@@ -1,0 +1,2 @@
+defmodule Hangman do
+end
