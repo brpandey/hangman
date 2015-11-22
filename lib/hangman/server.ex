@@ -171,7 +171,7 @@ defmodule Hangman.Server do
 
 	def handle_call(:secret_length, _from, state) do
 
-		{ :reply, String.length(state.secret), state }
+		{ :reply, {:secret_length, String.length(state.secret)}, state }
 
 	end
 

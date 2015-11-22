@@ -62,4 +62,20 @@ defmodule Hangman.Server.Test do
 
 	end
 
+	test "guessing invalid guesses" do
+
+		{:ok, _pid} = Hangman.Server.start_link("avocado", 5)
+
+		assert {:correct_letter, "--O---O", Nil} = Hangman.Server.guess_letter("o")
+
+		assert {:incorrect_letter, Nil, Nil} = Hangman.Server.guess_letter(123)
+
+		assert {:correct_letter, "--OC--O", Nil} = Hangman.Server.guess_letter("c")
+
+		assert {:incorrect_letter, Nil, Nil} = Hangman.Server.guess_word(456)
+
+		Hangman.Server.stop
+
+	end
+
 end
