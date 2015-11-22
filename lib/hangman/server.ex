@@ -63,8 +63,6 @@ defmodule Hangman.Server do
 		pattern = String.duplicate(@mystery_letter, String.length(secret))
 		state = %State{secret: String.upcase(secret), max_wrong: max_wrong, pattern: pattern}
 
-		IO.puts "state is #{state}"
-
 		{ :ok, state }
 
 	end
@@ -91,14 +89,21 @@ defmodule Hangman.Server do
 			true -> 
 				state = %{ state | correct_letters: HashSet.put(state.correct_letters, letter)}
 				pattern = Hangman.Pattern.update(state.pattern, state.secret, letter)
-				state = %{ state | pattern: pattern}
 
-				data = {:correct, pattern}
+				state = %{ state | pattern: pattern}
+				data = {:correct_letter, pattern, Nil}
+
+				#If no remaining mystery letters, we have our word
+				if not String.contains?(state.pattern, @mystery_letter) 
+					and state.pattern == state.secret do
+
+						data = {:correct_letter, pattern, _game_status(state)}
+
+					end
 
 			false ->
 				state = %{ state | incorrect_letters: HashSet.put(state.incorrect_letters, letter)}
-
-				data = {:incorrect, Nil}
+				data = {:incorrect_letter, Nil, Nil}
 
 		end
 
@@ -130,20 +135,18 @@ defmodule Hangman.Server do
 			true -> 
 				state = %{ state | pattern: word }
 
-				data = {:correct, _game_status(state)}
+				data = {:correct_word, _game_status(state)}
 
-				{ :stop, data, data, state }
+				{ :reply, data, state }
 
 			false ->
 				state = %{ state | incorrect_words: HashSet.put(state.incorrect_words, word) }
 
-				data = {:incorrect, Nil}
+				data = {:incorrect_word, Nil}
 
 				{ :reply, data, state }
 				
 		end
-
-		
 
 	end
 
@@ -153,8 +156,11 @@ defmodule Hangman.Server do
 
 	def handle_call(:game_status, _from, state) do
 
-		{ _, text, score } = _game_status(state)
-		data = "#{state.pattern}; score=#{score}; status=#{text}"
+		{ code, text, score } = _game_status(state)
+		display = "#{state.pattern}; score=#{score}; status=#{text}"
+
+		data = { code, score, display }
+
 		{ :reply, data, state }
 
 	end
@@ -172,7 +178,7 @@ defmodule Hangman.Server do
 
 	def handle_cast(:stop, state) do
 
-		{ :stop, "Stopping Hangman Server", state }
+		{ :stop, state }
 
 	end
 
@@ -190,7 +196,7 @@ defmodule Hangman.Server do
 
 	def terminate(_reason, _state) do
 
-		IO.puts "Terminating Hangman Server"
+		#IO.puts "Terminating Hangman Server"
 		:ok
 	end
 
