@@ -1,7 +1,6 @@
 defmodule Hangman.Player do
 
-
-
+	"""
 	def start do
 
 		Hangman.Server.secret_length
@@ -35,12 +34,9 @@ defmodule Hangman.Player do
 			{:incorrect_letter, pattern, Nil} ->  
 				_make_guess(:correct_letter, pattern)
 
-				
-
-
 		end
 
 	end
-
+	"""
 
 end

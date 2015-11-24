@@ -23,7 +23,7 @@ defmodule Hangman.Server do
 
 	#####
 	# External API
-	def start_link(secret, max_wrong) do
+	def start_link(secret, max_wrong \\ 5) when is_binary(secret) do
 
 		pattern = String.duplicate(@mystery_letter, String.length(secret))
 		args = %State{secret: String.upcase(secret), max_wrong: max_wrong, pattern: pattern}
@@ -35,11 +35,11 @@ defmodule Hangman.Server do
 
 	def mystery_letter, do: @mystery_letter
 
-	def guess_letter(letter) do
+	def guess_letter(letter) when is_binary(letter) do
 		GenServer.call @name, {:guess_letter, letter}
 	end
 
-	def guess_word(word) do
+	def guess_word(word) when is_binary(word) do
 		GenServer.call @name, {:guess_word, word}
 	end
 
@@ -51,8 +51,12 @@ defmodule Hangman.Server do
 		GenServer.call @name, :secret_length
 	end
 
+	def another_game(secret, max_wrong \\ 5) when is_binary(secret) do
+		GenServer.cast @name, {:another_game, secret, max_wrong}
+	end
+
 	def stop do
-		GenServer.cast @name, :stop
+		GenServer.call @name, :stop
 	end
 
 	#####
@@ -61,6 +65,7 @@ defmodule Hangman.Server do
 	def init(secret, max_wrong) do
 
 		pattern = String.duplicate(@mystery_letter, String.length(secret))
+
 		state = %State{secret: String.upcase(secret), max_wrong: max_wrong, pattern: pattern}
 
 		{ :ok, state }
@@ -87,25 +92,26 @@ defmodule Hangman.Server do
 		case String.contains?(state.secret, letter) do 
 
 			true -> 
-				state = %{ state | correct_letters: HashSet.put(state.correct_letters, letter)}
+				#Update pattern and game state
 				pattern = Hangman.Pattern.update(state.pattern, state.secret, letter)
 
-				state = %{ state | pattern: pattern}
-				data = {:correct_letter, pattern, Nil}
+				state = %{ state | correct_letters: HashSet.put(state.correct_letters, letter),
+					pattern: pattern }
 
-				#If no remaining mystery letters, we have our word
-				if not String.contains?(state.pattern, @mystery_letter) 
-					and state.pattern == state.secret do
-
-						data = {:correct_letter, pattern, _game_status(state)}
-
-					end
+				data = :correct_letter
 
 			false ->
-				state = %{ state | incorrect_letters: HashSet.put(state.incorrect_letters, letter)}
-				data = {:incorrect_letter, Nil, Nil}
+				#Update game state
+				state = %{ state | incorrect_letters: HashSet.put(state.incorrect_letters, letter) }
+
+				data = :incorrect_letter
 
 		end
+
+		#Update game status
+		{ code, _, display } = _game_status(state)
+
+		data = {data, code, state.pattern, display}
 
 		{ :reply, data, state }
 
@@ -135,18 +141,20 @@ defmodule Hangman.Server do
 			true -> 
 				state = %{ state | pattern: word }
 
-				data = {:correct_word, _game_status(state)}
-
-				{ :reply, data, state }
+				data = :correct_word
 
 			false ->
 				state = %{ state | incorrect_words: HashSet.put(state.incorrect_words, word) }
 
-				data = {:incorrect_word, Nil}
-
-				{ :reply, data, state }
+				data = :incorrect_word
 				
 		end
+
+		{ code, _, display } = _game_status(state)
+
+		data = {data, code, state.pattern, display}
+
+		{ :reply, data, state }
 
 	end
 
@@ -156,12 +164,7 @@ defmodule Hangman.Server do
 
 	def handle_call(:game_status, _from, state) do
 
-		{ code, text, score } = _game_status(state)
-		display = "#{state.pattern}; score=#{score}; status=#{text}"
-
-		data = { code, score, display }
-
-		{ :reply, data, state }
+		{ :reply, _game_status(state), state }
 
 	end
 
@@ -176,16 +179,32 @@ defmodule Hangman.Server do
 	end
 
 
-	def handle_cast(:stop, state) do
+	def handle_call(:stop, _from, state) do
 
-		{ :stop, state }
+		{ :stop, :normal, :ok, state }
+
+	end
+
+
+	def handle_cast({:another_game, secret, max_wrong}, state) do
+
+		# Reset the game state for use for another game by client
+		pattern = String.duplicate(@mystery_letter, String.length(secret))
+
+		state = %State{secret: String.upcase(secret), max_wrong: max_wrong, pattern: pattern}
+
+		state = %State{ state | correct_letters: HashSet.new, 
+			incorrect_letters: HashSet.new, 
+			incorrect_words: HashSet.new}
+
+		{ :noreply, state }
 
 	end
 
 
 	def format_status(_reason, [ _pdict, state ]) do
 	
-		[data: [{'State', "My current hangman server state is #{inspect state} and #{_game_status(state)}"}]]
+		[data: [{'State', "The current hangman server state is #{inspect state} and #{_game_status(state)}"}]]
 
 	end
 
@@ -221,16 +240,21 @@ defmodule Hangman.Server do
 
 		case status do
 
-			{:game_lost, _, _} -> 
-				status
+			{:game_lost, text, score} -> 
+				{:game_lost, score, _display_status(state.pattern, score, text)}
+
 			{status_code, text, _} -> 
 				score =	Set.size(state.incorrect_letters) + 
 					Set.size(state.incorrect_words) + 
 					Set.size(state.correct_letters)
 	
-				{status_code, text, score}
+				{status_code, score, _display_status(state.pattern, score, text)}
 		end
 
+	end
+
+	defp _display_status(pattern, score, text) do
+		"#{pattern}; score=#{score}; status=#{text}"
 	end
 
 end
