@@ -1,7 +1,7 @@
 defmodule Hangman.Player do
 
-	"""
-	def start do
+	'''
+	def init(player_name) do
 
 		Hangman.Server.secret_length
 
@@ -23,20 +23,24 @@ defmodule Hangman.Player do
 			{:secret_length, length} ->
 				Hangman.Strategy.init(length)
 
-			{_, _, {:game_lost, _}} ->
+			{_, :game_lost, _pattern, text} ->
+				#Lost the game
+				IO.puts text
+
+			{_, :game_won, _pattern, text} ->
+				#Won the game
+				IO.puts text
 
 			{:correct_letter, pattern, Nil} ->  
 				_make_guess(:correct_letter, pattern)
 
-			{:correct_letter, pattern, {:game_won, text}} ->
-				#Won the game
 
 			{:incorrect_letter, pattern, Nil} ->  
-				_make_guess(:correct_letter, pattern)
+				_make_guess(:incorrect_letter, pattern)
 
 		end
 
 	end
-	"""
+	'''
 
 end
