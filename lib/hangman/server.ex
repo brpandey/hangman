@@ -23,7 +23,8 @@ defmodule Hangman.Server do
 	@game_status_codes  %{
 		game_won: {:game_won, 'GAME_WON', 0}, 
 		game_lost: {:game_lost, 'GAME_LOST', 25}, 
-		game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1}
+		game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1},
+		game_reset: {:game_reset, 'GAME_RESET', 0}
 	}
 
 	@vsn "0"
@@ -125,8 +126,9 @@ defmodule Hangman.Server do
 
 		letter = String.upcase(letter)
 
-		data = cond do 
+		result = cond do 
 			String.contains?(state.secret, letter) -> #letter found within secret
+			
 				#Update pattern and game state
 				pattern = Pattern.update(state.pattern, state.secret, letter)
 
@@ -147,19 +149,16 @@ defmodule Hangman.Server do
 		#return updated game status
 		{ code, display } = check_game_status(state)
 
-		data = {data, code, state.pattern, display}
+		data = {result, code, state.pattern, display}
 
-		case code do 
+		#If the current game is finished check if there are remaining games
+		if code == :game_won or code == :game_lost do
 
-			:game_keep_guessing -> Nil
-
-			#covers :game_won, :game_lost states
-			_ -> 
-				{state, data} = check_games_over(state.secrets, state, data)
-
+			{state, data} = check_games_over(state.secrets, state, data)
+		
 		end
 
-		{ :reply, data, state }
+		{ :reply, {data, []}, state }
 
 	end
 
@@ -176,36 +175,35 @@ defmodule Hangman.Server do
 	"""
 	def handle_call({:guess_word, word}, _from, state) do
 
-		{ :game_keep_guessing, _} = check_game_status(state)
+		{ :game_keep_guessing, _ } = check_game_status(state)
 
 		word = String.upcase(word)
 
-		data = cond do
+		result = cond do
 				state.secret == word -> 
-					state = %{ state | pattern: word }	
+					state = %{ state | pattern: word }
+
 					:correct_word
 
 				true ->
-					state = %{ state | incorrect_words: HashSet.put(state.incorrect_words, word) }
+					state = %{ state | 
+						incorrect_words: HashSet.put(state.incorrect_words, word) }
+
 					:incorrect_word
 		end
 
 		{ code, display } = check_game_status(state)
 
-		data = {data, code, state.pattern, display}
+		data = {result, code, state.pattern, display}
 
+		#If the current game is finished check if there are remaining games
+		if code == :game_won or code == :game_lost do
 
-		case code do 
-
-			:game_keep_guessing -> Nil
-
-			#covers :game_won, :game_lost states
-			_ -> 
-				{state, data} = check_games_over(state.secrets, state, data)
+			{state, data} = check_games_over(state.secrets, state, data)
 		
 		end
 
-		{ :reply, data, state }
+		{ :reply, {data, []}, state }
 
 	end
 
@@ -283,22 +281,26 @@ defmodule Hangman.Server do
 
 	defp check_game_status(state) do
 
-		status = 
-			cond do
-				state.secret == state.pattern -> @game_status_codes[:game_won]
+		status = cond do
+
+				state.secret == "" -> @game_status_codes[:game_reset]
+
+				state.secret == state.pattern -> 
+					@game_status_codes[:game_won]
 
 				get_num_wrong_guesses(state) > state.max_wrong -> 
 					@game_status_codes[:game_lost]
 
 				true -> @game_status_codes[:game_keep_guessing]
-
 		end
 
 		case status do
-
 			{:game_lost, text, score} -> 
 				display_text = display_game_status(state.pattern, score, text)
 				{:game_lost, display_text}
+
+			{:game_reset, text, score} ->
+				{:game_reset, text}
 
 			{status_code, text, _} -> 
 				score =	get_score(state)
@@ -329,9 +331,7 @@ defmodule Hangman.Server do
 	
 	end
 
-	defp check_games_over([], _state, data) do 
-		{%State{}, data} 
-	end
+	defp check_games_over([], _state, data), do: {%State{}, data} 
 
 	defp check_games_over(secrets, state, data) when is_list(secrets) do
 
@@ -344,7 +344,7 @@ defmodule Hangman.Server do
 				#Updates state
 				state = save_and_load_next_game(state)
 
-				{state, data}
+				{state, {data, []}}
 
 			false -> 	#Otherwise we have no more games left 
 
@@ -352,19 +352,19 @@ defmodule Hangman.Server do
 				#And update the state
 				scores = List.insert_at(state.scores, state.current, get_score(state))
 
-				%{ state | scores: scores }
+				state = %{ state | scores: scores }
 
-				data = get_all_games_status(state)
+				results = game_over_all_games_status(state)
 
 				#Clear and return state so server process can be reused, 
 				#along with results data
-				{%State{}, data}
+				{%State{}, {data, results}}
 
 		end
 
 	end
 
-	defp get_all_games_status(state) do
+	defp game_over_all_games_status(state) do
 
 		total_score = Enum.reduce(state.scores, 0, &(&1 + &2))
 		
@@ -374,15 +374,17 @@ defmodule Hangman.Server do
 
 		results = Enum.zip(state.secrets, state.scores)
 
-		{:average_score, average_score, :games, games_played, :results, results}
+		[status: :game_over, average_score: average_score, 
+			games: games_played, results: results]
 
 	end
 
 	defp save_and_load_next_game(state) do
 
 		'''
-			Do game archival steps first
+			First, do game archival steps
 		'''
+
 		#Store the game finishing pattern into the state.patterns list - replace
 		patterns = List.replace_at(state.patterns, state.current, state.pattern)
 
@@ -396,7 +398,7 @@ defmodule Hangman.Server do
 									scores: scores, current: state.current + 1 }
 
 		'''
-			Do refresh of current state steps second
+			Second, do refresh of current state steps
 		'''
 
 		#Replace the current pattern with new game's pattern
