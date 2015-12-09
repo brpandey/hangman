@@ -1,7 +1,6 @@
 defmodule Hangman.Server.Cache do 
 	use GenServer
 
-	'''
 
 	@name __MODULE__
 
@@ -14,31 +13,34 @@ defmodule Hangman.Server.Cache do
 		GenServer.start_link(@name, args, options)
 	end
 
-	def server_process(player_name) do
-		GenServer.call(@name, {:server_process, player_name})
+	def get_server(player_name, secret) do
+		GenServer.call(@name, {:get_server, player_name, secret})
 	end
 
 
+	def init(state), do:	{:ok, HashDict.new}
 
-
-	def init() do
-		{:ok, HashDict.new}
-	end
-
-	def handle_call({:server_process, player_name}, _from, hangman_servers) do
+	def handle_call({:get_server, player_name, secret}, _from, hangman_servers) do
 
 		case HashDict.fetch(hangman_servers, player_name) do
 
-			{:ok, hangman_server} ->
-				{:reply, hangman_server, hangman_servers}
+			{:ok, hangman_server_pid} ->
+
+				{:reply, hangman_server_pid, hangman_servers}
 
 			:error ->
-				{} = Hangman.Server
+				{:ok, hangman_server_pid} = Hangman.Server.start(secret)
+
+				IO.puts "Creating a new hangman server"
+				
+				{
+					:reply, 
+					hangman_server_pid, 
+					HashDict.put(hangman_servers, player_name, hangman_server_pid)
+				}
 
 		end
 
-
 	end
-'''
 
 end

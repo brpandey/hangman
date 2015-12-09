@@ -18,6 +18,7 @@ defmodule Hangman.Server do
 	@name __MODULE__
 
 	@mystery_letter "-"
+
 	@max_wrong 5
 
 	@game_status_codes  %{
@@ -38,25 +39,25 @@ defmodule Hangman.Server do
 		Start public interface method with a single secret
 	"""
 
-	def start_link(secret, max_wrong \\ @max_wrong)
+	def start(secret, max_wrong \\ @max_wrong) do
 
-	def start_link(secret, max_wrong) when is_binary(secret) do
+		args = load_game(secret, max_wrong)
 
-		pattern = String.duplicate(@mystery_letter, String.length(secret))
-
-		args = %State{secret: String.upcase(secret), 
-						pattern: pattern, max_wrong: max_wrong}
-		
 		options = [name: @name] #,  debug: [:trace]]
 
-		GenServer.start_link(@name, args, options)
+		GenServer.start(@name, args, options)
 
 	end
 
-	@doc """
-		Start public interface method with a list of secrets
-	"""
-	def start_link(secrets, max_wrong) when is_list(secrets) do
+	def load_game(secret, max_wrong) when is_binary(secret) do
+	
+		pattern = String.duplicate(@mystery_letter, String.length(secret))
+
+		%State{secret: String.upcase(secret), 
+			pattern: pattern, max_wrong: max_wrong}
+	end
+
+	def load_game(secrets, max_wrong) when is_list(secrets) do
 
 		#initialize the list of secrets to be uppercase 
 		#initialize the list of patterns to fit the secrets length
@@ -64,12 +65,8 @@ defmodule Hangman.Server do
 
 		patterns = Enum.map(secrets, &String.duplicate(mystery_letter, String.length(&1)))
 
-		args = %State{secret: List.first(secrets), pattern: List.first(patterns),
-							secrets: secrets, patterns: patterns, max_wrong: max_wrong}
-
-		options = [name: @name] #,  debug: [:trace]]
-
-		GenServer.start_link(@name, args, options)
+		%State{secret: List.first(secrets), pattern: List.first(patterns),
+			secrets: secrets, patterns: patterns, max_wrong: max_wrong}
 
 	end
 
@@ -152,13 +149,16 @@ defmodule Hangman.Server do
 		data = {result, code, state.pattern, display}
 
 		#If the current game is finished check if there are remaining games
-		if code == :game_won or code == :game_lost do
+		case code do
 
-			{state, data} = check_games_over(state.secrets, state, data)
-		
+			:game_keep_guessing -> 
+				data = {data, []}
+			_ ->
+				{state, data} = check_games_over(state.secrets, state, data)
+
 		end
 
-		{ :reply, {data, []}, state }
+		{ :reply, data, state }
 
 	end
 
@@ -194,16 +194,19 @@ defmodule Hangman.Server do
 
 		{ code, display } = check_game_status(state)
 
-		data = {result, code, state.pattern, display}
+		data = { result, code, state.pattern, display }
 
 		#If the current game is finished check if there are remaining games
-		if code == :game_won or code == :game_lost do
+		case code do
 
-			{state, data} = check_games_over(state.secrets, state, data)
-		
+			:game_keep_guessing -> 
+				data = {data, []}
+			_ ->
+				{state, data} = check_games_over(state.secrets, state, data)
+
 		end
 
-		{ :reply, {data, []}, state }
+		{ :reply, data, state }
 
 	end
 
@@ -299,7 +302,7 @@ defmodule Hangman.Server do
 				display_text = display_game_status(state.pattern, score, text)
 				{:game_lost, display_text}
 
-			{:game_reset, text, score} ->
+			{:game_reset, text, _score} ->
 				{:game_reset, text}
 
 			{status_code, text, _} -> 
