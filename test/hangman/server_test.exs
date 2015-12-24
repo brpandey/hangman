@@ -1,7 +1,152 @@
 defmodule Hangman.Server.Test do
 	use ExUnit.Case, async: true
 
-	test "guessing letters, checking letter positions and winning game" do
+	test "0) multiple games with two players" do 
+
+		assert {:ok, _pid} = Hangman.Supervisor.start_link()
+
+		# Game #1: Stanley
+
+		stanley_game_server_pid = 
+			Hangman.Cache.get_server("stanley", ["factual", "backpack"])
+
+		assert {"stanley", :game_keep_guessing, "-------; score=0; status=KEEP_GUESSING"} = 
+			Hangman.Server.game_status(stanley_game_server_pid)
+
+		assert {{"stanley", :correct_letter, :game_keep_guessing, "--C----",
+  		"--C----; score=1; status=KEEP_GUESSING"}, []} = 
+			Hangman.Server.guess_letter(stanley_game_server_pid, "c")
+
+		assert {{"stanley", :correct_letter, :game_keep_guessing, "--C-U--",
+		  "--C-U--; score=2; status=KEEP_GUESSING"}, []} = 
+			Hangman.Server.guess_letter(stanley_game_server_pid, "u")
+
+		assert {{"stanley", :correct_letter, :game_keep_guessing, "-AC-UA-",
+  		"-AC-UA-; score=3; status=KEEP_GUESSING"}, []} = 
+  		Hangman.Server.guess_letter(stanley_game_server_pid, "a")
+
+  	assert {{"stanley", :correct_letter, :game_keep_guessing, "FAC-UA-",
+  		"FAC-UA-; score=4; status=KEEP_GUESSING"}, []} =
+  		Hangman.Server.guess_letter(stanley_game_server_pid, "f")
+
+  	assert {{"stanley", :correct_letter, :game_keep_guessing, "FACTUA-",
+  		"FACTUA-; score=5; status=KEEP_GUESSING"}, []} =
+  		Hangman.Server.guess_letter(stanley_game_server_pid, "t")
+
+  	assert {{"stanley", :correct_letter, :game_won, "FACTUAL", "FACTUAL; score=6; status=GAME_WON"},
+ 			[]} = Hangman.Server.guess_letter(stanley_game_server_pid, "l")
+
+ 		assert {"stanley", :game_keep_guessing, "--------; score=0; status=KEEP_GUESSING"} =
+ 			Hangman.Server.game_status(stanley_game_server_pid) 
+
+ 		assert {{"stanley", :correct_letter, :game_keep_guessing, "--C---C-",
+  		"--C---C-; score=1; status=KEEP_GUESSING"}, []} = 
+  		Hangman.Server.guess_letter(stanley_game_server_pid, "c")
+
+  	assert {{"stanley", :correct_letter, :game_keep_guessing, "-AC--AC-",
+  		"-AC--AC-; score=2; status=KEEP_GUESSING"}, []} = 
+  		Hangman.Server.guess_letter(stanley_game_server_pid, "a")
+
+  	assert {{"stanley", :correct_letter, :game_keep_guessing, "-ACK-ACK",
+  		"-ACK-ACK; score=3; status=KEEP_GUESSING"}, []} = 
+  		Hangman.Server.guess_letter(stanley_game_server_pid, "k")
+
+  	assert {{"stanley", :correct_word, :game_won, "BACKPACK", "BACKPACK; score=3; status=GAME_WON"},
+ 			[status: :game_over, average_score: 4.5, games: 2,
+  		results: [{"FACTUAL", 6}, {"BACKPACK", 3}]]} = 
+  		Hangman.Server.guess_word(stanley_game_server_pid, "backpack") 
+
+  	assert {"stanley", :game_reset, 'GAME_RESET'} =
+  		Hangman.Server.game_status(stanley_game_server_pid)
+
+
+  	# Game #2: Hugo
+
+		hugo_game_server_pid = Hangman.Cache.get_server("hugo", ["heart", "lullaby"])  
+
+		assert stanley_game_server_pid != hugo_game_server_pid
+
+		assert {"hugo", :game_keep_guessing, "-----; score=0; status=KEEP_GUESSING"} =
+			Hangman.Server.game_status(hugo_game_server_pid)                             
+
+		assert {{"hugo", :correct_letter, :game_keep_guessing, "H----",
+		  "H----; score=1; status=KEEP_GUESSING"}, []} = 
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "h")
+
+		assert {{"hugo", :incorrect_letter, :game_keep_guessing, "H----",
+		  "H----; score=2; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "l")
+
+		assert {{"hugo", :incorrect_letter, :game_keep_guessing, "H----",
+		  "H----; score=3; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "g")
+
+		assert {{"hugo", :correct_letter, :game_keep_guessing, "H-A--",
+		  "H-A--; score=4; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "a")
+
+		assert {{"hugo", :correct_letter, :game_keep_guessing, "H-AR-",
+		  "H-AR-; score=5; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "r")
+
+		assert {{"hugo", :correct_word, :game_won, "HEART", "HEART; score=5; status=GAME_WON"}, []} =
+			Hangman.Server.guess_word(hugo_game_server_pid, "heart")  
+
+		assert {"hugo", :game_keep_guessing, "-------; score=0; status=KEEP_GUESSING"} = 
+			Hangman.Server.game_status(hugo_game_server_pid)        
+
+		assert {{"hugo", :correct_letter, :game_keep_guessing, "----A--",
+		  "----A--; score=1; status=KEEP_GUESSING"}, []} = 
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "a")  
+
+		assert {{"hugo", :correct_letter, :game_keep_guessing, "----A-Y",
+		  "----A-Y; score=2; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "y")
+
+		assert {{"hugo", :incorrect_letter, :game_keep_guessing, "----A-Y",
+		  "----A-Y; score=3; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "s")
+
+		assert {{"hugo", :correct_letter, :game_keep_guessing, "L-LLA-Y",
+		  "L-LLA-Y; score=4; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(hugo_game_server_pid, "l")
+
+		assert {{"hugo", :correct_word, :game_won, "LULLABY", "LULLABY; score=4; status=GAME_WON"},
+		 [status: :game_over, average_score: 4.5, games: 2,
+		  results: [{"HEART", 5}, {"LULLABY", 4}]]} =
+		  Hangman.Server.guess_word(hugo_game_server_pid, "lullaby")  
+
+		assert {"hugo", :game_reset, 'GAME_RESET'} =
+			Hangman.Server.game_status(hugo_game_server_pid)    
+
+		# Game #3: Stanley      
+
+		assert ^stanley_game_server_pid = 
+			Hangman.Cache.get_server("stanley", ["jovial"])         
+
+		assert {"stanley", :secret_length, 6} = Hangman.Server.secret_length(stanley_game_server_pid)                     
+
+		assert {{"stanley", :correct_letter, :game_keep_guessing, "-----L",
+		  "-----L; score=1; status=KEEP_GUESSING"}, []} =
+		   Hangman.Server.guess_letter(stanley_game_server_pid, "l")                 
+
+		assert {{"stanley", :correct_letter, :game_keep_guessing, "----AL",
+		  "----AL; score=2; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(stanley_game_server_pid, "a")
+
+		assert {{"stanley", :correct_letter, :game_keep_guessing, "J---AL",
+		  "J---AL; score=3; status=KEEP_GUESSING"}, []} =
+		  Hangman.Server.guess_letter(stanley_game_server_pid, "j")
+
+		assert {{"stanley", :correct_word, :game_won, "JOVIAL", "JOVIAL; score=3; status=GAME_WON"},
+		 [status: :game_over, average_score: 3.0, games: 1, results: [{"JOVIAL", 3}]]} =
+		 Hangman.Server.guess_word(stanley_game_server_pid, "jovial")
+
+
+	end
+'''
+
+	test "1) guessing letters, checking letter positions and winning game" do
 
 		assert {:ok, _pid} = Hangman.Server.start_link("avocado", 5)
 
@@ -33,7 +178,7 @@ defmodule Hangman.Server.Test do
 
 	end
 
-	test "guessing letters, checking letter positions and losing game" do
+	test "2) guessing letters, checking letter positions and losing game" do
 
 		assert {:ok, _pid} = Hangman.Server.start_link("fantastic", 5)
 
@@ -85,7 +230,7 @@ defmodule Hangman.Server.Test do
 
 	end
 
-	test "returns correct game status" do
+	test "3) returns correct game status" do
 
 		{:ok, _pid} = Hangman.Server.start_link("avocado", 5)
 
@@ -123,7 +268,7 @@ defmodule Hangman.Server.Test do
 
 	end
 
-'''
+
 	test "another game" do
 
 		#Game 1

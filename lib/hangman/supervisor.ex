@@ -1,32 +1,24 @@
 defmodule Hangman.Supervisor do 
-
 	use Supervisor
 
-	#Initially supervise the server 
-	#once this works, we will supervise the cache
+	@name __MODULE__
 
-	def start_link(secret) when is_binary(secret) do
+	# Hangman.Server.Supervisor is a third line supervisor as
+	# it supervises Hangman.System.Supervisor,
+	# which is a second line supervisor and also
+	# the "error kernel" Hangman.Process.Registry
 
-		IO.puts "Starting single game Hangman.Server"
-
-		:supervisor.start_link(__MODULE__, secret)
-
+	def start_link() do
+		Supervisor.start_link(@name, Nil)
 	end
 
+	def init(_) do
+		children = [
+			worker(Hangman.Process.Registry, []),
+			supervisor(Hangman.System.Supervisor, [])
+		]
 
-	def start_link(secrets) when is_list(secrets) do
-
-		IO.puts "Starting multiple game Hangman.Server"
-
-		:supervisor.start_link(__MODULE__, secrets)
-
-	end
-
-	def init(secret) do
-
-		child_processes = [worker(Hangman.Server, [secret])]
-		supervise child_processes, strategy: :one_for_one
-
+		supervise(children, strategy: :rest_for_one)
 	end
 
 end

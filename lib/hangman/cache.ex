@@ -1,4 +1,4 @@
-defmodule Hangman.Server.Cache do 
+defmodule Hangman.Cache do 
 	use GenServer
 
 
@@ -13,33 +13,39 @@ defmodule Hangman.Server.Cache do
 		GenServer.start_link(@name, args, options)
 	end
 
+
 	def get_server(player_name, secret) do
-		GenServer.call(@name, {:get_server, player_name, secret})
-	end
+		
+		case Hangman.Server.whereis(player_name) do
 
+			:undefined ->
+				GenServer.call(@name, {:get_server, player_name, secret})
 
-	def init(state), do:	{:ok, HashDict.new}
+			pid -> 
+				Hangman.Server.load_game(pid, secret)
 
-	def handle_call({:get_server, player_name, secret}, _from, hangman_servers) do
-
-		case HashDict.fetch(hangman_servers, player_name) do
-
-			{:ok, hangman_server_pid} ->
-
-				{:reply, hangman_server_pid, hangman_servers}
-
-			:error ->
-				{:ok, hangman_server_pid} = Hangman.Server.start(secret)
-
-				IO.puts "Creating a new hangman server"
-				
-				{
-					:reply, 
-					hangman_server_pid, 
-					HashDict.put(hangman_servers, player_name, hangman_server_pid)
-				}
+				pid
 
 		end
+
+	end
+
+	def init(_), do:	{:ok, Nil}
+
+	def handle_call({:get_server, player_name, secret}, _from, state) do
+
+		#Check the registry again for the pid -- safeguard against race condition
+		case Hangman.Server.whereis(player_name) do
+
+			:undefined -> 
+				{:ok, pid} = Hangman.Server.Supervisor.start_child(player_name, secret)
+
+			pid -> 
+				Hangman.Server.load_game(pid, secret)
+
+		end
+
+		{:reply, pid, state}
 
 	end
 

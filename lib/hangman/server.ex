@@ -39,17 +39,35 @@ defmodule Hangman.Server do
 		Start public interface method with a single secret
 	"""
 
-	def start(secret, max_wrong \\ @max_wrong) do
+	def start_link(name, secret, max_wrong \\ @max_wrong) do
 
-		args = load_game(secret, max_wrong)
+		IO.puts "Starting Hangman Server"
 
-		options = [name: @name] #,  debug: [:trace]]
+		args = {name, _load_game(secret, max_wrong)}
 
-		GenServer.start(@name, args, options)
+		options = [name: via_tuple(name)] #,  debug: [:trace]]
+
+		GenServer.start_link(@name, args, options)
 
 	end
 
-	def load_game(secret, max_wrong) when is_binary(secret) do
+
+	def whereis(name) do
+
+		Hangman.Process.Registry.whereis_name({:hangman_server, name})
+
+	end
+
+	defp via_tuple(name) do
+	
+		{:via, Hangman.Process.Registry, {:hangman_server, name}}
+	
+	end
+
+	def mystery_letter, do: @mystery_letter
+
+
+	defp _load_game(secret, max_wrong) when is_binary(secret) do
 	
 		pattern = String.duplicate(@mystery_letter, String.length(secret))
 
@@ -57,7 +75,7 @@ defmodule Hangman.Server do
 			pattern: pattern, max_wrong: max_wrong}
 	end
 
-	def load_game(secrets, max_wrong) when is_list(secrets) do
+	defp _load_game(secrets, max_wrong) when is_list(secrets) do
 
 		#initialize the list of secrets to be uppercase 
 		#initialize the list of patterns to fit the secrets length
@@ -70,22 +88,30 @@ defmodule Hangman.Server do
 
 	end
 
-	def mystery_letter, do: @mystery_letter
+	def load_game(hangman_pid, secret, max_wrong \\ @max_wrong)
 
-	def guess_letter(letter) when is_binary(letter) do
-		GenServer.call @name, {:guess_letter, letter}
+	def load_game(hangman_pid, secret, max_wrong) when is_binary(secret) do
+		GenServer.cast hangman_pid, {:load_game, secret, max_wrong}
 	end
 
-	def guess_word(word) when is_binary(word) do
-		GenServer.call @name, {:guess_word, word}
+	def load_game(hangman_pid, secrets, max_wrong) when is_list(secrets) do
+		GenServer.cast hangman_pid, {:load_games, secrets, max_wrong}
 	end
 
-	def game_status do
-		GenServer.call @name, :game_status
+	def guess_letter(hangman_server_pid, letter) when is_binary(letter) do
+		GenServer.call hangman_server_pid, {:guess_letter, letter}
 	end
 
-	def secret_length do
-		GenServer.call @name, :secret_length
+	def guess_word(hangman_server_pid, word) when is_binary(word) do
+		GenServer.call hangman_server_pid, {:guess_word, word}
+	end
+
+	def game_status(hangman_server_pid) do
+		GenServer.call hangman_server_pid, :game_status
+	end
+
+	def secret_length(hangman_server_pid) do
+		GenServer.call hangman_server_pid, :secret_length
 	end
 
 '''
@@ -94,18 +120,46 @@ defmodule Hangman.Server do
 	end
 '''
 
-	def stop do
-		GenServer.call @name, :stop
+	def stop(hangman_server_pid) do
+
+		GenServer.call hangman_server_pid, :stop
+	
 	end
 
 	#####
 	# GenServer implementation
 
-	def init(state) do
+	def init({ name, state }) do
 
-		{ :ok, state }
+		{ :ok, { name, state } }
 
 	end
+
+	@doc """
+		:load_game
+		Loads a new game
+	"""
+	def handle_cast({:load_game, secret, max_wrong}, {name, _state}) do
+		
+		state = _load_game(secret, max_wrong)
+
+		{ :noreply, {name, state} }
+
+	end
+
+	@doc """
+		:load_games
+		Loads a set of games
+	"""
+
+	def handle_cast({:load_games, secret, max_wrong}, {name, _state}) do
+
+		state = _load_game(secret, max_wrong)
+		
+		{ :noreply, {name, state} }
+		
+	end
+
 
 	@doc """
 		{:guess_letter, letter}
@@ -117,9 +171,9 @@ defmodule Hangman.Server do
 		otherwise, returns the :incorrect atom and Nil
 	"""
 
-	def handle_call({:guess_letter, letter}, _from, state) do
+	def handle_call({:guess_letter, letter}, _from, {name, state}) do
 
-		{:game_keep_guessing, _} = check_game_status(state)
+		{ _, :game_keep_guessing, _} = check_game_status(name, state)
 
 		letter = String.upcase(letter)
 
@@ -144,9 +198,9 @@ defmodule Hangman.Server do
 		end
 
 		#return updated game status
-		{ code, display } = check_game_status(state)
+		{ _, code, display } = check_game_status(name, state)
 
-		data = {result, code, state.pattern, display}
+		data = {name, result, code, state.pattern, display}
 
 		#If the current game is finished check if there are remaining games
 		case code do
@@ -158,7 +212,7 @@ defmodule Hangman.Server do
 
 		end
 
-		{ :reply, data, state }
+		{ :reply, data, {name, state} }
 
 	end
 
@@ -173,9 +227,9 @@ defmodule Hangman.Server do
 
 		If incorrect, returns the :incorrect atom and nil	
 	"""
-	def handle_call({:guess_word, word}, _from, state) do
+	def handle_call({:guess_word, word}, _from, {name, state}) do
 
-		{ :game_keep_guessing, _ } = check_game_status(state)
+		{ _, :game_keep_guessing, _ } = check_game_status(name, state)
 
 		word = String.upcase(word)
 
@@ -192,9 +246,9 @@ defmodule Hangman.Server do
 					:incorrect_word
 		end
 
-		{ code, display } = check_game_status(state)
+		{ _, code, display } = check_game_status(name, state)
 
-		data = { result, code, state.pattern, display }
+		data = { name, result, code, state.pattern, display }
 
 		#If the current game is finished check if there are remaining games
 		case code do
@@ -206,7 +260,7 @@ defmodule Hangman.Server do
 
 		end
 
-		{ :reply, data, state }
+		{ :reply, data, {name, state} }
 
 	end
 
@@ -214,9 +268,9 @@ defmodule Hangman.Server do
 		:game_status
 		Returns the game status text
 	"""
-	def handle_call(:game_status, _from, state) do
+	def handle_call(:game_status, _from, {name, state}) do
 
-		{ :reply, check_game_status(state), state }
+		{ :reply, check_game_status(name, state), {name, state} }
 
 	end
 
@@ -224,9 +278,9 @@ defmodule Hangman.Server do
 		:secret_length
 		Returns the hangman secret length
 	"""
-	def handle_call(:secret_length, _from, state) do
+	def handle_call(:secret_length, _from, {name, state}) do
 
-		{ :reply, {:secret_length, String.length(state.secret)}, state }
+		{ :reply, {name, :secret_length, String.length(state.secret)}, {name, state} }
 
 	end
 
@@ -234,9 +288,9 @@ defmodule Hangman.Server do
 		:stop
 		Stops the server is a normal graceful way
 	"""
-	def handle_call(:stop, _from, state) do
+	def handle_call(:stop, _from, {name, state}) do
 
-		{ :stop, :normal, :ok, state }
+		{ :stop, :normal, {:ok, name}, state }
 
 	end
 
@@ -261,7 +315,7 @@ defmodule Hangman.Server do
 
 	def format_status(_reason, [ _pdict, state ]) do
 	
-		[data: [{'State', "The current hangman server state is #{inspect state} and #{check_game_status(state)}"}]]
+		[data: [{'State', "The current hangman server state is #{inspect state} and #{check_game_status("", state)}"}]]
 
 	end
 
@@ -282,7 +336,7 @@ defmodule Hangman.Server do
 	#####
 	# Helper functions
 
-	defp check_game_status(state) do
+	defp check_game_status(name, state) do
 
 		status = cond do
 
@@ -300,15 +354,15 @@ defmodule Hangman.Server do
 		case status do
 			{:game_lost, text, score} -> 
 				display_text = display_game_status(state.pattern, score, text)
-				{:game_lost, display_text}
+				{name, :game_lost, display_text}
 
 			{:game_reset, text, _score} ->
-				{:game_reset, text}
+				{name, :game_reset, text}
 
 			{status_code, text, _} -> 
 				score =	get_score(state)
 				display_text = display_game_status(state.pattern, score, text)
-				{status_code, display_text}
+				{name, status_code, display_text}
 		end
 
 	end
