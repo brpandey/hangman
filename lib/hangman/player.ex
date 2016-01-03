@@ -7,11 +7,11 @@ defmodule Hangman.Player do
       game_server_pid: Nil, 
       word_engine_pid: Nil,
        
-      current_guess: "",
+      last_guess: "",
       current_guess_result: Nil, 
       current_game_status: Nil, 
       current_pattern: "", 
-      current_text: "",
+      current_status_text: "",
       
       result: ""
   end
@@ -22,39 +22,40 @@ defmodule Hangman.Player do
       {player_name, game_server_pid, word_engine_pid}, [])
   end
 
-  # External events
+  # Events
 
-  def guess(player_pid, event = :game_reset) do
+  # 1) start guessing
+  def robot_guess(player_pid, event = :game_reset) do
     :gen_fsm.send_event(player_pid, :game_reset)
   end
 
-  # keep guessing, last letter correct
-  def guess(player_pid, event = {:game_keep_guessing, :correct_letter}) do
+  # 2) keep guessing, last letter correct
+  def robot_guess(player_pid, event = {:game_keep_guessing, :correct_letter}) do
     :gen_fsm.send_event(player_pid, event)
   end
 
-  # keep guessing, last letter incorrect
-  def guess(player_pid, event = {:game_keep_guessing, :incorrect_letter}) do
+  # 3) keep guessing, last letter incorrect
+  def robot_guess(player_pid, event = {:game_keep_guessing, :incorrect_letter}) do
     :gen_fsm.send_event(player_pid, event)
   end
 
-  # keep guessing, last word incorrect
-  def guess(player_pid, event = {:game_keep_guessing, :incorrect_word}) do
+  # 4) keep guessing, last word incorrect
+  def robot_guess(player_pid, event = {:game_keep_guessing, :incorrect_word}) do
     :gen_fsm.send_event(player_pid, event)
   end
 
-  # game won
-  def guess(player_pid, event = :game_won) do
+  # 5) game won
+  def robot_guess(player_pid, event = :game_won) do
     :gen_fsm.send_event(player_pid, event)
   end
 
-  # game lost
-  def guess(player_pid, event = :game_lost) do
+  # 6) game lost
+  def robot_guess(player_pid, event = :game_lost) do
     :gen_fsm.send_event(player_pid, event)
   end
 
-  # game_over
-  def guess(player_pid, event = :game_over) do
+  # 7) game_over
+  def robot_guess(player_pid, event = :game_over) do
     :gen_fsm.send_event(player_pid, event)
   end
 
@@ -78,9 +79,10 @@ defmodule Hangman.Player do
 
   end
 
-  # GUESS state
+  # GUESSING_ROBOT state
 
-  def guessing(:game_reset, state) do
+  # 1) start guessing
+  def guessing_robot(:game_reset, state) do
 
     IO.puts "In State: start {:guess, :game_reset}"
 
@@ -89,104 +91,100 @@ defmodule Hangman.Player do
 
     Hangman.Strategy.init(secret_length)
 
-    player_action(:default, {:game_reset})
+    player_action(:robot, {:game_reset})
 
-    { :next_state, :guess, state }
+    { :next_state, :guessing_robot, state }
 
   end
 
-  # keep guessing, last letter correct
-  def guessing({:game_keep_guessing, :correct_letter, 
-    correct_letter, pattern, text, []}, state) do
+  # 2) keep guessing, last letter correct
+  def guessing_robot({:game_keep_guessing, :correct_letter}, state) do
 
     # Print game state
-    IO.puts "#{text}\n"
-        
-    player_action(:default, {:correct_letter, correct_letter, pattern, text})
+    display_status(state)
 
-    { :next_state, :guess, state }
+    player_action(:robot, {:correct_letter, state.last_guess, state.current_pattern})
+
+    { :next_state, :guessing_robot, state }
 
   end
 
-  # game won, last letter correct
-  def guessing({:game_won, :correct_letter, correct_letter, pattern, text, []}, state) do
+  # 3) keep guessing, last letter incorrect
+  def guessing_robot({:game_keep_guessing, :incorrect_letter}, state) do
+
+    # Print game state
+    display_status(state)
+        
+    player_action(:robot, {:incorrect_letter, state.last_guess, state.current_pattern})
+
+    { :next_state, :guessing_robot, state }
+
+  end
+
+  # 4) keep guessing, last word incorrect
+  def guessing_robot({:game_keep_guessing, :incorrect_word}, state) do
+
+    # Print game state
+    display_status(state)
+        
+    player_action(:robot, {:incorrect_word, state.last_guess, state.current_pattern})
+
+    { :next_state, :guessing_robot, state }
+
+  end
+
+  # 5) game won
+  def guessing_robot(:game_won, state) do
     
     # Print game state
-    IO.puts "#{text}\n"
+    display_status(state)
 
     # Queue up the next next state 
-    guess(:game_reset)
+    robot_guess(:game_reset)
 
-    { :next_state, :guess, state }
+    { :next_state, :guessing_robot, state }
 
   end
 
-  # game won, last letter correct and game over
-  def guessing({:game_won, :correct_letter, correct_letter, pattern, text, result}, state) do
+  # 5) game won
+  def guessing_robot(:game_lost, state) do
     
     # Print game state
-    IO.puts "#{text}\n"
+    display_status(state)
 
     # Queue up the next next state 
-    guess(:game_over, result)
+    robot_guess(:game_reset)
 
-    { :next_state, :guess, state }
+    { :next_state, :guessing_robot, state }
 
   end
 
-  # keep guessing, last letter incorrect
-  def guessing({:game_keep_guessing, :incorrect_letter, incorrect_letter}) do
+  # 5) game won
+  def guessing_robot(:game_over, state) do
     
     # Print game state
-    IO.puts "#{text}\n"
-        
-    player_action(:default, {:correct_letter, correct_letter, pattern, text})
+    display_game_over_status(state)
 
-    { :next_state, :guess, state }
+    # Queue up the next next state 
+    robot_guess(:game_reset)
 
-  end
-
-
-  # LISTENING state
-
-  def listening(:hang_up, call_info) do
-    action("Hangup", call_info)
-    { :next_state, :start, nil }
+    { :next_state, :guessing_robot, state }
 
   end
-
-   def listening(:suspicious_phrase_heard, call_info) do
-    action("Heard something suspicious, starting transcription", call_info)
-    { :next_state, :transcribing,                              
-      call_info = %{ call_info | 
-                     suspicious_segments: call_info.suspicious_segments + 1}, 
-      @timeout }
-  end
-
-  # TRANSCRIBING state
-  def transcribing(:hang_up, call_info) do
-    action("Report on call", call_info)
-    { :next_state, :start, CallInfo.new }
-
-  def transcribing(:suspicious_phrase_heard, call_info) do
-    action("More suspicious stuff, extending timeout", call_info)
-    { :next_state, :transcribing, call_info, @timeout } 
-  end
-
-  def transcribing(:timeout, call_info) do     
-    action("Stopping transcription", call_info)
-    :gen_fsm.send_event(player_pid, :hang_up)
-    { :next_state, :listening, call_info }
-  end
-
 
   # Helpers
-  # {:guess, :game_keep_guessing, :correct_letter, 
-  # correct_letter, pattern, text, []}, state
 
-  def player_action(:default, current_game_context)
+  def display_status(state) do
+  	IO.puts "#{inspect state.current_status_text}\n"  	
+  end
+
+  def display_game_over_status(state) do
+  	IO.puts "#{inspect state.result}\n"  	
+  end
+
+  def player_action(:robot, decision_params, state) do
   
-      case Hangman.Strategy.make_guess(current_game_context) do
+      case Hangman.Strategy.make_guess(decision_params) do
 
         {:guess_word, guess_word} ->
 
@@ -201,12 +199,13 @@ defmodule Hangman.Player do
       end
 
     # Queue up the next next state 
-    guess(game_status, guess_result, guess_letter, pattern, text)
+    robot_guess(game_status, guess_result, guess_letter, pattern, text)
 
   end
 
-
-  # Strategy.make_guess
+  def player_action(:human, decision_params, state) do
+  	
+  end
 
 
   # Since Elixir no longer supports GenFSM, we need to use
@@ -244,20 +243,16 @@ end
 defmodule Strategy do
   #Helper function
 
-  defp _make_guess(guess_code, pattern) do
-
-    case Hangman.Strategy.next_guess(guess_code, pattern) do
-      {:word, word} ->
-        Hangman.Server.guess_word word
-        
-      {:letter, letter} ->
-        Hangman.Server.guess_letter letter
-    end
-  end
-
-
-  defp _next_guess(guess_code, pattern) do
-    
+  def make_guess({:correct_letter, state.last_guess, state.current_pattern}) do
 
   end
+
+  def make_guess({:incorrect_letter, state.last_guess, state.current_pattern}) do
+  	
+  end
+
+  def make_guess({:incorrect_word, state.last_guess, state.current_pattern}) do
+  	
+  end
+
 end
