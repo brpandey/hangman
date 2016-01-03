@@ -16,7 +16,7 @@ defmodule Hangman.Server.Supervisor do
 
 	def init(_) do
 
-		children = [ 
+		children = [
 			worker(Hangman.Server, []) 
 		]
 

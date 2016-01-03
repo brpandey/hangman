@@ -144,6 +144,30 @@ defmodule Hangman.Server.Test do
 
 
 	end
+
+'''
+	test "1) testing with hangman player fsm module" do
+
+		assert {:ok, _pid} = Hangman.Supervisor.start_link()
+
+		# Game #1: Stanley
+
+		stanley_game_server_pid = 
+			Hangman.Cache.get_server("stanley", ["factual", "backpack"])
+
+		{:ok, stanley_player_pid} = 
+			Hangman.Player.Supervisor.start_child("stanley", stanley_game_server_pid)
+
+		Hangman.Player.guess(stanley_player_pid, :default_strategy)
+
+		#Hangman.Player.guess(stanley_player_pid, {:interactive, :top_five_letters})
+
+	end
+
+'''
+
+
+
 '''
 
 	test "1) guessing letters, checking letter positions and winning game" do
