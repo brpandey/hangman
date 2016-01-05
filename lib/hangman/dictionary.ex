@@ -15,7 +15,7 @@ defmodule Hangman.Dictionary do
 
 	def words(length) do
 		Stream.resource(
-			fn -> File.open!("data/words.txt") end,
+			fn -> File.open!("lib/hangman/data/words.txt") end,
 		
 			fn file ->
 				case IO.read(file, :line) do
