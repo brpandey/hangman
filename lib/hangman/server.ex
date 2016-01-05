@@ -39,13 +39,13 @@ defmodule Hangman.Server do
 		Start public interface method with a single secret
 	"""
 
-	def start_link(name, secret, max_wrong \\ @max_wrong) do
+	def start_link(player_name, secret, max_wrong \\ @max_wrong) do
 
 		IO.puts "Starting Hangman Server"
 
-		args = {name, _load_game(secret, max_wrong)}
+		args = {player_name, _load_game(secret, max_wrong)}
 
-		options = [name: via_tuple(name)] #,  debug: [:trace]]
+		options = [name: via_tuple(player_name)] #,  debug: [:trace]]
 
 		GenServer.start_link(@name, args, options)
 

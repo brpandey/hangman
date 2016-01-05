@@ -272,15 +272,25 @@ defmodule Strategy do
   	
   end
 
-  def prepare_filter do
+  def prepare_filter(pattern) do
 
   	guessed_letters = MapSet.new
 
-  	MapSet.put(guessed_letters, "a")
-  	MapSet.put(guessed_letters, "c")
+  	MapSet.put(guessed_letters, "A")
+  	MapSet.put(guessed_letters, "C")
 
   	exclude_str = Enum.join(guessed_letters)
+  	replacement = Enum.join(["[^", exclude_str, "]"])
 
+
+  	# For each mystery_letter replace it with [^characters already guessed]
+  	updated_pattern = String.replace(pattern, Hangman.Server.mystery_letter, replacement)
+  	re_pat = Enum.join(['^', updated_pattern ,'$'])
+
+  	regex = Regex.compile!(re_pat)
+
+  	#Regex.match?(regex, word)
+  	
   	'''
 		# Create a counter object for current state of correct hangman letters
 		# Make sure we don't track mystery display letters
