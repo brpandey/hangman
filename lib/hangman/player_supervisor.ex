@@ -1,6 +1,8 @@
 defmodule Hangman.Player.Supervisor do
 	use Supervisor
 
+	@name __MODULE__
+	
 	#Hangman.Player.Supervisor is a first line supervisor
 	#which will dynamically start its children
 

@@ -16,7 +16,7 @@ defmodule Hangman.Supervisor do
 	def init(_) do
 		children = [
 			worker(Hangman.Process.Registry, []),
-			supervisor(Hangman.System.Supervisor, [])
+			supervisor(Hangman.System.Supervisor, []),
 			supervisor(Hangman.Player.System.Supervisor, [])
 		]
 
