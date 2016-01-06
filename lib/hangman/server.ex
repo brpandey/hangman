@@ -1,7 +1,7 @@
-defmodule Hangman.Server do
+defmodule Hangman.GameServer do
 	use GenServer
 
-	@moduledoc "Hangman.Server - hangman game server using GenServer.  
+	@moduledoc "Hangman.GameServer - hangman game server using GenServer.  
 		Interacts with player client through public interface and
 		maintains hangman game state"
 
