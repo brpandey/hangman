@@ -1,11 +1,17 @@
 defmodule Hangman.Player do
   @behaviour :gen_fsm
 
+ 	alias Hangman.Strategy, as: Strategy
+ 	alias Hangman.GameServer, as: GameServer
+ 	alias Hangman.WordEngine, as: WordEngine
+
+
   defmodule State do
     defstruct player_name: "", 
       game_server_pid: Nil, 
       word_engine_pid: Nil,
-       
+      
+      #TODO: Move into a separate struct, e.g. GamePlay
       last_guess: "",
       current_guess: "",
       current_guess_result: Nil, 
@@ -62,7 +68,7 @@ defmodule Hangman.Player do
                     game_server_pid: game_server_pid, 
                     word_engine_pid: word_engine_pid}
 
-    robot_guess(self(), :game_reset)
+    robot_guess(self(), :game_start)
     
     { :ok, :guessing_robot, state }
 
@@ -70,24 +76,29 @@ defmodule Hangman.Player do
 
   # GUESSING_ROBOT state
 
-  # 1) start guessing
-  def guessing_robot(:game_reset, state) do
+  def guessing_robot(:game_reset, state) do 
+  	IO.puts "GAME RESET STATE"
+  end
 
-    IO.puts "In State: start {:guess, :game_reset}"
+  # 1) start
+  def guessing_robot(:game_start, state) do
+
+    IO.puts "In State: guessing_robot :game_start"
 
     player = state.player_name
 
     {^player, :secret_length, secret_length} =
-      Hangman.Server.secret_length(state.game_server_pid)
+      GameServer.secret_length(state.game_server_pid)
 
     {^player, :game_keep_guessing, status} = 
-			Hangman.Server.game_status(state.game_server_pid)
+			GameServer.game_status(state.game_server_pid)
 
 		display_status(status) # Print game state
-    player_action(:robot, {:game_reset, secret_length}, state)
+    player_action(:robot, {:game_start, secret_length}, state)
     { :next_state, :guessing_robot, state }
 
   end
+
 
   # 2) keep guessing, last letter correct
   def guessing_robot({:game_keep_guessing, :correct_letter}, state) do
@@ -111,7 +122,7 @@ defmodule Hangman.Player do
   def guessing_robot({:game_won, _}, state) do
     
     display_status(:game_won, state) # Print game state
-    robot_guess(self(), :game_reset) # Queue up the next event 
+    robot_guess(self(), :game_start) # Queue up the next event 
     { :next_state, :guessing_robot, state }
 
   end
@@ -120,7 +131,7 @@ defmodule Hangman.Player do
   def guessing_robot({:game_lost, _}, state) do
     
     display_status(:game_lost, state) # Print game state
-    robot_guess(self(), :game_reset) # Queue up the next event 
+    robot_guess(self(), :game_start) # Queue up the next event 
     { :next_state, :guessing_robot, state }
 
   end
@@ -147,29 +158,39 @@ defmodule Hangman.Player do
   	IO.puts "#{inspect state.current_status_text}\n"  	
   end
 
-
-  def player_action(:robot, decision_params, state) do
+  def player_action(:robot, current_pass_context, state) do
   
-  	player = state.player_name	
+  	player = state.player_name
+  	strategy = state.strategy
 
-    case Hangman.Strategy.make_guess(decision_params) do
+  	# Generate the word filter options for the word engine filter
+		options = Strategy.word_filter_options(strategy, current_pass_context)
+
+		# Filter the engine word set
+		new_word_pass_state = WordEngine.filter_words(player, options)
+
+		# Update the strategy with the result of the new pass state from the word engine
+		strategy = Strategy.word_pass_update(strategy, new_word_pass_state)
+    
+    case Strategy.make_guess(strategy) do
 
       {:guess_word, guess_word} ->
 
       	guess = guess_word
 
         {{^player, guess_result, game_status, pattern, text}, final} =
-          Hangman.Server.guess_word(state.game_server_pid, guess_word)
+          GameServer.guess_word(state.game_server_pid, guess_word)
 
       {:guess_letter, guess_letter} ->
 
       	guess = guess_letter
 
         {{^player, guess_result, game_status, pattern, text}, final} =
-          Hangman.Server.guess_letter(state.game_server_pid, guess_letter)
+          GameServer.guess_letter(state.game_server_pid, guess_letter)
     
     end
 
+    # TODO: Update to use GamePlay struct in addition to %State
     state = %State{ state | 
     	last_guess: state.current_guess,
       current_guess: guess,
@@ -179,8 +200,6 @@ defmodule Hangman.Player do
       current_status_text: text,
       final_result: final
 		}
-
-
 
     # Queue up the next event 
     robot_guess(self(), {game_status, guess_result})
@@ -229,146 +248,6 @@ defmodule Hangman.Player do
 
   def terminate(reason, _state_name, _state) do
     reason
-  end
-
-end
-
-
-defmodule Strategy do
-	alias Hangman.Counter, as: Counter
-
-	@english_letter_frequency			%{
-		"a": 8.167, "b": 1.492, "c": 2.782, "d": 4.253, "e": 12.702, 
-		"f": 2.228, "g": 2.015, "h": 6.094, "i": 6.966, "j": 0.153,
-		"k": 0.772, "l": 4.025, "m": 2.406, "n": 6.749, "o": 7.507,
-		"p": 1.929, "q": 0.095, "r": 5.987, "s": 6.327, "t": 9.056,
-		"u": 2.758, "v": 0.978, "w": 2.360, "x": 0.150, "y": 1.974,
-		"z": 0.074}
-  
-	@word_set_size		%{micro: 2, tiny: 5, small: 9, large: 550}
-	
-	@top_threshhold		2
-
-
-  defmodule State do
-  	defstruct last_guess: "",
-  						robot_guessed_letters: HashSet.new, 
-							current_pass_size: 0,
-							letter_counts: Counter.new
-
-	end
-
-  def make_guess({:game_reset, secret_length}) do
-  	
-  	#Hangman.WordEngine.setup(secret_length)
-
-  end
-
-  def make_guess({:correct_letter, last_guess, pattern}) do
-
-  end
-
-  def make_guess({:incorrect_letter, last_guess, pattern}) do
-  	
-  end
-
-  def prepare_filter(pattern) do
-
-  	guessed_letters = MapSet.new
-
-  	MapSet.put(guessed_letters, "A")
-  	MapSet.put(guessed_letters, "C")
-
-  	exclude_str = Enum.join(guessed_letters)
-  	replacement = Enum.join(["[^", exclude_str, "]"])
-
-
-  	# For each mystery_letter replace it with [^characters already guessed]
-  	updated_pattern = String.replace(pattern, Hangman.Server.mystery_letter, replacement)
-  	re_pat = Enum.join(['^', updated_pattern ,'$'])
-
-  	regex = Regex.compile!(re_pat)
-
-  	#Regex.match?(regex, word)
-  	
-  	'''
-		# Create a counter object for current state of correct hangman letters
-		# Make sure we don't track mystery display letters
-		hangman_tally = Counter(hangman_pattern)
-		del hangman_tally[self._mystery_letter]
-
-		# Create string representation of set
-		exclude_str = ''.join(str(x) for x in self._guessed_letters)
-
-		# For each mystery_letter replace it with [^characters already guessed]
-		repat = '^' + hangman_pattern.replace(self._mystery_letter, '[^' + exclude_str + ']') + "$"
-
-		regex = re.compile(repat)
-		'''
-  end
-
-  def filter_word_space do
-		'''
-		# Use for filtering sequence
-		pass_params_tuple_vector = (last_guess_correct, self._last_guess, \
-			hangman_pattern, hangman_tally, regex, self._guessed_letters)
-
-		self._engine.set_pass_params(pass_params_tuple_vector)
-
-		# Reduce the engine word set
-		tally, pass_size, self._last_word = self._engine.reduce()
-
-		# Record the counts
-		self.set_letter_counts(pass_size, tally)
-		'''
-  end
-
-  def process_filter_results do
-  	
-  	'''
-  	if pass_size == 0: 
-			error = "Game over, exhausted all words, word not in dictionary"
-			#raise Exception("Word not in dictionary")
-
-		elif pass_size == 1:
-			if self._guessed_last_word != True:
-				word = self._last_word
-				guess = GuessWord(word)
-				self._last_guess = word
-				self._guessed_last_word = True
-			else: 
-				error = "Game over, exhausted all words, word not in dictionary"
-
-
-		# most of the game play is where the pass size hasn't dwindled down to 0 or 1
-		else:
-			tally = self._letter_counts
-			letter = self.__get_letter(tally, pass_size)
-
-			if self._display.ischatty():
-				self._display.chatty("letter counts are {}".format(tally))
-				self._display.chatty("guess character is {}".format(letter))
-
-			if letter != None:
-				guess = GuessLetter(letter)
-				self._guessed_letters.add(letter)
-				self._last_guess = letter
-			else:
-				raise Exception("Unable to determine next guess")
-  	'''
-  end
-
-  def retrieve_best_letter do
-  	'''
-  	assert(sum(tally.values()) > 0 and pass_size > 1)
-
-		letter, count = self.__letter_most_common_hybrid(tally, pass_size)
-
-		msg = "letter is {}, counts is {}, pass_size is {}"
-		self._display.chatty(msg.format(letter, count, pass_size))
-
-		return letter
-  	'''
   end
 
 end
