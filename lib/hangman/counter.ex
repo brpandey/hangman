@@ -24,10 +24,10 @@ defmodule Hangman.Counter do
 		# Splits word into codepoints list, and then reduces this list into
 		# the entries dict, updating the count by one if the key
 		# is already present in the entries Map
-		 
+
 		entries_updated = 
 			Enum.reduce(
-				String.codepoints(word), 
+				String.codepoints(word),
 				entries, 
 				fn head, acc -> Map.update(acc, head, 1, &(&1 + 1)) end
 			)
@@ -53,11 +53,16 @@ defmodule Hangman.Counter do
 			|> Enum.take(n)
 	end
 
-	# Returns an updated Counter
-	def del(%Hangman.Counter{entries: entries} = counter, letters) 
+	# Returns an updated Counter, after deleting specified keys in letters
+	def delete(%Hangman.Counter{entries: entries} = counter, letters) 
 	when is_list(letters) and is_binary(hd(letters)) do
 		entries_updated = Map.drop(entries, letters)
 		%Hangman.Counter{ counter | entries: entries_updated}
+	end
+
+	# Quick check to see if Counter is empty
+	def empty?(%Hangman.Counter{entries: entries} = _counter) do
+		entries == Map.new
 	end
 
 end

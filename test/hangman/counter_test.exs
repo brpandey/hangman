@@ -15,7 +15,7 @@ defmodule Hangman.Counter.Test do
 
 		IO.puts "Counter: #{inspect tally}"
 
-		tally = Counter.del(tally, [mystery_letter])
+		tally = Counter.delete(tally, [mystery_letter])
 
 		IO.puts "Counter: #{inspect tally}"
 
