@@ -7,8 +7,8 @@ defmodule Hangman.Strategy do
 		last_guess: "",
 		current_pass: %WordPass{}
   	
-
-	@english_letter_frequency			%{
+  # English letter frequency of english letters (wikipedia)
+	@eng_letter_freq			%{
 		"a": 8.167, "b": 1.492, "c": 2.782, "d": 4.253, "e": 12.702, 
 		"f": 2.228, "g": 2.015, "h": 6.094, "i": 6.966, "j": 0.153,
 		"k": 0.772, "l": 4.025, "m": 2.406, "n": 6.749, "o": 7.507,
@@ -54,17 +54,15 @@ defmodule Hangman.Strategy do
 		])
 	end
 
-  # TODO: Move WordPass struct to a separate location so both WordEngine and Strategy can share e.g. Hangman.Types
-  # def update(%Hangman.Strategy{} = strategy, %WordPass{} = _pass)
 
-	def word_pass_update(%Hangman.Strategy{} = strategy, {tally, size, last_word} = _pass) do
-		current_pass = %WordPass{ 
-			pass_size: size, 
-			pass_tally: tally, 
-			pass_only_word_left: last_word 
-		}
+	def update(%Hangman.Strategy{} = strategy, 
+    %WordPass{pass_size: size, pass_tally: tally, pass_only_word_left: last_word} = _pass) do
 
-		%Hangman.Strategy{ strategy | current_pass: current_pass}
+    Kernel.put_in(strategy.current_pass.pass_size, size)
+    Kernel.put_in(strategy.current_pass.pass_tally, tally)
+    Kernel.put_in(strategy.current_pass.pass_only_word_left, last_word)
+
+		strategy
   end
 
   def make_guess(%Hangman.Strategy{} = strategy) do
@@ -122,9 +120,49 @@ defmodule Hangman.Strategy do
 
   defp retrieve_best_letter(tally, pass_size) do
 
-  	false = Counter.empty?(tally)
+    """
+    Most common letter retrieval strategy with a twist
+    Get the first letter with the highest frequency for when the current possible
+    hangman word set space is > "small". Twist is added when we combine the english 
+    language letter relative frequency.
 
-		#IO.puts "letter is #{letter}, counts is #{count}, pass_size is #{pass_size}"
+    For the cases where the word set is less than small, only take the letter whose
+    frequencies are less than or equal to half the possible hagman word pass size
+
+    E.g.for size 10, the letter counts would need to be 5 or lower to be chosen
+
+    Doesn't handle tie between letters
+    """
+
+    false = Counter.empty?(tally)
+
+    cond do
+
+      pass_size > @word_set_size.small ->
+
+        [{letter1, count1}, {letter2, count2}] = Counter.most_common(tally, 2)
+
+        size_1 = (1 + @eng_letter_freq[letter1]) * count1
+
+        size_2 = (1 + @eng_letter_freq[letter2]) * count2
+
+        if size_2 > size_1, do: {letter2, count2}, else: {letter1, count1}
+
+
+      true ->
+        tuple_list = for {k,v} <- Counter.items(tally), v <= pass_size/2, do: {k,v}
+
+        if Kernel.length(tuple_list) == 0 do 
+          tuple_list = for {k,v} <- Counter.items(tally), do: {k,v}
+        end
+
+        tally = Counter.new(tuple_list)
+
+        {letter, count} = Counter.most_common(tally, 1)
+
+    end
+
+		#IO.puts "retrieve_best_letter: letter is #{letter}, counts is #{count}, pass_size is #{pass_size}"
 
 		#{letter, count}
   end

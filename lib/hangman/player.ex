@@ -4,7 +4,7 @@ defmodule Hangman.Player do
  	alias Hangman.Strategy, as: Strategy
  	alias Hangman.GameServer, as: GameServer
  	alias Hangman.WordEngine, as: WordEngine
-
+  alias Hangman.Types.WordPass, as: WordPass
 
   defmodule State do
     defstruct player_name: "", 
@@ -167,10 +167,10 @@ defmodule Hangman.Player do
 		options = Strategy.word_filter_options(strategy, current_pass_context)
 
 		# Filter the engine word set
-		new_word_pass_state = WordEngine.filter_words(player, options)
+		pass_info = WordEngine.filter_words(player, options)
 
-		# Update the strategy with the result of the new pass state from the word engine
-		strategy = Strategy.word_pass_update(strategy, new_word_pass_state)
+		# Update the strategy with the result of the new word pass info from the word engine
+		strategy = Strategy.update(strategy, pass_info)
     
     case Strategy.make_guess(strategy) do
 
