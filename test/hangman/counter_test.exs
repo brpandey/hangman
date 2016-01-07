@@ -35,6 +35,9 @@ defmodule Hangman.Counter.Test do
 
 		assert [{"E", 7}, {"O", 3}, {"A", 2}] = Counter.most_common(tally, 3)
 
+		IO.puts "Counter: #{inspect tally}"
+
+
 	end
 
 end
