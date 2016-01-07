@@ -1,8 +1,10 @@
 defmodule Hangman.Counter do
-	defstruct entries: Map.new
+	defstruct entries: Map.new # Since HashDict is deprecated, using Map instead
 
-	#As of Elixir 1.2 HashDict is deprecated, using Map instead
+	# Letter Frequency Counter for Hangman Word 
 	
+	# CREATE
+
 	# Returns new empty Counters
 	def new, do: %Hangman.Counter{}
 	def new([]), do: %Hangman.Counter{}
@@ -18,8 +20,41 @@ defmodule Hangman.Counter do
 		%Hangman.Counter{ entries: entries }
 	end
 
+	# READ
+
+	# Returns a key-value tuple list of {letter, count} tuples
+	def items(%Hangman.Counter{entries: entries} = _counter) do
+		Enum.into entries, []
+	end
+
+	# Quick check to see if Counter is empty
+	def empty?(%Hangman.Counter{entries: entries} = _counter) do
+		Enum.empty?(entries)
+	end
+
+	# Returns list of the most common n codepoints
+	def most_common(%Hangman.Counter{entries: entries} = _counter, n) when is_number(n) and n > 0 do
+		
+		tuple_list = Enum.into entries, []
+
+		#Sort from highest count to lowest count
+		tuple_sort_lambda = fn ({_letter_1, x}), ({_letter_2, y})  -> y <= x end
+
+		Enum.sort(tuple_list, tuple_sort_lambda) |> Enum.take(n)
+		#	|> Enum.map( fn ({letter, _count }) -> letter end)	# Just grab the letter
+			
+	end
+
+	# UPDATE
+
+	# Increment value for a given key by the given value - default is 1, 
+	# if not there add key and value of 1
+	def inc(%Hangman.Counter{entries: entries} = counter, key, value \\ 1) when is_binary(key) do
+		%Hangman.Counter{ counter | entries: Map.update(entries, key, 1, &(&1 + value)) }
+	end
+
 	# Returns an updated Counter
-	def add(%Hangman.Counter{entries: entries} = counter, word) do
+	def add(%Hangman.Counter{entries: entries} = counter, word) when is_binary(word) do
 		
 		# Splits word into codepoints list, and then reduces this list into
 		# the entries dict, updating the count by one if the key
@@ -35,34 +70,14 @@ defmodule Hangman.Counter do
 		%Hangman.Counter{ counter | entries: entries_updated }
 	end
 
-	# Returns a key-value tuple list of {letter, count} tuples
-	def items(%Hangman.Counter{entries: entries} = _counter) do
-		Enum.into entries, []
-	end
-
-	# Returns list of the most common n codepoints
-	def most_common(%Hangman.Counter{entries: entries} = _counter, n) when is_number(n) and n > 0 do
-		
-		tuple_list = Enum.into entries, []
-
-		#Sort from highest count to lowest count
-		tuple_sort_lambda = fn ({_letter_1, x}), ({_letter_2, y})  -> y <= x end
-
-		Enum.sort(tuple_list, tuple_sort_lambda) 
-			|> Enum.map( fn ({letter, _count }) -> letter end)	# Just grab the letter
-			|> Enum.take(n)
-	end
+	# DELETE
 
 	# Returns an updated Counter, after deleting specified keys in letters
 	def delete(%Hangman.Counter{entries: entries} = counter, letters) 
-	when is_list(letters) and is_binary(hd(letters)) do
+		when is_list(letters) and is_binary(hd(letters)) do
+
 		entries_updated = Map.drop(entries, letters)
 		%Hangman.Counter{ counter | entries: entries_updated}
-	end
-
-	# Quick check to see if Counter is empty
-	def empty?(%Hangman.Counter{entries: entries} = _counter) do
-		entries == Map.new
 	end
 
 end

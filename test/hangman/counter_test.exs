@@ -13,6 +13,8 @@ defmodule Hangman.Counter.Test do
 
 		tally = Counter.new(hangman_pattern)
 
+		assert !Counter.empty?(tally)
+
 		IO.puts "Counter: #{inspect tally}"
 
 		tally = Counter.delete(tally, [mystery_letter])
@@ -23,7 +25,15 @@ defmodule Hangman.Counter.Test do
 
 		IO.puts "Counter: #{inspect tally}"
 
-		assert ["O", "A", "E"] = Counter.most_common(tally, 3)
+		assert [{"O",3}, {"A",2}, {"E",2}] = Counter.most_common(tally, 3)
+
+		tuple_list = [{"O",3}, {"A",2}, {"E",2}]
+
+		tally = Counter.new(tuple_list)
+
+		tally = Counter.inc(tally, "E", 5)
+
+		assert [{"E", 7}, {"O", 3}, {"A", 2}] = Counter.most_common(tally, 3)
 
 	end
 
