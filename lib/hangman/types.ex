@@ -1,7 +1,18 @@
 defmodule Hangman.Types do
-	defmodule WordPass do
-    defstruct pass_size: 0,
-      pass_tally: Nil,
-      pass_only_word_left: ""
+
+	defmodule Reduction.Pass do
+    defstruct size: 0,
+      tally: Nil,
+      only_word_left: ""
   end
+
+  defmodule Game.Round do
+  	defstruct seq_no: 0,
+      guess: "",
+      result: Nil, 
+      status_code: Nil, 
+      status_text: "",
+      pattern: "", 
+      final_result: ""
+    end
 end
