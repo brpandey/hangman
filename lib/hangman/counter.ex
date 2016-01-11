@@ -20,6 +20,12 @@ defmodule Hangman.Counter do
 		%Hangman.Counter{ entries: entries }
 	end
 
+	# Returns new Counter	that reflects contents of Map
+	def new(%{} = map) do
+		entries = Enum.into map, Map.new
+		%Hangman.Counter{ entries: entries }
+	end
+
 	# READ
 
 	# Returns a key-value tuple list of {letter, count} tuples

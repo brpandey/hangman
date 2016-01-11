@@ -6,7 +6,7 @@ defmodule Hangman.Counter.Test do
 
 	# Basic CRUD Functionality: Create, Read, Update, Delete
 	
-	test "test string constructor" do
+	test "test basic counter crud" do
 
 		mystery_letter = "-"
 		hangman_pattern = "A-OCA-O"
@@ -34,6 +34,12 @@ defmodule Hangman.Counter.Test do
 		tally = Counter.inc(tally, "E", 5)
 
 		assert [{"E", 7}, {"O", 3}, {"A", 2}] = Counter.most_common(tally, 3)
+
+		map = %{"i" => 43, "o" => 42, "u" => 40, "l" => 35, "c" => 29, "n" => 27, "r" => 24, "s" => 20, "m" => 17, "b" => 15, "p" => 13, "d" => 12, "h" => 9, "g" => 9, "v" => 6, "f" => 6, "j" => 3, "y" => 2, "k" => 2, "x" => 1, "z" => 1, "w" => 1}
+
+		tally = Counter.new(map)
+
+		assert [{"i", 43}, {"o", 42}, {"u", 40}] = Counter.most_common(tally, 3)
 
 		IO.puts "Counter: #{inspect tally}"
 
