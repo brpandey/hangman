@@ -24,14 +24,12 @@ defmodule Hangman.Player.System.Supervisor do
 
 		'''
 		{:ok, engine_pid} = 
-			Supervisor.start_child(sv, worker(Hangman.WordEngine, 
+			Supervisor.start_child(sv, worker(Hangman.Reduction.Engine, 
 				["./data/words.txt"]))
 		'''
 
-		engine_pid = Nil	
-
 		Supervisor.start_child(sv, supervisor(Hangman.Player.Supervisor, 
-			[engine_pid]))
+			[]))
 
 	end
 
