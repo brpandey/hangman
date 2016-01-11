@@ -17,7 +17,7 @@ defmodule Hangman.Server.Supervisor do
 	def init(_) do
 
 		children = [
-			worker(Hangman.GameServer, []) 
+			worker(Hangman.Game.Server, []) 
 		]
 
 		#:simple_one_for_one to indicate that 

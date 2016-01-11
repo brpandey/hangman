@@ -16,18 +16,15 @@ defmodule Hangman.Cache do
 
 	def get_server(player_name, secret) do
 		
-		case Hangman.Server.whereis(player_name) do
+		case Hangman.Game.Server.whereis(player_name) do
 
 			:undefined ->
 				GenServer.call(@name, {:get_server, player_name, secret})
 
 			pid -> 
-				Hangman.Server.load_game(pid, secret)
-
+				Hangman.Game.Server.load_game(pid, secret)
 				pid
-
 		end
-
 	end
 
 	def init(_), do:	{:ok, Nil}
@@ -35,18 +32,19 @@ defmodule Hangman.Cache do
 	def handle_call({:get_server, player_name, secret}, _from, state) do
 
 		#Check the registry again for the pid -- safeguard against race condition
-		case Hangman.Server.whereis(player_name) do
+		pid = 
+		case Hangman.Game.Server.whereis(player_name) do
 
 			:undefined -> 
 				{:ok, pid} = Hangman.Server.Supervisor.start_child(player_name, secret)
+				pid
 
 			pid -> 
-				Hangman.Server.load_game(pid, secret)
-
+				Hangman.Game.Server.load_game(pid, secret)
+				pid
 		end
 
 		{:reply, pid, state}
-
 	end
 
 end

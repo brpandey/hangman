@@ -1,7 +1,7 @@
-defmodule Hangman.GameServer do
+defmodule Hangman.Game.Server do
 	use GenServer
 
-	@moduledoc "Hangman.GameServer - hangman game server using GenServer.  
+	@moduledoc "Hangman.Game.Server - hangman game server using GenServer.  
 		Interacts with player client through public interface and
 		maintains hangman game state"
 
@@ -15,10 +15,9 @@ defmodule Hangman.GameServer do
 			incorrect_letters: HashSet.new, incorrect_words: HashSet.new
 	end
 
+	@vsn "0"
 	@name __MODULE__
-
 	@mystery_letter "-"
-
 	@max_wrong 5
 
 	@game_status_codes  %{
@@ -27,9 +26,6 @@ defmodule Hangman.GameServer do
 		game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1},
 		game_reset: {:game_reset, 'GAME_RESET', 0}
 	}
-
-	@vsn "0"
-
 
 	#####
 	# External API
@@ -40,35 +36,14 @@ defmodule Hangman.GameServer do
 	"""
 
 	def start_link(player_name, secret, max_wrong \\ @max_wrong) do
-
 		IO.puts "Starting Hangman Server"
-
 		args = {player_name, _load_game(secret, max_wrong)}
-
 		options = [name: via_tuple(player_name)] #,  debug: [:trace]]
 
 		GenServer.start_link(@name, args, options)
-
 	end
-
-
-	def whereis(name) do
-
-		Hangman.Process.Registry.whereis_name({:hangman_server, name})
-
-	end
-
-	defp via_tuple(name) do
-	
-		{:via, Hangman.Process.Registry, {:hangman_server, name}}
-	
-	end
-
-	def mystery_letter, do: @mystery_letter
-
 
 	defp _load_game(secret, max_wrong) when is_binary(secret) do
-	
 		pattern = String.duplicate(@mystery_letter, String.length(secret))
 
 		%State{secret: String.upcase(secret), 
@@ -76,7 +51,6 @@ defmodule Hangman.GameServer do
 	end
 
 	defp _load_game(secrets, max_wrong) when is_list(secrets) do
-
 		#initialize the list of secrets to be uppercase 
 		#initialize the list of patterns to fit the secrets length
 		secrets = Enum.map(secrets, &String.upcase(&1))
@@ -85,8 +59,17 @@ defmodule Hangman.GameServer do
 
 		%State{secret: List.first(secrets), pattern: List.first(patterns),
 			secrets: secrets, patterns: patterns, max_wrong: max_wrong}
-
 	end
+
+	def whereis(name) do
+		Hangman.Process.Registry.whereis_name({:hangman_server, name})
+	end
+
+	defp via_tuple(name) do
+		{:via, Hangman.Process.Registry, {:hangman_server, name}}
+	end
+
+	def mystery_letter, do: @mystery_letter
 
 	def load_game(hangman_pid, secret, max_wrong \\ @max_wrong)
 
@@ -121,18 +104,14 @@ defmodule Hangman.GameServer do
 '''
 
 	def stop(hangman_server_pid) do
-
 		GenServer.call hangman_server_pid, :stop
-	
 	end
 
 	#####
 	# GenServer implementation
 
 	def init({ name, state }) do
-
 		{ :ok, { name, state } }
-
 	end
 
 	@doc """
@@ -140,11 +119,9 @@ defmodule Hangman.GameServer do
 		Loads a new game
 	"""
 	def handle_cast({:load_game, secret, max_wrong}, {name, _state}) do
-		
 		state = _load_game(secret, max_wrong)
 
 		{ :noreply, {name, state} }
-
 	end
 
 	@doc """
@@ -153,11 +130,9 @@ defmodule Hangman.GameServer do
 	"""
 
 	def handle_cast({:load_games, secret, max_wrong}, {name, _state}) do
-
 		state = _load_game(secret, max_wrong)
 		
 		{ :noreply, {name, state} }
-		
 	end
 
 
@@ -172,7 +147,6 @@ defmodule Hangman.GameServer do
 	"""
 
 	def handle_call({:guess_letter, letter}, _from, {name, state}) do
-
 		{ _, :game_keep_guessing, _} = check_game_status(name, state)
 
 		letter = String.upcase(letter)
@@ -204,16 +178,12 @@ defmodule Hangman.GameServer do
 
 		#If the current game is finished check if there are remaining games
 		case code do
-
-			:game_keep_guessing -> 
-				data = {data, []}
+			:game_keep_guessing -> data = {data, []}
 			_ ->
 				{state, data} = check_games_over(state.secrets, state, data)
-
 		end
 
 		{ :reply, data, {name, state} }
-
 	end
 
 	@doc """
@@ -228,8 +198,7 @@ defmodule Hangman.GameServer do
 		If incorrect, returns the :incorrect atom and nil	
 	"""
 	def handle_call({:guess_word, word}, _from, {name, state}) do
-
-		{ _, :game_keep_guessing, _ } = check_game_status(name, state)
+		{ _, :game_keep_guessing, _ } = check_game_status(name, state) # Assert
 
 		word = String.upcase(word)
 
@@ -247,21 +216,17 @@ defmodule Hangman.GameServer do
 		end
 
 		{ _, code, display } = check_game_status(name, state)
-
 		data = { name, result, code, state.pattern, display }
 
 		#If the current game is finished check if there are remaining games
 		case code do
-
 			:game_keep_guessing -> 
 				data = {data, []}
 			_ ->
 				{state, data} = check_games_over(state.secrets, state, data)
-
 		end
 
 		{ :reply, data, {name, state} }
-
 	end
 
 	@doc """
@@ -269,9 +234,7 @@ defmodule Hangman.GameServer do
 		Returns the game status text
 	"""
 	def handle_call(:game_status, _from, {name, state}) do
-
 		{ :reply, check_game_status(name, state), {name, state} }
-
 	end
 
 	@doc """
@@ -279,9 +242,7 @@ defmodule Hangman.GameServer do
 		Returns the hangman secret length
 	"""
 	def handle_call(:secret_length, _from, {name, state}) do
-
 		{ :reply, {name, :secret_length, String.length(state.secret)}, {name, state} }
-
 	end
 
 	@doc """
@@ -289,9 +250,7 @@ defmodule Hangman.GameServer do
 		Stops the server is a normal graceful way
 	"""
 	def handle_call(:stop, _from, {name, state}) do
-
 		{ :stop, :normal, {:ok, name}, state }
-
 	end
 
 
@@ -314,9 +273,7 @@ defmodule Hangman.GameServer do
 
 
 	def format_status(_reason, [ _pdict, state ]) do
-	
 		[data: [{'State', "The current hangman server state is #{inspect state} and #{check_game_status("", state)}"}]]
-
 	end
 
 
@@ -325,11 +282,9 @@ defmodule Hangman.GameServer do
 		No special cleanup other than refreshing the state
 	"""
 	def terminate(_reason, _state) do
-
 		#IO.puts "Terminating Hangman Server"
 		#state = %State{}
 		:ok
-
 	end
 
 
@@ -337,9 +292,7 @@ defmodule Hangman.GameServer do
 	# Helper functions
 
 	defp check_game_status(name, state) do
-
 		status = cond do
-
 				state.secret == "" -> @game_status_codes[:game_reset]
 
 				state.secret == state.pattern -> 
@@ -368,80 +321,59 @@ defmodule Hangman.GameServer do
 	end
 
 	defp get_num_wrong_guesses(state) do
-
 		Set.size(state.incorrect_letters) + 
 		Set.size(state.incorrect_words)
-
 	end
 
 	defp get_score(state) do
-		
 		Set.size(state.incorrect_letters) + 
 		Set.size(state.incorrect_words) +
 		Set.size(state.correct_letters)
-
 	end
 
 	defp display_game_status(pattern, score, text) do
-
 		"#{pattern}; score=#{score}; status=#{text}"
-	
 	end
 
 	defp check_games_over([], _state, data), do: {%State{}, data} 
 
 	defp check_games_over(secrets, state, data) when is_list(secrets) do
-
 		games_played = state.current + 1
 
 		case Kernel.length(secrets) > games_played do
-
 			true -> 	#Have games left to play
-
 				#Updates state
 				state = save_and_load_next_game(state)
-
 				{state, {data, []}}
 
 			false -> 	#Otherwise we have no more games left 
-
 				#Store the current score in the state.scores list - insert
 				#And update the state
 				scores = List.insert_at(state.scores, state.current, get_score(state))
-
 				state = %{ state | scores: scores }
-
 				results = game_over_all_games_status(state)
 
 				#Clear and return state so server process can be reused, 
 				#along with results data
 				{%State{}, {data, results}}
-
 		end
-
 	end
 
 	defp game_over_all_games_status(state) do
-
 		total_score = Enum.reduce(state.scores, 0, &(&1 + &2))
-		
 		games_played = state.current + 1
-
 		average_score = total_score / games_played
 
 		results = Enum.zip(state.secrets, state.scores)
 
 		[status: :game_over, average_score: average_score, 
 			games: games_played, results: results]
-
 	end
 
 	defp save_and_load_next_game(state) do
-
 		'''
 			First, do game archival steps
 		'''
-
 		#Store the game finishing pattern into the state.patterns list - replace
 		patterns = List.replace_at(state.patterns, state.current, state.pattern)
 
@@ -457,7 +389,6 @@ defmodule Hangman.GameServer do
 		'''
 			Second, do refresh of current state steps
 		'''
-
 		#Replace the current pattern with new game's pattern
 		#Replace the current secret with new game's secret
 		#Reset the letter and word set counters
