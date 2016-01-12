@@ -59,6 +59,19 @@ defmodule Hangman.Strategy do
 
   # UPDATE
 
+  def update(%Hangman.Strategy{} = strategy, human_guessed_letter) 
+    when is_binary(human_guessed_letter) do
+
+      guessed_letters = MapSet.put(strategy.guessed_letters, 
+                                    human_guessed_letter)
+          
+      strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
+      strategy = Kernel.put_in(strategy.guess, 
+                                  {:guess_letter, human_guessed_letter}) 
+
+      strategy
+  end
+
   def update(%Hangman.Strategy{} = strategy, %Pass{} = pass) do
     #Kernel.put_in(strategy, [:pass], pass)
 
