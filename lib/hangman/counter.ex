@@ -38,7 +38,7 @@ defmodule Hangman.Counter do
 		Enum.empty?(entries)
 	end
 
-	# Returns list of the most common n codepoints
+	# Returns list of the most common n codepoints and codepoint values
 	def most_common(%Hangman.Counter{entries: entries} = _counter, n) when is_number(n) and n > 0 do
 		
 		tuple_list = Enum.into entries, []
@@ -46,8 +46,24 @@ defmodule Hangman.Counter do
 		#Sort from highest count to lowest count
 		tuple_sort_lambda = fn ({_letter_1, x}), ({_letter_2, y})  -> y <= x end
 
-		Enum.sort(tuple_list, tuple_sort_lambda) |> Enum.take(n)
-		#	|> Enum.map( fn ({letter, _count }) -> letter end)	# Just grab the letter
+		tuple_list 
+			|> Enum.sort(tuple_sort_lambda) 
+			|> Enum.take(n)
+			
+	end
+
+		# Returns list of the most common n codepoints
+	def most_common_key(%Hangman.Counter{entries: entries} = _counter, n) when is_number(n) and n > 0 do
+		
+		tuple_list = Enum.into entries, []
+
+		#Sort from highest count to lowest count
+		tuple_sort_lambda = fn ({_letter_1, x}), ({_letter_2, y})  -> y <= x end
+
+		tuple_list 
+			|> Enum.sort(tuple_sort_lambda) 
+			|> Enum.take(n)
+			|> Enum.map( fn ({letter, _count }) -> letter end)	# Just grab the letter
 			
 	end
 
