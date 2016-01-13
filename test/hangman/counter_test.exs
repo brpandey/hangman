@@ -47,7 +47,6 @@ defmodule Hangman.Counter.Test do
 
 		IO.puts "Counter: #{inspect tally}"
 
-
+		IO.puts "Counter: deleted -- #{inspect Counter.delete(tally)}"
 	end
-
 end
