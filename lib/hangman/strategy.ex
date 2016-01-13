@@ -80,7 +80,7 @@ defmodule Hangman.Strategy do
 
     strategy = prepare_guess(strategy)
 
-    IO.puts "strategy: #{inspect strategy}"
+    IO.puts "updating strategy: #{inspect strategy}"
 
     strategy
   end
