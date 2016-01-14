@@ -1,6 +1,6 @@
 defmodule Hangman.Player.Client do
 
-  alias Hangman.{Player, Game, Reduction, Strategy, 
+  alias Hangman.{Player.Client, Game, Reduction, Strategy, 
 		Strategy.Options, Types.Game.Round}
 
 	defstruct name: "", 
@@ -11,7 +11,7 @@ defmodule Hangman.Player.Client do
     mystery_letter: Game.Server.mystery_letter,
     strategy: Strategy.new,
     round: %Round{},
-    final_result: ""		
+    game_summary: []	
 
   @human :human
   @cyborg :cyborg
@@ -27,51 +27,62 @@ defmodule Hangman.Player.Client do
 
   	unless type in [@human, @cyborg, @robot], do: raise "unknown player type"
 
-  	%Player.Client{ name: name, 
-							type: type,
-							game_server_pid: game_server_pid }
+  	%Client{ name: name, type: type, game_server_pid: game_server_pid }
   end
 
 
   # READ
 
-  def type_alias(%Player.Client{} = client, :star_wars) do
+  def fun_type_alias(%Client{} = client, :star_wars) do
   	case client.type do
-        @human -> :luke_skywalker
+        @human -> :jedi
         @cyborg -> :darth_vader
-        @robot -> :c3po      
+        @robot -> :r2d2
         _ -> raise "unknown player type"
       end
   end
 
-  def list_choices(%Player.Client{} = client) do
-  	:human = client.type # assert
+  def list_choices(%Client{} = client) do
+  	true = client.type in [@human, @cyborg] # assert
 
   	client.round_choices
   end
 
-  def status(%Player.Client{} = client) do
-  	
-  	summary = client.round.final_result
+  def game_won?(%Client{} = client) do
+  	client.round.status_code == :game_won
+  end
 
-		cond do
-  		summary == [] or summary == "" ->
-				client.round.status_text
-  		
-  		List.first(summary) == {:status, :game_over} ->
-  			str_final_result(client)
-  		
-  		true -> "No status"
+  def game_lost?(%Client{} = client) do
+  	client.round.status_code == :game_lost
+  end
+
+  def game_won_or_lost?(%Client{} = client) do
+  	game_won?(client) or game_lost?(client)
+  end
+
+  def game_over?(%Client{} = client) do
+  	List.first(client.game_summary) == {:status, :game_over}
+  end
+
+  def round_status(%Client{} = client) do
+  	client.round.status_text
+  end
+
+  def status(%Client{} = client) do
+  	case game_over?(client) do
+  		true -> str_final_result(client)
+  		false -> client.round.status_text
   	end
   end
 
 
-  defp str_final_result(%Player.Client{} = client) do
+  defp str_final_result(%Client{} = client) do
   	
   	text = ""
-  	summary = client.round.final_result
 
-  	if List.first(summary) == {:status, :game_over} do
+  	if game_over?(client) do
+	  	summary = client.game_summary
+
 			{:ok, avg} = Keyword.fetch(summary, :average_score)
 			{:ok, games} = Keyword.fetch(summary, :games)
 			{:ok, scores} = Keyword.fetch(summary, :results)
@@ -88,43 +99,45 @@ defmodule Hangman.Player.Client do
 
 	# UPDATE
 
-	def start(%Player.Client{} = client) do
+	def start(%Client{} = client) do
     player = client.name
 
     {^player, :secret_length, secret_length} =
       Game.Server.secret_length(client.game_server_pid)
 
-    client_action(client, client.type, {:game_start, secret_length})
+    round_action(client, client.type, {:game_start, secret_length})
   end
 
-  def guess_letter(%Player.Client{} = client, letter) do
-  	:human = client.type # assert
+  def guess_letter(%Client{} = client, letter) do
+  	true = client.type in [@human, @cyborg] # assert
 
-	  client_action(client, :human, {:guess_letter, letter})
+	  round_action(client, :human, {:guess_letter, letter})
   end
 
-  def choose_letters(%Player.Client{} = client) do
-  	:human = client.type # assert
+  def choose_letters(%Client{} = client) do
+  	true = client.type in [@human, @cyborg] # assert
 
-  	client_action(client, :human, :choose_letters)
+  	round_action(client, :human, :choose_letters)
   end
 
-  def robot_guess(%Player.Client{} = client, robot_guess_context) do
-  	:robot = client.type # assert
+  def robot_guess(%Client{} = client, robot_guess_context) do
+  	true = client.type in [@robot, @cyborg] # assert
 
-  	client_action(client, :robot, robot_guess_context)
+  	round_action(client, :robot, robot_guess_context)
 	end
 
 
   # PRIVATE 
 
-  # Action functions
+  # UPDATE
 
-  defp client_action(%Player.Client{} = client, :robot, action_context) do
+  # Round Action functions
+
+  defp round_action(%Client{} = client, :robot, context) do
   	
-  	client = action_setup(client, action_context)
+  	client = round_setup(client, context)
 
-  	{player, strategy, seq_no} = action_params(client)
+  	{player, strategy, seq_no} = round_params(client)
     
     round_info = 
 	    case Strategy.make_guess(strategy) do
@@ -149,24 +162,23 @@ defmodule Hangman.Player.Client do
       			status_text: text, final_result: final}
 	    end
 
-		update(%Player.Client{} = client, seq_no, round_info)
+		round_update(%Client{} = client, seq_no, round_info)
   end
 
   # Wrappers
-  defp client_action(%Player.Client{} = client, :human, {:game_start, length}) do
-  	client_action(client, {:human, :choose_letters}, {:game_start, length})
+  defp round_action(%Client{} = client, :human, {:game_start, length}) do
+  	round_action(client, {:human, :choose_letters}, {:game_start, length})
   end
 
-  defp client_action(%Player.Client{} = client, :human, :choose_letters) do
-  	client_action(client, {:human, :choose_letters}, Nil)
+  defp round_action(%Client{} = client, :human, :choose_letters) do
+  	round_action(client, {:human, :choose_letters}, Nil)
   end
 
-  defp client_action(%Player.Client{} = client, 
-  										{:human, :choose_letters}, action_context) do
+  defp round_action(%Client{} = client, {:human, :choose_letters}, context) do
 
-  	client = action_setup(client, action_context)
+  	client = round_setup(client, context)
 
-  	{player, strategy, seq_no} = action_params(client)
+  	{player, strategy, seq_no} = round_params(client)
 
   	# Return top 5 letters if possible
   	IO.inspect "strategy is: #{inspect strategy}"
@@ -187,58 +199,45 @@ defmodule Hangman.Player.Client do
   end
 
 
-  defp client_action(%Player.Client{} = client, 
-  							:human, {:guess_letter, guess_letter}) do
+  defp round_action(%Client{} = client, :human, {:guess_letter, letter}) do
 
   	pass_counter = client.strategy.pass.tally
   	pid = client.game_server_pid
 
-  	top5 = Counter.most_common_key(pass_counter, 5)
+  	top_choices = Counter.most_common_key(pass_counter, @round_letter_choices)
 
-  	unless guess_letter in top5, do: {guess_letter, _} = hd(top5)
+  	unless letter in top_choices, do: letter = hd(top_choices)
 
-  	seq_no = client.seq_no + 1
+  	seq_no = client.round_no + 1
   	player = client.player_name
 
   	{{^player, result, code, pattern, text}, final} =
-      Game.Server.guess_letter(pid, guess_letter)
+      Game.Server.guess_letter(pid, letter)
 
     round_info = %Round{seq_no: seq_no,
-			guess: guess_letter, result: result, 
+			guess: letter, result: result, 
 			status_code: code, pattern: pattern, 
 			status_text: text, final_result: final}
 
-		strategy = Strategy.update(client.strategy, guess_letter)
+		strategy = Strategy.update(client.strategy, letter)
 	  client = Kernel.put_in(client.strategy, strategy)
 
-		update(client, seq_no, round_info)
+		round_update(client, seq_no, round_info)
   end
 
 
-  # Helper functions
-
-  defp update(%Player.Client{} = client, seq_no, %Round{} = round_info) do
+  defp round_update(%Client{} = client, seq_no, %Round{} = round_info) do
 
   	client = Kernel.put_in(client.round, round_info)
 	  client = Kernel.put_in(client.round_no, seq_no)
 
-	  IO.puts "round: #{inspect round_info}"
+	  #IO.puts "round: #{inspect round_info}"
+       
+    if (round_info.final_result != "" and round_info.final_result != [] and
+    	List.first(round_info.final_result) == {:status, :game_over}) do
     
-    # TODO: Where in Player FSM to put?
-
-    # Queue up the next event 
-    # robot_guess(self(), {client.round.status_code, client.round.result})
+    	client = Kernel.put_in(client.game_summary, round_info.final_result)
     
-    # Queue up the next next event, if game_over
-    if round_info.final_result != "" and round_info.final_result != [] do
-    	client = Kernel.put_in(client.final_result, 
-    													round_info.final_result)
-    
-  		if Keyword.fetch!(round_info.final_result, :status) == :game_over do
-  	
-  			# TODO: Where in Player FSM to put?
-  			# robot_guess(self(), :game_over)
-			end
     end
 
     client
@@ -246,7 +245,7 @@ defmodule Hangman.Player.Client do
 
   # Action helper functions
 
-  defp action_params(%Player.Client{} = client) do
+  defp round_params(%Client{} = client) do
 
   	name = client.name
   	strategy = client.strategy
@@ -255,20 +254,20 @@ defmodule Hangman.Player.Client do
   	{name, strategy, seq_no}
   end
 
-  defp action_setup(%Player.Client{} = client, action_context) do
+  defp round_setup(%Client{} = client, context) do
 
-  	if action_context == Nil, do: action_context = action_context(client)
+  	if context == Nil, do: context = round_filter_context(client)
 
-  	{player, strategy, seq_no} = action_params(client)
+  	{player, strategy, seq_no} = round_params(client)
 
   	options = Keyword.new([{:id, player}, {:seq_no, seq_no}])
 
   	# Generate the word filter options for the words reduction engine
-		filter_options = Options.filter_options(strategy, action_context)
+		filter_options = Options.filter_options(strategy, context)
 
 		options = Keyword.merge(options, filter_options)
 
-		match_key = Kernel.elem(action_context, 0)
+		match_key = Kernel.elem(context, 0)
 
 		# Filter the engine hangman word set
 		{^seq_no, reduction_pass_info} = Reduction.Engine.Stub.reduce(match_key, options)
@@ -278,12 +277,10 @@ defmodule Hangman.Player.Client do
 
 	  client = Kernel.put_in(client.strategy, strategy)
 
-    IO.puts "player setup action, printing strategy again: #{inspect client.strategy}"
-
     client
   end
 
-  defp action_context(%Player.Client{} = client) do
+  defp round_filter_context(%Client{} = client) do
 
   	case client.round.result do
   		:correct_letter -> 
@@ -292,6 +289,12 @@ defmodule Hangman.Player.Client do
 
   		:incorrect_letter -> 
   			{:incorrect_letter, client.round.guess}
+
+  		:incorrect_word -> 
+  			{:incorrect_word, client.round.guess}
+
+  		true ->
+  			raise "Unknown round result"
   	end
   end
 
