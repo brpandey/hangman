@@ -11,66 +11,56 @@ defmodule Hangman.Player.Echo do
 
   # FSM API
 
-  def echo_game_keep_guessing_async(fsm_pid, other_pid) do
- 	  :gen_fsm.send_event(fsm_pid, 
- 	  	_event = {:echo, :robot_guess_async, :game_keep_guessing, other_pid})
+  def echo_start(fsm_pid, other_pid) do
+ 	  :gen_fsm.send_event(fsm_pid, {:echo_start, other_pid})
   end
 
-  def echo_game_won_async(fsm_pid, other_pid) do
-  	:gen_fsm.send_event(fsm_pid, 
-  		_event = {:echo, :robot_guess_async, :game_won, other_pid})
+  def echo_guess(fsm_pid, other_pid) do
+ 	  :gen_fsm.send_event(fsm_pid, {:echo_guess, other_pid})
   end
 
-  def echo_game_lost_async(fsm_pid, other_pid) do
-  	:gen_fsm.send_event(fsm_pid, 
-  		_event = {:echo, :robot_guess_async, :game_lost, other_pid})
+  def echo_won(fsm_pid, other_pid) do
+  	:gen_fsm.send_event(fsm_pid, {:echo_won, other_pid})
   end
 
-  def echo_game_over_async(fsm_pid, other_pid) do
-  	:gen_fsm.send_event(fsm_pid, 
-  		_event = {:echo, :robot_guess_async, :game_over, other_pid})
+  def echo_lost(fsm_pid, other_pid) do
+  	:gen_fsm.send_event(fsm_pid, {:echo_lost, other_pid})
   end
 
-  def echo_game_reset_async(fsm_pid, other_pid) do
-  	:gen_fsm.send_event(fsm_pid, 
-  		_event = {:echo, :robot_guess_async, :game_reset, other_pid})
+  def echo_game_over(fsm_pid, other_pid) do
+  	:gen_fsm.send_event(fsm_pid, {:echo_game_over, other_pid})
   end
 
   # OTP Callback
 
   def init(_) do
-    { :ok, :echo, %{}}
+    { :ok, :echo, [] }
   end
 
   # Asynchronous FSM Callbacks
 
-  def echo({:echo, :robot_guess_async, :game_keep_guessing, other_pid}, state) do
-  	Hangman.Player.FSM.robot_guess_async(other_pid, :game_keep_guessing)
-
+  def echo({:echo_start, other_pid}, state) do
+  	Hangman.Player.FSM.event_start(other_pid)
   	{:next_state, :echo, state}
   end
 
-  def echo({:echo, :robot_guess_async, :game_won, other_pid}, state) do
-    Hangman.Player.FSM.robot_guess_async(other_pid, :game_won)
+  def echo({:echo_guess, other_pid}, state) do
+  	Hangman.Player.FSM.guess(other_pid)
+  	{:next_state, :echo, state}
+  end
 
+  def echo({:echo_won, other_pid}, state) do
+    Hangman.Player.FSM.won(other_pid)
     {:next_state, :echo, state}
   end
 
-  def echo({:echo, :robot_guess_async, :game_lost, other_pid}, state) do
-    Hangman.Player.FSM.robot_guess_async(other_pid, :game_lost)
-
+  def echo({:echo_lost, other_pid}, state) do
+    Hangman.Player.FSM.lost(other_pid)
     {:next_state, :echo, state}
   end
 
-  def echo({:echo, :robot_guess_async, :game_over, other_pid}, state) do
-    Hangman.Player.FSM.robot_guess_async(other_pid, :game_over)
-
-    {:next_state, :echo, state}
-  end
-
-  def echo({:echo, :robot_guess_async, :game_reset, other_pid}, state) do
-    Hangman.Player.FSM.robot_guess_async(other_pid, :game_reset)
-  
+  def echo({:echo_game_over, other_pid}, state) do
+    Hangman.Player.FSM.game_over(other_pid)
     {:next_state, :echo, state}
   end
 

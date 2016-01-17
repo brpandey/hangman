@@ -8,125 +8,45 @@ defmodule Hangman.Player.FSM do
     :gen_fsm.start_link(__MODULE__, {player_name, player_type, game_server_pid}, [])
   end
 
+  def start(player_name, player_type, game_server_pid) do
+    :gen_fsm.start(__MODULE__, {player_name, player_type, game_server_pid}, [])
+  end
 
-  #
+
   #
   # EVENTS (External API)
-  #
-  #
 
-  def stop(fsm_pid) do
-		:gen_fsm.send_all_state_event(fsm_pid, :stop)
-	end
+  # HUMAN PLAYER EVENTS - (synchronous)
 
-  # PLAYER EVENTS
-  #
-  # HUMAN (synchronous)
+  def human_start(fsm_pid), do:  sync_start(fsm_pid)
+  def human_status(fsm_pid), do:  sync_status(fsm_pid)
+  def human_choose(fsm_pid), do: :gen_fsm.sync_send_event(fsm_pid, :choose_letters)
 
-  def human_start(fsm_pid) do
-  	:gen_fsm.sync_send_event(fsm_pid, :game_start)
-  end
-
-  def choose_letters(fsm_pid) do
-  	:gen_fsm.sync_send_event(fsm_pid, :choose_letters)
-  end
-
-  def guess_letter(fsm_pid, letter) when is_binary(letter) do
+  def human_guess(fsm_pid, letter) when is_binary(letter) do
   	:gen_fsm.sync_send_event(fsm_pid, {:guess_letter, letter})
   end
 
-  def status(fsm_pid) do
-    :gen_fsm.sync_send_event(fsm_pid, :choose_letters)
-  end
+  # GENERAL PLAYER EVENTS
+  # 1) start, 2-3) guess, 4) won, 5) lost, 6) game_over, 7) reset
 
-  # PLAYER EVENTS
-  #
-  # ROBOT (Asynchronous Events)
+  # Asynchronous Events
+  def event_start(fsm_pid), do: :gen_fsm.send_event(fsm_pid, :game_start)
+  def guess(fsm_pid), do: :gen_fsm.send_event(fsm_pid, :game_keep_guessing)
+  def won(fsm_pid), do: :gen_fsm.send_event(fsm_pid, :game_won)
+  def lost(fsm_pid), do:  :gen_fsm.send_event(fsm_pid, :game_lost)
+  def game_over(fsm_pid), do: :gen_fsm.send_event(fsm_pid, :game_over)
+  def stop(fsm_pid), do: :gen_fsm.send_all_state_event(fsm_pid, :stop)
 
-  def robot_async_start(fsm_pid) do
-    robot_guess_async(fsm_pid, :game_start) 
-  end
+  # Synchronous Events
+  def sync_start(fsm_pid), do:  :gen_fsm.sync_send_event(fsm_pid, :game_start)
+  def sync_guess(fsm_pid), do:  :gen_fsm.sync_send_event(fsm_pid, :game_keep_guessing)
+  def sync_won(fsm_pid), do:  :gen_fsm.sync_send_event(fsm_pid, :game_won)
+  def sync_lost(fsm_pid), do: :gen_fsm.sync_send_event(fsm_pid, :game_lost)
+  def sync_game_over(fsm_pid), do:  :gen_fsm.sync_send_event(fsm_pid, :game_over)
 
-  def robot_keep_guessing_async(fsm_pid) do
-    robot_guess_async(fsm_pid, :game_keep_guessing)
-  end
-
-  # 1) start guessing
-  def robot_guess_async(fsm_pid, event = :game_start) do
-    :gen_fsm.send_event(fsm_pid, event)
-  end
-
-  # 2 & 3) keep guessing, 
-  def robot_guess_async(fsm_pid, event = :game_keep_guessing) do
-    :gen_fsm.send_event(fsm_pid, event)
-  end
-
-  # 4) game won
-  def robot_guess_async(fsm_pid, event = :game_won) do
-    :gen_fsm.send_event(fsm_pid, event)
-  end
-
-  # 5) game lost
-  def robot_guess_async(fsm_pid, event = :game_lost) do
-    :gen_fsm.send_event(fsm_pid, event)
-  end
-
-  # 6) game_over
-  def robot_guess_async(fsm_pid, event = :game_over) do
-    :gen_fsm.send_event(fsm_pid, event)
-  end
-
-  # 7) game_reset
-  def robot_guess_async(fsm_pid, event = :game_reset) do
-    :gen_fsm.send_event(fsm_pid, event)
-  end
-
-  # PLAYER EVENTS
-  #
-  # ROBOT (Synchronous Events)
-
-  def robot_sync_start(fsm_pid) do
-    robot_guess_sync(fsm_pid, :game_start) 
-  end
-
-  def robot_keep_guessing(fsm_pid) do
-    robot_guess_sync(fsm_pid, :game_keep_guessing)
-  end
-
-  # 0) status
-  def robot_status(fsm_pid) do
-  	:gen_fsm.sync_send_all_state_event(fsm_pid, :game_status)
-  end  
-
-  # 1) start guessing
-  def robot_guess_sync(fsm_pid, event = :game_start) do
-    :gen_fsm.sync_send_event(fsm_pid, event)
-  end
-
-  # 2 & 3) keep guessing, 
-  def robot_guess_sync(fsm_pid, event = :game_keep_guessing) do
-    :gen_fsm.sync_send_event(fsm_pid, event)
-  end
-
-  # 4) game won
-  def robot_guess_sync(fsm_pid, event = :game_won) do
-    :gen_fsm.sync_send_event(fsm_pid, event)
-  end
-
-  # 5) game lost
-  def robot_guess_sync(fsm_pid, event = :game_lost) do
-    :gen_fsm.sync_send_event(fsm_pid, event)
-  end
-
-  # 6) game_over
-  def robot_guess_sync(fsm_pid, event = :game_over) do
-    :gen_fsm.sync_send_event(fsm_pid, event)
-  end
-
-  # 7) game_reset
-  def robot_guess_sync(fsm_pid, event = :game_reset) do
-    :gen_fsm.sync_send_event(fsm_pid, event)
-  end
+  def sync_status(fsm_pid) do 
+    :gen_fsm.sync_send_all_state_event(fsm_pid, :game_status)
+  end 
 
   #
   #
@@ -144,7 +64,7 @@ defmodule Hangman.Player.FSM do
 
     {:ok, echo_pid} = Player.Echo.start_link()
 
-    :sys.trace(echo_pid, true)
+    :sys.trace(echo_pid, true)    
 
     { :ok, initial_state, {client, echo_pid} }
   end
@@ -161,40 +81,64 @@ defmodule Hangman.Player.FSM do
   #
 
   # 1) start
-  def jedi(:game_start, _from, {client, echo_pid}) do
+  def jedi(:game_start, _from, {client, pid}) do
 
   	client = Player.Client.start(:game_start, :human, client)
     reply = Player.Client.list_choices(client)
 
-    { :reply, reply, :jedi, {client, echo_pid} }
+    { :reply, reply, :eager_jedi, {client, pid} }
   end
 
-  def jedi(:choose_letters, _from, {client, echo_pid}) do
+  def jedi(:game_over, _from, {client, pid}) do
+
+    true = Player.Client.game_over?(client) # assert
+
+    client = Player.Client.server_pull_status(client)
+
+    reply = Player.Client.game_over_status(client)
+
+    fsm_state_text = "jedi:game_over:sync"
+
+    fsm_print_status(fsm_state_text, reply)
+
+    { :stop, :normal, {client, pid} }
+  end  
+
+  def eager_jedi(:choose_letters, _from, {client, pid}) do
   	
     client = Player.Client.choose_letters(client)
     reply = Player.Client.list_choices(client)
 
-    { :reply, reply, :jedi, {client, echo_pid} }
+    { :reply, reply, :eager_jedi, {client, pid} }
   end
 
-  def jedi({:guess_letter, guess_letter}, _from, {client, echo_pid}) do
+  def eager_jedi({:guess_letter, guess_letter}, _from, {client, pid}) do
 
     client = Player.Client.guess_letter(client, guess_letter)
-    reply = Player.Client.status(client)
+    {status_code, _text} = reply = Player.Client.round_status(client)
 
-  	status(:reply)
+    next = 
+      case status_code do
+        :game_keep_guessing -> :eager_jedi
+        :game_won -> :cheery_jedi
+        :game_lost -> :disgruntled_jedi
+      end
 
-    { :reply, reply, :jedi, {client, echo_pid} }  	
+    { :reply, reply, next, {client, pid} }  	
   end
 
-  # To faciliate CYBORG state
-  
-  def jedi({:game_keep_guessing, _}, _from, {client, echo_pid}) do
-    
-    client = Player.Client.choose_letters(client)
-    reply = Player.Client.list_choices(client)
+  def cheery_jedi(:game_won, _from, {client, pid}) do
 
-    { :reply, reply, :jedi, {client, echo_pid} }
+    reply = Player.Client.round_status(client)
+
+    { :reply, reply, :jedi, {client, pid} }
+  end
+
+  def disgruntled_jedi(:game_lost, _from, {client, pid}) do
+
+    reply = Player.Client.round_status(client)
+
+    { :reply, reply, :jedi, {client, pid} }
   end
   
 
@@ -213,91 +157,71 @@ defmodule Hangman.Player.FSM do
 
     client = Player.Client.start(client)
 
-    fsm_state = "r2d2:game_start:async"
-
-    #IO.puts "client: #{inspect client}, echo_pid: #{inspect echo_pid}, fsm_state: #{fsm_state}"
+    fsm_state_text = "r2d2:game_start:async"
     
-    fsm_async_next_round(client, echo_pid, fsm_state)
+    fsm_async_next_round(client, echo_pid, fsm_state_text)
 
-    { :next_state, :eager_r2d2, {client, echo_pid} }
+    { :next_state, :eager_turbo_r2d2, {client, echo_pid} }
   end
 
   # 6) game over, asynchronous
-  def r2d2(:game_over, {client, echo_pid}) do
+  def r2d2(:game_over, {client, pid}) do
 
     true = Player.Client.game_over?(client) # assert
 
-    {:game_reset, status} = Player.Client.server_status(client) # assert
+    client = Player.Client.server_pull_status(client)
 
-    fsm_state = "r2d2:game_over:async"  
+    {:game_reset, status} = Player.Client.game_over_status(client) # assert
 
-    fsm_debug_spawn(fsm_state, status)
+    fsm_state_text = "r2d2:game_over:async"  
 
-    Player.Echo.echo_game_reset_async(echo_pid, self())
-
-    # Queue up the next event
-    #robot_guess_async(self(), :game_reset)      
-
-    
-    { :next_state, :zen_r2d2, {client, echo_pid} }
+    fsm_debug_spawn(fsm_state_text, status)
+        
+    { :stop, :normal, {client, pid} }
   end
 
   # 2 & 3) generic keep guessing
-  def eager_r2d2(:game_keep_guessing, {client, echo_pid}) do
+  def eager_turbo_r2d2(:game_keep_guessing, {client, echo_pid}) do
 
     client = Player.Client.robot_guess(client, Nil)
 
-    fsm_state = "eager_r2d2:game_keep_guessing:async:round#{client.round_no}" 
+    fsm_state_text = "eager_turbo_r2d2:game_keep_guessing:async:round#{client.round_no}" 
 
     {status_code, _}  = Player.Client.round_status(client)
 
     next_state = 
       case status_code do
-        :game_keep_guessing -> :eager_r2d2
-        :game_won -> :cheery_r2d2
-        :game_lost -> :disgruntled_r2d2
+        :game_keep_guessing -> :eager_turbo_r2d2
+        :game_won -> :cheery_turbo_r2d2
+        :game_lost -> :disgruntled_turbo_r2d2
       end
 
-    fsm_async_next_round(client, echo_pid, fsm_state)
+    fsm_async_next_round(client, echo_pid, fsm_state_text)
       
     { :next_state, next_state, {client, echo_pid} }
   end
 
   # 4) game won, asynchronous
-  def cheery_r2d2(:game_won, {client, echo_pid}) do
+  def cheery_turbo_r2d2(:game_won, {client, echo_pid}) do
 
-    fsm_state = "cheery_r2d2:game_won:async"
+    fsm_state_text = "cheery_turbo_r2d2:game_won:async"
 
-    fsm_async_game_over_check(client, echo_pid, fsm_state)
+    fsm_async_game_over_check(client, echo_pid, fsm_state_text)
 
     { :next_state, :r2d2, {client, echo_pid} }
   end
 
   # 5) game lost, asynchronous
-  def disgruntled_r2d2(:game_lost, {client, echo_pid}) do
+  def disgruntled_turbo_r2d2(:game_lost, {client, echo_pid}) do
 
-    fsm_state = "disgruntled_r2d2:game_lost:async"
+    fsm_state_text = "disgruntled_turbo_r2d2:game_lost:async"
 
-    fsm_async_game_over_check(client, echo_pid, fsm_state)
+    fsm_async_game_over_check(client, echo_pid, fsm_state_text)
 
     { :next_state, :r2d2, {client, echo_pid} }
   end
 
 
-  # 7) reset, asynchronous
-  def zen_r2d2(:game_reset, {client, echo_pid}) do 
-    
-    {:game_reset, status} = Player.Client.server_status(client)
-    
-    fsm_state = "zen_r2d2:game_reset:async"
-    
-    fsm_debug_spawn(fsm_state, status)
-
-    stop(self())
-
-
-    { :next_state, :zen_r2d2, {client, echo_pid} }
-  end
 
   #####################
   #                   #
@@ -311,118 +235,78 @@ defmodule Hangman.Player.FSM do
 
 
   # 1) start
-  def r2d2(:game_start, _from, {client, echo_pid}) do
+  def r2d2(:game_start, _from, {client, pid}) do
 
   	client = Player.Client.start(client)
     
-    fsm_state = "idle_r2d2:game_start:sync"
+    fsm_state_text = "r2d2:game_start:sync"
 
     reply = Player.Client.round_status(client)        
     
-    fsm_print_status(fsm_state, reply)
-      
+    fsm_print_status(fsm_state_text, reply)
 
-    { :reply, reply, :eager_r2d2, {client, echo_pid} }
+    { :reply, reply, :eager_r2d2, {client, pid} }
   end
 
   # 6) game over, synchronous
-  def r2d2(:game_over, _from, {client, echo_pid}) do
+  def r2d2(:game_over, _from, {client, pid}) do
 
     true = Player.Client.game_over?(client) # assert
 
-    reply = Player.Client.server_status(client)  
+    client = Player.Client.server_pull_status(client)
 
-    fsm_state = "idle_r2d2:game_over:sync"
+    reply = Player.Client.game_over_status(client)
 
-    fsm_print_status(fsm_state, reply)
+    fsm_state_text = "r2d2:game_over:sync"
 
-    { :reply, reply, :zen_r2d2, {client, echo_pid} }
+    fsm_print_status(fsm_state_text, reply)
+
+    { :stop, :normal, {client, pid} }
   end
 
   # 2 & 3) generic keep guessing
-  def eager_r2d2(:game_keep_guessing, _from, {client, echo_pid}) do
+  def eager_r2d2(:game_keep_guessing, _from, {client, pid}) do
 
     client = Player.Client.robot_guess(client, Nil)
 
-    fsm_state = "eager_r2d2:game_keep_guessing:sync"
+    fsm_state_text = "eager_r2d2:game_keep_guessing:sync"
 
     {status_code, _} = reply = Player.Client.round_status(client)
         
-    fsm_print_status(fsm_state, reply)
+    fsm_print_status(fsm_state_text, reply)
 
-    next_state = 
+    next = 
       case status_code do
         :game_keep_guessing -> :eager_r2d2
         :game_won -> :cheery_r2d2
         :game_lost -> :disgruntled_r2d2
       end
       
-    { :reply, reply, next_state, {client, echo_pid} }
+    { :reply, reply, next, {client, pid} }
   end
 
   # 4) game won
-  def cheery_r2d2(:game_won, _from, {client, echo_pid}) do
+  def cheery_r2d2(:game_won, _from, {client, pid}) do
 
-    fsm_state = "cheery_r2d2:game_won:sync"
-
-    reply = fsm_sync_game_over_check(client, fsm_state)
+    fsm_state_text = "cheery_r2d2:game_won:sync"
 
     true = Player.Client.game_won?(client)
 
-    reply = 
-      case Player.Client.game_over?(client) do
+    reply = fsm_sync_game_over_check(client, fsm_state_text)
 
-        # All games finished
-        true -> 
-          reply = Player.Client.game_over_status(client)
-          fsm_print_status(fsm_state, reply)
-          reply
-        
-        # Still more games left
-        false -> 
-          {:game_start}
-      end
-
-    { :reply, reply, :r2d2, {client, echo_pid} }
+    { :reply, reply, :r2d2, {client, pid} }
   end
 
   # 5) game lost
-  def disgruntled_r2d2(:game_lost, _from, {client, echo_pid}) do   
+  def disgruntled_r2d2(:game_lost, _from, {client, pid}) do   
 
-    fsm_state = "disgruntled_r2d2:game_lost:sync"
-
-    reply = fsm_sync_game_over_check(client, fsm_state)
+    fsm_state_text = "disgruntled_r2d2:game_lost:sync"
 
     true = Player.Client.game_lost?(client)
 
-    reply = 
-      case Player.Client.game_over?(client) do
-
-        # All games finished
-        true -> 
-          reply = Player.Client.game_over_status(client)
-          fsm_print_status(fsm_state, reply)
-          reply
-        
-        # Still more games left
-        false -> 
-          {:game_start}
-      end
+    reply = fsm_sync_game_over_check(client, fsm_state_text)
       
-    { :reply, reply, :r2d2, {client, echo_pid} }
-  end
-
-
-  # 7) reset, synchronous
-  def zen_r2d2(:game_reset, _from, {client, echo_pid}) do 
-    
-    reply = Player.Client.status(client)
-    
-    fsm_state = "zen_r2d2:game_reset:sync"
-
-    fsm_print_status(fsm_state, reply)
-
-    { :reply, reply, :zen_r2d2, {client, echo_pid} }
+    { :reply, reply, :r2d2, {client, pid} }
   end
 
 
@@ -466,20 +350,20 @@ defmodule Hangman.Player.FSM do
 
             # Won
             # Setup the next echo event
-            Player.Echo.echo_game_won_async(echo_pid, self())
+            Player.Echo.echo_won(echo_pid, self())
 
           false -> # Lost
 
             fsm_debug_spawn(fsm_text, Player.Client.round_status(client))
 
             # Setup the next echo event
-            Player.Echo.echo_game_lost_async(echo_pid, self())
+            Player.Echo.echo_lost(echo_pid, self())
 
         end
 
       false ->
         # Setup the next echo event
-        Player.Echo.echo_game_keep_guessing_async(echo_pid, self())
+        Player.Echo.echo_guess(echo_pid, self())
     end
   end
 
@@ -488,17 +372,17 @@ defmodule Hangman.Player.FSM do
       
       true->
         # Queue up game_over async event
-        #robot_guess_sync(self(), :game_over) 
+        #robot_sync_guess(self(), :game_over) 
         fsm_debug_spawn(fsm_text, Player.Client.game_over_status(client))
 
-        Player.Echo.echo_game_over_async(echo_pid, self())
+        Player.Echo.echo_game_over(echo_pid, self())
 
       false ->
         # Queue up game_start async event
-        #robot_guess_sync(self(), :game_start)
+        #robot_sync_guess(self(), :game_start)
         fsm_debug_spawn(fsm_text, Player.Client.round_status(client))
 
-        Player.Echo.echo_game_start_async(echo_pid, self())        
+        Player.Echo.echo_start(echo_pid, self())        
     end
   end
 
@@ -517,28 +401,25 @@ defmodule Hangman.Player.FSM do
   # the following functions below
 
 
-  def handle_event(:status, _from, state_name, state = {client, _}) do
-
-
-    IO.puts("in handle_event")
-
-    reply = Player.Client.status(client)
-    {:reply, reply, state_name, state}
+  def handle_event(:stop, _state_name, state) do
+    {:stop, :normal, state};
   end
 
   def handle_event(_event, state_name, state) do
     {:next_state, state_name, state}
   end
 
-  def handle_sync_event(_event, __from, state_name, state) do
+  def handle_sync_event(:status, _from, state_name, state = {client, _pid}) do
 
-    IO.puts("in handle_sync_event")
+    reply = Player.Client.status(client)
 
-    {:next_state, state_name, state}
+    IO.puts("in handle_event")
+
+    {:reply, reply, state_name, state}
   end
 
-  def handle_info(:stop, _state_name, state) do
-    {:stop, :normal, state};
+  def handle_sync_event(_event, __from, state_name, state) do
+    {:next_state, state_name, state}
   end
 
   def handle_info(_Info, state_name, state) do

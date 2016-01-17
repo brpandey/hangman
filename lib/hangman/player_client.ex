@@ -69,6 +69,7 @@ defmodule Hangman.Player.Client do
   end
 
   def game_over_status(%Client{} = client) do
+
   	case game_over?(client) do
   		true -> {:game_over, str_final_result(client)}
   		false -> {client.round.status_code, client.round.status_text}
@@ -76,7 +77,7 @@ defmodule Hangman.Player.Client do
   end
 
 
-  def server_status(%Client{} = client) do
+  def server_pull_status(%Client{} = client) do
 
   	player = client.name
   	
@@ -85,10 +86,11 @@ defmodule Hangman.Player.Client do
 
   	if status_code == :game_reset do
     	round_info = %Round{ status_code: status_code, status_text: status_text }
-			Kernel.put_in(client.round, round_info)
+			client = Kernel.put_in(client.round, round_info)
+			client = Kernel.put_in(client.game_summary, [status_code])
 		end
 
-  	{status_code, status_text}
+  	client
   end
 
 
@@ -247,7 +249,7 @@ defmodule Hangman.Player.Client do
   	client = Kernel.put_in(client.round, round_info)
 	  client = Kernel.put_in(client.round_no, seq_no)
 
-	  #IO.puts "round: #{inspect round_info}"
+	 	#IO.puts "round_update: #{inspect client}"
        
     if (round_info.final_result != "" and round_info.final_result != [] and
     	List.first(round_info.final_result) == {:status, :game_over}) do
@@ -257,17 +259,6 @@ defmodule Hangman.Player.Client do
     end
 
     client
-  end
-
-  # Action helper functions
-
-  defp round_params(%Client{} = client) do
-
-  	name = client.name
-  	strategy = client.strategy
-  	seq_no =  client.round_no + 1
-
-  	{name, strategy, seq_no}
   end
 
   defp round_setup(%Client{} = client, context) do
@@ -295,6 +286,18 @@ defmodule Hangman.Player.Client do
 
     client
   end
+
+
+  # Action helper functions
+
+  defp round_params(%Client{} = client) do
+
+  	name = client.name
+  	strategy = client.strategy
+  	seq_no =  client.round_no + 1
+
+  	{name, strategy, seq_no}
+  end  
 
   defp round_filter_context(%Client{} = client) do
 
