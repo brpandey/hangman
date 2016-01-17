@@ -65,14 +65,30 @@ defmodule Hangman.Player.Client do
   end
 
   def round_status(%Client{} = client) do
-  	client.round.status_text
+  	{client.round.status_code, client.round.status_text}
   end
 
-  def status(%Client{} = client) do
+  def game_over_status(%Client{} = client) do
   	case game_over?(client) do
-  		true -> str_final_result(client)
-  		false -> client.round.status_text
+  		true -> {:game_over, str_final_result(client)}
+  		false -> {client.round.status_code, client.round.status_text}
   	end
+  end
+
+
+  def server_status(%Client{} = client) do
+
+  	player = client.name
+  	
+  	{^player, status_code, status_text} =
+  		Game.Server.game_status(client.game_server_pid)
+
+  	if status_code == :game_reset do
+    	round_info = %Round{ status_code: status_code, status_text: status_text }
+			Kernel.put_in(client.round, round_info)
+		end
+
+  	{status_code, status_text}
   end
 
 
@@ -147,7 +163,7 @@ defmodule Hangman.Player.Client do
 	          Game.Server.guess_word(client.game_server_pid, guess_word)
 
 	       	%Round{seq_no: seq_no,
-      			guess: guess_word, result: result, 
+      			guess: guess_word, result_code: result, 
       			status_code: code, pattern: pattern, 
       			status_text: text, final_result: final}        
 
@@ -157,7 +173,7 @@ defmodule Hangman.Player.Client do
 	          Game.Server.guess_letter(client.game_server_pid, guess_letter)
 
 	        %Round{seq_no: seq_no,
-      			guess: guess_letter, result: result, 
+      			guess: guess_letter, result_code: result, 
       			status_code: code, pattern: pattern, 
       			status_text: text, final_result: final}
 	    end
@@ -215,7 +231,7 @@ defmodule Hangman.Player.Client do
       Game.Server.guess_letter(pid, letter)
 
     round_info = %Round{seq_no: seq_no,
-			guess: letter, result: result, 
+			guess: letter, result_code: result, 
 			status_code: code, pattern: pattern, 
 			status_text: text, final_result: final}
 
@@ -282,7 +298,7 @@ defmodule Hangman.Player.Client do
 
   defp round_filter_context(%Client{} = client) do
 
-  	case client.round.result do
+  	case client.round.result_code do
   		:correct_letter -> 
   			{:correct_letter, client.round.guess, 
   					client.round.pattern, client.mystery_letter}
