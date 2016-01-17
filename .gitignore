@@ -3,4 +3,4 @@
 /deps
 erl_crash.dump
 *.ez
-./tmp/
+/home/brpandey/Workspace/elixir-hangman/tmp
