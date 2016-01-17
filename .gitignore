@@ -1,6 +1,6 @@
 /_build
 /cover
 /deps
+/tmp
 erl_crash.dump
 *.ez
-/home/brpandey/Workspace/elixir-hangman/tmp
