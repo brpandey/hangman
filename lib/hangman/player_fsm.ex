@@ -1,8 +1,6 @@
 defmodule Hangman.Player.FSM do
   @behaviour :gen_fsm
 
-  require Hangman.Player.Client
-  #require Hangman.Player.Echo
 
   alias Hangman.{Player.Client, Player.Echo}
 
@@ -123,12 +121,19 @@ defmodule Hangman.Player.FSM do
     client = Client.guess_letter(client, guess_letter)
     {status_code, _text} = reply = Client.round_status(client)
 
+    IO.puts("eager_jedi, reply is: #{inspect reply}")
+
     next = 
       case status_code do
         :game_keep_guessing -> :eager_jedi
         :game_won -> :cheery_jedi
         :game_lost -> :disgruntled_jedi
       end
+
+    if next == :eager_jedi do
+      client = Client.choose_letters(client)
+      reply = Client.list_choices(client)
+    end
 
     { :reply, reply, next, {client, pid} }  	
   end

@@ -1,6 +1,4 @@
 defmodule Hangman.Strategy do
-  require Hangman.Counter
-  require Hangman.Types.Reduction.Pass
 
   alias Hangman.{Counter, Types.Reduction.Pass}
 
@@ -45,7 +43,7 @@ defmodule Hangman.Strategy do
   			end
 
   		_ ->
-  			letter = retrieve_best_letter(strategy.pass.tally, strategy.pass.size)
+  			letter = retrieve_best_letter(strategy)
   			
   			if letter != Nil and letter != "" 
           and {:guess_letter, letter} != strategy.prior_guess do
@@ -75,19 +73,27 @@ defmodule Hangman.Strategy do
   end
 
   def update(%Hangman.Strategy{} = strategy, %Pass{} = pass) do
-    #Kernel.put_in(strategy, [:pass], pass)
-
     strategy = %Hangman.Strategy{ strategy | pass: pass, 
                   prior_guess: strategy.guess}
 
     strategy = prepare_guess(strategy)
 
-    IO.puts "in strategy, updating strategy: #{inspect strategy}"
-
     strategy
   end
 
-  # Helper
+  # Helpers
+
+  def most_common_letter_and_counts(%Hangman.Strategy{} = strategy, n) 
+  when is_number(n) and n > 0 do
+    counter = strategy.pass.tally
+    Counter.most_common(counter, n)
+  end
+
+  def most_common_letter(%Hangman.Strategy{} = strategy, n) 
+  when is_number(n) and n > 0 do
+    counter = strategy.pass.tally
+    Counter.most_common_key(counter, n)
+  end
 
   @doc """
   retrieve_best_letter
@@ -105,7 +111,11 @@ defmodule Hangman.Strategy do
     Doesn't handle tie between letters
   """
 
-  def retrieve_best_letter(tally, pass_size) do
+  def retrieve_best_letter(%Hangman.Strategy{} = strategy) do
+    do_retrieve_best_letter(strategy.pass.tally, strategy.pass.size)
+  end
+
+  defp do_retrieve_best_letter(tally, pass_size) do
 
     false = Counter.empty?(tally) # Assert
 

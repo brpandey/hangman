@@ -103,12 +103,44 @@ _ = """
 
 		IO.puts "start: #{inspect reply}"			
 
-		reply = FSM.human_status(julio_pid)
+		reply = FSM.human_guess(julio_pid, "e")
 
-		IO.puts "1 status: #{inspect reply}"
+		IO.puts "1 status: #{inspect reply}"	
 
+		reply = FSM.human_guess(julio_pid, "a")
 
+		IO.puts "2 status: #{inspect reply}"
 
+		reply = FSM.human_guess(julio_pid, "t")
+
+		IO.puts "3 status: #{inspect reply}"
+
+		reply = FSM.human_guess(julio_pid, "o")
+
+		IO.puts "4 status: #{inspect reply}"
+
+		reply = FSM.human_guess(julio_pid, "i")
+
+		IO.puts "5 status: #{inspect reply}"
+
+		reply = FSM.human_guess(julio_pid, "l")
+
+		IO.puts "6 status: #{inspect reply}"
+
+		reply = FSM.human_guess(julio_pid, "c")
+
+		IO.puts "7 status: #{inspect reply}"
+
+		assert "Player julio, Round 8: please choose amongst these 3 letter choices observing their respective weighting:  u:2 m*:1 p:1. The asterisk denotes what the computer would have chosen"
+			= reply
+
+		reply = FSM.human_guess(julio_pid, "m")
+
+		IO.puts "8 status: #{inspect reply}"
+
+		reply = FSM.human_guess(julio_pid, "u")
+
+		IO.puts "9 status: #{inspect reply}"
 	end
 end
 

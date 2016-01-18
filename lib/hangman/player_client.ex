@@ -1,12 +1,6 @@
 defmodule Hangman.Player.Client do
 
-	require Hangman.Counter
-	require Hangman.Game.Server
-	require Hangman.Reduction.Engine.Stub
-	require Hangman.Strategy
-	require Hangman.Types
-
-  alias Hangman.{Player.Client, Counter, Game, Reduction, Strategy, 
+  alias Hangman.{Player.Client, Game, Reduction, Strategy, 
 		Strategy.Options, Types.Game.Round}
 
 	defstruct name: "", 
@@ -20,7 +14,6 @@ defmodule Hangman.Player.Client do
     game_summary: []	
 
   @human :human
-  @cyborg :cyborg
   @robot :robot
 
   @round_letter_choices 5
@@ -31,7 +24,7 @@ defmodule Hangman.Player.Client do
   def new(name, type, game_server_pid) 
   	when is_binary(name) do
 
-  	unless type in [@human, @cyborg, @robot], do: raise "unknown player type"
+  	unless type in [@human, @robot], do: raise "unknown player type"
 
   	%Client{ name: name, type: type, game_server_pid: game_server_pid }
   end
@@ -42,14 +35,13 @@ defmodule Hangman.Player.Client do
   def fun_type_alias(%Client{} = client, :star_wars) do
   	case client.type do
         @human -> :jedi
-        @cyborg -> :darth_vader
         @robot -> :r2d2
         _ -> raise "unknown player type"
       end
   end
 
   def list_choices(%Client{} = client) do
-  	true = client.type in [@human, @cyborg] # assert
+  	true = client.type in [@human] # assert
 
   	client.round_choices
   end
@@ -131,19 +123,19 @@ defmodule Hangman.Player.Client do
   end
 
   def guess_letter(%Client{} = client, letter) do
-  	true = client.type in [@human, @cyborg] # assert
+  	true = client.type in [@human] # assert
 
 	  round_action(client, :human, {:guess_letter, letter})
   end
 
   def choose_letters(%Client{} = client) do
-  	true = client.type in [@human, @cyborg] # assert
+  	true = client.type in [@human] # assert
 
   	round_action(client, :human, :choose_letters)
   end
 
   def robot_guess(%Client{} = client, robot_guess_context) do
-  	true = client.type in [@robot, @cyborg] # assert
+  	true = client.type in [@robot] # assert
 
   	round_action(client, :robot, robot_guess_context)
 	end
@@ -160,7 +152,7 @@ defmodule Hangman.Player.Client do
   	client = round_setup(client, context)
 
   	{player, strategy, seq_no} = round_params(client)
-    
+
     round_info = 
 	    case Strategy.make_guess(strategy) do
 	      {:guess_word, guess_word} ->
@@ -184,7 +176,7 @@ defmodule Hangman.Player.Client do
       			status_text: text, final_result: final}
 	    end
 
-	  client |> round_update(seq_no, round_info)
+	  round_update(client, seq_no, round_info)
   end
 
   # Wrappers
@@ -202,18 +194,23 @@ defmodule Hangman.Player.Client do
 
   	{player, strategy, seq_no} = round_params(client)
 
-  	# Return top 5 letters if possible
-  	IO.inspect "in player client, strategy is: #{inspect strategy}"
-
-  	pass_counter = client.strategy.pass.tally
-
-  	top_choices = Counter.most_common(pass_counter, @round_letter_choices)
+  	# Return top 5 letter, count pairs if possible
+  	top_choices = Strategy.most_common_letter_and_counts(strategy, 
+                            @round_letter_choices)
 
   	size = length(top_choices)
 
+    choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
+      acc <> " #{k}:#{v}" end)
+
+    best_letter = Strategy.retrieve_best_letter(strategy)
+
+    choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
+
   	choices = "Player #{player}, Round #{seq_no}: " 
   			<> "please choose amongst these #{size} letter choices "
-  			<> "observing their respective weighting: #{inspect top_choices}"
+  			<> "observing their respective weighting: #{choices_text}."
+        <> " The asterisk denotes what the computer would have chosen"
 
   	client = Kernel.put_in(client.round_choices, choices)
 
@@ -223,15 +220,15 @@ defmodule Hangman.Player.Client do
 
   defp round_action(%Client{} = client, :human, {:guess_letter, letter}) do
 
-  	pass_counter = client.strategy.pass.tally
   	pid = client.game_server_pid
 
-  	top_choices = Counter.most_common_key(pass_counter, @round_letter_choices)
+  	top_choices = Strategy.most_common_letter(client.strategy, 
+                            @round_letter_choices)
 
   	unless letter in top_choices, do: letter = hd(top_choices)
 
   	seq_no = client.round_no + 1
-  	player = client.player_name
+  	player = client.name
 
   	{{^player, result, code, pattern, text}, final} =
       Game.Server.guess_letter(pid, letter)
@@ -252,14 +249,11 @@ defmodule Hangman.Player.Client do
 
   	client = Kernel.put_in(client.round, round_info)
 	  client = Kernel.put_in(client.round_no, seq_no)
-
-	 	#IO.puts "round_update: #{inspect client}"
        
     if (round_info.final_result != "" and round_info.final_result != [] and
     	List.first(round_info.final_result) == {:status, :game_over}) do
     
     	client = Kernel.put_in(client.game_summary, round_info.final_result)
-    
     end
 
     client
