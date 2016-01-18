@@ -22,7 +22,6 @@ defmodule Hangman.Player.FSM do
 
   def human_start(fsm_pid), do:  sync_start(fsm_pid)
   def human_status(fsm_pid), do:  sync_status(fsm_pid)
-  def human_choose(fsm_pid), do: :gen_fsm.sync_send_event(fsm_pid, :choose_letters)
 
   def human_guess(fsm_pid, letter) when is_binary(letter) do
   	:gen_fsm.sync_send_event(fsm_pid, {:guess_letter, letter})
@@ -88,8 +87,6 @@ defmodule Hangman.Player.FSM do
   	client = Client.start(client)
     reply = Client.list_choices(client)
 
-    IO.puts "In Human Start!"
-
     { :reply, reply, :eager_jedi, {client, pid} }
   end
 
@@ -106,14 +103,6 @@ defmodule Hangman.Player.FSM do
     fsm_print_status(fsm_state_text, reply)
 
     { :stop, :normal, {client, pid} }
-  end  
-
-  def eager_jedi(:choose_letters, _from, {client, pid}) do
-  	
-    client = Client.choose_letters(client)
-    reply = Client.list_choices(client)
-
-    { :reply, reply, :eager_jedi, {client, pid} }
   end
 
   def eager_jedi({:guess_letter, guess_letter}, _from, {client, pid}) do
