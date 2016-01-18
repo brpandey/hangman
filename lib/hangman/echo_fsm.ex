@@ -1,6 +1,7 @@
 defmodule Hangman.Player.Echo do
 	@behaviour :gen_fsm
 
+	require Hangman.Player.FSM
 
 	# External API
 
@@ -31,7 +32,7 @@ defmodule Hangman.Player.Echo do
   	:gen_fsm.send_event(fsm_pid, {:echo_game_over, other_pid})
   end
 
-  # OTP Callback
+  # FSM Callbacks
 
   def init(_) do
     { :ok, :echo, [] }
@@ -45,26 +46,24 @@ defmodule Hangman.Player.Echo do
   end
 
   def echo({:echo_guess, other_pid}, state) do
-  	Hangman.Player.FSM.guess(other_pid)
+  	Hangman.Player.FSM.event_guess(other_pid)
   	{:next_state, :echo, state}
   end
 
   def echo({:echo_won, other_pid}, state) do
-    Hangman.Player.FSM.won(other_pid)
+    Hangman.Player.FSM.event_won(other_pid)
     {:next_state, :echo, state}
   end
 
   def echo({:echo_lost, other_pid}, state) do
-    Hangman.Player.FSM.lost(other_pid)
+    Hangman.Player.FSM.event_lost(other_pid)
     {:next_state, :echo, state}
   end
 
   def echo({:echo_game_over, other_pid}, state) do
-    Hangman.Player.FSM.game_over(other_pid)
+    Hangman.Player.FSM.event_game_over(other_pid)
     {:next_state, :echo, state}
   end
-
-
 
   # BOILERPLATE
 

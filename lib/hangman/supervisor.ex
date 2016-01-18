@@ -1,6 +1,9 @@
 defmodule Hangman.Supervisor do 
 	use Supervisor
 
+	require Hangman.Process.Registry
+	require Hangman.System.Supervisor
+
 	@name __MODULE__
 
 	# Hangman.Server.Supervisor is a third line supervisor as

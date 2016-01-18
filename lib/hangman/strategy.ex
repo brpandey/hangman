@@ -1,4 +1,6 @@
 defmodule Hangman.Strategy do
+  require Hangman.Counter
+  require Hangman.Types.Reduction.Pass
 
   alias Hangman.{Counter, Types.Reduction.Pass}
 
@@ -80,7 +82,7 @@ defmodule Hangman.Strategy do
 
     strategy = prepare_guess(strategy)
 
-    #IO.puts "updating strategy: #{inspect strategy}"
+    IO.puts "in strategy, updating strategy: #{inspect strategy}"
 
     strategy
   end

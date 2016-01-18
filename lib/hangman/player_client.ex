@@ -1,6 +1,12 @@
 defmodule Hangman.Player.Client do
 
-  alias Hangman.{Player.Client, Game, Reduction, Strategy, 
+	require Hangman.Counter
+	require Hangman.Game.Server
+	require Hangman.Reduction.Engine.Stub
+	require Hangman.Strategy
+	require Hangman.Types
+
+  alias Hangman.{Player.Client, Counter, Game, Reduction, Strategy, 
 		Strategy.Options, Types.Game.Round}
 
 	defstruct name: "", 
@@ -76,7 +82,6 @@ defmodule Hangman.Player.Client do
   	end
   end
 
-
   def server_pull_status(%Client{} = client) do
 
   	player = client.name
@@ -92,7 +97,6 @@ defmodule Hangman.Player.Client do
 
   	client
   end
-
 
   defp str_final_result(%Client{} = client) do
   	
@@ -180,7 +184,7 @@ defmodule Hangman.Player.Client do
       			status_text: text, final_result: final}
 	    end
 
-		round_update(%Client{} = client, seq_no, round_info)
+	  client |> round_update(seq_no, round_info)
   end
 
   # Wrappers
@@ -199,17 +203,17 @@ defmodule Hangman.Player.Client do
   	{player, strategy, seq_no} = round_params(client)
 
   	# Return top 5 letters if possible
-  	IO.inspect "strategy is: #{inspect strategy}"
+  	IO.inspect "in player client, strategy is: #{inspect strategy}"
 
-  	counter = strategy.pass.tally
+  	pass_counter = client.strategy.pass.tally
 
-  	top_choices = Counter.most_common(counter, @round_letter_choices)
+  	top_choices = Counter.most_common(pass_counter, @round_letter_choices)
 
   	size = length(top_choices)
 
   	choices = "Player #{player}, Round #{seq_no}: " 
   			<> "please choose amongst these #{size} letter choices "
-  			<> "observing their respective weighting: #{top_choices}"
+  			<> "observing their respective weighting: #{inspect top_choices}"
 
   	client = Kernel.put_in(client.round_choices, choices)
 

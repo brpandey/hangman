@@ -1,5 +1,5 @@
 defmodule Hangman.Counter do
-	defstruct entries: Map.new # Since HashDict is deprecated, using Map instead
+	defstruct entries: Map.new
 
 	# Letter Frequency Counter for words
 	

@@ -1,6 +1,8 @@
 defmodule Hangman.Cache do 
 	use GenServer
 
+	require Hangman.Game.Server
+	require Hangman.Server.Supervisor
 
 	@name __MODULE__
 

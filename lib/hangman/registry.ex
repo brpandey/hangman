@@ -1,5 +1,6 @@
 defmodule Hangman.Process.Registry do
 	  use GenServer
+	  
 	  import Kernel, except: [send: 2]
 
 	 	@name __MODULE__

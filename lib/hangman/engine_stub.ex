@@ -1,39 +1,42 @@
 defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
+	require Hangman.Counter
+	require Hangman.Types.Reduction.Pass
+
   alias Hangman.{Counter, Types.Reduction.Pass}
 
 	def reduce(:game_start, options) do
-		{:ok, id} = Keyword.fetch(options, :id)
-		{:ok, seq_no} = Keyword.fetch(options, :seq_no)
+		{:ok, __id} = Keyword.fetch(options, :id)
+		{:ok, __seq_no} = Keyword.fetch(options, :seq_no)
 
 		{:ok, true} =	Keyword.fetch(options, :game_start)
-		{:ok, length_filter_key}  = Keyword.fetch(options, :secret_length)
+		{:ok, _length_filter_key}  = Keyword.fetch(options, :secret_length)
 		
 		simulate_reduce_sequence(1)
 	end
 
 	def reduce(:correct_letter, options) do
-		{:ok, id} = Keyword.fetch(options, :id)
+		{:ok, _id} = Keyword.fetch(options, :id)
 		{:ok, seq_no} = Keyword.fetch(options, :seq_no)
 
 		# leave this in until we are assured the regex is faster
-		{:ok, correct_letter} = Keyword.fetch(options, :correct_letter)
+		{:ok, _correct_letter} = Keyword.fetch(options, :correct_letter)
 
-		{:ok, exclusion_filter_set} = Keyword.fetch(options, :guessed_letters)
-		{:ok, regex} = Keyword.fetch(options, :regex)
+		{:ok, _exclusion_filter_set} = Keyword.fetch(options, :guessed_letters)
+		{:ok, _regex} = Keyword.fetch(options, :regex)
 	
 		simulate_reduce_sequence(seq_no)	
 	end
 
  	def reduce(:incorrect_letter, options) do
-		{:ok, id} = Keyword.fetch(options, :id)
+		{:ok, _id} = Keyword.fetch(options, :id)
 		{:ok, seq_no} = Keyword.fetch(options, :seq_no)
 
 		# leave this in until we are assured the regex is faster
-		{:ok, incorrect_letter} = Keyword.fetch(options, :incorrect_letter)
+		{:ok, _incorrect_letter} = Keyword.fetch(options, :incorrect_letter)
 
-		{:ok, exclusion_filter_set} = Keyword.fetch(options, :guessed_letters)
-		{:ok, regex} = Keyword.fetch(options, :regex)
+		{:ok, _exclusion_filter_set} = Keyword.fetch(options, :guessed_letters)
+		{:ok, _regex} = Keyword.fetch(options, :regex)
 		
 		simulate_reduce_sequence(seq_no)
 	end
@@ -172,7 +175,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		_guessed = ["a", "c", "e", "i", "l", "o", "t"]
 
-		guess_letter = "m"
+		_guess_letter = "m"
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: "" }
 
