@@ -1,8 +1,6 @@
 defmodule Hangman.Player.System.Supervisor do
 	use Supervisor
 
-	require Hangman.Player.Supervisor
-
 	@name __MODULE__
 
 	# Hangman.Player.System.Supervisor is a second line supervisor

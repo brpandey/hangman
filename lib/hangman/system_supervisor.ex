@@ -1,9 +1,6 @@
 defmodule Hangman.System.Supervisor do 
 	use Supervisor
 
-	require Hangman.Server.Supervisor
-	require Hangman.Cache
-
 	@name __MODULE__
 
 	# Hangman.System.Supervisor is a second line supervisor

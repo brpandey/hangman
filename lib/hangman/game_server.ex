@@ -1,8 +1,6 @@
 defmodule Hangman.Game.Server do
 	use GenServer
 	
-	require Hangman.Pattern
-
 	@moduledoc "Hangman.Game.Server - hangman game server using GenServer.  
 		Interacts with player client through public interface and
 		maintains hangman game state"

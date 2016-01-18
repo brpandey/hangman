@@ -1,8 +1,5 @@
 defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
-	require Hangman.Counter
-	require Hangman.Types.Reduction.Pass
-
   alias Hangman.{Counter, Types.Reduction.Pass}
 
 	def reduce(:game_start, options) do
@@ -186,6 +183,8 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		size = 1
 
+		tally = Counter.new(%{"u" => 2})
+
 		#_possible = ["CUMULATE"]
 		#_possible = Enum.map(_possible, &String.downcase(&1))
 
@@ -193,7 +192,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		guess_word = "cumulate"
 
-		pass_info = %Pass{ size: size, tally: Nil, only_word_left: guess_word }
+		pass_info = %Pass{ size: size, tally: tally, only_word_left: guess_word }
 
 		{9, pass_info}		
 	end

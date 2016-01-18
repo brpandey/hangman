@@ -1,8 +1,6 @@
 defmodule Hangman.Server.Supervisor do
 	use Supervisor
 
-	require Hangman.Game.Server
-
 	#Hangman.Server.Supervisor is a first line supervisor
 	#which will dynamically start its children
 

@@ -1,8 +1,6 @@
 defmodule Hangman.Player.Echo do
 	@behaviour :gen_fsm
 
-	require Hangman.Player.FSM
-
 	# External API
 
   def start_link() do
