@@ -20,21 +20,21 @@ defmodule Hangman.Player.FSM do
 
   # HUMAN PLAYER EVENTS - (synchronous)
 
-  def human_start(fsm_pid), do:  sync_start(fsm_pid)
+  def jedi_start(fsm_pid), do:  sync_start(fsm_pid)
   
-  def human_status(fsm_pid), do:  sync_status(fsm_pid)
+  def jedi_status(fsm_pid), do:  sync_status(fsm_pid)
 
-  def human_won(fsm_pid), do:  sync_won(fsm_pid)
+  def jedi_won(fsm_pid), do:  sync_won(fsm_pid)
 
-  def human_lost(fsm_pid), do:  sync_lost(fsm_pid)
+  def jedi_lost(fsm_pid), do:  sync_lost(fsm_pid)
 
-  def human_game_over(fsm_pid), do: sync_game_over(fsm_pid)
+  def jedi_game_over(fsm_pid), do: sync_game_over(fsm_pid)
     
-  def human_guess(fsm_pid, letter) when is_binary(letter) do
+  def jedi_guess(fsm_pid, letter) when is_binary(letter) do
   	:gen_fsm.sync_send_event(fsm_pid, {:guess_letter, letter})
   end
 
-  def human_guess_last_word(fsm_pid) do
+  def jedi_guess_last_word(fsm_pid) do
     :gen_fsm.sync_send_event(fsm_pid, :guess_last_word)
   end
 
