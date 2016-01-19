@@ -91,7 +91,7 @@ _ = """
 
 			player_name = "julio"
  	  
-		secrets = ["cumulate"]
+		secrets = ["cumulate", "avocado"]
 
 		julio_game_server_pid = Cache.get_server(player_name, secrets)			
 
@@ -101,46 +101,91 @@ _ = """
 
 		reply = FSM.human_start(julio_pid)
 
-		IO.puts "start: #{inspect reply}"			
+		IO.puts "Game 1 start: #{inspect reply}"			
 
 		reply = FSM.human_guess(julio_pid, "e")
 
-		IO.puts "1 status: #{inspect reply}"	
+		IO.puts "Game 1, round 1 status: #{inspect reply}"	
 
 		reply = FSM.human_guess(julio_pid, "a")
 
-		IO.puts "2 status: #{inspect reply}"
+		IO.puts "Game 1, round 2 status: #{inspect reply}"
 
 		reply = FSM.human_guess(julio_pid, "t")
 
-		IO.puts "3 status: #{inspect reply}"
+		IO.puts "Game 1, round 3 status: #{inspect reply}"
 
 		reply = FSM.human_guess(julio_pid, "o")
 
-		IO.puts "4 status: #{inspect reply}"
+		IO.puts "Game 1, round 4 status: #{inspect reply}"
 
 		reply = FSM.human_guess(julio_pid, "i")
 
-		IO.puts "5 status: #{inspect reply}"
+		IO.puts "Game 1, round 5 status: #{inspect reply}"
 
 		reply = FSM.human_guess(julio_pid, "l")
 
-		IO.puts "6 status: #{inspect reply}"
+		IO.puts "Game 1, round 6 status: #{inspect reply}"
 
 		reply = FSM.human_guess(julio_pid, "c")
 
-		IO.puts "7 status: #{inspect reply}"
+		IO.puts "Game 1, round 7 status: #{inspect reply}"
 
 		assert "Player julio, Round 8: please choose amongst these 3 letter choices observing their respective weighting:  u:2 m*:1 p:1. The asterisk denotes what the computer would have chosen"
 			= reply
 
 		reply = FSM.human_guess(julio_pid, "m")
 
-		IO.puts "8 status: #{inspect reply}"
+		assert "Player julio, Round 9: Last word left: cumulate" = reply
 
-		reply = FSM.human_guess(julio_pid, "u")
+		reply = FSM.human_guess_last_word(julio_pid)
 
-		IO.puts "9 status: #{inspect reply}"
+		IO.puts "Game 1, round 9 status: #{inspect reply}"
+
+		reply = FSM.human_won(julio_pid)
+
+		IO.puts "Game 1, game status: #{inspect reply}"
+
+		reply = FSM.human_start(julio_pid)
+
+		IO.puts "Game 2, start: #{inspect reply}"	
+
+		reply = FSM.human_guess(julio_pid, "e")
+
+		IO.puts "Game 2, round 1 status: #{inspect reply}"		
+
+		reply = FSM.human_guess(julio_pid, "a")
+
+		IO.puts "Game 2, round 2 status: #{inspect reply}"		
+
+		reply = FSM.human_guess(julio_pid, "s")
+
+		IO.puts "Game 2, round 3 status: #{inspect reply}"
+
+		reply = FSM.human_guess(julio_pid, "r")
+
+		IO.puts "Game 2, round 4 status: #{inspect reply}"
+
+		reply = FSM.human_guess(julio_pid, "i")
+
+		IO.puts "Game 2, round 5 status: #{inspect reply}"	
+
+		reply = FSM.human_guess(julio_pid, "d")
+
+		IO.puts "Game 2, round 6 status: #{inspect reply}"
+
+		reply = FSM.human_guess_last_word(julio_pid)
+
+		IO.puts "Game 2, round 7 status: #{inspect reply}"
+
+		reply = FSM.human_won(julio_pid)
+
+		IO.puts "Game 2, game status: #{inspect reply}"
+
+		reply = FSM.human_game_over(julio_pid)
+
+		IO.puts "Game 2, summary status: #{inspect reply}"
+
 	end
 end
 

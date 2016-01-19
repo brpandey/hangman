@@ -6,6 +6,7 @@ defmodule Hangman.Player.Client do
 	defstruct name: "", 
   	type: Nil,
     game_server_pid: Nil, 
+    game_no: 0,
     round_no: 0,
     round_choices: "",
     mystery_letter: Game.Server.mystery_letter,
@@ -115,6 +116,16 @@ defmodule Hangman.Player.Client do
 
 	def start(%Client{} = client) do
     player = client.name
+    type = client.type
+    pid = client.game_server_pid
+    game = client.game_no
+
+    if client.game_no >= 1 do
+      client = %Client{ name: player, type: type, 
+                        game_server_pid: pid, game_no: game + 1 }
+    else
+      client = Kernel.put_in(client.game_no, client.game_no + 1)
+    end
 
     {^player, :secret_length, secret_length} =
       Game.Server.secret_length(client.game_server_pid)
@@ -127,6 +138,13 @@ defmodule Hangman.Player.Client do
 
 	  round_action(client, :human, {:guess_letter, letter})
   end
+
+  def guess_last_word(%Client{} = client) do
+    true = client.type in [@human] # assert
+
+    round_action(client, :human, :guess_last_word)
+  end
+
 
   def choose_letters(%Client{} = client) do
   	true = client.type in [@human] # assert
@@ -151,7 +169,7 @@ defmodule Hangman.Player.Client do
   	
   	client = round_setup(client, context)
 
-  	{player, strategy, seq_no} = round_params(client)
+  	{player, strategy, _game_no, seq_no} = round_params(client)
 
     round_info = 
 	    case Strategy.make_guess(strategy) do
@@ -192,27 +210,35 @@ defmodule Hangman.Player.Client do
 
   	client = round_setup(client, context)
 
-  	{player, strategy, seq_no} = round_params(client)
+  	{player, strategy, _game_no, seq_no} = round_params(client)
 
-  	# Return top 5 letter, count pairs if possible
-  	top_choices = Strategy.most_common_letter_and_counts(strategy, 
-                            @round_letter_choices)
+    choices = 
+      case Strategy.last_word(strategy) do
 
-  	size = length(top_choices)
+        Nil ->
+        	# Return top 5 letter, count pairs if possible
+        	top_choices = Strategy.most_common_letter_and_counts(strategy, 
+                                  @round_letter_choices)
 
-    choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
-      acc <> " #{k}:#{v}" end)
+        	size = length(top_choices)
 
-    best_letter = Strategy.retrieve_best_letter(strategy)
+          choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
+            acc <> " #{k}:#{v}" end)
 
-    choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
+          best_letter = Strategy.retrieve_best_letter(strategy)
 
-  	choices = "Player #{player}, Round #{seq_no}: " 
-  			<> "please choose amongst these #{size} letter choices "
-  			<> "observing their respective weighting: #{choices_text}."
-        <> " The asterisk denotes what the computer would have chosen"
+          choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
 
-  	client = Kernel.put_in(client.round_choices, choices)
+        	"Player #{player}, Round #{seq_no}: " 
+        			<> "please choose amongst these #{size} letter choices "
+        			<> "observing their respective weighting: #{choices_text}."
+              <> " The asterisk denotes what the computer would have chosen"
+        
+        last ->
+          "Player #{player}, Round #{seq_no}: Last word left: #{last}"
+      end
+
+    client = Kernel.put_in(client.round_choices, choices)
 
   	client
   end
@@ -225,6 +251,8 @@ defmodule Hangman.Player.Client do
   	top_choices = Strategy.most_common_letter(client.strategy, 
                             @round_letter_choices)
 
+    # If user has decided to put in a letter, not in the choices
+    # grab the letter that had the highest letter counts
   	unless letter in top_choices, do: letter = hd(top_choices)
 
   	seq_no = client.round_no + 1
@@ -238,10 +266,35 @@ defmodule Hangman.Player.Client do
 			status_code: code, pattern: pattern, 
 			status_text: text, final_result: final}
 
-		strategy = Strategy.update(client.strategy, letter)
+    strategy = Strategy.update(client.strategy, {:letter, letter})
 	  client = Kernel.put_in(client.strategy, strategy)
 
 		round_update(client, seq_no, round_info)
+  end
+
+  defp round_action(%Client{} = client, :human, :guess_last_word) do
+
+    pid = client.game_server_pid
+
+    last_word = Strategy.last_word(client.strategy)
+
+    if last_word == Nil, do: last_word = ""
+
+    seq_no = client.round_no + 1
+    player = client.name
+
+    {{^player, result, code, pattern, text}, final} =
+      Game.Server.guess_word(pid, last_word)
+
+    round_info = %Round{seq_no: seq_no,
+      guess: last_word, result_code: result, 
+      status_code: code, pattern: pattern, 
+      status_text: text, final_result: final}
+
+    strategy = Strategy.update(client.strategy, {:word, last_word})
+    client = Kernel.put_in(client.strategy, strategy)
+
+    round_update(client, seq_no, round_info)
   end
 
 
@@ -263,9 +316,9 @@ defmodule Hangman.Player.Client do
 
   	if context == Nil, do: context = round_filter_context(client)
 
-  	{player, strategy, seq_no} = round_params(client)
+  	{player, strategy, game_no, seq_no} = round_params(client)
 
-  	options = Keyword.new([{:id, player}, {:seq_no, seq_no}])
+  	options = Keyword.new([{:id, player}, {:game_no, game_no}, {:seq_no, seq_no}])
 
   	# Generate the word filter options for the words reduction engine
 		filter_options = Options.filter_options(strategy, context)
@@ -292,9 +345,10 @@ defmodule Hangman.Player.Client do
 
   	name = client.name
   	strategy = client.strategy
-  	seq_no =  client.round_no + 1
+    game_no = client.game_no
+    seq_no =  client.round_no + 1
 
-  	{name, strategy, seq_no}
+  	{name, strategy, game_no, seq_no}
   end  
 
   defp round_filter_context(%Client{} = client) do

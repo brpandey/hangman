@@ -21,10 +21,21 @@ defmodule Hangman.Player.FSM do
   # HUMAN PLAYER EVENTS - (synchronous)
 
   def human_start(fsm_pid), do:  sync_start(fsm_pid)
+  
   def human_status(fsm_pid), do:  sync_status(fsm_pid)
 
+  def human_won(fsm_pid), do:  sync_won(fsm_pid)
+
+  def human_lost(fsm_pid), do:  sync_lost(fsm_pid)
+
+  def human_game_over(fsm_pid), do: sync_game_over(fsm_pid)
+    
   def human_guess(fsm_pid, letter) when is_binary(letter) do
   	:gen_fsm.sync_send_event(fsm_pid, {:guess_letter, letter})
+  end
+
+  def human_guess_last_word(fsm_pid) do
+    :gen_fsm.sync_send_event(fsm_pid, :guess_last_word)
   end
 
   # GENERAL PLAYER EVENTS
@@ -127,16 +138,38 @@ defmodule Hangman.Player.FSM do
     { :reply, reply, next, {client, pid} }  	
   end
 
+  def eager_jedi(:guess_last_word, _from, {client, pid}) do
+
+    client = Client.guess_last_word(client)
+    {status_code, _text} = reply = Client.round_status(client)
+
+    IO.puts("eager_jedi, reply is: #{inspect reply}")
+
+    next = 
+      case status_code do
+        :game_keep_guessing -> :eager_jedi
+        :game_won -> :cheery_jedi
+        :game_lost -> :disgruntled_jedi
+      end
+
+    if next == :eager_jedi do
+      client = Client.choose_letters(client)
+      reply = Client.list_choices(client)
+    end
+
+    { :reply, reply, next, {client, pid} }    
+  end
+
   def cheery_jedi(:game_won, _from, {client, pid}) do
 
-    reply = Client.round_status(client)
-
+    reply = fsm_sync_game_over_check(client, "cheery_jedi:game_won:sync")
+ 
     { :reply, reply, :jedi, {client, pid} }
   end
 
   def disgruntled_jedi(:game_lost, _from, {client, pid}) do
 
-    reply = Client.round_status(client)
+    reply = fsm_sync_game_over_check(client, "disgruntled_jedi:game_lost:sync")
 
     { :reply, reply, :jedi, {client, pid} }
   end

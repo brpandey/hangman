@@ -24,6 +24,16 @@ defmodule Hangman.Strategy do
 
   # READ
 
+  def last_word(%Hangman.Strategy{} = strategy) do
+    
+    if strategy.pass.size == 1 do
+      strategy.pass.only_word_left      
+    else
+      Nil
+    end
+
+  end
+
   def make_guess(%Hangman.Strategy{} = strategy), do: strategy.guess
 
   def prepare_guess(%Hangman.Strategy{} = strategy) do
@@ -59,7 +69,7 @@ defmodule Hangman.Strategy do
 
   # UPDATE
 
-  def update(%Hangman.Strategy{} = strategy, human_guessed_letter) 
+  def update(%Hangman.Strategy{} = strategy, {:letter, human_guessed_letter}) 
     when is_binary(human_guessed_letter) do
 
       guessed_letters = MapSet.put(strategy.guessed_letters, 
@@ -68,6 +78,14 @@ defmodule Hangman.Strategy do
       strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
       strategy = Kernel.put_in(strategy.guess, 
                                   {:guess_letter, human_guessed_letter}) 
+
+      strategy
+  end
+
+  def update(%Hangman.Strategy{} = strategy, {:word, last_word}) 
+    when is_binary(last_word) do
+
+      strategy = Kernel.put_in(strategy.guess, {:guess_word, last_word})
 
       strategy
   end
