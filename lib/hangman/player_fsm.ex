@@ -60,12 +60,11 @@ defmodule Hangman.Player.FSM do
   def init({player_name, type, game_server_pid}) do
 
     client = Client.new(player_name, type, game_server_pid)
-    #initial_state = Client.fun_type_alias(client, :star_wars)
 
     initial = 
       case client.type do
         :human -> :idle_jedi
-        :robot -> :idle_r2d2
+        :robot -> :neutral_r2d2
         _ -> raise "unknown player type"
       end
 
@@ -87,10 +86,20 @@ defmodule Hangman.Player.FSM do
   # SYNCHRONOUS State Callbacks
   #
 
+  # Since human will be calling, want to guard for events unsupported 
+  # in current states, rather than crashing
+
+  def idle_jedi({:guess_letter, _guess_letter}, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :idle_jedi, {client, pid} } 
+  end
+
+  def idle_jedi(:guess_last_word, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :idle_jedi, {client, pid} } 
+  end  
 
   def idle_jedi(:proceed, _from, {client, pid}) do
 
-    reply = fsm_start_or_over_check(client)
+    reply = game_start_or_over_check(client)
 
     case reply do
       {:game_start} ->  
@@ -99,19 +108,23 @@ defmodule Hangman.Player.FSM do
         { :reply, reply, :eager_jedi, {client, pid} }
 
       {:game_over} ->
-        true = Client.game_over?(client) # assert
-        client = Client.server_pull_status(client)
         reply = Client.game_over_status(client)
 
         IO.puts "#{inspect reply}"
-#        { :stop, :normal, {client, pid} }
         { :reply, reply, :idle_jedi, {client, pid}}
-
 
       _ -> 
         { :reply, reply, :idle_jedi, {client, pid}}
     end
 
+  end
+
+  def eager_jedi(:proceed, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :eager_jedi, {client, pid} } 
+  end
+
+  def eager_jedi(:guess_last_word, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :eager_jedi, {client, pid} } 
   end
 
   def eager_jedi({:guess_letter, guess_letter}, _from, {client, pid}) do
@@ -129,12 +142,22 @@ defmodule Hangman.Player.FSM do
     if next == :eager_jedi do
       client = Client.choose_letters(client)
       reply = Client.list_choices(client)
+
+      if Client.last_word?(client), do: next = :giddy_jedi
     end
 
     { :reply, reply, next, {client, pid} }  	
   end
 
-  def eager_jedi(:guess_last_word, _from, {client, pid}) do
+  def giddy_jedi(:proceed, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :giddy_jedi, {client, pid} } 
+  end 
+
+  def giddy_jedi({:guess_letter, _guess_letter}, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :giddy_jedi, {client, pid} } 
+  end
+
+  def giddy_jedi(:guess_last_word, _from, {client, pid}) do
 
     client = Client.guess_last_word(client)
     {status_code, _text} = reply = Client.round_status(client)
@@ -147,8 +170,7 @@ defmodule Hangman.Player.FSM do
       end
 
     if next == :eager_jedi do
-      client = Client.choose_letters(client)
-      reply = Client.list_choices(client)
+      raise "Shouldn't be here"
     end
 
     { :reply, reply, next, {client, pid} }    
@@ -167,39 +189,37 @@ defmodule Hangman.Player.FSM do
   #
 
   # 1) proceed
-  def idle_r2d2(:proceed, _from, {client, pid}) do
+  def neutral_r2d2(:proceed, _from, {client, pid}) do
 
-    case fsm_start_or_over_check(client) do
+    case game_start_or_over_check(client) do
       {:game_start} -> 
       	client = Client.start(client)
         reply = Client.round_status(client)
-        { :reply, reply, :eager_r2d2, {client, pid} }
+        { :reply, reply, :intrigued_r2d2, {client, pid} }
       
       {:game_over} ->
-        true = Client.game_over?(client) # assert
         reply = Client.game_over_status(client)
 
         IO.puts "#{inspect reply}"
-        #{ :stop, :normal, {client, pid} }
-        { :reply, reply, :idle_r2d2, {client, pid}}
+        { :reply, reply, :neutral_r2d2, {client, pid}}
 
 
       _ -> 
-        { :reply, "Shouldn't be here", :idle_r2d2, {client, pid}}
+        { :reply, "Shouldn't be here", :neutral_r2d2, {client, pid}}
     end
   end
 
   # 2) game_keep_guessing
-  def eager_r2d2(:game_keep_guessing, _from, {client, pid}) do
+  def intrigued_r2d2(:game_keep_guessing, _from, {client, pid}) do
 
     client = Client.robot_guess(client, Nil)
     {status_code, _} = reply = Client.round_status(client)
     
     next = 
       case status_code do
-        :game_keep_guessing -> :eager_r2d2
-        :game_won -> :idle_r2d2
-        :game_lost -> :idle_r2d2
+        :game_keep_guessing -> :intrigued_r2d2
+        :game_won -> :neutral_r2d2
+        :game_lost -> :neutral_r2d2
       end
       
     { :reply, reply, next, {client, pid} }
@@ -210,29 +230,27 @@ defmodule Hangman.Player.FSM do
   #
 
   # 1) proceed
-  def idle_r2d2(:proceed, {client, echo_pid}) do
+  def neutral_r2d2(:proceed, {client, echo_pid}) do
 
-    case fsm_start_or_over_check(client) do
+    case game_start_or_over_check(client) do
 
       {:game_start} -> 
         client = Client.start(client)
         Echo.echo_guess(echo_pid, self()) # Setup the next async echo event
 
-        { :next_state, :eager_r3d3, {client, echo_pid} }
+        { :next_state, :spellbound_r2d2, {client, echo_pid} }
 
       {:game_over} ->
-        true = Client.game_over?(client) # assert
-
         IO.puts "Game Over - Terminating FSM"
         { :stop, :normal, {client, echo_pid} }
 
       _ -> 
-        { :next_state, :idle_r2d2, {client, echo_pid}}
+        { :next_state, :neutral_r2d2, {client, echo_pid}}
     end
   end
 
-  # 2) game keep guessing - r2d2 is so fast, it changes into r3d3
-  def eager_r3d3(:game_keep_guessing, {client, echo_pid}) do
+  # 2) game keep guessing
+  def spellbound_r2d2(:game_keep_guessing, {client, echo_pid}) do
 
     client = Client.robot_guess(client, Nil)
     {status_code, _}  = Client.round_status(client)
@@ -242,37 +260,26 @@ defmodule Hangman.Player.FSM do
         :game_keep_guessing -> 
           # Setup the next async echo event
           Echo.echo_guess(echo_pid, self())
-          :eager_r3d3
+          :spellbound_r2d2
 
         :game_won -> 
           # Setup the next async echo event
           Echo.echo_proceed(echo_pid, self())
-          :idle_r2d2
+          :neutral_r2d2
 
         :game_lost -> 
           # Setup the next async echo event
           Echo.echo_proceed(echo_pid, self())
-          :idle_r2d2
+          :neutral_r2d2
       end
 
     { :next_state, next_state, {client, echo_pid} }
   end
 
 
-  # STATE HELPER functions
+  # STATE HELPER function(s)
 
-  # defp fsm_print_status(text), do: IO.puts "#{text}\n"
-  # defp fsm_print_status(text, value), do: IO.puts "#{text} #{inspect value}\n"
-
-  # def fsm_debug_spawn(file_name, term) do
-  #  path = "/home/brpandey/Workspace/elixir-hangman/tmp"
-  #  spawn(fn ->
-  #    "#{path}/#{file_name}"
-  #    |> File.write!(:erlang.term_to_binary(term))
-  #    end)
-  # end
-
-  defp fsm_start_or_over_check(%Client{} = client) do
+  defp game_start_or_over_check(%Client{} = client) do
 
     case Client.game_won_or_lost?(client) do
       

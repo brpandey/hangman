@@ -35,20 +35,15 @@ defmodule Hangman.Player.Client do
 
   def list_choices(%Client{} = client) do
   	true = client.type in [@human] # assert
-
   	client.round_choices
   end
 
-  def game_won?(%Client{} = client) do
-  	client.round.status_code == :game_won
-  end
+  def game_won?(%Client{} = client), do: client.round.status_code == :game_won
 
-  def game_lost?(%Client{} = client) do
-  	client.round.status_code == :game_lost
-  end
+  def game_lost?(%Client{} = client), do: client.round.status_code == :game_lost
 
-  def game_won_or_lost?(%Client{} = client) do
-  	game_won?(client) or game_lost?(client)
+  def game_won_or_lost?(%Client{} = client) do 
+    game_won?(client) or game_lost?(client)
   end
 
   def game_over?(%Client{} = client) do
@@ -86,6 +81,12 @@ defmodule Hangman.Player.Client do
   	end
 
   	text
+  end
+
+  def last_word?(%Client{} = client) do
+    last_word = Strategy.last_word(client.strategy)
+
+    if last_word == Nil, do: false, else: true
   end
 
 	# UPDATE

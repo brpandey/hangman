@@ -167,6 +167,10 @@ _ = """
 
 		IO.puts "Game 2, round 7 status: #{inspect reply}"
 
+		reply = FSM.jedi_proceed(julio_pid)
+
+		IO.puts "Game 2, status: #{inspect reply}"
+
 	end
 end
 
