@@ -1,12 +1,7 @@
 defmodule Hangman.FSM.Test do
 	use ExUnit.Case
 
-	require Hangman.Supervisor
-	require Hangman.Cache
-	require Hangman.Player.FSM
-
   alias Hangman.{Cache, Player.FSM}
-
 
 	test "synchronous player through 1 game test" do
 		
@@ -21,52 +16,50 @@ defmodule Hangman.FSM.Test do
 
 		#:sys.trace(julio_pid, true)
 
-		{:game_keep_guessing, reply} = FSM.sync_start(julio_pid)
+		{:game_keep_guessing, reply} = FSM.r2d2_proceed(julio_pid)
 
     assert "-------E; score=1; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = FSM.sync_guess(julio_pid) 
+    {:game_keep_guessing, reply} = FSM.r2d2_guess(julio_pid) 
 
     assert "-----A-E; score=2; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = FSM.sync_guess(julio_pid)	    
+    {:game_keep_guessing, reply} = FSM.r2d2_guess(julio_pid)	    
 
     assert "-----ATE; score=3; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = FSM.sync_guess(julio_pid)
+    {:game_keep_guessing, reply} = FSM.r2d2_guess(julio_pid)
     
     assert "-----ATE; score=4; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = FSM.sync_guess(julio_pid)
+    {:game_keep_guessing, reply} = FSM.r2d2_guess(julio_pid)
 
     assert "-----ATE; score=5; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = FSM.sync_guess(julio_pid)
+    {:game_keep_guessing, reply} = FSM.r2d2_guess(julio_pid)
 
     assert "----LATE; score=6; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = FSM.sync_guess(julio_pid)
+    {:game_keep_guessing, reply} = FSM.r2d2_guess(julio_pid)
 
     assert "C---LATE; score=7; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = FSM.sync_guess(julio_pid)
+    {:game_keep_guessing, reply} = FSM.r2d2_guess(julio_pid)
 
     assert "C-M-LATE; score=8; status=KEEP_GUESSING" = reply
 
-    {:game_won, reply} = FSM.sync_guess(julio_pid)
+    {:game_won, reply} = FSM.r2d2_guess(julio_pid)
 
     assert "CUMULATE; score=8; status=GAME_WON" = reply
 
-    {:game_over, reply} = FSM.sync_won(julio_pid)
+    FSM.r2d2_proceed(julio_pid)
 
- 	  assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
+ 	  #assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
 
-
- 	  #FSM.sync_game_over(julio_pid)
  	  FSM.stop(julio_pid)
 
 
- 	  # Game 2 -- ASYNC ROBOT!! turbo_r2d2
+ 	  # Game 2 -- ASYNC ROBOT!! turbo r2d2
 _ = """
 			player_name = "julio"
  	  
@@ -78,7 +71,7 @@ _ = """
 
 		:sys.trace(julio_pid, true)
 
-		reply = FSM.event_start(julio_pid)
+		reply = FSM.turbo_r2d2_proceed(julio_pid)
 
 		IO.puts "start: #{inspect reply}"
 
@@ -89,7 +82,7 @@ _ = """
 
 		# Game 3 -- HUMAN!! jedi
 
-			player_name = "julio"
+		player_name = "julio"
  	  
 		secrets = ["cumulate", "avocado"]
 
@@ -99,7 +92,7 @@ _ = """
 
 		:sys.trace(julio_pid, true)
 
-		reply = FSM.jedi_start(julio_pid)
+		reply = FSM.jedi_proceed(julio_pid)
 
 		IO.puts "Game 1 start: #{inspect reply}"			
 
@@ -131,22 +124,18 @@ _ = """
 
 		IO.puts "Game 1, round 7 status: #{inspect reply}"
 
-		assert "Player julio, Round 8: please choose amongst these 3 letter choices observing their respective weighting:  u:2 m*:1 p:1. The asterisk denotes what the computer would have chosen"
+		assert "Player julio, Round 8, C---LATE; score=7; status=KEEP_GUESSING: please choose amongst these 3 letter choices observing their respective weighting:  u:2 m*:1 p:1. The asterisk denotes what the computer would have chosen"
 			= reply
 
 		reply = FSM.jedi_guess(julio_pid, "m")
 
 		assert "Player julio, Round 9: Last word left: cumulate" = reply
 
-		reply = FSM.jedi_guess_last_word(julio_pid)
+		reply = FSM.jedi_win(julio_pid)
 
 		IO.puts "Game 1, round 9 status: #{inspect reply}"
 
-		reply = FSM.jedi_won(julio_pid)
-
-		IO.puts "Game 1, game status: #{inspect reply}"
-
-		reply = FSM.jedi_start(julio_pid)
+		reply = FSM.jedi_proceed(julio_pid)
 
 		IO.puts "Game 2, start: #{inspect reply}"	
 
@@ -174,17 +163,9 @@ _ = """
 
 		IO.puts "Game 2, round 6 status: #{inspect reply}"
 
-		reply = FSM.jedi_guess_last_word(julio_pid)
+		reply = FSM.jedi_win(julio_pid)
 
 		IO.puts "Game 2, round 7 status: #{inspect reply}"
-
-		reply = FSM.jedi_won(julio_pid)
-
-		IO.puts "Game 2, game status: #{inspect reply}"
-
-		reply = FSM.jedi_game_over(julio_pid)
-
-		IO.puts "Game 2, summary status: #{inspect reply}"
 
 	end
 end

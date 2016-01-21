@@ -33,14 +33,6 @@ defmodule Hangman.Player.Client do
 
   # READ
 
-  def fun_type_alias(%Client{} = client, :star_wars) do
-  	case client.type do
-        @human -> :jedi
-        @robot -> :r2d2
-        _ -> raise "unknown player type"
-      end
-  end
-
   def list_choices(%Client{} = client) do
   	true = client.type in [@human] # assert
 
@@ -73,22 +65,6 @@ defmodule Hangman.Player.Client do
   		true -> {:game_over, str_final_result(client)}
   		false -> {client.round.status_code, client.round.status_text}
   	end
-  end
-
-  def server_pull_status(%Client{} = client) do
-
-  	player = client.name
-  	
-  	{^player, status_code, status_text} =
-  		Game.Server.game_status(client.game_server_pid)
-
-  	if status_code == :game_reset do
-    	round_info = %Round{ status_code: status_code, status_text: status_text }
-			client = Kernel.put_in(client.round, round_info)
-			client = Kernel.put_in(client.game_summary, [status_code])
-		end
-
-  	client
   end
 
   defp str_final_result(%Client{} = client) do
@@ -158,6 +134,21 @@ defmodule Hangman.Player.Client do
   	round_action(client, :robot, robot_guess_context)
 	end
 
+  def server_pull_status(%Client{} = client) do
+
+  	player = client.name
+  	
+  	{^player, status_code, status_text} =
+  		Game.Server.game_status(client.game_server_pid)
+
+  	if status_code == :game_reset do
+    	round_info = %Round{ status_code: status_code, status_text: status_text }
+			client = Kernel.put_in(client.round, round_info)
+			client = Kernel.put_in(client.game_summary, [status_code])
+		end
+
+  	client
+  end
 
   # PRIVATE 
 
@@ -216,6 +207,8 @@ defmodule Hangman.Player.Client do
       case Strategy.last_word(strategy) do
 
         Nil ->
+        	{_, status} = round_status(client)
+
         	# Return top 5 letter, count pairs if possible
         	top_choices = Strategy.most_common_letter_and_counts(strategy, 
                                   @round_letter_choices)
@@ -229,7 +222,7 @@ defmodule Hangman.Player.Client do
 
           choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
 
-        	"Player #{player}, Round #{seq_no}: " 
+        	"Player #{player}, Round #{seq_no}, #{status}: " 
         			<> "please choose amongst these #{size} letter choices "
         			<> "observing their respective weighting: #{choices_text}."
               <> " The asterisk denotes what the computer would have chosen"
