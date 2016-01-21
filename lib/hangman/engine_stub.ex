@@ -197,7 +197,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		_guessed = ["a", "c", "e", "i", "l", "m", "o", "t"]
 
-		guess_word = "cumulate"
+		_guess_word = "cumulate"
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: "cumulate" }
 
