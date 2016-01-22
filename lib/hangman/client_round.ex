@@ -1,0 +1,212 @@
+defmodule Hangman.Player.Client.Round do
+
+		alias Hangman.{Game, Reduction, Strategy, 
+			Strategy.Options, Types.Game.Round}
+
+		  @round_letter_choices 5	
+
+		# READ
+
+		def context(%Hangman.Player.Client{} = client) do
+
+	  	case client.round.result_code do
+	  		:correct_letter -> 
+	  			{:correct_letter, client.round.guess, 
+	  					client.round.pattern, client.mystery_letter}
+
+	  		:incorrect_letter -> 
+	  			{:incorrect_letter, client.round.guess}
+
+	  		:incorrect_word -> 
+	  			{:incorrect_word, client.round.guess}
+
+	  		true ->
+	  			raise "Unknown round result"
+	  	end
+	  end
+
+	  def status(%Hangman.Player.Client{} = client) do
+  		{client.round.status_code, client.round.status_text}
+  	end
+
+	  # UPDATE
+
+	  def setup(%Hangman.Player.Client{} = client, strategy_context) do
+
+	  	{player, strategy, game_no, seq_no} = params(client)
+
+	  	options = Keyword.new([{:id, player}, {:game_no, game_no}, {:seq_no, seq_no}])
+
+	  	# Generate the word filter options for the words reduction engine
+			filter_options = Options.filter_options(strategy, strategy_context)
+
+			options = Keyword.merge(options, filter_options)
+
+			match_key = Kernel.elem(strategy_context, 0)
+
+			# Filter the engine hangman word set
+			{^seq_no, reduction_pass_info} = Reduction.Engine.Stub.reduce(match_key, options)
+
+			# Update the round strategy with the result of the reduction pass info _from the engine
+			strategy = Strategy.update(strategy, reduction_pass_info)
+
+		  client = Kernel.put_in(client.strategy, strategy)
+
+	    client
+	  end
+
+	  # Round Action functions
+
+	  def action(%Hangman.Player.Client{} = client, :robot, :guess) do
+	  	
+	  	{player, strategy, _game_no, seq_no} = params(client)
+
+	    round_info = 
+		    case Strategy.make_guess(strategy) do
+		      {:guess_word, guess_word} ->
+
+		        {{^player, result, code, pattern, text}, final} =
+		          Game.Server.guess_word(client.game_server_pid, guess_word)
+
+		       	%Round{seq_no: seq_no,
+	      			guess: guess_word, result_code: result, 
+	      			status_code: code, pattern: pattern, 
+	      			status_text: text, final_result: final}        
+
+		      {:guess_letter, guess_letter} ->
+
+		        {{^player, result, code, pattern, text}, final} =
+		          Game.Server.guess_letter(client.game_server_pid, guess_letter)
+
+		        %Round{seq_no: seq_no,
+	      			guess: guess_letter, result_code: result, 
+	      			status_code: code, pattern: pattern, 
+	      			status_text: text, final_result: final}
+		    end
+
+		  update(client, round_info)
+	  end
+
+	  # Wrappers
+	  def action(%Hangman.Player.Client{} = client, :human, :guess) do
+	  	action(client, :human, :choose_letters)
+	  end
+
+	  def action(%Hangman.Player.Client{} = client, :human, :choose_letters) do
+
+	  	{player, strategy, _game_no, seq_no} = params(client)
+
+	    choices = 
+	      case Strategy.last_word(strategy) do
+
+	        Nil ->
+	        	{_, status} = status(client)
+
+	        	# Return top 5 letter, count pairs if possible
+	        	top_choices = Strategy.most_common_letter_and_counts(strategy, 
+	                                  @round_letter_choices)
+
+	        	size = length(top_choices)
+
+	          choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
+	            acc <> " #{k}:#{v}" end)
+
+	          best_letter = Strategy.retrieve_best_letter(strategy)
+
+	          choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
+
+	        	"Player #{player}, Round #{seq_no}, #{status}: " 
+	        			<> "please choose amongst these #{size} letter choices "
+	        			<> "observing their respective weighting: #{choices_text}."
+	              <> " The asterisk denotes what the computer would have chosen"
+	        
+	        last ->
+	          "Player #{player}, Round #{seq_no}: Last word left: #{last}"
+	      end
+
+	    client = Kernel.put_in(client.round_choices, choices)
+
+	  	client
+	  end
+
+	  def action(%Hangman.Player.Client{} = client, :human, {:guess_letter, letter}) do
+
+	  	pid = client.game_server_pid
+
+	  	top_choices = Strategy.most_common_letter(client.strategy, 
+	                            @round_letter_choices)
+
+	    # If user has decided to put in a letter, not in the choices
+	    # grab the letter that had the highest letter counts
+	  	unless letter in top_choices, do: letter = hd(top_choices)
+
+	  	seq_no = client.round_no + 1
+	  	player = client.name
+
+	  	{{^player, result, code, pattern, text}, final} =
+	      Game.Server.guess_letter(pid, letter)
+
+	    round_info = %Round{seq_no: seq_no,
+				guess: letter, result_code: result, 
+				status_code: code, pattern: pattern, 
+				status_text: text, final_result: final}
+
+	    strategy = Strategy.update(client.strategy, {:letter, letter})
+		  client = Kernel.put_in(client.strategy, strategy)
+
+			update(client, round_info)
+	  end
+
+	  def action(%Hangman.Player.Client{} = client, :human, :guess_last_word) do
+
+	    pid = client.game_server_pid
+
+	    last_word = Strategy.last_word(client.strategy)
+
+	    if last_word == Nil, do: last_word = ""
+
+	    seq_no = client.round_no + 1
+	    player = client.name
+
+	    {{^player, result, code, pattern, text}, final} =
+	      Game.Server.guess_word(pid, last_word)
+
+	    round_info = %Round{seq_no: seq_no,
+	      guess: last_word, result_code: result, 
+	      status_code: code, pattern: pattern, 
+	      status_text: text, final_result: final}
+
+	    strategy = Strategy.update(client.strategy, {:word, last_word})
+	    client = Kernel.put_in(client.strategy, strategy)
+
+	    update(client, round_info)
+	  end
+
+
+	  def update(%Hangman.Player.Client{} = client, %Round{} = round_info) do
+
+	  	client = Kernel.put_in(client.round, round_info)
+		  client = Kernel.put_in(client.round_no, round_info.seq_no)
+	       
+	    if (round_info.final_result != "" and round_info.final_result != [] and
+	    	List.first(round_info.final_result) == {:status, :game_over}) do
+	    
+	    	client = Kernel.put_in(client.game_summary, round_info.final_result)
+	    end
+
+	    client
+	  end
+
+	  # Action helper
+
+	  defp params(%Hangman.Player.Client{} = client) do
+
+	  	name = client.name
+	  	strategy = client.strategy
+	    game_no = client.game_no
+	    seq_no =  client.round_no + 1
+
+	  	{name, strategy, game_no, seq_no}
+	  end 
+
+	end # Module Round

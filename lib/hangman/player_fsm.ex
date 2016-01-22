@@ -212,7 +212,7 @@ defmodule Hangman.Player.FSM do
   # 2) game_keep_guessing
   def intrigued_r2d2(:game_keep_guessing, _from, {client, pid}) do
 
-    client = Client.robot_guess(client, Nil)
+    client = Client.robot_guess(client)
     {status_code, _} = reply = Client.round_status(client)
     
     next = 
@@ -252,7 +252,7 @@ defmodule Hangman.Player.FSM do
   # 2) game keep guessing
   def spellbound_r2d2(:game_keep_guessing, {client, echo_pid}) do
 
-    client = Client.robot_guess(client, Nil)
+    client = Client.robot_guess(client)
     {status_code, _}  = Client.round_status(client)
 
     next_state = 
