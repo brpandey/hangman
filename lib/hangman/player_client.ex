@@ -1,14 +1,15 @@
 defmodule Hangman.Player.Client do
 
-  alias Hangman.{Player.Client, Game, Strategy}
+  alias Hangman.{Player.Client, Player.Events, Strategy}
 
 	defstruct name: "", 
   	type: Nil,
+  	event_server_pid: Nil,
     game_server_pid: Nil, 
     game_no: 0,
     round_no: 0,
     round_choices: "",
-    mystery_letter: Game.Server.mystery_letter,
+    mystery_letter: Hangman.Game.Server.mystery_letter,
     strategy: Strategy.new,
     round: %Hangman.Types.Game.Round{},
     game_summary: []	
@@ -19,19 +20,20 @@ defmodule Hangman.Player.Client do
 
   # CREATE
 
-  def new(name, type, game_server_pid) 
+  def new(name, type, game_server_pid, event_server_pid) 
   	when is_binary(name) do
 
   	unless type in [@human, @robot], do: raise "unknown player type"
 
-  	%Client{ name: name, type: type, game_server_pid: game_server_pid }
+  	%Client{ name: name, type: type, 
+  		game_server_pid: game_server_pid, event_server_pid: event_server_pid }
   end
-
 
   # READ
 
   def list_choices(%Client{} = client) do
   	true = client.type in [@human] # assert
+
   	client.round_choices
   end
 
@@ -42,6 +44,7 @@ defmodule Hangman.Player.Client do
   end
 
   def game_won?(%Client{} = client), do: client.round.status_code == :game_won
+
   def game_lost?(%Client{} = client), do: client.round.status_code == :game_lost
 
   def game_won_or_lost?(%Client{} = client) do 
@@ -63,7 +66,7 @@ defmodule Hangman.Player.Client do
   	end
   end
 
-  defp str_final_result(%Client{} = client) do
+  def str_final_result(%Client{} = client) do
   	
   	text = ""
 
@@ -80,75 +83,52 @@ defmodule Hangman.Player.Client do
 			text = "Game Over! Average Score: #{avg}, " 
 						<> "# Games: #{games}, Scores: #{results}"
   	end
-
-  	text
   end
-
 
 	# UPDATE
 
 	def start(%Client{} = client) do
-    player = client.name
-    type = client.type
-    pid = client.game_server_pid
-    game = client.game_no
-
     if client.game_no >= 1 do
-      client = %Client{ name: player, type: type, 
-                        game_server_pid: pid, game_no: game + 1 }
+      client = %Client{ name: client.name, type: client.type, 
+                        game_server_pid: client.game_server_pid,
+                        event_server_pid: client.event_server_pid,
+                        game_no: client.game_no + 1 }
     else
       client = Kernel.put_in(client.game_no, client.game_no + 1)
+
+      # Notify the event server that we've started playing hangman
+      Events.Notify.start(client.event_server_pid, client.name)
     end
 
-    {^player, :secret_length, secret_length} =
-      Game.Server.secret_length(client.game_server_pid)
-
-    context = {:game_start, secret_length}
-
-    client 
-    	|> Client.Round.setup(context)
-    	|> Client.Round.action(client.type, :guess)
+    Client.Round.start(client)
   end
 
   def choose_letters(%Client{} = client) do
   	true = client.type in [@human] # assert
 
-  	context = Client.Round.context(client)
-
-  	client 
-  		|> Client.Round.setup(context) 
-  		|> Client.Round.action(:human, :choose_letters)
+  	Client.Round.choose_letters(client)
   end
 
   def robot_guess(%Client{} = client) do
   	true = client.type in [@robot] # assert
 
-  	context = Client.Round.context(client)
-
-  	client
-  	  |> Client.Round.setup(context) 
-  		|> Client.Round.action(:robot, :guess)
+  	Client.Round.robot_guess(client)
 	end
 
   def guess_letter(%Client{} = client, letter) do
   	true = client.type in [@human] # assert
 
-  	client
-  		|> Client.Round.action(:human, {:guess_letter, letter})
+  	Client.Round.guess_letter(client, letter)
   end
 
   def guess_last_word(%Client{} = client) do
     true = client.type in [@human] # assert
 
-    client
-    	|> Client.Round.action(:human, :guess_last_word)
+    Client.Round.guess_last_word(client)
   end
-
 
   # DELETE
 
-  def delete(%Client{} = _client) do
-  	%Client{}
-  end
+  def delete(%Client{} = _client), do:	%Client{}
 
 end

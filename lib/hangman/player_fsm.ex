@@ -1,16 +1,17 @@
 defmodule Hangman.Player.FSM do
   @behaviour :gen_fsm
 
-
   alias Hangman.{Player.Client, Player.Async.Echo}
 
   # External API
-  def start_link(player_name, player_type, game_server_pid) do
-    :gen_fsm.start_link(__MODULE__, {player_name, player_type, game_server_pid}, [])
+  def start_link(player_name, player_type, game_server_pid, event_server_pid) do
+    :gen_fsm.start_link(__MODULE__, {player_name, player_type, 
+      game_server_pid, event_server_pid}, [])
   end
 
-  def start(player_name, player_type, game_server_pid) do
-    :gen_fsm.start(__MODULE__, {player_name, player_type, game_server_pid}, [])
+  def start(player_name, player_type, game_server_pid, event_server_pid) do
+    :gen_fsm.start(__MODULE__, {player_name, player_type, 
+      game_server_pid, event_server_pid}, [])
   end
 
   def stop(fsm_pid) do
@@ -57,9 +58,9 @@ defmodule Hangman.Player.FSM do
 
   # OTP :gen_fsm Callbacks
 
-  def init({player_name, type, game_server_pid}) do
+  def init({player_name, type, game_server_pid, event_server_pid}) do
 
-    client = Client.new(player_name, type, game_server_pid)
+    client = Client.new(player_name, type, game_server_pid, event_server_pid)
 
     initial = 
       case client.type do
@@ -302,7 +303,7 @@ defmodule Hangman.Player.FSM do
   # BOILERPLATE
 
   # Since Elixir no longer supports :gen_fsm through GenFSM, we need
-  # to require the Erlang module :gen_fsm as a behaviour and implement
+  # to use the Erlang module :gen_fsm as a behaviour and implement
   # the following functions below
 
 

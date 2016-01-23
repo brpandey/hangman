@@ -12,7 +12,9 @@ defmodule Hangman.FSM.Test do
 
 		julio_game_server_pid = Cache.get_server(player_name, secrets)
 
-		{:ok, julio_pid} = FSM.start(player_name, :robot, julio_game_server_pid)
+		{:ok, status_pid} = Hangman.Player.Events.Notify.start_link()
+
+		{:ok, julio_pid} = FSM.start(player_name, :robot, julio_game_server_pid, status_pid)
 
 		#:sys.trace(julio_pid, true)
 
@@ -88,7 +90,9 @@ _ = """
 
 		julio_game_server_pid = Cache.get_server(player_name, secrets)			
 
-		{:ok, julio_pid} = FSM.start(player_name, :human, julio_game_server_pid)
+		{:ok, status_pid} = Hangman.Player.Events.Notify.start_link()
+
+		{:ok, julio_pid} = FSM.start(player_name, :human, julio_game_server_pid, status_pid)
 
 		:sys.trace(julio_pid, true)
 
