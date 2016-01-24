@@ -16,10 +16,10 @@ defmodule Hangman.Player.Events.Notify do
 						IO.inspect "#Player #{name}, Game #{game_no}, secret length --> #{length}"
 
 					{:guessed_letter, name, game_no, letter} ->
-						IO.inspect "#Player #{name}, Game #{game_no}, guessed letter --> #{letter}"
+						IO.inspect "#Player #{name}, Game #{game_no}, letter --> #{letter}"
 
 					{:guessed_word, name, game_no, word} ->
-						IO.inspect "#Player #{name}, Game #{game_no}, guessed word --> #{word}"
+						IO.inspect "#Player #{name}, Game #{game_no}, word --> #{word}"
 
 					{:round_status, name, game_no, round_no, status} ->
 						IO.inspect "#Player #{name}, Game #{game_no}, Round #{round_no}, status --> #{status}"

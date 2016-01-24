@@ -33,7 +33,7 @@ defmodule Hangman.Player.Logger.Handler do
 
 	def handle_event({:guessed_word, _name, _game_no, word}, file_pid) do
 
-		msg = "# guessed word --> #{word} "
+		msg = "# word --> #{word} "
 
 		write(file_pid, msg)
 
@@ -42,7 +42,7 @@ defmodule Hangman.Player.Logger.Handler do
 
 	def handle_event({:guessed_letter, _name, _game_no, letter}, file_pid) do
 
-		msg = "# guessed letter --> #{letter}"
+		msg = "# letter --> #{letter}"
 
 		write(file_pid, msg)
 
