@@ -1,33 +1,45 @@
 defmodule Hangman.Player.Events.Notify do
 
-	def start_link() do
+	# options = [file_output: true, display_output: false]
+	def start_link(options \\ [file_output: true]) do
 		{:ok, pid} = GenEvent.start_link()
-		GenEvent.add_handler(pid, Hangman.Player.Logger.Handler, [])
 
-		Task.start_link fn ->
-			stream = GenEvent.stream(pid)
+		case Keyword.fetch(options, :file_output) do
+			{:ok, true} ->
+				GenEvent.add_handler(pid, Hangman.Player.Logger.Handler, [])
+			_ -> ""
+		end
 
-			for event <- stream do
-				case event do
-					{:start, name} ->
-						IO.inspect "#Player #{name} --> _Ha_Ng_m_An_ has started"
+		case Keyword.fetch(options, :display_output) do
+			
+			{:ok, true} ->
+				Task.start_link fn ->
+					stream = GenEvent.stream(pid)
 
-					{:secret_length, name, game_no, length} ->
-						IO.inspect "#Player #{name}, Game #{game_no}, secret length --> #{length}"
+					for event <- stream do
+						case event do
+							{:start, name} ->
+								IO.inspect "#Player #{name} --> _Ha_Ng_m_An_ has started"
 
-					{:guessed_letter, name, game_no, letter} ->
-						IO.inspect "#Player #{name}, Game #{game_no}, letter --> #{letter}"
+							{:secret_length, name, game_no, length} ->
+								IO.inspect "#Player #{name}, Game #{game_no}, secret length --> #{length}"
 
-					{:guessed_word, name, game_no, word} ->
-						IO.inspect "#Player #{name}, Game #{game_no}, word --> #{word}"
+							{:guessed_letter, name, game_no, letter} ->
+								IO.inspect "#Player #{name}, Game #{game_no}, letter --> #{letter}"
 
-					{:round_status, name, game_no, round_no, status} ->
-						IO.inspect "#Player #{name}, Game #{game_no}, Round #{round_no}, status --> #{status}"
+							{:guessed_word, name, game_no, word} ->
+								IO.inspect "#Player #{name}, Game #{game_no}, word --> #{word}"
 
-					{:game_over, name, text} ->
-						IO.inspect "#Player #{name}, Game Over!! --> #{text}"
-				end		
-			end
+							{:round_status, name, game_no, round_no, status} ->
+								IO.inspect "#Player #{name}, Game #{game_no}, Round #{round_no}, status --> #{status}"
+
+							{:game_over, name, text} ->
+								IO.inspect "#Player #{name}, Game Over!! --> #{text}"
+						end
+					end
+				end
+
+			_ -> ""
 		end
 
 		{:ok, pid}
