@@ -190,20 +190,22 @@ defmodule Hangman.Player.Client.Round do
 
   defp action(%Hangman.Player.Client{} = client, :human, {:guess_letter, letter}) do
 
-  	pid = client.game_server_pid
+  	{player, strategy, game_no, seq_no} = params(client)
 
-  	top_choices = Strategy.most_common_letter(client.strategy, 
-                            @round_letter_choices)
+  	top_choices = Strategy.most_common_letter(strategy, @round_letter_choices)
 
     # If user has decided to put in a letter, not in the choices
     # grab the letter that had the highest letter counts
   	unless letter in top_choices, do: letter = hd(top_choices)
 
-  	seq_no = client.round_no + 1
-  	player = client.name
-
   	{{^player, result, code, pattern, text}, final} =
-      Game.Server.guess_letter(pid, letter)
+      Game.Server.guess_letter(client.game_server_pid, letter)
+
+    Events.Notify.guessed_letter(client.event_server_pid, 
+    	{player, game_no, letter})
+
+    Events.Notify.round_status(client.event_server_pid,
+			{player, game_no, seq_no, text})
 
     round_info = %Round{seq_no: seq_no,
 			guess: letter, result_code: result, 
@@ -218,17 +220,19 @@ defmodule Hangman.Player.Client.Round do
 
   defp action(%Hangman.Player.Client{} = client, :human, :guess_last_word) do
 
-    pid = client.game_server_pid
+   	{player, strategy, game_no, seq_no} = params(client)
 
-    last_word = Strategy.last_word(client.strategy)
-
-    if last_word == Nil, do: last_word = ""
-
-    seq_no = client.round_no + 1
-    player = client.name
+    last_word =
+    	case Strategy.last_word(strategy) do Nil -> ""; word -> word end
 
     {{^player, result, code, pattern, text}, final} =
-      Game.Server.guess_word(pid, last_word)
+      Game.Server.guess_word(client.game_server_pid, last_word)
+
+    Events.Notify.guessed_word(client.event_server_pid, 
+  		{player, game_no, last_word})
+
+    Events.Notify.round_status(client.event_server_pid,
+			{player, game_no, seq_no, text})
 
     round_info = %Round{seq_no: seq_no,
       guess: last_word, result_code: result, 
@@ -249,12 +253,11 @@ defmodule Hangman.Player.Client.Round do
        
     if (round_info.final_result != "" and round_info.final_result != [] and
     	List.first(round_info.final_result) == {:status, :game_over}) do
-    
-    	client = Kernel.put_in(client.game_summary, round_info.final_result)
 
-    	summary_text = Hangman.Player.Client.str_final_result(client)
+    	summary = str_game_summary(round_info.final_result)
+    	client = Kernel.put_in(client.game_summary, summary)
 
-    	Events.Notify.game_over(client.event_server_pid, client.name, summary_text)
+    	Events.Notify.game_over(client.event_server_pid, client.name, summary)
     end
 
     client
@@ -270,6 +273,20 @@ defmodule Hangman.Player.Client.Round do
     seq_no =  client.round_no + 1
 
   	{name, strategy, game_no, seq_no}
-  end 
+  end
+
+  defp str_game_summary(tuple_list) 
+  when is_list(tuple_list) and is_tuple(hd(tuple_list)) do
+  	
+		{:ok, avg} = Keyword.fetch(tuple_list, :average_score)
+		{:ok, games} = Keyword.fetch(tuple_list, :games)
+		{:ok, scores} = Keyword.fetch(tuple_list, :results)
+
+		results = Enum.reduce(scores, "",  fn {k,v}, acc -> 
+								acc <> " (#{k}: #{v})"  end)
+			
+		"Game Over! Average Score: #{avg}, " 
+			<> "# Games: #{games}, Scores: #{results}"
+	end
 
 end # Module Round
