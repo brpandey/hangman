@@ -12,11 +12,10 @@ defmodule Hangman.Player.Client do
     mystery_letter: Hangman.Game.Server.mystery_letter,
     strategy: Strategy.new,
     round: %Hangman.Types.Game.Round{},
-    game_summary: []	
+    game_summary: Nil
 
   @human :human
   @robot :robot
-
 
   # CREATE
 
@@ -33,57 +32,28 @@ defmodule Hangman.Player.Client do
 
   def list_choices(%Client{} = client) do
   	true = client.type in [@human] # assert
-
-  	client.round_choices
+		client.round_choices
   end
 
   def last_word?(%Client{} = client) do
-    last_word = Strategy.last_word(client.strategy)
-
-    if last_word == Nil, do: false, else: true
+    case Strategy.last_word(client.strategy) do Nil -> false; _ -> true end
   end
 
   def game_won?(%Client{} = client), do: client.round.status_code == :game_won
 
   def game_lost?(%Client{} = client), do: client.round.status_code == :game_lost
 
-  def game_won_or_lost?(%Client{} = client) do 
-    game_won?(client) or game_lost?(client)
-  end
+  def game_over?(%Client{} = client), do: client.game_summary != Nil
 
-  def game_over?(%Client{} = client) do
-  	List.first(client.game_summary) == {:status, :game_over}
-  end
-
-  def round_status(%Client{} = client) do
-  	Client.Round.status(client)
-  end
+  def round_status(%Client{} = client), do: Client.Round.status(client)
 
   def game_over_status(%Client{} = client) do
   	case game_over?(client) do
-  		true -> {:game_over, str_final_result(client)}
+  		true -> {:game_over, client.game_summary}
   		false -> {client.round.status_code, client.round.status_text}
   	end
   end
 
-  def str_final_result(%Client{} = client) do
-  	
-  	text = ""
-
-  	if game_over?(client) do
-	  	summary = client.game_summary
-
-			{:ok, avg} = Keyword.fetch(summary, :average_score)
-			{:ok, games} = Keyword.fetch(summary, :games)
-			{:ok, scores} = Keyword.fetch(summary, :results)
-
-			results = Enum.reduce(scores, "", 
-										fn({k,v}, acc) -> acc <> " (#{k}: #{v})"  end)
-				
-			text = "Game Over! Average Score: #{avg}, " 
-						<> "# Games: #{games}, Scores: #{results}"
-  	end
-  end
 
 	# UPDATE
 

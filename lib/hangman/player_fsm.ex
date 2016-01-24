@@ -282,7 +282,7 @@ defmodule Hangman.Player.FSM do
 
   defp game_start_or_over_check(%Client{} = client) do
 
-    case Client.game_won_or_lost?(client) do
+    case Client.game_won?(client) or Client.game_lost?(client) do
       
       true -> # Single game finished
 
