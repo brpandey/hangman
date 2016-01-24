@@ -12,9 +12,9 @@ defmodule Hangman.FSM.Test do
 
 		julio_game_server_pid = Cache.get_server(player_name, secrets)
 
-		{:ok, status_pid} = Hangman.Player.Events.Notify.start_link()
+		{:ok, notify_pid} = Hangman.Player.Events.Notify.start_link()
 
-		{:ok, julio_pid} = FSM.start(player_name, :robot, julio_game_server_pid, status_pid)
+		{:ok, julio_pid} = FSM.start(player_name, :robot, julio_game_server_pid, notify_pid)
 
 		#:sys.trace(julio_pid, true)
 
@@ -63,13 +63,15 @@ defmodule Hangman.FSM.Test do
 
  	  # Game 2 -- ASYNC ROBOT!! turbo r2d2
 _ = """
-			player_name = "julio"
+		player_name = "julio"
  	  
 		secrets = ["cumulate"]
 
 		julio_game_server_pid = Cache.get_server(player_name, secrets)
 
-		{:ok, julio_pid} = FSM.start(player_name, :robot, julio_game_server_pid)
+		{:ok, notify_pid} = Hangman.Player.Events.Notify.start_link()
+
+		{:ok, julio_pid} = FSM.start(player_name, :robot, julio_game_server_pid, notify_pid)
 
 		:sys.trace(julio_pid, true)
 
@@ -80,7 +82,7 @@ _ = """
 		reply = FSM.sync_status(julio_pid)
 
 		IO.puts "1 status: #{inspect reply}"
-	"""
+		"""
 
 		# Game 3 -- HUMAN!! jedi
 
@@ -90,9 +92,9 @@ _ = """
 
 		julio_game_server_pid = Cache.get_server(player_name, secrets)			
 
-		{:ok, status_pid} = Hangman.Player.Events.Notify.start_link()
+		{:ok, notify_pid} = Hangman.Player.Events.Notify.start_link()
 
-		{:ok, julio_pid} = FSM.start(player_name, :human, julio_game_server_pid, status_pid)
+		{:ok, julio_pid} = FSM.start(player_name, :human, julio_game_server_pid, notify_pid)
 
 		:sys.trace(julio_pid, true)
 
