@@ -20,7 +20,7 @@ defmodule Hangman.Player.Client do
   # CREATE
 
   def new(name, type, game_server_pid, event_server_pid) 
-  	when is_binary(name) do
+  	when is_binary(name) and is_atom(type) do
 
   	unless type in [@human, @robot], do: raise "unknown player type"
 
