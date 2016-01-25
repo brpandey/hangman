@@ -19,23 +19,23 @@ defmodule Hangman.Player.FSM do
   end
 
   # HUMAN PLAYER EVENTS - (synchronous)
-  def jedi_proceed(fsm_pid), do:  :gen_fsm.sync_send_event(fsm_pid, :proceed)  
+  def socrates_proceed(fsm_pid), do:  :gen_fsm.sync_send_event(fsm_pid, :proceed)  
 
-  def jedi_guess(fsm_pid, letter) when is_binary(letter) do
+  def socrates_guess(fsm_pid, letter) when is_binary(letter) do
   	:gen_fsm.sync_send_event(fsm_pid, {:guess_letter, letter})
   end
 
-  def jedi_win(fsm_pid) do
+  def socrates_win(fsm_pid) do
     :gen_fsm.sync_send_event(fsm_pid, :guess_last_word)
   end
 
   # ROBOT PLAYER EVENTS (synchronous - robot guessing)  
-  def r2d2_guess(fsm_pid) do
+  def wall_e_guess(fsm_pid) do
     :gen_fsm.sync_send_event(fsm_pid, :game_keep_guessing)
   end
 
   # TURBO ROBOT PLAYER EVENTS (asynchronous - robot guessing)
-  def turbo_r2d2_guess(fsm_pid) do 
+  def turbo_wall_e_guess(fsm_pid) do 
     :gen_fsm.send_event(fsm_pid, :game_keep_guessing)
   end
 
@@ -63,8 +63,8 @@ defmodule Hangman.Player.FSM do
 
     initial = 
       case client.type do
-        :human -> :idle_jedi
-        :robot -> :neutral_r2d2
+        :human -> :idle_socrates
+        :robot -> :neutral_wall_e
         _ -> raise "unknown player type"
       end
 
@@ -76,11 +76,11 @@ defmodule Hangman.Player.FSM do
   end
 
 
-  #####################
-  #                   #
-  # jedi HUMAN states #
-  #                   #
-  #####################
+  #########################
+  #                       #
+  # socrates HUMAN states #
+  #                       #
+  #########################
 
   #
   # SYNCHRONOUS State Callbacks
@@ -89,15 +89,15 @@ defmodule Hangman.Player.FSM do
   # Since human will be calling, want to guard for events unsupported 
   # in current states, rather than crashing
 
-  def idle_jedi({:guess_letter, _guess_letter}, _from, {client, pid}) do
-    { :reply, "Event unsupported in given state", :idle_jedi, {client, pid} } 
+  def idle_socrates({:guess_letter, _guess_letter}, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :idle_socrates, {client, pid} } 
   end
 
-  def idle_jedi(:guess_last_word, _from, {client, pid}) do
-    { :reply, "Event unsupported in given state", :idle_jedi, {client, pid} } 
+  def idle_socrates(:guess_last_word, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :idle_socrates, {client, pid} } 
   end  
 
-  def idle_jedi(:proceed, _from, {client, pid}) do
+  def idle_socrates(:proceed, _from, {client, pid}) do
 
     reply = game_start_or_over_check(client)
 
@@ -105,70 +105,70 @@ defmodule Hangman.Player.FSM do
       {:game_start} ->  
         client = Client.start(client)
         reply = Client.list_choices(client)
-        { :reply, reply, :eager_jedi, {client, pid} }
+        { :reply, reply, :eager_socrates, {client, pid} }
 
       {:game_over} ->
         reply = Client.game_over_status(client)
 
-        { :reply, reply, :idle_jedi, {client, pid}}
+        { :reply, reply, :idle_socrates, {client, pid}}
 
       _ -> 
-        { :reply, reply, :idle_jedi, {client, pid}}
+        { :reply, reply, :idle_socrates, {client, pid}}
     end
 
   end
 
-  def eager_jedi(:proceed, _from, {client, pid}) do
-    { :reply, "Event unsupported in given state", :eager_jedi, {client, pid} } 
+  def eager_socrates(:proceed, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :eager_socrates, {client, pid} } 
   end
 
-  def eager_jedi(:guess_last_word, _from, {client, pid}) do
-    { :reply, "Event unsupported in given state", :eager_jedi, {client, pid} } 
+  def eager_socrates(:guess_last_word, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :eager_socrates, {client, pid} } 
   end
 
-  def eager_jedi({:guess_letter, guess_letter}, _from, {client, pid}) do
+  def eager_socrates({:guess_letter, guess_letter}, _from, {client, pid}) do
 
     client = Client.guess_letter(client, guess_letter)
     {status_code, _text} = reply = Client.round_status(client)
 
     next = 
       case status_code do
-        :game_keep_guessing -> :eager_jedi
-        :game_won -> :idle_jedi
-        :game_lost -> :idle_jedi
+        :game_keep_guessing -> :eager_socrates
+        :game_won -> :idle_socrates
+        :game_lost -> :idle_socrates
       end
 
-    if next == :eager_jedi do
+    if next == :eager_socrates do
       client = Client.choose_letters(client)
       reply = Client.list_choices(client)
 
-      if Client.last_word?(client), do: next = :giddy_jedi
+      if Client.last_word?(client), do: next = :giddy_socrates
     end
 
     { :reply, reply, next, {client, pid} }  	
   end
 
-  def giddy_jedi(:proceed, _from, {client, pid}) do
-    { :reply, "Event unsupported in given state", :giddy_jedi, {client, pid} } 
+  def giddy_socrates(:proceed, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :giddy_socrates, {client, pid} } 
   end 
 
-  def giddy_jedi({:guess_letter, _guess_letter}, _from, {client, pid}) do
-    { :reply, "Event unsupported in given state", :giddy_jedi, {client, pid} } 
+  def giddy_socrates({:guess_letter, _guess_letter}, _from, {client, pid}) do
+    { :reply, "Event unsupported in given state", :giddy_socrates, {client, pid} } 
   end
 
-  def giddy_jedi(:guess_last_word, _from, {client, pid}) do
+  def giddy_socrates(:guess_last_word, _from, {client, pid}) do
 
     client = Client.guess_last_word(client)
     {status_code, _text} = reply = Client.round_status(client)
 
     next = 
       case status_code do
-        :game_keep_guessing -> :eager_jedi
-        :game_won -> :idle_jedi
-        :game_lost -> :idle_jedi
+        :game_keep_guessing -> :eager_socrates
+        :game_won -> :idle_socrates
+        :game_lost -> :idle_socrates
       end
 
-    if next == :eager_jedi do
+    if next == :eager_socrates do
       raise "Shouldn't be here"
     end
 
@@ -178,7 +178,7 @@ defmodule Hangman.Player.FSM do
 
   #####################
   #                   #
-  # r2d2 ROBOT states #
+  # wall_e ROBOT states #
   #                   #
   #####################
 
@@ -188,42 +188,42 @@ defmodule Hangman.Player.FSM do
   #
 
   # 1) 
-  def neutral_r2d2(:game_keep_guessing, _from, {client, pid}) do
+  def neutral_wall_e(:game_keep_guessing, _from, {client, pid}) do
 
     case game_start_or_over_check(client) do
       {:game_start} -> 
       	client = Client.start(client)
         reply = Client.round_status(client)
-        { :reply, reply, :intrigued_r2d2, {client, pid} }
+        { :reply, reply, :intrigued_wall_e, {client, pid} }
       
       {:game_over} ->
         reply = Client.game_over_status(client)
-        { :reply, reply, :zen_r2d2, {client, pid}}
+        { :reply, reply, :zen_wall_e, {client, pid}}
 
       _ -> 
-        { :reply, "Shouldn't be here", :neutral_r2d2, {client, pid}}
+        { :reply, "Shouldn't be here", :neutral_wall_e, {client, pid}}
     end
   end
 
   # 2) 
-  def intrigued_r2d2(:game_keep_guessing, _from, {client, pid}) do
+  def intrigued_wall_e(:game_keep_guessing, _from, {client, pid}) do
 
     client = Client.robot_guess(client)
     {status_code, _} = reply = Client.round_status(client)
     
     next = 
       case status_code do
-        :game_keep_guessing -> :intrigued_r2d2
-        :game_won -> :neutral_r2d2
-        :game_lost -> :neutral_r2d2
+        :game_keep_guessing -> :intrigued_wall_e
+        :game_won -> :neutral_wall_e
+        :game_lost -> :neutral_wall_e
       end
       
     { :reply, reply, next, {client, pid} }
   end
 
   # 3)
-  def zen_r2d2(:game_keep_guessing, _from, {client, pid}) do
-    { :reply, {:game_reset, "GAME RESET"}, :zen_r2d2, {client, pid}}
+  def zen_wall_e(:game_keep_guessing, _from, {client, pid}) do
+    { :reply, {:game_reset, "GAME RESET"}, :zen_wall_e, {client, pid}}
   end
 
   #
@@ -231,7 +231,7 @@ defmodule Hangman.Player.FSM do
   #
 
   # 1) 
-  def neutral_r2d2(:game_keep_guessing, {client, echo_pid}) do
+  def neutral_wall_e(:game_keep_guessing, {client, echo_pid}) do
 
     case game_start_or_over_check(client) do
 
@@ -239,18 +239,18 @@ defmodule Hangman.Player.FSM do
         client = Client.start(client)
         Echo.echo_guess(echo_pid, self()) # Setup the next async echo event
 
-        { :next_state, :spellbound_r2d2, {client, echo_pid} }
+        { :next_state, :spellbound_wall_e, {client, echo_pid} }
 
       {:game_over} ->
-        { :next_state, :zen_r2d2, {client, echo_pid} }
+        { :next_state, :zen_wall_e, {client, echo_pid} }
 
       _ -> 
-        { :next_state, :neutral_r2d2, {client, echo_pid}}
+        { :next_state, :neutral_wall_e, {client, echo_pid}}
     end
   end
 
   # 2)
-  def spellbound_r2d2(:game_keep_guessing, {client, echo_pid}) do
+  def spellbound_wall_e(:game_keep_guessing, {client, echo_pid}) do
 
     client = Client.robot_guess(client)
     {status_code, _}  = Client.round_status(client)
@@ -260,24 +260,24 @@ defmodule Hangman.Player.FSM do
         :game_keep_guessing -> 
           # Setup the next async echo event
           Echo.echo_guess(echo_pid, self())
-          :spellbound_r2d2
+          :spellbound_wall_e
 
         :game_won -> 
           # Setup the next async echo event
           Echo.echo_proceed(echo_pid, self())
-          :neutral_r2d2
+          :neutral_wall_e
 
         :game_lost -> 
           # Setup the next async echo event
           Echo.echo_proceed(echo_pid, self())
-          :neutral_r2d2
+          :neutral_wall_e
       end
 
     { :next_state, next_state, {client, echo_pid} }
   end
 
   # 3)
-  def zen_r2d2(:game_keep_guessing, {client, pid}) do
+  def zen_wall_e(:game_keep_guessing, {client, pid}) do
     { :stop, :normal, {client, pid}}
   end
 

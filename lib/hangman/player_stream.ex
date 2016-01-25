@@ -10,8 +10,8 @@ defmodule Hangman.Player.Stream do
 				end,
 
 			fn julio_pid ->
-				case FSM.r2d2_guess(julio_pid) do
-					{:game_reset, reply} -> {:halt, julio_pid}
+				case FSM.wall_e_guess(julio_pid) do
+					{:game_reset, _} -> {:halt, julio_pid}
 
 					# All other game states :game_keep_guessing ... :game_over
 					{_, reply} -> {[reply], julio_pid}							
