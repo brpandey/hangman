@@ -29,25 +29,24 @@ defmodule Hangman.Player.FSM do
     :gen_fsm.sync_send_event(fsm_pid, :guess_last_word)
   end
 
-  # ROBOT PLAYER EVENTS (synchronous - robot guessing)
-  def r2d2_proceed(fsm_pid), do:  :gen_fsm.sync_send_event(fsm_pid, :proceed)
-  
+  # ROBOT PLAYER EVENTS (synchronous - robot guessing)  
   def r2d2_guess(fsm_pid) do
     :gen_fsm.sync_send_event(fsm_pid, :game_keep_guessing)
   end
 
   # TURBO ROBOT PLAYER EVENTS (asynchronous - robot guessing)
-  def turbo_r2d2_proceed(fsm_pid), do: async_proceed(fsm_pid)
-
-  # EXTRA
-  def async_proceed(fsm_pid), do:  :gen_fsm.send_event(fsm_pid, :proceed)
-
-  def async_guess(fsm_pid) do
+  def turbo_r2d2_guess(fsm_pid) do 
     :gen_fsm.send_event(fsm_pid, :game_keep_guessing)
   end
 
+
+  # STATUS -- EXTRA
   def sync_status(fsm_pid) do 
     :gen_fsm.sync_send_all_state_event(fsm_pid, :game_status)
+  end 
+
+  def sync_game_over_status(fsm_pid) do 
+    :gen_fsm.sync_send_all_state_event(fsm_pid, :game_over_status)
   end 
 
   #
@@ -111,7 +110,6 @@ defmodule Hangman.Player.FSM do
       {:game_over} ->
         reply = Client.game_over_status(client)
 
-        IO.puts "#{inspect reply}"
         { :reply, reply, :idle_jedi, {client, pid}}
 
       _ -> 
@@ -189,8 +187,8 @@ defmodule Hangman.Player.FSM do
   # SYNCHRONOUS State Callbacks
   #
 
-  # 1) proceed
-  def neutral_r2d2(:proceed, _from, {client, pid}) do
+  # 1) 
+  def neutral_r2d2(:game_keep_guessing, _from, {client, pid}) do
 
     case game_start_or_over_check(client) do
       {:game_start} -> 
@@ -200,17 +198,14 @@ defmodule Hangman.Player.FSM do
       
       {:game_over} ->
         reply = Client.game_over_status(client)
-
-        IO.puts "#{inspect reply}"
-        { :reply, reply, :neutral_r2d2, {client, pid}}
-
+        { :reply, reply, :zen_r2d2, {client, pid}}
 
       _ -> 
         { :reply, "Shouldn't be here", :neutral_r2d2, {client, pid}}
     end
   end
 
-  # 2) game_keep_guessing
+  # 2) 
   def intrigued_r2d2(:game_keep_guessing, _from, {client, pid}) do
 
     client = Client.robot_guess(client)
@@ -226,12 +221,17 @@ defmodule Hangman.Player.FSM do
     { :reply, reply, next, {client, pid} }
   end
 
+  # 3)
+  def zen_r2d2(:game_keep_guessing, _from, {client, pid}) do
+    { :reply, {:game_reset, "GAME RESET"}, :zen_r2d2, {client, pid}}
+  end
+
   #
   # ASYNCHRONOUS State Callbacks
   #
 
-  # 1) proceed
-  def neutral_r2d2(:proceed, {client, echo_pid}) do
+  # 1) 
+  def neutral_r2d2(:game_keep_guessing, {client, echo_pid}) do
 
     case game_start_or_over_check(client) do
 
@@ -242,15 +242,14 @@ defmodule Hangman.Player.FSM do
         { :next_state, :spellbound_r2d2, {client, echo_pid} }
 
       {:game_over} ->
-        IO.puts "Game Over - Terminating FSM"
-        { :stop, :normal, {client, echo_pid} }
+        { :next_state, :zen_r2d2, {client, echo_pid} }
 
       _ -> 
         { :next_state, :neutral_r2d2, {client, echo_pid}}
     end
   end
 
-  # 2) game keep guessing
+  # 2)
   def spellbound_r2d2(:game_keep_guessing, {client, echo_pid}) do
 
     client = Client.robot_guess(client)
@@ -277,6 +276,10 @@ defmodule Hangman.Player.FSM do
     { :next_state, next_state, {client, echo_pid} }
   end
 
+  # 3)
+  def zen_r2d2(:game_keep_guessing, {client, pid}) do
+    { :stop, :normal, {client, pid}}
+  end
 
   # STATE HELPER function(s)
 
@@ -315,13 +318,18 @@ defmodule Hangman.Player.FSM do
     {:next_state, state_name, state}
   end
 
-  def handle_sync_event(:status, _from, state_name, state = {client, _pid}) do
+  def handle_sync_event(:game_over_status, _from, state_name, state = {client, _}) do
 
-    reply = Client.status(client)
+    status = Client.game_over_status(client)
 
-    IO.puts("in handle_event")
+    {:reply, status, state_name, state}
+  end  
 
-    {:reply, reply, state_name, state}
+  def handle_sync_event(:game_status, _from, state_name, state = {client, _}) do
+
+    status = Client.round_status(client)
+
+    {:reply, status, state_name, state}
   end
 
   def handle_sync_event(_event, __from, state_name, state) do

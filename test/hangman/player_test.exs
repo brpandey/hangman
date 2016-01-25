@@ -16,9 +16,9 @@ defmodule Hangman.FSM.Test do
 
 		{:ok, julio_pid} = FSM.start(player_name, :robot, julio_game_server_pid, notify_pid)
 
-		#:sys.trace(julio_pid, true)
+		:sys.trace(julio_pid, true)
 
-		{:game_keep_guessing, reply} = FSM.r2d2_proceed(julio_pid)
+		{:game_keep_guessing, reply} = FSM.r2d2_guess(julio_pid)
 
     assert "-------E; score=1; status=KEEP_GUESSING" = reply
 
@@ -54,9 +54,11 @@ defmodule Hangman.FSM.Test do
 
     assert "CUMULATE; score=8; status=GAME_WON" = reply
 
-    FSM.r2d2_proceed(julio_pid)
+    {:game_over, reply} = FSM.r2d2_guess(julio_pid)
 
- 	  #assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
+ 	  assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
+
+    {:game_reset, reply} = FSM.r2d2_guess(julio_pid)
 
  	  FSM.stop(julio_pid)
 
@@ -75,7 +77,7 @@ _ = """
 
 		:sys.trace(julio_pid, true)
 
-		reply = FSM.turbo_r2d2_proceed(julio_pid)
+		reply = FSM.turbo_r2d2_guess(julio_pid)
 
 		IO.puts "start: #{inspect reply}"
 
