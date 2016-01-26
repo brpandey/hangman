@@ -4,6 +4,7 @@ defmodule Hangman.Player.Client do
 
 	defstruct name: "", 
   	type: Nil,
+    secret_length: 0,
   	event_server_pid: Nil,
     game_server_pid: Nil, 
     game_no: 0,

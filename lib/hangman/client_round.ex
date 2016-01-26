@@ -11,15 +11,9 @@ defmodule Hangman.Player.Client.Round do
 
 	def start(%Hangman.Player.Client{} = client) do
 
-    player = client.name
+    client = do_start(client)
 
-	  {^player, :secret_length, secret_length} =
-    	Game.Server.secret_length(client.game_server_pid)
-
-    Events.Notify.secret_length(client.event_server_pid,
-			{player, client.game_no, secret_length})
-		
-		context = {:game_start, secret_length}
+		context = {:game_start, client.secret_length}
 
     client
     	|> setup(context)
@@ -77,6 +71,23 @@ defmodule Hangman.Player.Client.Round do
   end
 
   # UPDATE
+
+  defp do_start(%Hangman.Player.Client{} = client) do
+    
+    player = client.name
+
+    {^player, :secret_length, secret_length, status_text} =
+      Game.Server.secret_length(client.game_server_pid)
+
+    Events.Notify.secret_length(client.event_server_pid,
+      {player, client.game_no, secret_length})
+    
+    client = Kernel.put_in(client.secret_length, secret_length)
+    client = Kernel.put_in(client.round.status_code, :game_start)
+    client = Kernel.put_in(client.round.status_text, status_text)
+
+    client
+  end
 
   defp setup(%Hangman.Player.Client{} = client, strategy_context) do
 
@@ -174,10 +185,9 @@ defmodule Hangman.Player.Client.Round do
 
           choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
 
-        	"Player #{player}, Round #{seq_no}, #{status}: " 
-        			<> "please choose amongst these #{size} letter choices "
-        			<> "observing their respective weighting: #{choices_text}."
-              <> " The asterisk denotes what the computer would have chosen"
+        	"Player #{player}, Round #{seq_no}, #{status}. " <>
+        	"#{size} weighted letter choices : #{choices_text}" <> 
+          " (* robot choice)"
         
         last ->
           "Player #{player}, Round #{seq_no}: Last word left: #{last}"
@@ -196,7 +206,7 @@ defmodule Hangman.Player.Client.Round do
 
     # If user has decided to put in a letter, not in the choices
     # grab the letter that had the highest letter counts
-  	unless letter in top_choices, do: letter = hd(top_choices)
+  	unless letter in top_choices, do: letter = Kernel.hd(top_choices)
 
   	{{^player, result, code, pattern, text}, final} =
       Game.Server.guess_letter(client.game_server_pid, letter)
@@ -276,7 +286,7 @@ defmodule Hangman.Player.Client.Round do
   end
 
   defp str_game_summary(tuple_list) 
-  when is_list(tuple_list) and is_tuple(hd(tuple_list)) do
+  when is_list(tuple_list) and is_tuple(Kernel.hd(tuple_list)) do
   	
 		{:ok, avg} = Keyword.fetch(tuple_list, :average_score)
 		{:ok, games} = Keyword.fetch(tuple_list, :games)

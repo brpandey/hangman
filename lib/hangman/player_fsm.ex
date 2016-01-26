@@ -5,11 +5,15 @@ defmodule Hangman.Player.FSM do
 
   # External API
   def start_link(player_name, player_type, game_server_pid, event_server_pid) do
+    IO.puts "Starting Hangman FSM Server"
+
     :gen_fsm.start_link(__MODULE__, {player_name, player_type, 
       game_server_pid, event_server_pid}, [])
   end
 
   def start(player_name, player_type, game_server_pid, event_server_pid) do
+    IO.puts "Starting Hangman FSM Server"
+
     :gen_fsm.start(__MODULE__, {player_name, player_type, 
       game_server_pid, event_server_pid}, [])
   end
@@ -38,6 +42,10 @@ defmodule Hangman.Player.FSM do
   def turbo_wall_e_guess(fsm_pid) do 
     :gen_fsm.send_event(fsm_pid, :game_keep_guessing)
   end
+
+  def async_guess(fsm_pid) do 
+    :gen_fsm.send_event(fsm_pid, :game_keep_guessing)
+  end  
 
 
   # STATUS -- EXTRA
@@ -70,7 +78,7 @@ defmodule Hangman.Player.FSM do
 
     {:ok, echo_pid} = Echo.start_link()
     
-    :sys.trace(echo_pid, true)    
+    #:sys.trace(echo_pid, true)    
 
     { :ok, initial, {client, echo_pid} }
   end
@@ -105,10 +113,11 @@ defmodule Hangman.Player.FSM do
       {:game_start} ->  
         client = Client.start(client)
         reply = Client.list_choices(client)
+
         { :reply, reply, :eager_socrates, {client, pid} }
 
       {:game_over} ->
-        reply = Client.game_over_status(client)
+        {:game_over, reply} = Client.game_over_status(client)
 
         { :reply, reply, :idle_socrates, {client, pid}}
 
@@ -129,7 +138,7 @@ defmodule Hangman.Player.FSM do
   def eager_socrates({:guess_letter, guess_letter}, _from, {client, pid}) do
 
     client = Client.guess_letter(client, guess_letter)
-    {status_code, _text} = reply = Client.round_status(client)
+    {status_code, reply} = Client.round_status(client)
 
     next = 
       case status_code do
@@ -159,7 +168,7 @@ defmodule Hangman.Player.FSM do
   def giddy_socrates(:guess_last_word, _from, {client, pid}) do
 
     client = Client.guess_last_word(client)
-    {status_code, _text} = reply = Client.round_status(client)
+    {status_code, reply} = Client.round_status(client)
 
     next = 
       case status_code do
@@ -264,12 +273,12 @@ defmodule Hangman.Player.FSM do
 
         :game_won -> 
           # Setup the next async echo event
-          Echo.echo_proceed(echo_pid, self())
+          Echo.echo_guess(echo_pid, self())
           :neutral_wall_e
 
         :game_lost -> 
           # Setup the next async echo event
-          Echo.echo_proceed(echo_pid, self())
+          Echo.echo_guess(echo_pid, self())
           :neutral_wall_e
       end
 

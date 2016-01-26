@@ -8,24 +8,14 @@ defmodule Hangman.Player.Async.Echo do
 
 
   # FSM API
-  def echo_proceed(fsm_pid, other_pid) do
- 	  :gen_fsm.send_event(fsm_pid, {:echo_proceed, other_pid})
-  end
-
   def echo_guess(fsm_pid, other_pid) do
  	  :gen_fsm.send_event(fsm_pid, {:echo_guess, other_pid})
   end
-
 
   # FSM Callbacks
   def init(_), do: { :ok, :echo, [] }
 
   # Asynchronous FSM Callbacks
-  def echo({:echo_proceed, other_pid}, state) do
-  	Hangman.Player.FSM.async_proceed(other_pid)
-  	{:next_state, :echo, state}
-  end
-
   def echo({:echo_guess, other_pid}, state) do
   	Hangman.Player.FSM.async_guess(other_pid)
   	{:next_state, :echo, state}

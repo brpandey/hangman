@@ -126,7 +126,7 @@ defmodule Game.Server.Test do
 		assert ^stanley_game_server_pid = 
 			Cache.get_server("stanley", ["jovial"])         
 
-		assert {"stanley", :secret_length, 6} = Game.Server.secret_length(stanley_game_server_pid)                     
+		assert {"stanley", :secret_length, 6, _} = Game.Server.secret_length(stanley_game_server_pid)                     
 
 		assert {{"stanley", :correct_letter, :game_keep_guessing, "-----L",
 		  "-----L; score=1; status=KEEP_GUESSING"}, []} =

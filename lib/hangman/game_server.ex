@@ -242,7 +242,12 @@ defmodule Hangman.Game.Server do
 		Returns the hangman secret length
 	"""
 	def handle_call(:secret_length, _from, {name, state}) do
-		{ :reply, {name, :secret_length, String.length(state.secret)}, {name, state} }
+		{_, _, status_text} = check_game_status(name, state)
+		length = String.length(state.secret)
+
+		# Let's piggyback the round status text with the secret length value
+
+		{ :reply, {name, :secret_length, length, status_text}, {name, state} }
 	end
 
 	@doc """

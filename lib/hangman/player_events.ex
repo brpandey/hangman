@@ -2,6 +2,8 @@ defmodule Hangman.Player.Events.Notify do
 
 	# options = [file_output: true, display_output: false]
 	def start_link(options \\ [file_output: true]) do
+		IO.puts "Starting Hangman GenEvent Server"
+
 		{:ok, pid} = GenEvent.start_link()
 
 		case Keyword.fetch(options, :file_output) do
@@ -19,22 +21,22 @@ defmodule Hangman.Player.Events.Notify do
 					for event <- stream do
 						case event do
 							{:start, name} ->
-								IO.inspect "#Player #{name} --> _Ha_Ng_m_An_ has started"
+								IO.puts "##{name}_feed setup --> _HAN__AN_ has started"
 
 							{:secret_length, name, game_no, length} ->
-								IO.inspect "#Player #{name}, Game #{game_no}, secret length --> #{length}"
+								IO.puts "##{name}_feed Game #{game_no}, secret length --> #{length}"
 
 							{:guessed_letter, name, game_no, letter} ->
-								IO.inspect "#Player #{name}, Game #{game_no}, letter --> #{letter}"
+								IO.puts "##{name}_feed Game #{game_no}, letter --> #{letter}"
 
 							{:guessed_word, name, game_no, word} ->
-								IO.inspect "#Player #{name}, Game #{game_no}, word --> #{word}"
+								IO.puts "##{name}_feed Game #{game_no}, word --> #{word}"
 
 							{:round_status, name, game_no, round_no, status} ->
-								IO.inspect "#Player #{name}, Game #{game_no}, Round #{round_no}, status --> #{status}"
+								IO.puts "##{name}_feed Game #{game_no}, Round #{round_no}, status --> #{status}\n"
 
 							{:game_over, name, text} ->
-								IO.inspect "#Player #{name}, Game Over!! --> #{text}"
+								IO.puts "##{name}_feed Game Over!! --> #{text}"
 						end
 					end
 				end
