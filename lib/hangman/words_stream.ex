@@ -21,6 +21,27 @@ defmodule Hangman.Words.Stream do
 			fn file -> File.close(file) end)
 	end
 
+	def words(:line, path) do
+		Stream.resource(
+			fn -> File.open!(path) end,
+		
+			fn file ->
+				case IO.read(file, :line) do
+					data when is_binary(data) ->
+
+						data = data |> String.downcase 
+
+						{ [data], file }
+
+
+					_ -> {:halt, file}
+				end
+			end,
+			
+			fn file -> File.close(file) end)
+	end
+
+
 	def words(:length, length, path) do
 		Stream.resource(
 			fn -> File.open!(path) end,
