@@ -1,12 +1,19 @@
 defmodule Hangman.Dictionary.Cache do
 	#use GenServer
 
-	@dictionary_chunks 1000
-	@words_chunk_size 200
-	@dictionary_path "lib/hangman/data/words.txt"
-	@dictionary_sorted_path "lib/hangman/data/words_sorted.txt"
+	@dictionary_chunks 500
+	@words_chunk_size 1_000
 
-	#Total dictionary size is about @dictionary_chunks * @words_chunk_size = 200 * 1000 = 200_000
+	@dictionary_normal_path "lib/hangman/data/words.txt"
+	@dictionary_normal_sorted_path "lib/hangman/data/words_sorted.txt"
+	@dictionary_big_path "lib/hangman/data/words_big.txt"
+	@dictionary_big_sorted_path "lib/hangman/data/words_big_sorted.txt"
+
+	@dictionary_path @dictionary_big_path
+	@dictionary_sorted_path @dictionary_big_sorted_path
+	
+	#Total dictionary size is about @dictionary_chunks * @words_chunk_size = 1000 * 200 = 200_000
+	#Total big dictionary size is about @dictionary_chunks * @words_chunk_size = 2000 * 200 = 400_000
 
 
 	# This is only for the hangman word dictionary, TODO dynamically generate atoms from lengths
@@ -82,10 +89,6 @@ defmodule Hangman.Dictionary.Cache do
 		#IO.puts "final collection is: #{inspect val}\n"
 
 		IO.puts "ets info is: #{inspect :ets.info(:dictionary_cache)}\n"
-
-		lookup = :ets.lookup(:dictionary_cache, :chunk_key_3)
-
-		IO.puts "ets lookup: #{inspect lookup}\n"
 
 		Hangman.Words.Stream.delete(ws)
 
