@@ -7,11 +7,12 @@ defmodule Hangman.Dictionary.Cache.Test do
 
 		IO.puts "sort and write finished"
 		
-		Hangman.Dictionary.Cache.load()
+		Hangman.Dictionary.Cache.load2()
 
 		IO.puts "finished loading"
 
 		ctr = Hangman.Dictionary.Cache.tally(8)
+
 		IO.puts "Counter of length 8 is: #{inspect ctr}"
 		IO.puts "\n\n"
 	end
