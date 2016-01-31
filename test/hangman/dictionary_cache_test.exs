@@ -7,7 +7,7 @@ defmodule Hangman.Dictionary.Cache.Test do
 
 		IO.puts "sort and write finished"
 		
-		Hangman.Dictionary.Cache.load2()
+		Hangman.Dictionary.Cache.load()
 
 		IO.puts "finished loading"
 

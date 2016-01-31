@@ -3,6 +3,8 @@ defmodule Hangman.Words.Stream do
 		defstruct file: Nil, type: Nil, group_id: -1, group_index: -1
 	end
 
+	# Create
+
 	def new(type = :sorted_dictionary_stream, path) do
 		file = File.open!(path) 
 		%State{ file: file, type: type}
@@ -13,8 +15,19 @@ defmodule Hangman.Words.Stream do
 		%State{ file: file, type: type}
 	end
 
+	# Read / Update
+
 	def words(%State{} = state), do: do_words(state, state.type)
 
+
+	# Delete
+
+	def delete(%State{} = state) do
+		File.close(state.file)
+		%State{}
+	end	
+
+	# Private
 
 	defp do_words(%State{} = state, :sorted_dictionary_stream) do
 		Stream.resource(
@@ -22,7 +35,7 @@ defmodule Hangman.Words.Stream do
 		
 			fn state ->
 				case IO.read(state.file, :line) do
-					"\n" -> {[], state}
+					data when data in ["\n", ""] -> {[], state}
 
 					data when is_binary(data) ->
 						data = data |> String.strip |> String.downcase 
@@ -58,8 +71,8 @@ defmodule Hangman.Words.Stream do
 		
 			fn state ->
 				case IO.read(state.file, :line) do
-					"" -> {[], state}
-
+					data when data in ["\n", ""] -> {[], state}
+					
 					data when is_binary(data) ->
 						data = data |> String.downcase 
 						{ [data], state }
