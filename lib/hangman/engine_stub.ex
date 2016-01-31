@@ -42,9 +42,6 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 	end
 
 
-
-
-
 	# Game 1 - word is: cumulate
 
 	def simulate_reduce_sequence(1, 1) do
