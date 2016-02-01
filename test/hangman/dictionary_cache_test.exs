@@ -11,9 +11,11 @@ defmodule Hangman.Dictionary.Cache.Test do
 
 		IO.puts "finished loading"
 
-		ctr = Hangman.Dictionary.Cache.tally(8)
+		size = 8
 
-		IO.puts "Counter of length 8 is: #{inspect ctr}"
+		ctr = Hangman.Dictionary.Cache.lookup_tally(size)
+
+		IO.puts "Counter of length #{size} is: #{inspect ctr}"
 		IO.puts "\n\n"
 	end
 end
