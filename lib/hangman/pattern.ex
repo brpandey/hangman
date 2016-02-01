@@ -1,5 +1,6 @@
 defmodule Hangman.Pattern do 
 
+	@spec update(String.t, String.t, String.t) :: String.t
 	def update( pattern, secret, letter ) do
 		do_update( String.codepoints(pattern), String.codepoints(secret), letter, [])
 	end
