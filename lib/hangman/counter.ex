@@ -28,6 +28,15 @@ defmodule Hangman.Counter do
 
 	# READ
 
+	# Returns true if counters equal
+	def equal?(%Hangman.Counter{} = c1, %Hangman.Counter{} = c2) do
+			
+		str1 = "#{inspect c1}"
+		str2 = "#{inspect c2}"
+
+		str1 == str2
+	end
+
 	# Returns a key-value tuple list of {letter, count} tuples
 	def items(%Hangman.Counter{entries: entries} = _counter) do
 		Enum.into entries, []
