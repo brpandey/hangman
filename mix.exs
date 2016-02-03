@@ -2,7 +2,7 @@ defmodule Hangman.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :hangman,
+    [app: :play_hangman,
      version: "0.0.1",
      elixir: "~> 1.2.0",
      build_embedded: Mix.env == :prod,

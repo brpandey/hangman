@@ -4,4 +4,4 @@
 /tmp
 erl_crash.dump
 *.ez
-hangman
+play_hangman
