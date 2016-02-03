@@ -1,8 +1,8 @@
 defmodule Hangman.Dictionary.Cache do
 	#use GenServer
 
-	# A chunk contains at most 500 words
-	@chunk_words_size 500
+	# A chunk contains at most 2_000 words
+	@chunk_words_size 2_000
 
 	@ets_table_name :hangman_dictionary_cache
 
@@ -37,6 +37,7 @@ defmodule Hangman.Dictionary.Cache do
 	end
 
 
+
 	# READ
 
 	# Retrieve dictionary tally counter given word secret length
@@ -50,9 +51,11 @@ defmodule Hangman.Dictionary.Cache do
 			true -> 
 				key = get_ets_counter_key(secret_length)
 				
-				case :ets.lookup(@ets_table_name, key) do
+				case :ets.match_object(@ets_table_name, {key, :_}) do
 					[] -> raise "counter not found for key: #{inspect key}"
-					[{_key, counter}] -> counter
+					[{_key, binary_counter}] -> 
+						counter = :erlang.binary_to_term(binary_counter)
+						counter
 				end
 
 			false -> raise "key not in set of possible keys!"
@@ -99,16 +102,19 @@ defmodule Hangman.Dictionary.Cache do
 	# arranged by length are also stored in the ets after the 
 	# chunks are stored
 
+	# Optimization Note: Converting word_list chunks to binaries
+	# and counters to binaries drastically reduces ets memory footprint
+
 	defp load(table_name, sorted_path, buffer_size) 
 		when is_atom(table_name) and is_binary(sorted_path) 
 		and is_number(buffer_size) and buffer_size > 0 do
 
-		do_load(table_name, sorted_path, buffer_size, :chunks)
-		do_load(table_name, :counters)
+		do_load(:chunks, {table_name, sorted_path, buffer_size})
+		do_load(:counters, table_name)
 	end
 
 
-	defp do_load(table_name, sorted_path, buffer_size, :chunks) do
+	defp do_load(:chunks, {table_name, sorted_path, buffer_size}) do
 		:ets.new(table_name, [:bag, :named_table, :protected])
 
 		ws = Hangman.Words.Stream.new(:sorted_dictionary_stream, sorted_path)
@@ -151,7 +157,9 @@ defmodule Hangman.Dictionary.Cache do
 		fn_ets_insert_chunks = fn 
 			{words_chunk_list, length} -> 
 					key = get_ets_chunk_key(length)
-					:ets.insert(table_name, {key, words_chunk_list}) 
+					# convert words_chunk_list into a binary :)
+					bin_value = :erlang.term_to_binary(words_chunk_list)
+					:ets.insert(table_name, {key, bin_value}) 
 		end
 
 		# Group the word stream by chunks, normalize the chunks then insert into ets
@@ -166,14 +174,16 @@ defmodule Hangman.Dictionary.Cache do
 		IO.puts ":chunks, ets info is: #{inspect :ets.info(@ets_table_name)}\n"		
 	end
 
-	defp do_load(table_name, :counters) do
+
+	defp do_load(:counters, table_name) do
 
 		# lambda to insert verified counter structure into ets
 		fn_ets_insert_counters = fn 
 			{0, Nil} -> ""
 		 	{length, %Hangman.Counter{} = counter} ->  
 		 		key = get_ets_counter_key(length)
-		 		:ets.insert(table_name, {key, counter})
+		 		binary_counter = :erlang.term_to_binary(counter)
+		 		:ets.insert(table_name, {key, binary_counter})
 		end
 
 		# Given all the keys we inserted, create the tallys and insert it into the ets
@@ -199,12 +209,12 @@ defmodule Hangman.Dictionary.Cache do
 
 	defp get_ets_chunk_key(word_length) do
 		true = MapSet.member?(@possible_keys, word_length)
-		{:chunk, word_length}
+		_ets_key = {:chunk, word_length}
 	end
 
 	defp get_ets_counter_key(word_length) do
 		true = MapSet.member?(@possible_keys, word_length)
-		{:counter, word_length}
+		_ets_key = {:counter, word_length}
 	end	
 
 
@@ -214,15 +224,18 @@ defmodule Hangman.Dictionary.Cache do
 	# We are only generating tallys from chunks of words, not existing tallies
 	defp generate_tally(_name, {:counter, _length}), do: {0, Nil}
 
-	defp generate_tally(table_name, key = {:chunk, length}) 
-		when is_number(length) and length > 0 do
-		
+	defp generate_tally(table_name, key = {:chunk, length}) do
+		# Use for pattern matching when we do ets.foldl
+
 		fn_reduce_words_into_counter = fn 
 			head, acc -> Hangman.Counter.add_unique_letters(acc, head)
 		end
 
 		fn_reduce_key_chunks_into_counter = fn
-			{^key, word_list}, acc -> Enum.reduce(word_list, acc, fn_reduce_words_into_counter)
+			{^key, bin_word_list}, acc -> # we pin to function arg's specified key
+				# convert back from binary to words list chunk
+				word_list = :erlang.binary_to_term(bin_word_list)
+				Enum.reduce(word_list, acc, fn_reduce_words_into_counter)
 			_, acc -> acc	
 		end
 
