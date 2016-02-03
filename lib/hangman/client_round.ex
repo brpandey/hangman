@@ -103,11 +103,11 @@ defmodule Hangman.Player.Client.Round do
 		match_key = Kernel.elem(strategy_context, 0)
 
 		# Filter the engine hangman word set
-		{^seq_no, reduction_pass_info} = Reduction.Engine.Stub.reduce(match_key, 
-                                      pass_key, filter_options)
+		{^game_no, ^seq_no, pass_metadata} = 
+      Reduction.Engine.Stub.reduce(match_key, pass_key, filter_options)
 
 		# Update the round strategy with the result of the reduction pass info _from the engine
-		strategy = Strategy.update(strategy, reduction_pass_info)
+		strategy = Strategy.update(strategy, pass_metadata)
 
 	  client = Kernel.put_in(client.strategy, strategy)
 

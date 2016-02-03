@@ -53,7 +53,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{1, pass_info}
+		{1, 1, pass_info}
 	end
 
 	def simulate_reduce_sequence(1, 2) do
@@ -72,7 +72,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{2, pass_info}
+		{1, 2, pass_info}
 	end
 
 	def simulate_reduce_sequence(1, 3) do
@@ -89,7 +89,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{3, pass_info}
+		{1, 3, pass_info}
 	end
 
 	def simulate_reduce_sequence(1, 4) do
@@ -107,7 +107,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{4, pass_info}		
+		{1, 4, pass_info}		
 	end
 
 	def simulate_reduce_sequence(1, 5) do
@@ -126,7 +126,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{5, pass_info}		
+		{1, 5, pass_info}		
 	end
 
 	def simulate_reduce_sequence(1, 6) do
@@ -143,7 +143,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{6, pass_info}		
+		{1, 6, pass_info}		
 	end
 
 	def simulate_reduce_sequence(1, 7) do
@@ -160,7 +160,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: "" }
 
-		{7, pass_info}		
+		{1, 7, pass_info}		
 	end
 
 	def simulate_reduce_sequence(1, 8) do
@@ -177,7 +177,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: "" }
 
-		{8, pass_info}		
+		{1, 8, pass_info}		
 	end
 
 	def simulate_reduce_sequence(1, 9) do
@@ -195,7 +195,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: "cumulate" }
 
-		{9, pass_info}		
+		{1, 9, pass_info}		
 	end
 
 
@@ -219,7 +219,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{1, pass_info}
+		{2, 1, pass_info}
 	end
 
 	def simulate_reduce_sequence(2, 2) do
@@ -237,7 +237,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{2, pass_info}
+		{2, 2, pass_info}
 	end
 
 	def simulate_reduce_sequence(2, 3) do
@@ -254,7 +254,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{3, pass_info}
+		{2, 3, pass_info}
 	end
 
 	def simulate_reduce_sequence(2, 4) do
@@ -270,7 +270,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{4, pass_info}
+		{2, 4, pass_info}
 	end
 
 	def simulate_reduce_sequence(2, 5) do
@@ -286,7 +286,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{5, pass_info}
+		{2, 5, pass_info}
 	end
 
 	def simulate_reduce_sequence(2, 6) do
@@ -301,7 +301,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{6, pass_info}
+		{2, 6, pass_info}
 	end
 
 	def simulate_reduce_sequence(2, 7) do
@@ -315,7 +315,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: "avocado"}
 
-		{7, pass_info}
+		{2, 7, pass_info}
 	end
 
 	def simulate_reduce_sequence(2, 8) do
@@ -329,7 +329,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{8, pass_info}
+		{2, 8, pass_info}
 	end
 
 	def simulate_reduce_sequence(2, 9) do
@@ -343,7 +343,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{9, pass_info}
+		{2, 9, pass_info}
 	end
 
 
@@ -367,7 +367,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{1, pass_info}
+		{3, 1, pass_info}
 	end
 
 	def simulate_reduce_sequence(3, 2) do
@@ -384,7 +384,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{2, pass_info}
+		{3, 2, pass_info}
 	end
 
 	def simulate_reduce_sequence(3, 3) do
@@ -401,7 +401,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{3, pass_info}
+		{3, 3, pass_info}
 	end
 
 	def simulate_reduce_sequence(3, 4) do
@@ -417,7 +417,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{4, pass_info}
+		{3, 4, pass_info}
 	end
 
 	def simulate_reduce_sequence(3, 5) do
@@ -432,7 +432,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{5, pass_info}
+		{3, 5, pass_info}
 	end
 
 	def simulate_reduce_sequence(3, 6) do
@@ -446,7 +446,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: "eruptive"}
 
-		{6, pass_info}
+		{3, 6, pass_info}
 	end
 
 	def simulate_reduce_sequence(3, 7) do
@@ -460,7 +460,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{7, pass_info}
+		{3, 7, pass_info}
 	end
 
 	def simulate_reduce_sequence(3, 8) do
@@ -474,7 +474,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{8, pass_info}
+		{3, 8, pass_info}
 	end
 
 	def simulate_reduce_sequence(3, 9) do
@@ -488,7 +488,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{9, pass_info}
+		{3, 9, pass_info}
 	end
 
 
@@ -508,7 +508,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{1, pass_info}
+		{4, 1, pass_info}
 	end
 
 	def simulate_reduce_sequence(4, 2) do
@@ -522,7 +522,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{2, pass_info}
+		{4, 2, pass_info}
 	end
 
 	def simulate_reduce_sequence(4, 3) do
@@ -536,7 +536,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{3, pass_info}
+		{4, 3, pass_info}
 	end
 
 	def simulate_reduce_sequence(4, 4) do
@@ -550,7 +550,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{4, pass_info}
+		{4, 4, pass_info}
 	end
 
 	def simulate_reduce_sequence(4, 5) do
@@ -564,7 +564,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{5, pass_info}
+		{4, 5, pass_info}
 	end
 
 	def simulate_reduce_sequence(4, 6) do
@@ -578,7 +578,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{6, pass_info}
+		{4, 6, pass_info}
 	end
 
 	def simulate_reduce_sequence(4, 7) do
@@ -592,7 +592,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{7, pass_info}
+		{4, 7, pass_info}
 	end
 
 	def simulate_reduce_sequence(4, 8) do
@@ -606,7 +606,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{8, pass_info}
+		{4, 8, pass_info}
 	end
 
 	def simulate_reduce_sequence(4, 9) do
@@ -620,7 +620,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
 
-		{9, pass_info}
+		{4, 9, pass_info}
 	end
 
 end
