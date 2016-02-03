@@ -2,43 +2,40 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
   alias Hangman.{Counter, Types.Reduction.Pass}
 
-	def reduce(:game_start, options) do
-		{:ok, __id} = Keyword.fetch(options, :id)
-		{:ok, __seq_no} = Keyword.fetch(options, :seq_no)
-		{:ok, game_no} = Keyword.fetch(options, :game_no)
+	def reduce(:game_start, 
+		{id, game_no, round_no} = _pass_key, filter_options) 
+		when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
-		{:ok, true} =	Keyword.fetch(options, :game_start)
-		{:ok, _length_filter_key}  = Keyword.fetch(options, :secret_length)
+		{:ok, true} =	Keyword.fetch(filter_options, :game_start)
+		{:ok, _length_filter_key}  = Keyword.fetch(filter_options, :secret_length)
 		
 		simulate_reduce_sequence(game_no, 1)
 	end
 
-	def reduce(:correct_letter, options) do
-		{:ok, _id} = Keyword.fetch(options, :id)
-		{:ok, seq_no} = Keyword.fetch(options, :seq_no)
-		{:ok, game_no} = Keyword.fetch(options, :game_no)		
+	def reduce(:correct_letter, 
+		{id, game_no, round_no} = _pass_key, filter_options)
+		when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
 		# leave this in until we are assured the regex is faster
-		{:ok, _correct_letter} = Keyword.fetch(options, :correct_letter)
+		{:ok, _correct_letter} = Keyword.fetch(filter_options, :correct_letter)
 
-		{:ok, _exclusion_filter_set} = Keyword.fetch(options, :guessed_letters)
-		{:ok, _regex} = Keyword.fetch(options, :regex)
+		{:ok, _exclusion_filter_set} = Keyword.fetch(filter_options, :guessed_letters)
+		{:ok, _regex} = Keyword.fetch(filter_options, :regex)
 	
-		simulate_reduce_sequence(game_no, seq_no)	
+		simulate_reduce_sequence(game_no, round_no)	
 	end
 
- 	def reduce(:incorrect_letter, options) do
-		{:ok, _id} = Keyword.fetch(options, :id)
-		{:ok, seq_no} = Keyword.fetch(options, :seq_no)
-		{:ok, game_no} = Keyword.fetch(options, :game_no)		
+ 	def reduce(:incorrect_letter, 
+ 		{id, game_no, round_no} = _pass_key, filter_options) 
+ 		when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
 		# leave this in until we are assured the regex is faster
-		{:ok, _incorrect_letter} = Keyword.fetch(options, :incorrect_letter)
+		{:ok, _incorrect_letter} = Keyword.fetch(filter_options, :incorrect_letter)
 
-		{:ok, _exclusion_filter_set} = Keyword.fetch(options, :guessed_letters)
-		{:ok, _regex} = Keyword.fetch(options, :regex)
+		{:ok, _exclusion_filter_set} = Keyword.fetch(filter_options, :guessed_letters)
+		{:ok, _regex} = Keyword.fetch(filter_options, :regex)
 		
-		simulate_reduce_sequence(game_no, seq_no)
+		simulate_reduce_sequence(game_no, round_no)
 	end
 
 
