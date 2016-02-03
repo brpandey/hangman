@@ -1,13 +1,22 @@
 defmodule Hangman.Dictionary.Cache.Test do
 	use ExUnit.Case, async: true
 
-	test "initial test of cache" do
+	test "initial test of dictionary cache" do
+
+		assert catch_error(Hangman.Dictionary.Cache.lookup_tally(8)) == 
+			%RuntimeError{message: "table not loaded yet"}
 
 		Hangman.Dictionary.Cache.setup()
 
-		IO.puts "finished loading"
+ 		assert catch_error(Hangman.Dictionary.Cache.setup()) == 
+ 			%RuntimeError{message: "cache already setup!"}
+
+		IO.puts "finished cache setup"
 
 		size = 8
+
+		assert catch_error(Hangman.Dictionary.Cache.lookup_tally(383838383838383)) ==
+			%RuntimeError{message: "key not in set of possible keys!"}
 
 		lookup = Hangman.Dictionary.Cache.lookup_tally(size)
 

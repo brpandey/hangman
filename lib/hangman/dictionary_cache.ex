@@ -32,7 +32,7 @@ defmodule Hangman.Dictionary.Cache do
 				sort_and_write(@dictionary_path, @dictionary_sorted_path)
 				load(@ets_table_name, @dictionary_sorted_path, @chunk_words_size)
 
-			_ -> raise "Cache already setup!"
+			_ -> raise "cache already setup!"
 		end
 	end
 
@@ -51,11 +51,11 @@ defmodule Hangman.Dictionary.Cache do
 				key = get_ets_counter_key(secret_length)
 				
 				case :ets.lookup(@ets_table_name, key) do
-					[] -> raise "Counter not found for key: #{inspect key}"
+					[] -> raise "counter not found for key: #{inspect key}"
 					[{_key, counter}] -> counter
 				end
 
-			false -> raise "Key not in set of possible keys!"
+			false -> raise "key not in set of possible keys!"
 		end
 
 	end
