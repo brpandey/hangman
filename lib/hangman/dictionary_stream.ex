@@ -1,24 +1,23 @@
-defmodule Hangman.Words.Stream do
+defmodule Hangman.Dictionary.Stream do
 	defmodule State do
 		defstruct file: Nil, type: Nil, group_id: -1, group_index: -1
 	end
 
 	# Create
 
-	def new(type = :sorted_dictionary_stream, path) do
+	def new(type = :sorted, path) do
 		file = File.open!(path) 
 		%State{ file: file, type: type}
 	end
 
-	def new(type = :lines_only_stream, path) do
+	def new(type = :unsorted, path) do
 		file = File.open!(path) 
 		%State{ file: file, type: type}
 	end
 
 	# Read / Update
 
-	def words(%State{} = state), do: do_words(state, state.type)
-
+	def get_lazy(%State{} = state), do: do_words(state, state.type)
 
 	# Delete
 
@@ -29,7 +28,7 @@ defmodule Hangman.Words.Stream do
 
 	# Private
 
-	defp do_words(%State{} = state, :sorted_dictionary_stream) do
+	defp do_words(%State{} = state, :sorted) do
 		Stream.resource(
 			fn ->	state	end,
 		
@@ -65,7 +64,7 @@ defmodule Hangman.Words.Stream do
 			fn state -> File.close(state.file) end)
 	end
 
-	defp do_words(%State{} = state, :lines_only_stream) do
+	defp do_words(%State{} = state, :unsorted) do
 		Stream.resource(
 			fn -> state end,
 		
