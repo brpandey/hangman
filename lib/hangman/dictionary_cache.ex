@@ -1,7 +1,7 @@
 defmodule Hangman.Dictionary.Cache do
 	#use GenServer
 
-	alias Hangman.{Dictionary, Counter}
+	alias Hangman.{Dictionary, Counter, Word.Chunks}
 
 	# A chunk contains at most 2_000 words
 	@chunk_words_size 2_000
@@ -62,7 +62,25 @@ defmodule Hangman.Dictionary.Cache do
 
 			false -> raise "key not in set of possible keys!"
 		end
+	end
 
+	def lookup_chunks(length_key) do
+
+		if :ets.info(@ets_table_name) == :undefined, do: raise "table not loaded yet"
+
+		ets_key = get_ets_chunk_key(length_key)
+			
+		fn_reduce_chunks_into_stream = fn
+			# we pin to specified ets {chunk, length} key
+			{^ets_key, ets_value}, acc ->
+				Chunks.add(acc, ets_value) 
+			_, acc -> acc	
+		end
+
+		chunks = %Chunks{} = :ets.foldl(fn_reduce_chunks_into_stream, 
+			Chunks.new(length_key), @ets_table_name)
+
+		chunks
 	end
 
 	# PRIVATE

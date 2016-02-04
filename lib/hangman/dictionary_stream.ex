@@ -3,6 +3,14 @@ defmodule Hangman.Dictionary.Stream do
 		defstruct file: Nil, type: Nil, group_id: -1, group_index: -1
 	end
 
+	@moduledoc """
+		Glorified state wrapper around two types of streams: 
+			sorted dictionary files and unsorted dictionary files
+
+		Sorted dictionary file type streams, also have length, the actual word value, 
+		and the word group index by length information included as part of this stream 
+	"""
+
 	# Create
 
 	def new(type = :sorted, path) do
