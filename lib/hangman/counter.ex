@@ -11,7 +11,7 @@ defmodule Hangman.Counter do
 
 	# Returns new Counter that reflects contents of string
 	def new(word) when is_binary(word) do 
-		add(new(), word) 
+		add_letters(new(), word) 
 	end
 	
 	# Returns new Counter	that reflects contents of tuple list
@@ -78,15 +78,26 @@ defmodule Hangman.Counter do
 	end
 
 	# Returns an updated Counter
-	def add(%Hangman.Counter{entries: entries} = counter, word) when is_binary(word) do
+
+	# Handle case where list is empty
+	def add_letters(%Hangman.Counter{} = counter, []), do: counter
+
+  def add_letters(%Hangman.Counter{} = counter, word)
+  when is_binary(word) do
+    add_letters(counter, String.codepoints(word))
+  end
+
+	def add_letters(%Hangman.Counter{entries: entries} = counter, codepoints) 
+	when is_list(codepoints) and is_binary(hd(codepoints)) do
 		
-		# Splits word into codepoints list, and then reduces this list into
+		# Splits word into unique codepoints list, 
+    # and then reduces this list into
 		# the entries dict, updating the count by one if the key
 		# is already present in the entries Map
 
 		entries_updated = 
 			Enum.reduce(
-				String.codepoints(word),
+				codepoints,
 				entries, 
 				fn head, acc -> Map.update(acc, head, 1, &(&1 + 1)) end
 			)
@@ -94,21 +105,32 @@ defmodule Hangman.Counter do
 		%Hangman.Counter{ counter | entries: entries_updated }
 	end
 
-	# Returns an updated Counter
-	def add_unique_letters(%Hangman.Counter{entries: entries} = counter, word) when is_binary(word) do
+	def add_unique_letters(%Hangman.Counter{} = counter, word) 
+	when is_binary(word) do
 		
-		# Splits word into unique codepoints list, and then reduces this list into
+		# Splits word into unique codepoints list, 
+    # and then reduces this list into
 		# the entries dict, updating the count by one if the key
 		# is already present in the entries Map
 
-		entries_updated = 
-			Enum.reduce(
-				String.codepoints(word) |> Enum.uniq,
-				entries, 
-				fn head, acc -> Map.update(acc, head, 1, &(&1 + 1)) end
-			)
+		add_letters(counter, String.codepoints(word) |> Enum.uniq)
+	end
 
-		%Hangman.Counter{ counter | entries: entries_updated }
+	def add_unique_letters(%Hangman.Counter{} = counter, word, 
+		%MapSet{} = exclusion_set) when is_binary(word) do
+		
+		# Splits word into unique codepoints list, 
+    # and then reduces this list into
+		# the entries dict, updating the count by one if the key
+		# is already present in the entries Map
+
+		letter_set = MapSet.new(String.codepoints(word))
+
+		unique_excluded = MapSet.difference(letter_set, exclusion_set)
+
+    IO.puts "unique_excluded is: #{inspect unique_excluded}"
+
+		add_letters(counter, MapSet.to_list(unique_excluded))
 	end
 
 	# DELETE

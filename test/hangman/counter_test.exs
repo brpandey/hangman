@@ -21,7 +21,7 @@ defmodule Hangman.Counter.Test do
 
 		IO.puts "Counter: #{inspect tally}"
 
-		tally = Counter.add(tally, "EVOKE")
+		tally = Counter.add_letters(tally, "EVOKE")
 
 		IO.puts "Counter: #{inspect tally}"
 
@@ -46,6 +46,29 @@ defmodule Hangman.Counter.Test do
 		assert [{"i", 43}, {"o", 42}, {"u", 40}] = Counter.most_common(tally, 3)
 
 		IO.puts "Counter: #{inspect tally}"
+
+		tally = Counter.new
+
+		# 1 "m", 1 "i", 1 "s", 1 "p"
+		tally = Counter.add_unique_letters(tally, "mississippi")
+
+		IO.puts "Counter unique: #{inspect tally}"
+
+    tally = Counter.new
+
+		tally = Counter.add_unique_letters(tally, 
+                                       "mississippi", 
+                                       MapSet.new(["i", "o", "l"]))
+
+    assert [{"m", 1}, {"p", 1}, {"s", 1}] = 
+      Counter.most_common(tally, 5)
+
+		tally = Counter.new
+
+    tally = Counter. add_letters(tally, "mississippi")
+
+    assert [{"i", 4}, {"s", 4}, {"p", 2}, {"m", 1}] = 
+      Counter.most_common(tally, 5)
 
 		IO.puts "Counter: deleted -- #{inspect Counter.delete(tally)}"
 	end
