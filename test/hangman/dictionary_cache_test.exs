@@ -1,4 +1,4 @@
-defmodule Dictionary.Cache.Test do
+defmodule Hangman.Dictionary.Cache.Test do
 	use ExUnit.Case, async: true
 
 	alias Hangman.{Dictionary, Counter, Word.Chunks}
@@ -20,7 +20,7 @@ defmodule Dictionary.Cache.Test do
 		assert catch_error(Dictionary.Cache.lookup_tally(383838383838383)) ==
 			%RuntimeError{message: "key not in set of possible keys!"}
 
-		lookup = Dictionary.Cache.lookup_tally(size)
+		lookup = Dictionary.Cache.lookup(:tally, size)
 
 		counter_8 = Counter.new(%{"a" => 14490, "b" => 4485, 
 			"c" => 7815, "d" => 8046, "e" => 19600, "f" => 2897, "g" => 6009, 
@@ -35,7 +35,7 @@ defmodule Dictionary.Cache.Test do
 		
 		IO.puts "Counters match\n\n"
 	
-		chunks = %Chunks{} = Dictionary.Cache.lookup_chunks(8)
+		chunks = %Chunks{} = Dictionary.Cache.lookup(:chunks, 8)
 
 		word_count = 28558
 
@@ -43,11 +43,17 @@ defmodule Dictionary.Cache.Test do
 
 		IO.puts "chunks: #{inspect chunks}"
 
-		Chunks.stream(chunks)
-    |> Stream.map(&Chunks.words_list/1)
-		|> Stream.each(&IO.inspect/1)
-		|> Enum.take(5)
 
+		# Chunks.get_chunks_lazy(chunks)
+    # |> Stream.map(&Chunks.unpack/1)
+		# |> Stream.each(&IO.inspect/1)
+		# |> Enum.take(5)
+
+
+		Chunks.get_words_lazy(chunks)
+		|> Stream.each(&IO.inspect/1)
+		|> Enum.take(20)
+	
 	end
 
 

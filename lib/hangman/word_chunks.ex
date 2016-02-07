@@ -8,9 +8,44 @@ defmodule Hangman.Word.Chunks do
 
 	alias Hangman.{Word.Chunks}
 
+  @chunk_words_size 1_000
+
 	def new(length_key) when is_number(length_key) and length_key > 0 do
 		%Chunks{key: length_key, raw_stream: [], chunk_count: 0, word_count: 0}
 	end
+
+  def new(length_key, %Stream{} = words, buf_size \\ @chunk_words_size)
+  when is_number(length_key) and is_number(buf_size) and buf_size > 0 do
+    
+    # Take the stream, wrap it with indexes, and the apply chunking
+
+    fn_split_into_chunks = fn
+      {_word, index} -> 
+        _chunk_id = div(index, buf_size)
+    end
+
+		fn_normalize_chunks = fn 
+			chunk -> 
+				Enum.map_reduce(chunk, "", 
+					fn {word, _index}, _acc -> {word, length_key} end)
+		end
+
+		fn_reduce_chunks = fn 
+			{word_list, _} = _head, acc ->
+	    	bin_chunk = :erlang.term_to_binary(word_list)
+	    	chunk_size = Kernel.length(word_list)
+	    	value = {bin_chunk, chunk_size}
+	    	Chunks.add(acc, value)
+    end
+
+    chunks = words
+    |> Stream.with_index
+    |> Stream.chunk_by(fn_split_into_chunks)
+    |> Stream.map(fn_normalize_chunks)
+    |> Enum.reduce(Chunks.new(length_key), fn_reduce_chunks)
+
+    chunks
+  end
 
 	@doc "Performs constant time lookup of number of words in stream"
 	def get_count(%Chunks{raw_stream: raw_stream} = chunks, :words) do
@@ -27,11 +62,12 @@ defmodule Hangman.Word.Chunks do
 	end
 
 	@doc "Takes an existing chunk stream and a tuple value
-		The tuple head is a binary chunk and the tuple tail is the number of words"
+		The tuple head is a binary chunk and the tail is the number of words"
 
 	def add(%Chunks{raw_stream: raw_stream} = chunks, 
-													{binary_chunk, word_count} = _value)
-	when is_binary(binary_chunk) and is_number(word_count) and word_count > 0 do
+          {binary_chunk, word_count} = _v)
+	when is_binary(binary_chunk) and is_number(word_count) 
+  and word_count > 0 do
 
 		if is_nil(raw_stream), do: raise "need to invoke new before using add"
 
@@ -43,13 +79,16 @@ defmodule Hangman.Word.Chunks do
 		}
 	end
 
-  def stream(%Chunks{raw_stream: raw_stream} = _stream) do
-    raw_stream    
+  # def get_chunks_lazy(%Chunks{raw_stream: raw_stream} = _stream) do
+  #  raw_stream
+  # end
+
+  def get_words_lazy(%Chunks{raw_stream: raw_stream} = _stream) do
+  	Stream.flat_map(raw_stream, &unpack(&1))
   end
 
-  def words_list(binary_chunk) when is_binary(binary_chunk) do
+  defp unpack(binary_chunk) when is_binary(binary_chunk) do
 		_words_list = :erlang.binary_to_term(binary_chunk)
   end
-
 
 end
