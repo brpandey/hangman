@@ -1,0 +1,243 @@
+defmodule Hangman.Engine.Cache.Test do
+	use ExUnit.Case, async: true
+
+	alias Hangman.{Pass.Engine, Dictionary, Strategy, 
+                 Counter, Types.Reduction.Pass}
+
+	test "test engine reduce methods" do
+
+    # assume secret word is cumulate
+
+		Dictionary.Cache.setup()
+    Engine.setup()
+
+    strategy = Strategy.new
+
+		IO.puts "finished engine and cache setup"
+
+    #### ROUND 1
+    pass_key = {id, game_no, round_no} = {"julio", 1, 1}
+
+    context = {:game_start, 8} 
+    options = Strategy.Options.filter_options(strategy, context)
+
+    tally = Counter.new(%{"e" => 19600, "s" => 16560, "i" => 15530, "a" => 14490, "r" => 14211, "n" => 12186, "t" => 11870, "o" => 11462, "l" => 11026, "d" => 8046, "c" => 7815, "u" => 7377, "g" => 6009, "m" => 5793, "p" => 5763, "h" => 5111, "b" => 4485, "y" => 3395, "f" => 2897, "k" => 2628, "w" => 2313, "v" => 2156, "z" => 783, "x" => 662, "q" => 422, "j" => 384})
+
+    pass_info = %Pass{ size: 28558, tally: tally, only_word_left: ""}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = Engine.reduce(:game_start, pass_key, options)
+
+    IO.puts "pass_key is: #{inspect pass_key}"
+    IO.puts "pass_info is: #{inspect pass_info}"
+    IO.puts "passed game start reduce"
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "e"} = Strategy.make_guess(strategy)
+
+    # Game Server Guess results
+    context = {:correct_letter, "e", "-------E", "-"}
+    
+
+    #### ROUND 2
+    pass_key = {id, game_no, round_no = round_no + 1}
+		assert Strategy.get_guessed(strategy) == ["e"]
+
+    options = Strategy.Options.filter_options(strategy, context)
+
+		tally = Counter.new(%{"a" => 1215, "i" => 1154, "l" => 940, "o" => 855, "t" => 807, "s" => 689, "r" => 688, "n" => 662, "u" => 548, "c" => 527, "b" => 425, "p" => 387, "m" => 380, "d" => 348, "g" => 280, "h" => 257, "k" => 228, "f" => 169, "v" => 155, "y" => 127, "z" => 112, "w" => 111, "q" => 35, "x" => 24, "j" => 18})
+
+    pass_info = %Pass{ size: 1833, tally: tally, only_word_left: ""}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = 
+      Engine.reduce(:correct_letter, pass_key, options)
+
+    IO.puts "pass_key is: #{inspect pass_key}"
+    IO.puts "pass_info is: #{inspect pass_info}"
+    IO.puts "passed game start reduce"
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "a"} = Strategy.make_guess(strategy)
+
+
+    # Game Server Guess results
+    context = {:correct_letter, "a", "-----A-E", "-"}
+    
+
+    # ROUND 3
+
+    pass_key = {id, game_no, round_no = round_no + 1}
+		assert Strategy.get_guessed(strategy) == ["a", "e"]
+
+    options = Strategy.Options.filter_options(strategy, context)
+
+		tally = Counter.new(%{"t" => 162, "i" => 121, "o" => 108, "u" => 97, "r" => 94, "l" => 89, "s" => 86, "c" => 78, "g" => 63, "n" => 58, "p" => 55, "m" => 50, "b" => 44, "d" => 36, "f" => 28, "h" => 25, "k" => 19, "v" => 13, "w" => 11, "y" => 4, "j" => 3, "x" => 2, "z" => 2, "q" => 1})
+
+
+    pass_info = %Pass{ size: 236, tally: tally, only_word_left: ""}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = 
+      Engine.reduce(:correct_letter, pass_key, options)
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "t"} = Strategy.make_guess(strategy)
+
+
+    # Game Server Guess results
+    context = {:correct_letter, "t", "-----A-E", "-"}
+
+
+    # ROUND 4
+
+    pass_key = {id, game_no, round_no = round_no + 1}
+		assert Strategy.get_guessed(strategy) == ["a", "e", "t"]
+
+    options = Strategy.Options.filter_options(strategy, context)
+
+		tally = Counter.new(%{"i" => 43, "o" => 42, "u" => 40, "l" => 35, "c" => 29, "n" => 27, "r" => 24, "s" => 20, "m" => 17, "b" => 15, "p" => 13, "d" => 12, "h" => 9, "g" => 9, "v" => 6, "f" => 6, "j" => 3, "y" => 2, "k" => 2, "x" => 1, "z" => 1, "w" => 1})
+
+    pass_info = %Pass{ size: 79, tally: tally, only_word_left: ""}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = 
+      Engine.reduce(:correct_letter, pass_key, options)
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "o"} = Strategy.make_guess(strategy)
+
+
+    # Game Server Guess results
+    context = {:incorrect_letter, "o"}
+
+
+    # ROUND 5
+
+    pass_key = {id, game_no, round_no = round_no + 1}
+		assert Strategy.get_guessed(strategy) == ["a", "e", "o", "t"]
+
+    options = Strategy.Options.filter_options(strategy, context)
+
+		tally = Counter.new(%{"u" => 29, "i" => 24, "l" => 16, "n" => 13, "c" => 12, "s" => 12, "r" => 10, "g" => 8, "m" => 7, "p" => 7, "b" => 6, "d" => 5, "f" => 4, "h" => 3, "j" => 3, "v" => 2, "y" => 2, "k" => 1, "x" => 1, "z" => 1})
+
+    pass_info = %Pass{ size: 37, tally: tally, only_word_left: ""}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = 
+      Engine.reduce(:correct_letter, pass_key, options)
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "i"} = Strategy.make_guess(strategy)
+
+
+    # Game Server Guess results
+    context = {:incorrect_letter, "i"}
+
+
+
+
+    # ROUND 6
+
+    pass_key = {id, game_no, round_no = round_no + 1}
+		assert Strategy.get_guessed(strategy) == ["a", "e", "i", "o", "t"]
+
+    options = Strategy.Options.filter_options(strategy, context)
+
+		tally = Counter.new(%{"u" => 12, "l" => 10, "n" => 4, "p" => 4, "s" => 4, "c" => 3, "g" => 3, "b" => 2, "f" => 2, "h" => 2, "m" => 2, "y" => 2, "d" => 1, "k" => 1, "j" => 1, "r" => 1, "v" => 1, "x" => 1})
+
+
+    pass_info = %Pass{ size: 13, tally: tally, only_word_left: ""}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = 
+      Engine.reduce(:correct_letter, pass_key, options)
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "l"} = Strategy.make_guess(strategy)
+
+
+    # Game Server Guess results
+    context = {:incorrect_letter, "l"}
+
+
+    # ROUND 7
+
+    pass_key = {id, game_no, round_no = round_no + 1}
+		assert Strategy.get_guessed(strategy) == ["a", "e", "i", "l", "o", "t"]
+
+    options = Strategy.Options.filter_options(strategy, context)
+
+		tally = Counter.new(%{"u" => 7, "c" => 2, "g" => 2, "n" => 2, "s" => 2, "b" => 1, "d" => 1, "f" => 1, "j" => 1, "m" => 1, "p" => 1})
+
+
+    pass_info = %Pass{ size: 7, tally: tally, only_word_left: ""}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = 
+      Engine.reduce(:correct_letter, pass_key, options)
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "c"} = Strategy.make_guess(strategy)
+
+
+    # Game Server Guess results
+    context = {:correct_letter, "c", "C---LATE", "-"}
+
+
+
+    # ROUND 8
+
+    pass_key = {id, game_no, round_no = round_no + 1}
+		assert Strategy.get_guessed(strategy) == 
+      ["a", "c", "e", "i", "l", "o", "t"]
+
+    options = Strategy.Options.filter_options(strategy, context)
+
+		tally = Counter.new(%{"u" => 2, "m" => 1, "p" => 1})
+
+    pass_info = %Pass{ size: 8, tally: tally, only_word_left: ""}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = 
+      Engine.reduce(:correct_letter, pass_key, options)
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "m"} = Strategy.make_guess(strategy)
+
+
+    # Game Server Guess results
+    context = {:correct_letter, "m", "C-M-LATE", "-"}
+
+    # ROUND 9
+
+    pass_key = {id, game_no, round_no = round_no + 1}
+		assert Strategy.get_guessed(strategy) == 
+      ["a", "c", "e", "i", "l", "m", "o", "t"]
+
+    options = Strategy.Options.filter_options(strategy, context)
+
+		tally = Counter.new(%{"u" => 2})
+
+    pass_info = %Pass{ size: 1, tally: tally, only_word_left: "cumulate"}
+
+    # Assert reduce results!!!
+    {^pass_key, ^pass_info} = 
+      Engine.reduce(:correct_letter, pass_key, options)
+
+    # Choose guess
+    strategy = Strategy.update(strategy, pass_info)
+
+    {:guess_word, "cumulate"} = Strategy.make_guess(strategy)
+
+	end
+
+end
