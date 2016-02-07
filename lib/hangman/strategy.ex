@@ -36,6 +36,12 @@ defmodule Hangman.Strategy do
 
   def make_guess(%Hangman.Strategy{} = strategy), do: strategy.guess
 
+  def get_guessed(%Hangman.Strategy{} = strategy) do
+    MapSet.to_list(strategy.guessed_letters)
+  end
+
+  # UPDATE
+
   def prepare_guess(%Hangman.Strategy{} = strategy) do
   	case strategy.pass.size do 
   		0 ->
@@ -66,8 +72,6 @@ defmodule Hangman.Strategy do
   			end
   	end
   end
-
-  # UPDATE
 
   def update(%Hangman.Strategy{} = strategy, {:letter, human_guessed_letter}) 
     when is_binary(human_guessed_letter) do
