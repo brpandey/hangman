@@ -5,8 +5,8 @@ defmodule Hangman.Dictionary.Cache.Test do
 
 	test "initial test of dictionary cache" do
 
-		assert catch_error(Dictionary.Cache.lookup_tally(8)) == 
-			%RuntimeError{message: "table not loaded yet"}
+		# assert catch_error(Dictionary.Cache.lookup_tally(8)) == 
+		#	%RuntimeError{message: "table not loaded yet"}
 
 		Dictionary.Cache.setup()
 
@@ -17,8 +17,8 @@ defmodule Hangman.Dictionary.Cache.Test do
 
 		size = 8
 
-		assert catch_error(Dictionary.Cache.lookup_tally(383838383838383)) ==
-			%RuntimeError{message: "key not in set of possible keys!"}
+		#assert catch_error(Dictionary.Cache.lookup_tally(383838383838383)) ==
+		#	%RuntimeError{message: "key not in set of possible keys!"}
 
 		lookup = Dictionary.Cache.lookup(:tally, size)
 
@@ -42,12 +42,6 @@ defmodule Hangman.Dictionary.Cache.Test do
 		assert word_count == Chunks.get_count(chunks, :words)
 
 		IO.puts "chunks: #{inspect chunks}"
-
-
-		# Chunks.get_chunks_lazy(chunks)
-    # |> Stream.map(&Chunks.unpack/1)
-		# |> Stream.each(&IO.inspect/1)
-		# |> Enum.take(5)
 
 
 		Chunks.get_words_lazy(chunks)

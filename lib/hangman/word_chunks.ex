@@ -85,6 +85,51 @@ defmodule Hangman.Word.Chunks do
   	Stream.flat_map(raw_stream, &unpack(&1))
   end
 
+
+  def transform_stream(stream, :sorted_dictionary, buffer_size) do
+
+	  # lambda to split stream into chunks based on generated chunk id
+		# Uses 1 + div() function to group consecutive, sorted words
+		# Takes into account the current word-length-group index position and 
+		# specified words-chunk buffer size, to determine chunk id
+
+		#	A) Example of word stream before chunking
+		#	{6, "mugful", 8509}
+		#	{6, "muggar", 8510}
+		#	{6, "mugged", 8511}
+		#	{6, "muggee", 8512}
+
+		fn_split_into_chunks = fn 
+			{length, _word, length_group_index} -> 
+				_chunk_id = length * ( 1 + div(length_group_index, buffer_size))
+		end
+
+		# lambda to normalize chunks
+		# Flatten out / normalize chunks so that they contain 
+    # only a list of words, and word length size
+
+		# B) Example of chunk, before normalization
+		#	[{6, "mugful", 8509}, {6, "muggar", 8510}, {6, "mugged", 8511},
+		#	 {6, "muggee", ...}, {6, ...}, {...}, ...]
+
+		fn_normalize_chunks = fn 
+			chunk -> 
+				Enum.map_reduce(chunk, "", 
+					fn {length, word, _}, _acc -> {word, length} end)
+		end
+
+		#	C) Example of chunk after normalization
+		#	{["mugful", "muggar", "mugged", "muggee", ...], 6}
+
+
+    stream 
+    |> Stream.chunk_by(fn_split_into_chunks)
+    |> Stream.map(fn_normalize_chunks)
+
+  end
+
+
+
   defp unpack(binary_chunk) when is_binary(binary_chunk) do
 		_words_list = :erlang.binary_to_term(binary_chunk)
   end

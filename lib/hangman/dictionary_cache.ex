@@ -143,41 +143,6 @@ defmodule Hangman.Dictionary.Cache do
 
 		:ets.new(table_name, [:bag, :named_table, :protected])
 
-		sorted_stream = Dictionary.Stream.new(:sorted, sorted_path)
-
-		# lambda to split stream into chunks based on generated chunk id
-		# Uses 1 + div() function to group consecutive, sorted words
-		# Takes into account the current word-length-group index position and 
-		# specified words-chunk buffer size, to determine chunk id
-
-		#	A) Example of word stream before chunking
-		#	{6, "mugful", 8509}
-		#	{6, "muggar", 8510}
-		#	{6, "mugged", 8511}
-		#	{6, "muggee", 8512}
-
-		fn_split_into_chunks = fn 
-			{length, _word, length_group_index} -> 
-				_chunk_id = length * ( 1 + div(length_group_index, buffer_size))
-		end
-
-		# lambda to normalize chunks
-		# Flatten out / normalize chunks so that they contain 
-    # only a list of words, and word length size
-
-		# B) Example of chunk, before normalization
-		#	[{6, "mugful", 8509}, {6, "muggar", 8510}, {6, "mugged", 8511},
-		#	 {6, "muggee", ...}, {6, ...}, {...}, ...]
-
-		fn_normalize_chunks = fn 
-			chunk -> 
-				Enum.map_reduce(chunk, "", 
-					fn {length, word, _}, _acc -> {word, length} end)
-		end
-
-		#	C) Example of chunk after normalization
-		#	{["mugful", "muggar", "mugged", "muggee", ...], 6}
-
 		# For each words list chunk, insert into ets lambda
 
 		fn_ets_insert_chunks = fn 
@@ -193,13 +158,13 @@ defmodule Hangman.Dictionary.Cache do
 
 		# Group the word stream by chunks, 
     # normalize the chunks then insert into ets
-		Dictionary.Stream.get_lazy(sorted_stream)
-			|> Stream.chunk_by(fn_split_into_chunks)  
-			|> Stream.map(fn_normalize_chunks)
-			|> Stream.each(fn_ets_insert_chunks)
-			|> Stream.run
+		
+    Dictionary.Stream.new(:sorted, sorted_path) 
+    |> Dictionary.Stream.get_lazy
+    |> Chunks.transform_stream(:sorted_dictionary, buffer_size)
+		|> Stream.each(fn_ets_insert_chunks)
+		|> Stream.run
 
-		Dictionary.Stream.delete(sorted_stream)
 
     info = :ets.info(@ets_table_name)
 		IO.puts ":chunks, ets info is: #{inspect info}\n"		
