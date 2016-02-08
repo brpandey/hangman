@@ -20,7 +20,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		{:ok, _correct_letter} = Keyword.fetch(filter_options, :correct_letter)
 
 		{:ok, _exclusion_filter_set} = Keyword.fetch(filter_options, :guessed_letters)
-		{:ok, _regex} = Keyword.fetch(filter_options, :regex)
+		{:ok, _regex} = Keyword.fetch(filter_options, :regex_match_key)
 	
 		simulate_reduce_sequence(pass_key)	
 	end
@@ -33,7 +33,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		{:ok, _incorrect_letter} = Keyword.fetch(filter_options, :incorrect_letter)
 
 		{:ok, _exclusion_filter_set} = Keyword.fetch(filter_options, :guessed_letters)
-		{:ok, _regex} = Keyword.fetch(filter_options, :regex)
+		{:ok, _regex} = Keyword.fetch(filter_options, :regex_match_key)
 		
 		simulate_reduce_sequence(pass_key)
 	end

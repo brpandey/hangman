@@ -8,6 +8,8 @@ defmodule Hangman.Engine.Cache.Test do
 
     # assume secret word is cumulate
 
+    #### GAME SETUP
+
 		Dictionary.Cache.setup()
     Engine.setup()
 
@@ -19,17 +21,15 @@ defmodule Hangman.Engine.Cache.Test do
     pass_key = {id, game_no, round_no} = {"julio", 1, 1}
 
     context = {:game_start, 8} 
-    options = Strategy.Options.filter_options(strategy, context)
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
 
     tally = Counter.new(%{"e" => 19600, "s" => 16560, "i" => 15530, "a" => 14490, "r" => 14211, "n" => 12186, "t" => 11870, "o" => 11462, "l" => 11026, "d" => 8046, "c" => 7815, "u" => 7377, "g" => 6009, "m" => 5793, "p" => 5763, "h" => 5111, "b" => 4485, "y" => 3395, "f" => 2897, "k" => 2628, "w" => 2313, "v" => 2156, "z" => 783, "x" => 662, "q" => 422, "j" => 384})
 
     pass_info = %Pass{ size: 28558, tally: tally, only_word_left: ""}
 
     # Assert reduce results!!!
-    {^pass_key, ^pass_info} = Engine.reduce(:game_start, pass_key, options)
+    {^pass_key, ^pass_info} = Engine.reduce(:game_start, pass_key, reduce_key)
 
-    IO.puts "pass_key is: #{inspect pass_key}"
-    IO.puts "pass_info is: #{inspect pass_info}"
     IO.puts "passed game start reduce"
 
     # Choose guess
@@ -42,21 +42,22 @@ defmodule Hangman.Engine.Cache.Test do
 
     #### ROUND 2
     pass_key = {id, game_no, round_no = round_no + 1}
-		assert Strategy.get_guessed(strategy) == ["e"]
 
-    options = Strategy.Options.filter_options(strategy, context)
+    guessed = ["e"]
+
+		assert guessed == Strategy.get_guessed(strategy)
+
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
+
+    assert ~r/^[^e][^e][^e][^e][^e][^e][^e]e$/  =
+      Strategy.Options.regex_match_key(context, guessed)
 
 		tally = Counter.new(%{"a" => 1215, "i" => 1154, "l" => 940, "o" => 855, "t" => 807, "s" => 689, "r" => 688, "n" => 662, "u" => 548, "c" => 527, "b" => 425, "p" => 387, "m" => 380, "d" => 348, "g" => 280, "h" => 257, "k" => 228, "f" => 169, "v" => 155, "y" => 127, "z" => 112, "w" => 111, "q" => 35, "x" => 24, "j" => 18})
 
-    pass_info = %Pass{ size: 1833, tally: tally, only_word_left: ""}
+    pass_info = %Pass{ only_word_left: "", size: 1833, tally: tally}
 
     # Assert reduce results!!!
-    {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, options)
-
-    IO.puts "pass_key is: #{inspect pass_key}"
-    IO.puts "pass_info is: #{inspect pass_info}"
-    IO.puts "passed game start reduce"
+    {^pass_key, ^pass_info} = Engine.reduce(:correct_letter, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -70,18 +71,22 @@ defmodule Hangman.Engine.Cache.Test do
     # ROUND 3
 
     pass_key = {id, game_no, round_no = round_no + 1}
-		assert Strategy.get_guessed(strategy) == ["a", "e"]
+    guessed = ["a", "e"]
 
-    options = Strategy.Options.filter_options(strategy, context)
+		assert guessed == Strategy.get_guessed(strategy)
+
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
+
+    assert ~r/^[^ae][^ae][^ae][^ae][^ae]a[^ae]e$/ = 
+      Strategy.Options.regex_match_key(context, guessed)
 
 		tally = Counter.new(%{"t" => 162, "i" => 121, "o" => 108, "u" => 97, "r" => 94, "l" => 89, "s" => 86, "c" => 78, "g" => 63, "n" => 58, "p" => 55, "m" => 50, "b" => 44, "d" => 36, "f" => 28, "h" => 25, "k" => 19, "v" => 13, "w" => 11, "y" => 4, "j" => 3, "x" => 2, "z" => 2, "q" => 1})
-
 
     pass_info = %Pass{ size: 236, tally: tally, only_word_left: ""}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, options)
+      Engine.reduce(:correct_letter, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -89,15 +94,20 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:correct_letter, "t", "-----A-E", "-"}
+    context = {:correct_letter, "t", "-----ATE", "-"}
 
 
     # ROUND 4
 
     pass_key = {id, game_no, round_no = round_no + 1}
-		assert Strategy.get_guessed(strategy) == ["a", "e", "t"]
+    guessed = ["a", "e", "t"]
 
-    options = Strategy.Options.filter_options(strategy, context)
+		assert guessed == Strategy.get_guessed(strategy)
+
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
+
+    assert ~r/^[^aet][^aet][^aet][^aet][^aet]ate$/ = 
+      Strategy.Options.regex_match_key(context, guessed)
 
 		tally = Counter.new(%{"i" => 43, "o" => 42, "u" => 40, "l" => 35, "c" => 29, "n" => 27, "r" => 24, "s" => 20, "m" => 17, "b" => 15, "p" => 13, "d" => 12, "h" => 9, "g" => 9, "v" => 6, "f" => 6, "j" => 3, "y" => 2, "k" => 2, "x" => 1, "z" => 1, "w" => 1})
 
@@ -105,7 +115,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, options)
+      Engine.reduce(:correct_letter, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -119,9 +129,14 @@ defmodule Hangman.Engine.Cache.Test do
     # ROUND 5
 
     pass_key = {id, game_no, round_no = round_no + 1}
-		assert Strategy.get_guessed(strategy) == ["a", "e", "o", "t"]
+    guessed = ["a", "e", "o", "t"]
 
-    options = Strategy.Options.filter_options(strategy, context)
+		assert guessed == Strategy.get_guessed(strategy)
+
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
+
+    assert ~r/^[^o]*$/  =
+      Strategy.Options.regex_match_key(context, guessed)
 
 		tally = Counter.new(%{"u" => 29, "i" => 24, "l" => 16, "n" => 13, "c" => 12, "s" => 12, "r" => 10, "g" => 8, "m" => 7, "p" => 7, "b" => 6, "d" => 5, "f" => 4, "h" => 3, "j" => 3, "v" => 2, "y" => 2, "k" => 1, "x" => 1, "z" => 1})
 
@@ -129,7 +144,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, options)
+      Engine.reduce(:correct_letter, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -145,9 +160,14 @@ defmodule Hangman.Engine.Cache.Test do
     # ROUND 6
 
     pass_key = {id, game_no, round_no = round_no + 1}
-		assert Strategy.get_guessed(strategy) == ["a", "e", "i", "o", "t"]
+    guessed = ["a", "e", "i", "o", "t"]
 
-    options = Strategy.Options.filter_options(strategy, context)
+		assert guessed == Strategy.get_guessed(strategy)
+
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
+
+    assert ~r/^[^i]*$/ = 
+      Strategy.Options.regex_match_key(context, guessed)
 
 		tally = Counter.new(%{"u" => 12, "l" => 10, "n" => 4, "p" => 4, "s" => 4, "c" => 3, "g" => 3, "b" => 2, "f" => 2, "h" => 2, "m" => 2, "y" => 2, "d" => 1, "k" => 1, "j" => 1, "r" => 1, "v" => 1, "x" => 1})
 
@@ -156,7 +176,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, options)
+      Engine.reduce(:correct_letter, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -164,15 +184,20 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:incorrect_letter, "l"}
+    context = {:correct_letter, "l", "----LATE", "-"}
 
 
     # ROUND 7
 
     pass_key = {id, game_no, round_no = round_no + 1}
-		assert Strategy.get_guessed(strategy) == ["a", "e", "i", "l", "o", "t"]
+    guessed = ["a", "e", "i", "l", "o", "t"]
 
-    options = Strategy.Options.filter_options(strategy, context)
+		assert guessed == Strategy.get_guessed(strategy)
+
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
+
+    assert ~r/^[^aeilot][^aeilot][^aeilot][^aeilot]late$/  = 
+      Strategy.Options.regex_match_key(context, guessed)
 
 		tally = Counter.new(%{"u" => 7, "c" => 2, "g" => 2, "n" => 2, "s" => 2, "b" => 1, "d" => 1, "f" => 1, "j" => 1, "m" => 1, "p" => 1})
 
@@ -181,7 +206,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, options)
+      Engine.reduce(:correct_letter, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -196,18 +221,22 @@ defmodule Hangman.Engine.Cache.Test do
     # ROUND 8
 
     pass_key = {id, game_no, round_no = round_no + 1}
-		assert Strategy.get_guessed(strategy) == 
-      ["a", "c", "e", "i", "l", "o", "t"]
+    guessed = ["a", "c", "e", "i", "l", "o", "t"]
 
-    options = Strategy.Options.filter_options(strategy, context)
+		assert guessed == Strategy.get_guessed(strategy)     
+
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
+
+    assert ~r/^c[^aceilot][^aceilot][^aceilot]late$/  = 
+      Strategy.Options.regex_match_key(context, guessed)
 
 		tally = Counter.new(%{"u" => 2, "m" => 1, "p" => 1})
 
-    pass_info = %Pass{ size: 8, tally: tally, only_word_left: ""}
+    pass_info = %Pass{ size: 2, tally: tally, only_word_left: ""}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, options)
+      Engine.reduce(:correct_letter, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -219,19 +248,23 @@ defmodule Hangman.Engine.Cache.Test do
 
     # ROUND 9
 
-    pass_key = {id, game_no, round_no = round_no + 1}
-		assert Strategy.get_guessed(strategy) == 
-      ["a", "c", "e", "i", "l", "m", "o", "t"]
+    pass_key = {id, game_no, round_no + 1}
+    guessed = ["a", "c", "e", "i", "l", "m", "o", "t"]
 
-    options = Strategy.Options.filter_options(strategy, context)
+		assert guessed == Strategy.get_guessed(strategy) 
 
-		tally = Counter.new(%{"u" => 2})
+    reduce_key = Strategy.Options.reduce_key(strategy, context)
+
+    assert ~r/^c[^aceilmot]m[^aceilmot]late$/  = 
+      Strategy.Options.regex_match_key(context, guessed)
+
+		tally = Counter.new(%{"u" => 1})
 
     pass_info = %Pass{ size: 1, tally: tally, only_word_left: "cumulate"}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, options)
+      Engine.reduce(:correct_letter, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)

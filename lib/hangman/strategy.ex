@@ -168,7 +168,7 @@ defmodule Hangman.Strategy do
 
   defmodule Options do
 
-    def filter_options(%Hangman.Strategy{} = _strategy, 
+    def reduce_key(%Hangman.Strategy{} = _strategy, 
       {:game_start, secret_length} = _context) do
     
       Keyword.new([
@@ -177,33 +177,34 @@ defmodule Hangman.Strategy do
         ])
     end
 
-    def filter_options(%Hangman.Strategy{ guessed_letters: guessed } = _strategy, 
-      {:correct_letter, guess, pattern, mystery_letter} = _context) do
+    def reduce_key(%Hangman.Strategy{ guessed_letters: guessed } = _strategy, 
+      {:correct_letter, guess, _pattern, _mystery_letter} = context) do
       
-      regex = regex_word_filter(:correct_letter, 
-                String.downcase(pattern), mystery_letter, guessed)
+      regex = regex_match_key(context, guessed)
 
       Keyword.new([
         {:correct_letter, guess}, 
         {:guessed_letters, guessed},
-        {:regex, regex}
+        {:regex_match_key, regex}
       ])
     end
 
-    def filter_options(%Hangman.Strategy{ guessed_letters: guessed } = _strategy,
-      {:incorrect_letter, guess} = _context) do
+    def reduce_key(%Hangman.Strategy{ guessed_letters: guessed } = _strategy,
+      {:incorrect_letter, guess} = context) do
       
-      regex = regex_word_filter(:incorrect_letter, guess)
+      regex = regex_match_key(context, guessed)
 
       Keyword.new([
-        {:incorrect_letter, guess}, # leave this in until we are assured the regex is faster
+        {:incorrect_letter, guess},
         {:guessed_letters, guessed},
-        {:regex, regex}
+        {:regex_match_key, regex}
       ])
     end
 
     # Helper methods
-    defp regex_word_filter(:correct_letter, pattern, mystery_letter, guessed_letters) do
+    def regex_match_key({:correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
+      pattern = String.downcase(pattern)
+
       replacement = "[^" <> Enum.join(guessed_letters) <> "]"
 
       # For each mystery_letter replace it with [^characters-already-guessed]
@@ -211,7 +212,7 @@ defmodule Hangman.Strategy do
       Regex.compile!("^" <> updated_pattern <> "$")
     end
 
-    defp regex_word_filter(:incorrect_letter, incorrect_letter) do
+    def regex_match_key({:incorrect_letter, incorrect_letter}, _guessed) do
         
       # If "E" was the incorrect letter, the pattern would be "^[^E]*$"
       # Starting from the beginning of the string to the end, any string that 

@@ -2,13 +2,13 @@ defmodule Hangman.Word.Chunks do
 	defstruct key: Nil, raw_stream: Nil, chunk_count: Nil, word_count: Nil
 
 	@moduledoc """
-		Stream to handle Hangman Word Chunks
+		Module to handle Hangman word list chunks for a given length
 		Encapsulates raw stream consisting of binary chunks
 	"""
 
 	alias Hangman.{Word.Chunks}
 
-  @chunk_words_size 1_000
+  @chunk_words_size 500
 
 	def new(length_key) when is_number(length_key) and length_key > 0 do
 		%Chunks{key: length_key, raw_stream: [], chunk_count: 0, word_count: 0}
@@ -17,7 +17,7 @@ defmodule Hangman.Word.Chunks do
   def new(length_key, %Stream{} = words, buf_size \\ @chunk_words_size)
   when is_number(length_key) and is_number(buf_size) and buf_size > 0 do
     
-    # Take the stream, wrap it with indexes, and the apply chunking
+    # Take the stream, wrap it with indexes, and apply chunking
 
     fn_split_into_chunks = fn
       {_word, index} -> 
@@ -61,6 +61,8 @@ defmodule Hangman.Word.Chunks do
 		chunks.chunk_count
 	end
 
+  def get_key(%Chunks{key: key} = _chunks), do: key
+
 	@doc "Takes an existing chunk stream and a tuple value
 		The tuple head is a binary chunk and the tail is the number of words"
 
@@ -78,10 +80,6 @@ defmodule Hangman.Word.Chunks do
 			word_count: chunks.word_count + word_count
 		}
 	end
-
-  # def get_chunks_lazy(%Chunks{raw_stream: raw_stream} = _stream) do
-  #  raw_stream
-  # end
 
   def get_words_lazy(%Chunks{raw_stream: raw_stream} = _stream) do
   	Stream.flat_map(raw_stream, &unpack(&1))

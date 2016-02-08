@@ -91,20 +91,20 @@ defmodule Hangman.Player.Client.Round do
 
   # Setup the game play round
 
-  defp setup(%Hangman.Player.Client{} = client, strategy_context) do
+  defp setup(%Hangman.Player.Client{} = client, context) do
 
   	{player, strategy, game_no, seq_no} = params(client)
 
   	pass_key = {player, game_no, seq_no}
 
   	# Generate the word filter options for the words reduction engine
-		filter_options = Options.filter_options(strategy, strategy_context)
+		reduce_key = Options.reduce_key(strategy, context)
 
-		match_key = Kernel.elem(strategy_context, 0)
+		match_key = Kernel.elem(context, 0)
 
 		# Filter the engine hangman word set
 		{^pass_key, pass_info} = 
-      Reduction.Engine.Stub.reduce(match_key, pass_key, filter_options)
+      Reduction.Engine.Stub.reduce(match_key, pass_key, reduce_key)
 
 		# Update the round strategy with the result of the reduction pass info _from the engine
 		strategy = Strategy.update(strategy, pass_info)

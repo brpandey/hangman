@@ -128,8 +128,6 @@ defmodule Hangman.Counter do
 
 		unique_excluded = MapSet.difference(letter_set, exclusion_set)
 
-    IO.puts "unique_excluded is: #{inspect unique_excluded}"
-
 		add_letters(counter, MapSet.to_list(unique_excluded))
 	end
 
