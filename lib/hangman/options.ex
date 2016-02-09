@@ -54,8 +54,10 @@ defmodule Hangman.Options do
 
 		{:ok, notify_pid} = Player.Events.Notify.start_link([display_output: false])
 
-		Player.Stream.round(player_name, game_server_pid, notify_pid)		# reader stream
-			|> Stream.each(fn text -> IO.puts("\n#{text}") end)							# printer stream
+		Player.Stream.get_round_lazy(player_name, game_server_pid, notify_pid)		
+    # reader stream
+			|> Stream.each(fn text -> IO.puts("\n#{text}") end)							
+    # printer stream
 			|> Enum.take(100)
   end
 end
