@@ -141,7 +141,8 @@ defmodule Hangman.Dictionary.Cache do
 
 	defp do_load(:chunks, {table_name, sorted_path, buffer_size}) do
 
-		:ets.new(table_name, [:bag, :named_table, :protected])
+		:ets.new(table_name, [:bag, :named_table, :public, 
+                          {:write_concurrency, true}])
 
 		# For each words list chunk, insert into ets lambda
 
@@ -154,6 +155,7 @@ defmodule Hangman.Dictionary.Cache do
 					bin_chunk = :erlang.term_to_binary(words_chunk_list) 
 					ets_value = {bin_chunk, chunk_size}
 					:ets.insert(table_name, {ets_key, ets_value}) 
+          "ets chunk insert of #{inspect ets_key}, #{inspect ets_value}"
 		end
 
 		# Group the word stream by chunks, 
@@ -162,8 +164,9 @@ defmodule Hangman.Dictionary.Cache do
     Dictionary.Stream.new(:sorted, sorted_path) 
     |> Dictionary.Stream.get_lazy
     |> Chunks.transform_stream(:sorted_dictionary, buffer_size)
-		|> Stream.each(fn_ets_insert_chunks)
-		|> Stream.run
+		|> pmap(fn_ets_insert_chunks)
+    |> Enum.each(&IO.inspect/1)
+#		|> Stream.run
 
 
     info = :ets.info(@ets_table_name)
@@ -182,6 +185,7 @@ defmodule Hangman.Dictionary.Cache do
 		 		ets_key = get_ets_counter_key(length)
 		 		ets_value = :erlang.term_to_binary(counter)
 		 		:ets.insert(table_name, {ets_key, ets_value})
+        "ets counter insert of #{inspect ets_key}, #{inspect ets_value}"
 		end
 
 		# Given all the keys we inserted, create the tallys 
@@ -198,12 +202,29 @@ defmodule Hangman.Dictionary.Cache do
 
 		get_ets_keys_lazy(table_name) 
 		|> Stream.map(&generate_tally(table_name, &1)) 
-		|> Stream.each(fn_ets_insert_counters)
-		|> Stream.run
+	#	|> Stream.each(fn_ets_insert_counters)
+	#	|> Stream.run
+    |> pmap(fn_ets_insert_counters)
+    |> Enum.each(&IO.inspect/1)
 
     info = :ets.info(@ets_table_name)
 		IO.puts ":counter + chunks, ets info is: #{inspect info}\n"		
 	end
+
+  # Execute map function using pmap, launching a process for each map
+
+  defp pmap(stream, fun) do
+    me = self
+    stream
+    |>
+    Enum.map(fn (elem) ->
+      spawn_link fn -> (send me, { self, fun.(elem) }) end
+    end)
+    |>
+    Enum.map(fn (pid) ->
+      receive do { ^pid, result } -> result end
+    end)
+  end
 
 	# Simple helpers to generate tuple keys for ets based on word length size
 
@@ -273,6 +294,9 @@ defmodule Hangman.Dictionary.Cache do
 			fn _acc -> :ok end
 		)
 	end
+
+
+
 
 end
 
