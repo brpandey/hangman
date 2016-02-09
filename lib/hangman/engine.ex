@@ -1,9 +1,10 @@
-defmodule Hangman.Pass.Engine do
+defmodule Hangman.Reduction.Engine do
 
   alias Hangman.{Dictionary, Types.Reduction.Pass, Word.Chunks, Counter}
 
 	@moduledoc """
-	Maintains the current hangman pass state for a given player, round number.
+	Maintains the current hangman words reduction state 
+  for a given player, round number.
 
 	Uses an ets table to track only the current pass state
 
@@ -19,12 +20,12 @@ defmodule Hangman.Pass.Engine do
 	end
 
 	@doc "Initial engine reduce routine"
-	def reduce(:game_start, {id, game_no, round_no} = pass_key, options)
+	def reduce(:game_start, {id, game_no, round_no} = pass_key, reduce_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
 		# Asserts
-		{:ok, true} =	Keyword.fetch(options, :game_start)
-		{:ok, length_key}  = Keyword.fetch(options, :secret_length)
+		{:ok, true} =	Keyword.fetch(reduce_key, :game_start)
+		{:ok, length_key}  = Keyword.fetch(reduce_key, :secret_length)
 		
 		# Since this is the first pass, grab the words and tally from
 		# the Dictionary Cache
@@ -46,25 +47,11 @@ defmodule Hangman.Pass.Engine do
 	end
 
 
-	def reduce(:incorrect_letter, {id, game_no, round_no} = pass_key, options)
+	def reduce(:game_keep_guessing, {id, game_no, round_no} = pass_key, reduce_key)
  	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
-		# leave this in until we are assured the regex is faster
-		# {:ok, _incorrect_letter} = Keyword.fetch(options, :incorrect_letter)
-
-		{:ok, exclusion_set} = Keyword.fetch(options, :guessed_letters)
-		{:ok, regex_key} = Keyword.fetch(options, :regex_match_key)
-
-		pass_info = do_reduce(pass_key, regex_key, exclusion_set)
-
-		{pass_key, pass_info}
-	end
-
-	def reduce(:correct_letter, {id, game_no, round_no} = pass_key, options)
- 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
-
-		{:ok, exclusion_set} = Keyword.fetch(options, :guessed_letters)
-		{:ok, regex_key} = Keyword.fetch(options, :regex_match_key)
+		{:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
+		{:ok, regex_key} = Keyword.fetch(reduce_key, :regex_match_key)
 
 		pass_info = do_reduce(pass_key, regex_key, exclusion_set)
 

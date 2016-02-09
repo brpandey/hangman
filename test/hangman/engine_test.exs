@@ -1,10 +1,10 @@
-defmodule Hangman.Engine.Cache.Test do
+defmodule Hangman.Engine.Test do
 	use ExUnit.Case, async: true
 
-	alias Hangman.{Pass.Engine, Dictionary, Strategy, 
+	alias Hangman.{Reduction.Engine, Dictionary, Strategy, 
                  Counter, Types.Reduction.Pass}
 
-	test "test engine reduce methods" do
+	test "engine reduce functionality" do
 
     # assume secret word is cumulate
 
@@ -37,7 +37,7 @@ defmodule Hangman.Engine.Cache.Test do
     {:guess_letter, "e"} = Strategy.make_guess(strategy)
 
     # Game Server Guess results
-    context = {:correct_letter, "e", "-------E", "-"}
+    context = {:game_keep_guessing, :correct_letter, "e", "-------E", "-"}
     
 
     #### ROUND 2
@@ -57,7 +57,7 @@ defmodule Hangman.Engine.Cache.Test do
     pass_info = %Pass{ only_word_left: "", size: 1833, tally: tally}
 
     # Assert reduce results!!!
-    {^pass_key, ^pass_info} = Engine.reduce(:correct_letter, pass_key, reduce_key)
+    {^pass_key, ^pass_info} = Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -65,7 +65,7 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:correct_letter, "a", "-----A-E", "-"}
+    context = {:game_keep_guessing, :correct_letter, "a", "-----A-E", "-"}
     
 
     # ROUND 3
@@ -86,7 +86,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, reduce_key)
+      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -94,7 +94,7 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:correct_letter, "t", "-----ATE", "-"}
+    context = {:game_keep_guessing, :correct_letter, "t", "-----ATE", "-"}
 
 
     # ROUND 4
@@ -115,7 +115,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, reduce_key)
+      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -123,7 +123,7 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:incorrect_letter, "o"}
+    context = {:game_keep_guessing, :incorrect_letter, "o"}
 
 
     # ROUND 5
@@ -144,7 +144,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, reduce_key)
+      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -152,7 +152,7 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:incorrect_letter, "i"}
+    context = {:game_keep_guessing, :incorrect_letter, "i"}
 
 
 
@@ -176,7 +176,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, reduce_key)
+      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -184,7 +184,7 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:correct_letter, "l", "----LATE", "-"}
+    context = {:game_keep_guessing, :correct_letter, "l", "----LATE", "-"}
 
 
     # ROUND 7
@@ -206,7 +206,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, reduce_key)
+      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -214,7 +214,7 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:correct_letter, "c", "C---LATE", "-"}
+    context = {:game_keep_guessing, :correct_letter, "c", "C---LATE", "-"}
 
 
 
@@ -236,7 +236,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, reduce_key)
+      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -244,7 +244,7 @@ defmodule Hangman.Engine.Cache.Test do
 
 
     # Game Server Guess results
-    context = {:correct_letter, "m", "C-M-LATE", "-"}
+    context = {:game_keep_guessing, :correct_letter, "m", "C-M-LATE", "-"}
 
     # ROUND 9
 
@@ -264,7 +264,7 @@ defmodule Hangman.Engine.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:correct_letter, pass_key, reduce_key)
+      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)

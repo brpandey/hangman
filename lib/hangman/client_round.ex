@@ -56,14 +56,11 @@ defmodule Hangman.Player.Client.Round do
 
   	case client.round.result_code do
   		:correct_letter -> 
-  			{:correct_letter, client.round.guess, 
+  			{:game_keep_guessing, :correct_letter, client.round.guess, 
   					client.round.pattern, client.mystery_letter}
 
   		:incorrect_letter -> 
-  			{:incorrect_letter, client.round.guess}
-
-  		:incorrect_word -> 
-  			{:incorrect_word, client.round.guess}
+  			{:game_keep_guessing, :incorrect_letter, client.round.guess}
 
   		true ->
   			raise "Unknown round result"

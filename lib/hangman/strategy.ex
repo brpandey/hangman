@@ -178,7 +178,8 @@ defmodule Hangman.Strategy do
     end
 
     def reduce_key(%Hangman.Strategy{ guessed_letters: guessed } = _strategy, 
-      {:correct_letter, guess, _pattern, _mystery_letter} = context) do
+      {_, :correct_letter, guess, _pattern, 
+       _mystery_letter} = context) do
       
       regex = regex_match_key(context, guessed)
 
@@ -190,7 +191,7 @@ defmodule Hangman.Strategy do
     end
 
     def reduce_key(%Hangman.Strategy{ guessed_letters: guessed } = _strategy,
-      {:incorrect_letter, guess} = context) do
+      {_, :incorrect_letter, guess} = context) do
       
       regex = regex_match_key(context, guessed)
 
@@ -202,7 +203,7 @@ defmodule Hangman.Strategy do
     end
 
     # Helper methods
-    def regex_match_key({:correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
+    def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
       pattern = String.downcase(pattern)
 
       replacement = "[^" <> Enum.join(guessed_letters) <> "]"
@@ -212,7 +213,7 @@ defmodule Hangman.Strategy do
       Regex.compile!("^" <> updated_pattern <> "$")
     end
 
-    def regex_match_key({:incorrect_letter, incorrect_letter}, _guessed) do
+    def regex_match_key({_, :incorrect_letter, incorrect_letter}, _guessed) do
         
       # If "E" was the incorrect letter, the pattern would be "^[^E]*$"
       # Starting from the beginning of the string to the end, any string that 

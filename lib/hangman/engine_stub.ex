@@ -3,39 +3,24 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
   alias Hangman.{Counter, Types.Reduction.Pass}
 
 	def reduce(:game_start, 
-		{id, game_no, 1} = pass_key, filter_options) 
+		{id, game_no, 1} = pass_key, reduce_key) 
 		when is_binary(id) and is_number(game_no) do
 
-		{:ok, true} =	Keyword.fetch(filter_options, :game_start)
-		{:ok, _length_filter_key}  = Keyword.fetch(filter_options, :secret_length)
+		{:ok, true} =	Keyword.fetch(reduce_key, :game_start)
+		{:ok, _length_filter_key}  = Keyword.fetch(reduce_key, :secret_length)
 		
 		simulate_reduce_sequence(pass_key)
 	end
 
-	def reduce(:correct_letter, 
-		{id, game_no, round_no} = pass_key, filter_options)
+	def reduce(:game_keep_guessing, 
+		{id, game_no, round_no} = pass_key, reduce_key)
 		when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
-		# leave this in until we are assured the regex is faster
-		{:ok, _correct_letter} = Keyword.fetch(filter_options, :correct_letter)
 
-		{:ok, _exclusion_filter_set} = Keyword.fetch(filter_options, :guessed_letters)
-		{:ok, _regex} = Keyword.fetch(filter_options, :regex_match_key)
+		{:ok, _exclusion_filter_set} = Keyword.fetch(reduce_key, :guessed_letters)
+		{:ok, _regex} = Keyword.fetch(reduce_key, :regex_match_key)
 	
 		simulate_reduce_sequence(pass_key)	
-	end
-
- 	def reduce(:incorrect_letter, 
- 		{id, game_no, round_no} = pass_key, filter_options) 
- 		when is_binary(id) and is_number(game_no) and is_number(round_no) do
-
-		# leave this in until we are assured the regex is faster
-		{:ok, _incorrect_letter} = Keyword.fetch(filter_options, :incorrect_letter)
-
-		{:ok, _exclusion_filter_set} = Keyword.fetch(filter_options, :guessed_letters)
-		{:ok, _regex} = Keyword.fetch(filter_options, :regex_match_key)
-		
-		simulate_reduce_sequence(pass_key)
 	end
 
 
