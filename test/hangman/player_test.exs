@@ -7,7 +7,7 @@ defmodule Hangman.FSM.Test do
 		
 		{:ok, _pid} = Hangman.Supervisor.start_link()
 
-		player_name = "julio"
+		player_name = "wall_e"
 		secrets = ["cumulate"]
 
  	  IO.puts "\n1) Starting regular WALL-e \n"		
@@ -72,7 +72,7 @@ defmodule Hangman.FSM.Test do
  	  # Game 2 -- ASYNC ROBOT!! turbo wall_e
 
  	  IO.puts "\n2) Starting turbo WALL-e \n"
-		player_name = "julio"
+		player_name = "turbo wall_e"
  	  
 		secrets = ["cumulate"]
 
@@ -101,7 +101,7 @@ defmodule Hangman.FSM.Test do
 
  	  IO.puts "\n3) Starting Socrates human guessing player with 2 games \n"		
 
-		player_name = "julio"
+		player_name = "socrates"
  	  
 		secrets = ["cumulate", "avocado"]
 
@@ -145,12 +145,12 @@ defmodule Hangman.FSM.Test do
 
 		IO.puts "Game 1: #{reply}"
 
-		assert "Player julio, Round 8, C---LATE; score=7; status=KEEP_GUESSING. 3 weighted letter choices :  u:2 m*:1 p:1 (* robot choice)" 
+		assert "Player socrates, Round 8, C---LATE; score=7; status=KEEP_GUESSING. 3 weighted letter choices :  u:2 m*:1 p:1 (* robot choice)" 
 			= reply
 
 		reply = FSM.socrates_guess(player_fsm_pid, "m")
 
-		assert "Player julio, Round 9: Last word left: cumulate" = reply
+		assert "Player socrates, Round 9: Last word left: cumulate" = reply
 
 		reply = FSM.socrates_win(player_fsm_pid)
 

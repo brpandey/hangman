@@ -10,35 +10,33 @@ defmodule Hangman.Player.Round do
 
 	def start(%Player{} = player) do
 
-    player = do_start(player)
-
-		context = {:game_start, player.secret_length}
-
     case player.type do
       :robot ->
-        player |> do_setup(context) |> Robot.action(:guess)
+        player
+        |> do_start
+        |> do_setup(:game_start)
+        |> Robot.action(:guess)
+
       :human -> 
-        player |> do_setup(context) |> Human.action(:choose_letters)
+        player
+        |> do_start
+        |> do_setup(:game_start)
+        |> Human.action(:choose_letters)
+
       _ -> raise "Unknown player type"
     end
 
 	end
 
 	def robot_guess(%Player{} = player) do
-		
-		context = do_context(player)
-
   	player
-  	  |> do_setup(context)
+  	  |> do_setup
   		|> Robot.action(:guess)
 	end
 
 	def choose_letters(%Player{} = player) do
-
-  	context = do_context(player)
-
   	player 
-  		|> do_setup(context)
+  		|> do_setup
   		|> Human.action(:choose_letters)
 	end
 
@@ -114,7 +112,18 @@ defmodule Hangman.Player.Round do
 
   # Setup the game play round
 
-  defp do_setup(%Player{} = player, context) do
+  defp do_setup(%Player{} = player) do
+    do_setup(player, do_context(player))
+  end
+
+  defp do_setup(%Player{} = player, :game_start) do
+    len = secret_length(player)
+    true = is_number(len)
+    context = {:game_start, len}
+    do_setup(player, context)
+  end
+
+  defp do_setup(%Player{} = player, context) when is_nil(context) == false do
 
   	{name, strategy, game_no, seq_no} = params(player)
 
@@ -148,6 +157,10 @@ defmodule Hangman.Player.Round do
     seq_no =  player.round_no + 1
 
   	{name, strategy, game_no, seq_no}
+  end
+
+  defp secret_length(%Player{} = player) do
+    player.secret_length
   end
 
   defp do_game_summary(tuple_list) 
