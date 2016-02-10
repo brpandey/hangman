@@ -3,11 +3,19 @@ defmodule Hangman.Dictionary.Cache.Profile do
 
   alias Hangman.{Dictionary, Word.Chunks, Counter}
 
-  def go do
+
+  def go_simple do
+    profile do
+      run_test
+    end
+  end 
+
+  def go_hard do
     :fprof.apply(&run_test/0, [])
     :fprof.profile()
     :fprof.analyse()
   end 
+
   
   def run_test do
 
