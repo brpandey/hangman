@@ -1,6 +1,6 @@
 defmodule Hangman.Dictionary.Stream do
 	defmodule State do
-		defstruct file: Nil, type: Nil, group_id: -1, group_index: -1
+		defstruct file: nil, type: nil, group_id: -1, group_index: -1
 	end
 
 	@moduledoc """

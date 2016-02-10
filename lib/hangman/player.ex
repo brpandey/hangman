@@ -3,17 +3,17 @@ defmodule Hangman.Player do
   alias Hangman.{Player, Player.Round, Player.Events, Strategy}
 
 	defstruct name: "", 
-  	type: Nil,
-    secret_length: 0,
-  	event_server_pid: Nil,
-    game_server_pid: Nil, 
+  	type: nil,
+    secret_length: nil,
+  	event_server_pid: nil,
+    game_server_pid: nil, 
     game_no: 0,
     round_no: 0,
     round_choices: "",
     mystery_letter: Hangman.Game.Server.mystery_letter,
     strategy: Strategy.new,
     round: %Hangman.Types.Game.Round{},
-    game_summary: Nil
+    game_summary: nil
 
   @human :human
   @robot :robot
@@ -37,14 +37,14 @@ defmodule Hangman.Player do
   end
 
   def last_word?(%Player{} = player) do
-    case Strategy.last_word(player.strategy) do Nil -> false; _ -> true end
+    case Strategy.last_word(player.strategy) do nil -> false; _ -> true end
   end
 
   def game_won?(%Player{} = player), do: player.round.status_code == :game_won
 
   def game_lost?(%Player{} = player), do: player.round.status_code == :game_lost
 
-  def game_over?(%Player{} = player), do: player.game_summary != Nil
+  def game_over?(%Player{} = player), do: player.game_summary != nil
 
   def round_status(%Player{} = player), do: Round.status(player)
 

@@ -143,7 +143,7 @@ defmodule Hangman.Game.Server do
 		If a correct guess, returns the :correct atom with the 
 		string representation of the current game state 
 		(which will contain MYSTERY_LETTER in place of unknown letters)
-		otherwise, returns the :incorrect atom and Nil
+		otherwise, returns the :incorrect atom and nil
 	"""
 
 	def handle_call({:guess_letter, letter}, _from, {name, state}) do

@@ -10,7 +10,7 @@ defmodule Hangman.Supervisor do
 	# also the "error kernel" Hangman.Process.Registry
 
 	def start_link() do
-		Supervisor.start_link(@name, Nil)
+		Supervisor.start_link(@name, nil)
 	end
 
 	def init(_) do

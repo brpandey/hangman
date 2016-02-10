@@ -9,8 +9,8 @@ defmodule Hangman.Types do
   defmodule Game.Round do
   	defstruct seq_no: 0,
       guess: "",
-      result_code: Nil, 
-      status_code: Nil, 
+      result_code: nil, 
+      status_code: nil, 
       status_text: "",
       pattern: "", 
       final_result: ""

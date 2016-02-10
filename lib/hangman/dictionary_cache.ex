@@ -107,7 +107,7 @@ defmodule Hangman.Dictionary.Cache do
 				unsorted_stream = Dictionary.Stream.new(:unsorted, path)
 
 				write_lambda = fn 
-					"\n" ->	Nil
+					"\n" ->	nil
 					term -> IO.write(file, term) 
 				end
 
@@ -179,7 +179,7 @@ defmodule Hangman.Dictionary.Cache do
 
 		# lambda to insert verified counter structure into ets
 		fn_ets_insert_counters = fn 
-			{0, Nil} -> ""
+			{0, nil} -> ""
 		 	{length, %Counter{} = counter} ->  
 		 		ets_key = get_ets_counter_key(length)
 		 		ets_value = :erlang.term_to_binary(counter)
@@ -225,7 +225,7 @@ defmodule Hangman.Dictionary.Cache do
 	# as specified by length_key
 
 	# We are only generating tallys from chunks of words, not existing tallies
-	defp generate_tally(_name, {:counter, _length}), do: {0, Nil}
+	defp generate_tally(_name, {:counter, _length}), do: {0, nil}
 
 	defp generate_tally(table_name, ets_key = {:chunk, length}) do
 		# Use for pattern matching when we do ets.foldl

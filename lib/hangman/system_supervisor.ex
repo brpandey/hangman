@@ -10,7 +10,7 @@ defmodule Hangman.System.Supervisor do
 	def start_link do
 		IO.puts "Starting Hangman System Supervisor"
 
-		Supervisor.start_link(@name, Nil)
+		Supervisor.start_link(@name, nil)
 	end
 
 	def init(_) do

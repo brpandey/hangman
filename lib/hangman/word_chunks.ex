@@ -1,5 +1,5 @@
 defmodule Hangman.Word.Chunks do
-	defstruct key: Nil, raw_stream: Nil, chunk_count: Nil, word_count: Nil
+	defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
 
 	@moduledoc """
 		Module to handle Hangman word list chunks for a given length

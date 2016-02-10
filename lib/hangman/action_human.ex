@@ -11,7 +11,7 @@ defmodule Hangman.Action.Human do
    	{name, strategy, game_no, seq_no} = Player.Round.params(player)
 
     last_word =
-    	case Strategy.last_word(strategy) do Nil -> ""; word -> word end
+    	case Strategy.last_word(strategy) do nil -> ""; word -> word end
 
     {{^name, result, code, pattern, text}, final} =
       Game.Server.guess_word(player.game_server_pid, last_word)
@@ -40,7 +40,7 @@ defmodule Hangman.Action.Human do
     choices = 
       case Strategy.last_word(strategy) do
 
-        Nil ->
+        nil ->
         	{_, status} = Player.Round.status(player)
 
         	# Return top 5 letter, count pairs if possible

@@ -10,7 +10,7 @@ defmodule Hangman.Player.System.Supervisor do
 	def start_link do
 		IO.puts "Starting Hangman Player System Supervisor"
 
-		result = {:ok, sv} = Supervisor.start_link(@name, Nil)
+		result = {:ok, sv} = Supervisor.start_link(@name, nil)
 
 		start_workers(sv)
 

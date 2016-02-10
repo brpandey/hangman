@@ -29,7 +29,7 @@ defmodule Hangman.Strategy do
     if strategy.pass.size == 1 do
       strategy.pass.only_word_left      
     else
-      Nil
+      nil
     end
 
   end
@@ -61,7 +61,7 @@ defmodule Hangman.Strategy do
   		_ ->
   			letter = retrieve_best_letter(strategy)
   			
-  			if letter != Nil and letter != "" 
+  			if letter != nil and letter != "" 
           and {:guess_letter, letter} != strategy.prior_guess do
   				guessed_letters = MapSet.put(strategy.guessed_letters, letter)
   				

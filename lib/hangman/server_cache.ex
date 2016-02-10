@@ -6,7 +6,7 @@ defmodule Hangman.Cache do
 	def start_link do
 		IO.puts "Starting Hangman Server Cache"
 
-		args = Nil
+		args = nil
 		options = [name: @name]
 
 		GenServer.start_link(@name, args, options)
@@ -26,7 +26,7 @@ defmodule Hangman.Cache do
 		end
 	end
 
-	def init(_), do:	{:ok, Nil}
+	def init(_), do:	{:ok, nil}
 
 	def handle_call({:get_server, player_name, secret}, _from, state) do
 
