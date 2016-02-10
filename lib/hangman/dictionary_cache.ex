@@ -33,6 +33,9 @@ defmodule Hangman.Dictionary.Cache do
 		case :ets.info(@ets_table_name) do
 			:undefined ->
 				sort_and_write(@dictionary_path, @dictionary_sorted_path)
+
+		    :ets.new(@ets_table_name, [:bag, :named_table, :protected])
+
 				load(@ets_table_name, @dictionary_sorted_path, @chunk_words_size)
 
 			_ -> raise "cache already setup!"
@@ -141,9 +144,6 @@ defmodule Hangman.Dictionary.Cache do
 
 	defp do_load(:chunks, {table_name, sorted_path, buffer_size}) do
 
-		:ets.new(table_name, [:bag, :named_table, :public, 
-                          {:write_concurrency, true}])
-
 		# For each words list chunk, insert into ets lambda
 
 		fn_ets_insert_chunks = fn 
@@ -164,9 +164,8 @@ defmodule Hangman.Dictionary.Cache do
     Dictionary.Stream.new(:sorted, sorted_path) 
     |> Dictionary.Stream.get_lazy
     |> Chunks.transform_stream(:sorted_dictionary, buffer_size)
-		|> pmap(fn_ets_insert_chunks)
-    |> Enum.each(&IO.inspect/1)
-#		|> Stream.run
+    |> Stream.each(fn_ets_insert_chunks)
+		|> Stream.run
 
 
     info = :ets.info(@ets_table_name)
@@ -202,29 +201,12 @@ defmodule Hangman.Dictionary.Cache do
 
 		get_ets_keys_lazy(table_name) 
 		|> Stream.map(&generate_tally(table_name, &1)) 
-	#	|> Stream.each(fn_ets_insert_counters)
-	#	|> Stream.run
-    |> pmap(fn_ets_insert_counters)
-    |> Enum.each(&IO.inspect/1)
+	  |> Stream.each(fn_ets_insert_counters)
+		|> Stream.run
 
     info = :ets.info(@ets_table_name)
 		IO.puts ":counter + chunks, ets info is: #{inspect info}\n"		
 	end
-
-  # Execute map function using pmap, launching a process for each map
-
-  defp pmap(stream, fun) do
-    me = self
-    stream
-    |>
-    Enum.map(fn (elem) ->
-      spawn_link fn -> (send me, { self, fun.(elem) }) end
-    end)
-    |>
-    Enum.map(fn (pid) ->
-      receive do { ^pid, result } -> result end
-    end)
-  end
 
 	# Simple helpers to generate tuple keys for ets based on word length size
 
