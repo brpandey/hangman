@@ -6,7 +6,7 @@ defmodule Hangman.Dictionary.Cache.Profile do
 
   def go_simple do
     profile do
-      run_test
+      run_setup_test
     end
   end 
 
@@ -16,6 +16,9 @@ defmodule Hangman.Dictionary.Cache.Profile do
     :fprof.analyse()
   end 
 
+  def run_setup_test do
+    Dictionary.Cache.setup()
+  end
   
   def run_test do
 

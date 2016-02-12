@@ -86,7 +86,7 @@ defmodule Hangman.Word.Chunks do
   end
 
 
-  def transform_stream(stream, :sorted_dictionary, buffer_size) do
+  def transform_stream(stream, :sorted_grouped, buffer_size) do
 
 	  # lambda to split stream into chunks based on generated chunk id
 		# Uses 1 + div() function to group consecutive, sorted words
@@ -100,8 +100,8 @@ defmodule Hangman.Word.Chunks do
 		#	{6, "muggee", 8512}
 
 		fn_split_into_chunks = fn 
-			{length, _word, length_group_index} -> 
-				_chunk_id = length * ( 1 + div(length_group_index, buffer_size))
+			{length_group, group_index, _} -> 
+				_chunk_id = length_group * ( 1 + div(group_index, buffer_size))
 		end
 
 		# lambda to normalize chunks
@@ -115,7 +115,7 @@ defmodule Hangman.Word.Chunks do
 		fn_normalize_chunks = fn 
 			chunk -> 
 				Enum.map_reduce(chunk, "", 
-					fn {length, word, _}, _acc -> {word, length} end)
+					fn {length, _, word}, _acc -> {word, length} end)
 		end
 
 		#	C) Example of chunk after normalization

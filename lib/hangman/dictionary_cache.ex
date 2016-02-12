@@ -1,10 +1,8 @@
 defmodule Hangman.Dictionary.Cache do
 	#use GenServer
 
-	alias Hangman.{Dictionary, Counter, Word.Chunks}
-
-	# A chunk contains at most 2_000 words
-	@chunk_words_size 2_000
+	alias Hangman.{Counter, Word.Chunks}
+  alias Hangman.Dictionary.File, as: DictFile
 
 	@ets_table_name :dictionary_cache
 
@@ -13,15 +11,22 @@ defmodule Hangman.Dictionary.Cache do
   # dictionary file sizes
 	@possible_length_keys MapSet.new(2..28)
 
-	# Dictionary path file names
-	@dictionary_normal_path "lib/hangman/data/words.txt"
-	@dictionary_normal_sorted_path "lib/hangman/data/words_sorted.txt"
-	@dictionary_big_path "lib/hangman/data/words_big.txt"
-	@dictionary_big_sorted_path "lib/hangman/data/words_big_sorted.txt"
+  # Dictionary path file names
+	@dict_normal_path "lib/hangman/data/words.txt"
+	@dict_normal_sorted_path "lib/hangman/data/words_sorted.txt"
+  @dict_normal_grouped_path "lib/hangman/data/words_grouped.txt"
+  @dict_normal_chunked_path "lib/hangman/data/words_chunked.txt"
+
+	@dict_big_path "lib/hangman/data/words_big.txt"
+	@dict_big_sorted_path "lib/hangman/data/words_big_sorted.txt"
+	@dict_big_grouped_path "lib/hangman/data/words_big_grouped.txt"
+	@dict_big_chunked_path "lib/hangman/data/words_big_chunked.txt"
 
 	# Active dictionary paths in use by program
-	@dictionary_path @dictionary_normal_path
-	@dictionary_sorted_path @dictionary_normal_sorted_path
+	@dict_path @dict_normal_path
+	@dict_sorted_path @dict_normal_sorted_path
+	@dict_grouped_path @dict_normal_grouped_path
+	@dict_chunked_path @dict_normal_chunked_path
 
 
 	# PUBLIC
@@ -32,16 +37,17 @@ defmodule Hangman.Dictionary.Cache do
 	def setup() do
 		case :ets.info(@ets_table_name) do
 			:undefined ->
-				sort_and_write(@dictionary_path, @dictionary_sorted_path)
+        # transform dictionary file, 3 times if necessary
+        path = @dict_path 
+        |> DictFile.Stream.transform_and_write(@dict_sorted_path, :sort)
+        |> DictFile.Stream.transform_and_write(@dict_grouped_path, :group)
+        |> DictFile.Stream.transform_and_write(@dict_chunked_path, :chunk)
 
-		    :ets.new(@ets_table_name, [:bag, :named_table, :protected])
-
-				load(@ets_table_name, @dictionary_sorted_path, @chunk_words_size)
+				load(@ets_table_name, path)
 
 			_ -> raise "cache already setup!"
 		end
 	end
-
 
 
 	# READ
@@ -93,34 +99,6 @@ defmodule Hangman.Dictionary.Cache do
 
 	# PRIVATE
 
-	# Sort dictionary words file and write to new file.  
-	# If already sorted, use sorted file.
-
-	defp sort_and_write(path, sorted_path) 
-		when is_binary(path) and is_binary(sorted_path) do
-
-		case File.open(sorted_path) do
-			{:ok, _file} -> :ok
-			{:error, :enoent} ->
-				{:ok, file} = File.open(sorted_path, [:append])
-
-				unsorted_stream = Dictionary.Stream.new(:unsorted, path)
-
-				write_lambda = fn 
-					"\n" ->	nil
-					term -> IO.write(file, term) 
-				end
-
-				Dictionary.Stream.get_lazy(unsorted_stream)
-					|> Enum.sort_by(&String.length/1, &<=/2)
-					|> Enum.each(write_lambda)
-
-				File.close(file)
-
-				Dictionary.Stream.delete(unsorted_stream)
-		end	
-
-	end
 
 	# Load dictionary word file into ets table @ets_table_name
 	# Segments of the dictionary word stream are broken up into chunks, 
@@ -133,40 +111,41 @@ defmodule Hangman.Dictionary.Cache do
 	# Optimization Note: Converting word_list chunks to binaries
 	# and counters to binaries drastically reduces ets memory footprint
 
-	defp load(table_name, sorted_path, buffer_size) 
-		when is_atom(table_name) and is_binary(sorted_path) 
-		and is_number(buffer_size) and buffer_size > 0 do
-
-		do_load(:chunks, {table_name, sorted_path, buffer_size})
+	defp load(table_name, dict_path) 
+	when is_atom(table_name) and is_binary(dict_path) do
+    
+    :ets.new(table_name, [:bag, :named_table, :protected])
+    
+		do_load(:chunks, {table_name, dict_path})
 		do_load(:counters, table_name)
 	end
 
 
-	defp do_load(:chunks, {table_name, sorted_path, buffer_size}) do
+	defp do_load(:chunks, {table_name, path}) do
 
 		# For each words list chunk, insert into ets lambda
 
 		fn_ets_insert_chunks = fn 
+      {Nil, 0} -> ""
 			{words_chunk_list, length} -> 
 					ets_key = get_ets_chunk_key(length)
+
           # record actual chunk size :)
 					chunk_size = Kernel.length(words_chunk_list)
+
           # convert chunk into binary :)
 					bin_chunk = :erlang.term_to_binary(words_chunk_list) 
 					ets_value = {bin_chunk, chunk_size}
 					:ets.insert(table_name, {ets_key, ets_value}) 
-          "ets chunk insert of #{inspect ets_key}, #{inspect ets_value}"
 		end
 
 		# Group the word stream by chunks, 
     # normalize the chunks then insert into ets
 		
-    Dictionary.Stream.new(:sorted, sorted_path) 
-    |> Dictionary.Stream.get_lazy
-    |> Chunks.transform_stream(:sorted_dictionary, buffer_size)
+    DictFile.Stream.new(:read_chunks, path)
+    |> DictFile.Stream.chunks_stream
     |> Stream.each(fn_ets_insert_chunks)
 		|> Stream.run
-
 
     info = :ets.info(@ets_table_name)
 		IO.puts ":chunks, ets info is: #{inspect info}\n"		
@@ -184,7 +163,6 @@ defmodule Hangman.Dictionary.Cache do
 		 		ets_key = get_ets_counter_key(length)
 		 		ets_value = :erlang.term_to_binary(counter)
 		 		:ets.insert(table_name, {ets_key, ets_value})
-        "ets counter insert of #{inspect ets_key}, #{inspect ets_value}"
 		end
 
 		# Given all the keys we inserted, create the tallys 
@@ -230,21 +208,25 @@ defmodule Hangman.Dictionary.Cache do
 	defp generate_tally(table_name, ets_key = {:chunk, length}) do
 		# Use for pattern matching when we do ets.foldl
 
-		fn_reduce_words_into_counter = fn 
-			head, acc -> Counter.add_unique_letters(acc, head)
-		end
-
+#		fn_reduce_words_into_counter = fn 
+#			head, acc -> Counter.add_unique_letters(acc, head)
+#		end
+    
+    # acc is the counter here
 		fn_reduce_key_chunks_into_counter = fn
-			{^ets_key, {bin_chunk, _size} = _value}, acc -> # we pin to function arg's specified key
-				# convert back from binary to words list chunk
-				word_list = :erlang.binary_to_term(bin_chunk)
-				Enum.reduce(word_list, acc, fn_reduce_words_into_counter)
-			_, acc -> acc	
+    # we pin to function arg's specified key
+		{^ets_key, {bin_chunk, _size} = _value}, acc -> 
+			  # convert back from binary to words list chunk
+			  word_list = :erlang.binary_to_term(bin_chunk)
+        Counter.add_word_list(acc, word_list)
+        #Enum.reduce(word_list, acc, fn_reduce_words_into_counter)
+			
+      _, acc -> acc	
 		end
 
 		counter = :ets.foldl(fn_reduce_key_chunks_into_counter, 
 			Counter.new(), table_name)
-
+    
 		{length, counter}
 	end
 
@@ -276,9 +258,6 @@ defmodule Hangman.Dictionary.Cache do
 			fn _acc -> :ok end
 		)
 	end
-
-
-
 
 end
 
