@@ -21,16 +21,10 @@ defmodule Hangman.Dictionary.File.Stream do
 	when is_binary(path) and is_binary(new_path) and 
   type in [:sort, :group, :chunk] do
 
-    IO.puts "in transform and write, type: #{inspect type}, path: #{path}, new_path: #{new_path}"
-
 		case File.open(new_path) do
-			{:ok, _file} -> 
-        IO.puts "already exists, Really?"
-        new_path
+			{:ok, _file} -> new_path
 			{:error, :enoent} ->
 				{:ok, write_file} = File.open(new_path, [:append])
-
-        IO.puts "create new! transform howdy"
 
 				fn_write_lambda = fn 
 					"\n" ->	nil
@@ -44,7 +38,6 @@ defmodule Hangman.Dictionary.File.Stream do
 
         fn_write_chunk_lambda = fn
           chunk ->
-            IO.inspect("write_chunk: #{inspect chunk}")
             bin_chunk = :erlang.term_to_binary(chunk)
             IO.binwrite(write_file, bin_chunk)
             # Add delimiter after every chunk, easier for chunk retrieval
@@ -60,14 +53,12 @@ defmodule Hangman.Dictionary.File.Stream do
 					  |> Enum.each(fn_write_lambda)
 
           :group ->
-            IO.puts "group transform type"
             new(:read_sorted, path)
             |> get_data_lazy
             |> Stream.each(fn_write_group_lambda)
             |> Stream.run
 
           :chunk ->
-            IO.puts "chunks transform type"
             new(:read_grouped, path) 
             |> get_data_lazy
             |> Chunks.transform_stream(:sorted_grouped, @chunk_words_size)
