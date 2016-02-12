@@ -58,6 +58,9 @@ defmodule Hangman.Reduction.Engine do
 		{pass_key, pass_info}
 	end
 
+  # Private reduce method that actually does the reduce
+  # Loads Chunks for the current pass, and reduces word
+  # stream given regex filter
 	defp do_reduce(pass_key, regex_key, %MapSet{} = exclusion_set) do
 
     IO.puts "In do reduce"
@@ -74,12 +77,10 @@ defmodule Hangman.Reduction.Engine do
 
     filtered_stream = 
       stored_chunks |> Chunks.get_words_lazy
-      |> Stream.filter(&regex_match?(&1, regex_key))
-
-		# Populate counter object, now that we've created the new filtered stream
-		tally = Enum.reduce(filtered_stream, Counter.new, fn head, acc ->
-			Counter.add_unique_letters(acc, head, exclusion_set)
-		end)
+    |> Stream.filter(&regex_match?(&1, regex_key))
+    
+		# Populate counter object, now that we've created the new filtered chunks
+    tally = Counter.new |> Counter.add_words_stream(filtered_stream, exclusion_set)
 
     IO.puts "In round pass, tally is: #{inspect tally}"
 

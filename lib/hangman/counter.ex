@@ -87,11 +87,12 @@ defmodule Hangman.Counter do
     add_letters(counter, String.codepoints(word))
   end
 
-	def add_letters(%Hangman.Counter{entries: entries} = counter, codepoints) 
-	when is_list(codepoints) and is_binary(hd(codepoints)) do
-		
-		# Splits word into unique codepoints list, 
-    # and then reduces this list into
+	def add_letters(%Hangman.Counter{entries: entries} = counter, codepoints) do
+
+		false = Enum.empty?(codepoints)
+
+		# Splits word into unique codepoints enumerable, 
+    # and then reduces this enumerable into
 		# the entries dict, updating the count by one if the key
 		# is already present in the entries Map
 
@@ -105,6 +106,22 @@ defmodule Hangman.Counter do
 		%Hangman.Counter{ counter | entries: entries_updated }
 	end
 
+_ = """
+ if a word is "restlessness", rather than scoring it with 1 s
+ collapse the duplicate s's that are consecutive to make 3 s's
+
+    fn_filter_hangman_codepoints = fn
+      head, {last_codepoint, codepoints} ->
+      if head != last_codepoint do
+        acc ++ head
+      else
+        acc
+      end
+      last_codepoint = head
+      {last_codepoint, map}
+    end
+"""
+
 	def add_unique_letters(%Hangman.Counter{} = counter, word) 
 	when is_binary(word) do
 		
@@ -117,7 +134,8 @@ defmodule Hangman.Counter do
 	end
 
 	def add_unique_letters(%Hangman.Counter{} = counter, word, 
-		%MapSet{} = exclusion_set) when is_binary(word) do
+                         %MapSet{} = exclusion_set)
+  when is_binary(word) do
 		
 		# Splits word into unique codepoints list, 
     # and then reduces this list into
@@ -131,9 +149,98 @@ defmodule Hangman.Counter do
 		add_letters(counter, MapSet.to_list(unique_excluded))
 	end
 
+  def add_word_list(%Hangman.Counter{} = counter, words)
+  when is_list(words) do
+
+    fn_reduce_word_into_counter = fn
+      "", acc -> acc                                    
+      word, acc ->
+        seq = String.codepoints(word) |> Enum.uniq
+
+        # Update the counter's map
+        add_letters(acc, seq)
+    end
+    
+    counter = Enum.reduce(words, counter, fn_reduce_word_into_counter)
+
+    counter
+
+  end
+
+  def add_word_list(%Hangman.Counter{} = counter, words, 
+                    %MapSet{} = exclusion_set)
+  when is_list(words) do
+
+    # routine to check if a word is a duplicate or in exclusion set
+    fn_dup_and_exclusion_check_1_pass = fn
+      codepoint, dup_val -> 
+        case(MapSet.member?(exclusion_set, codepoint)) do
+          # regard codepoints that are in the exclusion set as fake dupes
+          # by givin the value of the first element again 
+          # - we handle the edge case later :)
+          true -> dup_val
+          _ -> codepoint
+        end
+    end
+
+    fn_reduce_word_into_counter = fn
+      "", acc -> acc                                    
+      word, acc ->
+        seq = String.codepoints(word) # add each word's codepoint
+        fake_dup_val = List.first(seq)
+
+        seq = Enum.uniq_by(seq, &fn_dup_and_exclusion_check_1_pass.(&1, fake_dup_val))
+      
+        # Cover edge case if the first element we used for the fake dup val
+        # if that is in the exclusion set, then drop it :)
+        if MapSet.member?(exclusion_set, List.first(seq)) do
+          seq = Enum.drop(seq, 1)
+        end
+
+        # Update the counter's map
+        add_letters(acc, seq)
+    end
+    
+    counter = Enum.reduce(words, counter, fn_reduce_word_into_counter)
+
+    #counter = delete(counter, letters)
+
+    counter
+  end
+
+
+  def add_words_stream(%Hangman.Counter{} = counter, words_stream, 
+                    %MapSet{} = exclusion_set) do
+
+    # acc is codepoints stream, initially it is an empty list
+    counter = Enum.reduce(words_stream, counter, fn word, acc ->
+      # add each word's uniq codepoint
+
+      sequence = word |> String.codepoints |> Enum.uniq
+
+      # Update the counter with the sorted (codepoints by word) stream
+      add_letters(acc, sequence)
+    end
+    )
+    
+    # Add word delimiter empty codepoint to exclusion set
+    # Remove exclusion set in one go per word list (vs. per word)
+    letters = cond do
+      MapSet.size(exclusion_set) > 0 ->
+        exclusion_set |> MapSet.to_list
+      true ->
+        []
+    end
+    
+    delete(counter, letters)
+  end
+
+
 	# DELETE
 
 	# Returns an updated Counter, after deleting specified keys in letters
+  def delete(%Hangman.Counter{} = counter, []), do: counter
+
 	def delete(%Hangman.Counter{entries: entries} = counter, letters) 
 		when is_list(letters) and is_binary(hd(letters)) do
 
