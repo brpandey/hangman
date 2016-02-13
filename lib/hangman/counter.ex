@@ -15,6 +15,8 @@ defmodule Hangman.Counter do
   @type key :: String.t
   @type value :: pos_integer
 
+  @chunk_words_size 500
+
 	# Letter Frequency Counter for words
 	
 	# CREATE
@@ -35,7 +37,7 @@ defmodule Hangman.Counter do
 	end
 	
 	# Returns new Counter	that reflects contents of tuple list
-  @spec new(list) :: t
+  @spec new([tuple]) :: t
 	def new(tuple_list) when is_list(tuple_list) and is_tuple(hd(tuple_list)) do
 		map = Enum.into tuple_list, Map.new
 		%Counter{ map: map }
@@ -167,7 +169,7 @@ defmodule Hangman.Counter do
     
     # 1) Reduce the words into a codepoint sequence list
 
-    # 2) Convert sequence list into letter counts list
+    # 2) Convert sequence list into letter counts list - faster then bulk map puts!
     # e.g.  the seq is ["a", "b", "d", "h", "d", "b", "b", "h", "a"] 
     # sort  the seq is now ["a", "a", "b", "b", "b", "d", "d", "h", "h"]
     # chunk the seq is now [["a", "a"], ["b", "b", "b"], ["d", "d"], ["h", "h"]]
@@ -198,10 +200,8 @@ defmodule Hangman.Counter do
   def add_words(%Counter{} = counter, words_stream, 
                     %MapSet{} = exclusion_set) do
 
-    chunk_size = 500
-
     counter = words_stream
-    |> Stream.chunk(chunk_size, chunk_size, [])
+    |> Stream.chunk(@chunk_words_size, @chunk_words_size, [])
     |> Enum.reduce(counter, &add_words(&2, &1)) # the acc is the first param, so switch
 
     
