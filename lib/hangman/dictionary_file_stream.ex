@@ -1,79 +1,11 @@
 defmodule Hangman.Dictionary.File.Stream do
-
-	alias Hangman.{Word.Chunks}
-
-	# A chunk contains at most 2_000 words
-	@chunk_words_size 2_000
   
-  # Used to delimit chunk values in binary chunks file..
-  @chunks_file_delimiter :erlang.term_to_binary({8,1,8,1,8,1})
-
 	defmodule State do
 		defstruct file: nil, type: nil, group_id: -1, group_index: -1
 	end
-  
 
-  # Takes input file, applies a transform type and returns new file path
-  # For example, can be used to first sort a file, then upon
-  # second invocation, group that file
-
-	def transform_and_write(path, new_path, type) 
-	when is_binary(path) and is_binary(new_path) and 
-  type in [:sort, :group, :chunk] do
-
-		case File.open(new_path) do
-			{:ok, _file} -> new_path
-			{:error, :enoent} ->
-				{:ok, write_file} = File.open(new_path, [:append])
-
-				fn_write_lambda = fn 
-					"\n" ->	nil
-					term -> IO.write(write_file, term) 
-				end
-
-        fn_write_group_lambda = fn
-          {length, index, word} -> 
-            IO.puts(write_file, "#{length} #{index} #{word}")
-        end
-
-        fn_write_chunk_lambda = fn
-          chunk ->
-            bin_chunk = :erlang.term_to_binary(chunk)
-            IO.binwrite(write_file, bin_chunk)
-            # Add delimiter after every chunk, easier for chunk retrieval
-            IO.binwrite(write_file, @chunks_file_delimiter)
-        end
-
-        # Process by transform type, then apply transforms
-        case type do
-          :sort -> 
-				    new(:read_unsorted, path)
-				    |> get_data_lazy
-					  |> Enum.sort_by(&String.length/1, &<=/2)
-					  |> Enum.each(fn_write_lambda)
-
-          :group ->
-            new(:read_sorted, path)
-            |> get_data_lazy
-            |> Stream.each(fn_write_group_lambda)
-            |> Stream.run
-
-          :chunk ->
-            new(:read_grouped, path) 
-            |> get_data_lazy
-            |> Chunks.transform_stream(:sorted_grouped, @chunk_words_size)
-            |> Stream.each(fn_write_chunk_lambda)
-		        |> Stream.run
-          
-            _ -> raise "Unsupported type"
-          
-				  File.close(write_file)
-
-		    end
-    end
-
-    new_path
-	end
+  # Used to delimit chunk values in binary chunks file..
+  @chunks_file_delimiter :erlang.term_to_binary({8,1,8,1,8,1})
 
 
 	# Create

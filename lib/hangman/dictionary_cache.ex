@@ -1,32 +1,15 @@
 defmodule Hangman.Dictionary.Cache do
 	#use GenServer
 
-	alias Hangman.{Counter, Word.Chunks}
   alias Hangman.Dictionary.File, as: DictFile
+	alias Hangman.{Counter, Word.Chunks}
 
-	@ets_table_name :dictionary_cache
+	@ets_table_name :dictionary_cache_table
 
 	# Used to insert the word list chunks and frequency counter tallies, 
 	# indexed by word length 2..28, for both the normal and big 
   # dictionary file sizes
 	@possible_length_keys MapSet.new(2..28)
-
-  # Dictionary path file names
-	@dict_normal_path "lib/hangman/data/words.txt"
-	@dict_normal_sorted_path "lib/hangman/data/words_sorted.txt"
-  @dict_normal_grouped_path "lib/hangman/data/words_grouped.txt"
-  @dict_normal_chunked_path "lib/hangman/data/words_chunked.txt"
-
-	@dict_big_path "lib/hangman/data/words_big.txt"
-	@dict_big_sorted_path "lib/hangman/data/words_big_sorted.txt"
-	@dict_big_grouped_path "lib/hangman/data/words_big_grouped.txt"
-	@dict_big_chunked_path "lib/hangman/data/words_big_chunked.txt"
-
-	# Active dictionary paths in use by program
-	@dict_path @dict_normal_path
-	@dict_sorted_path @dict_normal_sorted_path
-	@dict_grouped_path @dict_normal_grouped_path
-	@dict_chunked_path @dict_normal_chunked_path
 
 
 	# PUBLIC
@@ -38,10 +21,9 @@ defmodule Hangman.Dictionary.Cache do
 		case :ets.info(@ets_table_name) do
 			:undefined ->
         # transform dictionary file, 3 times if necessary
-        path = @dict_path 
-        |> DictFile.Stream.transform_and_write(@dict_sorted_path, :sort)
-        |> DictFile.Stream.transform_and_write(@dict_grouped_path, :group)
-        |> DictFile.Stream.transform_and_write(@dict_chunked_path, :chunk)
+        path = DictFile.transform(:normal, :sorted)
+        |> DictFile.transform(:sorted, :grouped)
+        |> DictFile.transform(:grouped, :chunked)
 
 				load(@ets_table_name, path)
 
