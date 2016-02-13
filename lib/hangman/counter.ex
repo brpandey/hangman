@@ -72,9 +72,10 @@ defmodule Hangman.Counter do
 	# UPDATE
 
 	# Increment value for a given key by the given value - default is 1, 
-	# if not there add key and value of 1
-	def inc(%Hangman.Counter{entries: entries} = counter, key, value \\ 1) when is_binary(key) do
-		%Hangman.Counter{ counter | entries: Map.update(entries, key, 1, &(&1 + value)) }
+	# if not there add key and value
+	def inc_by(%Hangman.Counter{entries: entries} = counter, key, value \\ 1)
+  when is_binary(key) and is_number(value) and value > 0 do
+		%Hangman.Counter{ counter | entries: Map.update(entries, key, value, &(&1 + value)) }
 	end
 
 	# Returns an updated Counter
@@ -82,8 +83,7 @@ defmodule Hangman.Counter do
 	# Handle case where list is empty
 	def add_letters(%Hangman.Counter{} = counter, []), do: counter
 
-  def add_letters(%Hangman.Counter{} = counter, word)
-  when is_binary(word) do
+  def add_letters(%Hangman.Counter{} = counter, word) when is_binary(word) do
     add_letters(counter, String.codepoints(word))
   end
 
@@ -91,10 +91,10 @@ defmodule Hangman.Counter do
 
 		false = Enum.empty?(codepoints)
 
-		# Splits word into unique codepoints enumerable, 
+		# Splits word into codepoints enumerable, 
     # and then reduces this enumerable into
 		# the entries dict, updating the count by one if the key
-		# is already present in the entries Map
+		# is already present in the entries Map, else setting 1 as the initial value
 
 		entries_updated = 
 			Enum.reduce(
@@ -155,13 +155,42 @@ _ = """
     fn_reduce_word_into_counter = fn
       "", acc -> acc                                    
       word, acc ->
-        seq = String.codepoints(word) |> Enum.uniq
+        # seq = String.codepoints(word) |> Enum.uniq
+        
+        # using char lists is faster 
+        seq = word |> String.to_char_list |> Enum.uniq
+        
+        List.flatten(seq, acc)
 
-        # Update the counter's map
-        add_letters(acc, seq)
     end
     
-    counter = Enum.reduce(words, counter, fn_reduce_word_into_counter)
+    # reduce the words into a codepoints sequence
+    seq_list = Enum.reduce(words, [], fn_reduce_word_into_counter)
+
+#    IO.puts "sequence list: #{seq_list}"
+#    IO.puts "sequent list, chunk_by: #{inspect seq_list |> Enum.sort |> Enum.chunk_by(&(&1)) |> Enum.map(&Enum.with_index(&1,1)) |> Enum.map(&List.last/1)}"
+
+    grouped_codepoint_counts = seq_list 
+    # e.g. the seq is ["a", "b", "d", "h", "d", "b", "b", "h", "a"] 
+    |> Enum.sort
+    # O(nlogn)
+    # e.g. the seq is now ["a", "a", "b", "b", "b", "d", "d", "h", "h"]
+    |> Enum.chunk_by(&(&1))
+    # O(n)
+    # e.g. the seq is now [["a", "a"], ["b", "b", "b"], ["d", "d"], ["h", "h"]]
+    |> Enum.map(&Enum.with_index(&1,1))
+    # O(n)
+    # e.g. [[{"a", 1}, {"a", 2}], [{"b", 1}, {"b", 2}, {"b", 3}], 
+    # [{"d", 1}, {"d", 2}], [{"h", 1}, {"h", 2}]]
+    |> Enum.map(&List.last/1)
+    # O(n)
+    # e.g. final seq is: [{"a", 2}, {"b", 3}, {"d", 2}, {"h", 2}] 
+
+    # allow for batch updating of codepoints vs updating the counter map for every codepoint
+    counter = Enum.reduce(grouped_codepoint_counts, counter, fn {codepoint_value, value}, acc -> 
+      inc_by(acc, :binary.list_to_bin([codepoint_value]), value)
+      # inc_by(acc, codepoint_value, value)
+    end)
 
     counter
 
@@ -176,7 +205,7 @@ _ = """
       codepoint, dup_val -> 
         case(MapSet.member?(exclusion_set, codepoint)) do
           # regard codepoints that are in the exclusion set as fake dupes
-          # by givin the value of the first element again 
+          # by giving the value of the first element again 
           # - we handle the edge case later :)
           true -> dup_val
           _ -> codepoint

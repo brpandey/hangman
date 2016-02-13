@@ -33,7 +33,7 @@ defmodule Hangman.Counter.Test do
 
 		tally = Counter.new(tuple_list)
 
-		tally = Counter.inc(tally, "E", 5)
+		tally = Counter.inc_by(tally, "E", 5)
 
 		assert [{"E", 7}, {"O", 3}, {"A", 2}] = Counter.most_common(tally, 10)
 
@@ -65,10 +65,18 @@ defmodule Hangman.Counter.Test do
 
 		tally = Counter.new
 
-    tally = Counter. add_letters(tally, "mississippi")
+    tally = Counter.add_letters(tally, "mississippi")
 
     assert [{"i", 4}, {"s", 4}, {"p", 2}, {"m", 1}] = 
       Counter.most_common(tally, 5)
+
+    word_list = ["cotoneaster","cotransduce","cotransfers","cotransport","cottonmouth","cottonseeds","cottontails","cottonweeds","cottonwoods","cotylosaurs","coulometers","coulometric","councillors","counselings","counselling","counsellors","countenance","counteracts","counterbade","counterbids","counterblow","countercoup","counterfeit","counterfire"]
+
+    tally = Counter.new
+
+    tally = Counter.add_word_list(tally, word_list)
+
+    IO.puts "Counter word list: #{inspect tally}"
 
 		IO.puts "Counter: deleted -- #{inspect Counter.delete(tally)}"
 	end

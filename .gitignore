@@ -3,5 +3,6 @@
 /deps
 /tmp
 erl_crash.dump
+.DS_Store
 *.ez
 play_hangman
