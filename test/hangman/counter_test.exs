@@ -56,11 +56,9 @@ defmodule Hangman.Counter.Test do
 
     tally = Counter.new
 
-		tally = Counter.add_unique_letters(tally, 
-                                       "mississippi", 
-                                       MapSet.new(["i", "o", "l"]))
+		tally = Counter.add_unique_letters(tally, "mississippi")
 
-    assert [{"m", 1}, {"p", 1}, {"s", 1}] = 
+    assert [{"i", 1}, {"m", 1}, {"p", 1}, {"s", 1}] =
       Counter.most_common(tally, 5)
 
 		tally = Counter.new
@@ -74,7 +72,7 @@ defmodule Hangman.Counter.Test do
 
     tally = Counter.new
 
-    tally = Counter.add_word_list(tally, word_list)
+    tally = Counter.add_words(tally, word_list)
 
     IO.puts "Counter word list: #{inspect tally}"
 

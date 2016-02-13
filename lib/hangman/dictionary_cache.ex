@@ -218,7 +218,7 @@ defmodule Hangman.Dictionary.Cache do
 		{^ets_key, {bin_chunk, _size} = _value}, acc -> 
 			  # convert back from binary to words list chunk
 			  word_list = :erlang.binary_to_term(bin_chunk)
-        Counter.add_word_list(acc, word_list)
+        Counter.add_words(acc, word_list)
         #Enum.reduce(word_list, acc, fn_reduce_words_into_counter)
 			
       _, acc -> acc	

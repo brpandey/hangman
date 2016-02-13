@@ -75,12 +75,11 @@ defmodule Hangman.Reduction.Engine do
 		# filter out words that don't regex match
 		# do for all values in stream
 
-    filtered_stream = 
-      stored_chunks |> Chunks.get_words_lazy
-    |> Stream.filter(&regex_match?(&1, regex_key))
+    filtered_stream = stored_chunks 
+    |> Chunks.get_words_lazy |> Stream.filter(&regex_match?(&1, regex_key))
     
 		# Populate counter object, now that we've created the new filtered chunks
-    tally = Counter.new |> Counter.add_words_stream(filtered_stream, exclusion_set)
+    tally = Counter.new |> Counter.add_words(filtered_stream, exclusion_set)
 
     IO.puts "In round pass, tally is: #{inspect tally}"
 
