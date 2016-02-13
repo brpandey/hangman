@@ -124,8 +124,8 @@ defmodule Hangman.Counter do
 
 		# Splits word into codepoints enumerable, 
     # and then reduces this enumerable into
-		# the map dict, updating the count by one if the key
-		# is already present in the map Map, else setting 1 as the initial value
+		# the map, updating the count by one if the key
+		# is already present in the map, else setting 1 as the initial value
 
 		map_updated = 
 			Enum.reduce(
@@ -205,7 +205,6 @@ defmodule Hangman.Counter do
     |> Enum.reduce(counter, &add_words(&2, &1)) # the acc is the first param, so switch
 
     
-    # Add word delimiter empty codepoint to exclusion set
     # Remove exclusion set in one go per word list (vs. per word)
     letters = cond do
       MapSet.size(exclusion_set) > 0 ->
