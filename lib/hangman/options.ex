@@ -1,6 +1,7 @@
 defmodule Hangman.Options do
 
 	alias Hangman.{Cache, Player, Supervisor}
+  alias Hangman.{Dictionary, Reduction.Engine}
 
   def main(args) do
     args |> parse_args |> print |> run
@@ -15,8 +16,8 @@ defmodule Hangman.Options do
 		case Keyword.fetch(parsed, :help) do
 			{:ok, true} ->
 
-				IO.puts "--dictfile <file name> --name <player name> --word <hangman secrets> --baseline, or"
-				IO.puts "-f <file name> -n <player name> -w <hangman secrets> -bl"
+				IO.puts "--name <player name> --word <hangman secrets> --baseline, or"
+				IO.puts "-n <player name> -w <hangman secrets> -bl"
 		    System.halt(0)
 
 			:error -> parsed
@@ -28,7 +29,7 @@ defmodule Hangman.Options do
     	[
 	    	strict: [
 	    		help: :boolean, # --help or alias -h, boolean only
-	    		dictfile: :string,	 # --dictfile or alias -f, string only
+	    		#dictfile: :string,	 # --dictfile or alias -f, string only
 	    		word: :string, # --word or alias -w, string only
 	    		baseline: :boolean, # --baseline or alias -bl, boolean only
 	    		name: :string, # --name or alias -n, string only
@@ -49,15 +50,15 @@ defmodule Hangman.Options do
   	secrets = String.split(word, " ")
 
   	{:ok, _pid} = Supervisor.start_link()
+		Dictionary.Cache.Server.setup()
+    Engine.Server.setup()
 
 		game_server_pid = Cache.get_server(player_name, secrets)
 
 		{:ok, notify_pid} = Player.Events.Notify.start_link([display_output: false])
 
-		Player.Stream.get_round_lazy(player_name, game_server_pid, notify_pid)		
-    # reader stream
+		Player.Stream.get_rounds_lazy(player_name, game_server_pid, notify_pid)		
 			|> Stream.each(fn text -> IO.puts("\n#{text}") end)							
-    # printer stream
-			|> Enum.take(100)
+			|> Stream.run
   end
 end

@@ -1,4 +1,4 @@
-defmodule Hangman.Reduction.Engine do
+defmodule Hangman.Reduction.Engine.Server do
 
   alias Hangman.{Dictionary, Types.Reduction.Pass, Word.Chunks, Counter}
 
@@ -32,13 +32,16 @@ defmodule Hangman.Reduction.Engine do
 
 		# Subsequent lookups will be from the pass table
 
-		chunks = %Chunks{} = Dictionary.Cache.lookup(:chunks, length_key)
+		chunks = %Chunks{} = Dictionary.Cache.Server.lookup(:chunks, length_key)
 
 		pass_size = Chunks.get_count(chunks, :words)
 
-		tally = %Counter{} = Dictionary.Cache.lookup(:tally, length_key)
+		tally = %Counter{} = Dictionary.Cache.Server.lookup(:tally, length_key)
 
 		pass_info = %Pass{ size: pass_size, tally: tally, only_word_left: ""}
+
+    IO.puts "tally is: #{inspect tally}"
+    IO.puts "pass_info is: #{inspect pass_info}"
 
 		# Store pass info into ets table for round 2 (next pass)
 		put_next_pass_chunks(chunks, pass_key)
@@ -117,10 +120,16 @@ defmodule Hangman.Reduction.Engine do
 	# "store next pass chunks into ets table with pass key"
 	defp put_next_pass_chunks(%Chunks{} = chunks, {id, game_no, round_no})
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
+    IO.puts "made it to put_next_pass_chunks"
+
+    IO.puts("put_next_pass_chunks 0, ets #{inspect :ets.info(@ets_table_name)}")
+
 		next_pass_key = {id, game_no, round_no + 1}
+
+    IO.puts "next_pass_key is #{inspect next_pass_key}, chunks is #{inspect chunks}"
 		:ets.insert(@ets_table_name, {next_pass_key, chunks})
 
-    IO.puts("put_next_pass_chunks, ets #{inspect :ets.info(@ets_table_name)}")
+    IO.puts("put_next_pass_chunks 1, ets #{inspect :ets.info(@ets_table_name)}")
 	end
 
 	# "get pass chunks from ets table with pass key"

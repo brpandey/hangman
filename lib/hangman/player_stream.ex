@@ -2,7 +2,7 @@ defmodule Hangman.Player.Stream do
 
 	alias Hangman.{Player.FSM}
 
-	def get_round_lazy(name, game_pid, notify_pid) do
+	def get_rounds_lazy(name, game_pid, notify_pid) do
 		Stream.resource(
 			fn -> 
 				{:ok, fsm_pid} = FSM.start(name, :robot, game_pid, notify_pid)

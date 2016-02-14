@@ -1,4 +1,4 @@
-defmodule Hangman.Dictionary.Cache do
+defmodule Hangman.Dictionary.Cache.Server do
 	#use GenServer
 
   alias Hangman.Dictionary.File, as: DictFile

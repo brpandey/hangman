@@ -136,7 +136,7 @@ defmodule Hangman.Player.Round do
 
 		# Filter the engine hangman word set
 		{^pass_key, pass_info} = 
-      Reduction.Engine.Stub.reduce(match_key, pass_key, reduce_key)
+      Reduction.Engine.Server.reduce(match_key, pass_key, reduce_key)
 
 		# Update the round strategy with the result of the reduction pass info _from the engine
 		strategy = Strategy.update(strategy, pass_info)

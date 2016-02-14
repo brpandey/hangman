@@ -1,26 +1,26 @@
-defmodule Hangman.Dictionary.Cache.Test do
+defmodule Hangman.Dictionary.Cache.Server.Test do
 	use ExUnit.Case #, async: true
 
 	alias Hangman.{Dictionary, Counter, Word.Chunks}
 
 	test "initial test of dictionary cache" do
     
-		assert catch_error(Dictionary.Cache.lookup(:tally, 8)) ==
+		assert catch_error(Dictionary.Cache.Server.lookup(:tally, 8)) ==
       %RuntimeError{message: "table not loaded yet"}
 
-		Dictionary.Cache.setup()
+		Dictionary.Cache.Server.setup()
 
- 		assert catch_error(Dictionary.Cache.setup()) ==
+ 		assert catch_error(Dictionary.Cache.Server.setup()) ==
  			%RuntimeError{message: "cache already setup!"}
 
 		IO.puts "finished cache setup"
 
 		size = 8
 
-		assert catch_error(Dictionary.Cache.lookup(:tally, 383838383838383)) ==
+		assert catch_error(Dictionary.Cache.Server.lookup(:tally, 383838383838383)) ==
 		  %RuntimeError{message: "key not in set of possible keys!"}
 
-		lookup = Dictionary.Cache.lookup(:tally, size)
+		lookup = Dictionary.Cache.Server.lookup(:tally, size)
 
 		counter_8 = Counter.new(%{"a" => 14490, "b" => 4485, 
 			"c" => 7815, "d" => 8046, "e" => 19600, "f" => 2897, "g" => 6009, 
@@ -35,7 +35,7 @@ defmodule Hangman.Dictionary.Cache.Test do
 		
 		IO.puts "Counters match\n\n"
 	
-		chunks = %Chunks{} = Dictionary.Cache.lookup(:chunks, 8)
+		chunks = %Chunks{} = Dictionary.Cache.Server.lookup(:chunks, 8)
 
 		word_count = 28558
 
