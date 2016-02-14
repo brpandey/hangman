@@ -10,8 +10,8 @@ defmodule Hangman.Engine.Test do
 
     #### GAME SETUP
 
-		Dictionary.Cache.setup()
-    Engine.setup()
+		{:ok, dpid} = Dictionary.Cache.Server.start_link()
+    {:ok, epid} = Engine.Server.start_link(dpid)
 
     strategy = Strategy.new
 
@@ -28,7 +28,8 @@ defmodule Hangman.Engine.Test do
     pass_info = %Pass{ size: 28558, tally: tally, only_word_left: ""}
 
     # Assert reduce results!!!
-    {^pass_key, ^pass_info} = Engine.reduce(:game_start, pass_key, reduce_key)
+    {^pass_key, ^pass_info} = 
+      Engine.Server.reduce(epid, :game_start, pass_key, reduce_key)
 
     IO.puts "passed game start reduce"
 
@@ -57,7 +58,8 @@ defmodule Hangman.Engine.Test do
     pass_info = %Pass{ only_word_left: "", size: 1833, tally: tally}
 
     # Assert reduce results!!!
-    {^pass_key, ^pass_info} = Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
+    {^pass_key, ^pass_info} = 
+      Engine.Server.reduce(epid, :game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -86,7 +88,7 @@ defmodule Hangman.Engine.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
+      Engine.Server.reduce(epid, :game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -115,7 +117,7 @@ defmodule Hangman.Engine.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
+      Engine.Server.reduce(epid, :game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -144,7 +146,7 @@ defmodule Hangman.Engine.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
+      Engine.Server.reduce(epid, :game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -176,7 +178,7 @@ defmodule Hangman.Engine.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
+      Engine.Server.reduce(epid, :game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -206,7 +208,7 @@ defmodule Hangman.Engine.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
+      Engine.Server.reduce(epid, :game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -236,7 +238,7 @@ defmodule Hangman.Engine.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
+      Engine.Server.reduce(epid, :game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -264,7 +266,7 @@ defmodule Hangman.Engine.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Engine.reduce(:game_keep_guessing, pass_key, reduce_key)
+      Engine.Server.reduce(epid, :game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)

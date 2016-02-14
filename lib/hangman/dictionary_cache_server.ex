@@ -41,12 +41,12 @@ defmodule Hangman.Dictionary.Cache.Server do
   end
 
   def handle_call({:lookup_tally, length_key}, _from, {}) do
-    data = lookup(:tally, length_key)
+    data = do_lookup(:tally, length_key)
     {:reply, data, {}}
   end
 
   def handle_call({:lookup_chunks, length_key}, _from, {}) do
-    data = lookup(:chunks, length_key)
+    data = do_lookup(:chunks, length_key)
     {:reply, data, {}}
   end
  
@@ -82,7 +82,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 	# Retrieve dictionary tally counter given word secret length
 
-	defp lookup(:tally, length_key) 
+	defp do_lookup(:tally, length_key) 
 		when is_number(length_key) and length_key > 0 do
 
 		if :ets.info(@ets_table_name) == :undefined do
@@ -104,7 +104,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 		end
 	end
 
-	defp lookup(:chunks, length_key) do
+	defp do_lookup(:chunks, length_key) do
 
 		if :ets.info(@ets_table_name) == :undefined do
       raise "table not loaded yet"

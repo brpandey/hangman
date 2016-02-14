@@ -1,6 +1,8 @@
 defmodule Hangman.Reduction.Engine.Server do
+  use GenServer
 
-  alias Hangman.{Dictionary, Types.Reduction.Pass, Word.Chunks, Counter}
+  alias Hangman.{Types.Reduction.Pass, Word.Chunks, Counter}
+  alias Hangman.Dictionary.Cache, as: DictCache
 
 	@moduledoc """
 	Maintains the current hangman words reduction state 
@@ -14,14 +16,68 @@ defmodule Hangman.Reduction.Engine.Server do
 	"""
 
 	@ets_table_name :engine_pass_table
+  @name __MODULE__
 
-	def setup() do
+  # External API
+
+  def start_link(dict_cache_pid) when is_pid(dict_cache_pid) do
+    IO.puts "Starting Hangman Engine Server"
+    args = {dict_cache_pid}
+    options = []
+    GenServer.start_link(@name, args, options)
+  end
+
+  def reduce(pid, :game_start,  {id, game_no, round_no} = pass_key, reduce_key)
+	when is_binary(id) and is_number(game_no) and is_number(round_no) do
+    GenServer.call pid, {:reduce, :game_start, pass_key, reduce_key}
+  end
+
+  def reduce(pid, :game_keep_guessing,  
+             {id, game_no, round_no} = pass_key, reduce_key)
+	when is_binary(id) and is_number(game_no) and is_number(round_no) do
+    GenServer.call pid, {:reduce, :game_keep_guessing, pass_key, reduce_key}
+  end
+
+	def stop(pid) do
+		GenServer.call pid, :stop
+	end
+
+  def init({dict_cache_pid}) do
+    setup()
+    {:ok, {dict_cache_pid}}
+  end
+
+  def handle_call({:reduce, :game_start, pass_key, reduce_key}, _from, {dpid}) do
+    data = do_reduce(:game_start, pass_key, reduce_key, dpid)
+    {:reply, data, {dpid}}
+  end
+
+  def handle_call({:reduce, :game_keep_guessing, pass_key, reduce_key}, 
+                  _from, {dpid}) do
+    data = do_reduce(:game_keep_guessing, pass_key, reduce_key)
+    {:reply, data, {dpid}}
+  end
+
+	def handle_call(:stop, _from, {dpid}) do
+		{ :stop, :normal, :ok, {dpid}}
+	end 
+
+	def terminate(_reason, _state) do
+		:ok
+	end
+
+  # Reduction Engine Abstraction Methods
+
+
+	defp setup() do
 		:ets.new(@ets_table_name, [:set, :named_table, :protected])
 	end
 
-	@doc "Initial engine reduce routine"
-	def reduce(:game_start, {id, game_no, round_no} = pass_key, reduce_key)
-	when is_binary(id) and is_number(game_no) and is_number(round_no) do
+	# "Initial engine reduce routine"
+	defp do_reduce(:game_start, {id, game_no, round_no} = pass_key, 
+                 reduce_key, pid)
+	when is_binary(id) and is_number(game_no) and is_number(round_no) 
+    and is_pid(pid) do
 
 		# Asserts
 		{:ok, true} =	Keyword.fetch(reduce_key, :game_start)
@@ -32,11 +88,11 @@ defmodule Hangman.Reduction.Engine.Server do
 
 		# Subsequent lookups will be from the pass table
 
-		chunks = %Chunks{} = Dictionary.Cache.Server.lookup(:chunks, length_key)
+		chunks = %Chunks{} = DictCache.Server.lookup(pid, :chunks, length_key)
 
 		pass_size = Chunks.get_count(chunks, :words)
 
-		tally = %Counter{} = Dictionary.Cache.Server.lookup(:tally, length_key)
+		tally = %Counter{} = DictCache.Server.lookup(pid, :tally, length_key)
 
 		pass_info = %Pass{ size: pass_size, tally: tally, only_word_left: ""}
 
@@ -50,13 +106,14 @@ defmodule Hangman.Reduction.Engine.Server do
 	end
 
 
-	def reduce(:game_keep_guessing, {id, game_no, round_no} = pass_key, reduce_key)
+	defp do_reduce(:game_keep_guessing, 
+                 {id, game_no, round_no} = pass_key, reduce_key)
  	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
 		{:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
 		{:ok, regex_key} = Keyword.fetch(reduce_key, :regex_match_key)
 
-		pass_info = do_reduce(pass_key, regex_key, exclusion_set)
+		pass_info = do_reduce(:regex, pass_key, regex_key, exclusion_set)
 
 		{pass_key, pass_info}
 	end
@@ -64,7 +121,7 @@ defmodule Hangman.Reduction.Engine.Server do
   # Private reduce method that actually does the reduce
   # Loads Chunks for the current pass, and reduces word
   # stream given regex filter
-	defp do_reduce(pass_key, regex_key, %MapSet{} = exclusion_set) do
+	defp do_reduce(:regex, pass_key, regex_key, %MapSet{} = exclusion_set) do
 
     IO.puts "In do reduce"
 
