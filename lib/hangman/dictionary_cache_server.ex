@@ -1,5 +1,5 @@
 defmodule Hangman.Dictionary.Cache.Server do
-	#use GenServer
+	use GenServer
 
   alias Hangman.Dictionary.File, as: DictFile
 	alias Hangman.{Counter, Word.Chunks}
@@ -11,13 +11,59 @@ defmodule Hangman.Dictionary.Cache.Server do
   # dictionary file sizes
 	@possible_length_keys MapSet.new(2..28)
 
+  @name __MODULE__
+	# External API
 
-	# PUBLIC
+  def start_link() do
+    IO.puts "Starting Hangman Dictionary Cache Server"
+    args = {}
+    options = []
+    GenServer.start_link(@name, args, options)
+  end
+
+  def lookup(pid, :tally, length_key)
+  when is_number(length_key) and length_key > 0 do
+    GenServer.call pid, {:lookup_tally, length_key}
+  end
+
+  def lookup(pid, :chunks, length_key)
+  when is_number(length_key) and length_key > 0 do
+    GenServer.call pid, {:lookup_chunks, length_key}
+  end
+
+	def stop(pid) do
+		GenServer.call pid, :stop
+	end
+
+  def init({}) do
+    setup()
+    {:ok, {}}
+  end
+
+  def handle_call({:lookup_tally, length_key}, _from, {}) do
+    data = lookup(:tally, length_key)
+    {:reply, data, {}}
+  end
+
+  def handle_call({:lookup_chunks, length_key}, _from, {}) do
+    data = lookup(:chunks, length_key)
+    {:reply, data, {}}
+  end
+ 
+	def handle_call(:stop, _from, {}) do
+		{ :stop, :normal, :ok, {}}
+	end 
+
+	def terminate(_reason, _state) do
+		:ok
+	end
+
+  # Dictionary Cache Abstraction Methods
 
 	# CREATE (and UPDATE)
 
 	# Setup cache ets
-	def setup() do
+	defp setup() do
 		case :ets.info(@ets_table_name) do
 			:undefined ->
         # transform dictionary file, 3 times if necessary
@@ -36,7 +82,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 	# Retrieve dictionary tally counter given word secret length
 
-	def lookup(:tally, length_key) 
+	defp lookup(:tally, length_key) 
 		when is_number(length_key) and length_key > 0 do
 
 		if :ets.info(@ets_table_name) == :undefined do
@@ -58,7 +104,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 		end
 	end
 
-	def lookup(:chunks, length_key) do
+	defp lookup(:chunks, length_key) do
 
 		if :ets.info(@ets_table_name) == :undefined do
       raise "table not loaded yet"
@@ -78,9 +124,6 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 		chunks
 	end
-
-	# PRIVATE
-
 
 	# Load dictionary word file into ets table @ets_table_name
 	# Segments of the dictionary word stream are broken up into chunks, 
@@ -190,10 +233,6 @@ defmodule Hangman.Dictionary.Cache.Server do
 	defp generate_tally(table_name, ets_key = {:chunk, length}) do
 		# Use for pattern matching when we do ets.foldl
 
-#		fn_reduce_words_into_counter = fn 
-#			head, acc -> Counter.add_unique_letters(acc, head)
-#		end
-    
     # acc is the counter here
 		fn_reduce_key_chunks_into_counter = fn
     # we pin to function arg's specified key
@@ -201,7 +240,6 @@ defmodule Hangman.Dictionary.Cache.Server do
 			  # convert back from binary to words list chunk
 			  word_list = :erlang.binary_to_term(bin_chunk)
         Counter.add_words(acc, word_list)
-        #Enum.reduce(word_list, acc, fn_reduce_words_into_counter)
 			
       _, acc -> acc	
 		end
