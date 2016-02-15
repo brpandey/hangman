@@ -72,7 +72,7 @@ defmodule Hangman.Player do
       player = Kernel.put_in(player.game_no, player.game_no + 1)
 
       # Notify the event server that we've started playing hangman
-      Events.Notify.start(player.event_server_pid, player.name)
+      Events.Server.notify_start(player.event_server_pid, player.name)
     end
 
     Round.start(player)

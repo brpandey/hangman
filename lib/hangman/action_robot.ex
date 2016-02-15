@@ -15,10 +15,10 @@ defmodule Hangman.Action.Robot do
 	        {{^name, result, code, pattern, text}, final} =
 	          Game.Server.guess_word(player.game_server_pid, guess_word)
 
-	        Events.Notify.guessed_word(player.event_server_pid, 
+	        Events.Server.notify_word(player.event_server_pid, 
 	        	{name, game_no, guess_word})
 
-	        Events.Notify.round_status(player.event_server_pid,
+	        Events.Server.notify_status(player.event_server_pid,
 						{name, game_no, seq_no, text})
 
 	       	%Round{seq_no: seq_no,
@@ -31,10 +31,10 @@ defmodule Hangman.Action.Robot do
 	        {{^name, result, code, pattern, text}, final} =
 	          Game.Server.guess_letter(player.game_server_pid, guess_letter)
 
-					Events.Notify.guessed_letter(player.event_server_pid, 
+					Events.Server.notify_letter(player.event_server_pid, 
 						{name, game_no, guess_letter})
 
-					Events.Notify.round_status(player.event_server_pid,
+					Events.Server.notify_status(player.event_server_pid,
 						{name, game_no, seq_no, text})
 
 	        %Round{seq_no: seq_no,

@@ -7,7 +7,6 @@ defmodule Hangman.Player.System.Supervisor do
 
 	# Hangman.Player.System.Supervisor is a second line supervisor
 	# as it supervises a first-line supervisor, Hangman.Player.Supervisor
-	# along with the Hangman.WordEngine worker
 
 	def start_link do
 		IO.puts "Starting Hangman Player System Supervisor"
@@ -23,8 +22,6 @@ defmodule Hangman.Player.System.Supervisor do
 	# we instantiate the children this alternate way
 
 	def start_workers(sv) do
-
-	
     {:ok, dictionary_cache_pid} = 
 			Supervisor.start_child(sv, worker(Hangman.Dictionary.Cache.Server, []))
 	
@@ -37,7 +34,6 @@ defmodule Hangman.Player.System.Supervisor do
 
 		Supervisor.start_child(sv, supervisor(Hangman.Player.Supervisor, 
 			[engine_pid, notify_pid]))
-
 	end
 
 	def init(_) do

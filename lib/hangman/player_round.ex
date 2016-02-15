@@ -65,7 +65,7 @@ defmodule Hangman.Player.Round do
     	summary = do_game_summary(round_info.final_result)
     	player = Kernel.put_in(player.game_summary, summary)
 
-    	Events.Notify.game_over(player.event_server_pid, player.name, summary)
+    	Events.Server.notify_game_over(player.event_server_pid, player.name, summary)
     end
 
     player
@@ -100,7 +100,7 @@ defmodule Hangman.Player.Round do
     {^name, :secret_length, secret_length, status_text} =
       Game.Server.secret_length(player.game_server_pid)
 
-    Events.Notify.secret_length(player.event_server_pid,
+    Events.Server.notify_length(player.event_server_pid,
       {name, player.game_no, secret_length})
     
     player = Kernel.put_in(player.secret_length, secret_length)

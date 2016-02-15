@@ -4,6 +4,7 @@ defmodule Hangman.Player.Logger.Handler do
 	def init(_), do: {:ok, []}
 
 	def handle_event({:start, name}, _state) do
+
 		file_name = "#{name}_hangman_games.txt"
 
 		{:ok, file_pid} = File.open(file_name, [:append])
@@ -23,7 +24,7 @@ defmodule Hangman.Player.Logger.Handler do
 	end
 
 	def handle_event({:secret_length, _name, game_no, length}, file_pid) do
-
+    IO.puts "logger received event secret length"
 		msg = "\n# new game #{game_no}! secret length --> #{length}\n"
 
 		write(file_pid, msg)
