@@ -5,6 +5,7 @@ defmodule Hangman.Player do
 	defstruct name: "", 
   	type: nil,
     secret_length: nil,
+    engine_server_pid: nil,
   	event_server_pid: nil,
     game_server_pid: nil, 
     game_no: 0,
@@ -20,13 +21,15 @@ defmodule Hangman.Player do
 
   # CREATE
 
-  def new(name, type, game_server_pid, event_server_pid) 
-  	when is_binary(name) and is_atom(type) do
+  def new(name, type, engine_pid, 
+          game_pid, event_pid) 
+  	when is_binary(name) and is_atom(type) and is_pid(engine_pid) 
+      and is_pid(game_pid) and is_pid(event_pid) do
 
   	unless type in [@human, @robot], do: raise "unknown player type"
 
-  	%Player{ name: name, type: type, 
-  		game_server_pid: game_server_pid, event_server_pid: event_server_pid }
+  	%Player{ name: name, type: type, engine_server_pid: engine_pid, 
+  		game_server_pid: game_pid, event_server_pid: event_pid }
   end
 
   # READ
@@ -61,6 +64,7 @@ defmodule Hangman.Player do
 	def start(%Player{} = player) do
     if player.game_no >= 1 do
       player = %Player{ name: player.name, type: player.type, 
+                        engine_server_pid: player.engine_server_pid,
                         game_server_pid: player.game_server_pid,
                         event_server_pid: player.event_server_pid,
                         game_no: player.game_no + 1 }

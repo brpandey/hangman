@@ -1,6 +1,8 @@
 defmodule Hangman.Player.System.Supervisor do
 	use Supervisor
 
+  import Supervisor.Spec
+
 	@name __MODULE__
 
 	# Hangman.Player.System.Supervisor is a second line supervisor
@@ -22,14 +24,19 @@ defmodule Hangman.Player.System.Supervisor do
 
 	def start_workers(sv) do
 
-		'''
+	
+    {:ok, dictionary_cache_pid} = 
+			Supervisor.start_child(sv, worker(Hangman.Dictionary.Cache.Server, []))
+	
 		{:ok, engine_pid} = 
-			Supervisor.start_child(sv, worker(Hangman.Reduction.Engine, 
-				["./data/words.txt"]))
-		'''
+			Supervisor.start_child(sv, worker(Hangman.Reduction.Engine.Server, 
+                                        [dictionary_cache_pid]))
+	
+    {:ok, notify_pid} = 
+      Supervisor.start_child(sv, worker(Hangman.Player.Events.Notify, []))
 
 		Supervisor.start_child(sv, supervisor(Hangman.Player.Supervisor, 
-			[]))
+			[engine_pid, notify_pid]))
 
 	end
 

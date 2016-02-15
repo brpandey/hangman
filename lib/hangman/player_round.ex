@@ -127,6 +127,8 @@ defmodule Hangman.Player.Round do
 
   	{name, strategy, game_no, seq_no} = params(player)
 
+    engine_pid = player.engine_server_pid
+
   	pass_key = {name, game_no, seq_no}
 
   	# Generate the word filter options for the words reduction engine
@@ -135,8 +137,9 @@ defmodule Hangman.Player.Round do
 		match_key = Kernel.elem(context, 0)
 
 		# Filter the engine hangman word set
+
 		{^pass_key, pass_info} = 
-      Reduction.Engine.Server.reduce(match_key, pass_key, reduce_key)
+      Reduction.Engine.Server.reduce(engine_pid, match_key, pass_key, reduce_key)
 
 		# Update the round strategy with the result of the reduction pass info _from the engine
 		strategy = Strategy.update(strategy, pass_info)

@@ -1,7 +1,6 @@
 defmodule Hangman.Options do
 
 	alias Hangman.{Cache, Player, Supervisor}
-  alias Hangman.{Dictionary, Reduction.Engine}
 
   def main(args) do
     args |> parse_args |> print |> run
@@ -50,14 +49,10 @@ defmodule Hangman.Options do
   	secrets = String.split(word, " ")
 
   	{:ok, _pid} = Supervisor.start_link()
-		Dictionary.Cache.Server.setup()
-    Engine.Server.setup()
 
 		game_server_pid = Cache.get_server(player_name, secrets)
 
-		{:ok, notify_pid} = Player.Events.Notify.start_link([display_output: false])
-
-		Player.Stream.get_rounds_lazy(player_name, game_server_pid, notify_pid)		
+		Player.Game.play_rounds_lazy(:robot, game_server_pid, player_name)		
 			|> Stream.each(fn text -> IO.puts("\n#{text}") end)							
 			|> Stream.run
   end

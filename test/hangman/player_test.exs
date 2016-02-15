@@ -1,7 +1,7 @@
 defmodule Hangman.FSM.Test do
 	use ExUnit.Case
 
-  alias Hangman.{Cache, Player.FSM}
+  alias Hangman.{Cache, Player, Player.FSM}
 
 	test "synchronous player through 1 game test" do
 		
@@ -12,11 +12,10 @@ defmodule Hangman.FSM.Test do
 
  	  IO.puts "\n1) Starting regular WALL-e \n"		
 
-		player_game_server_pid = Cache.get_server(player_name, secrets)
+		game_pid = Cache.get_server(player_name, secrets)
 
-		{:ok, notify_pid} = Hangman.Player.Events.Notify.start_link()
-
-		{:ok, player_fsm_pid} = FSM.start(player_name, :robot, player_game_server_pid, notify_pid)
+    {:ok, player_fsm_pid} = 
+      Player.Supervisor.start_child(game_pid, player_name, :robot)
 
 		#:sys.trace(player_fsm_pid, true)
 
@@ -76,11 +75,10 @@ defmodule Hangman.FSM.Test do
  	  
 		secrets = ["cumulate"]
 
-		player_game_server_pid = Cache.get_server(player_name, secrets)
+		game_pid = Cache.get_server(player_name, secrets)
 
-		{:ok, notify_pid} = Hangman.Player.Events.Notify.start_link([display_output: true])
-
-		{:ok, player_fsm_pid} = FSM.start(player_name, :robot, player_game_server_pid, notify_pid)
+    {:ok, player_fsm_pid} = 
+      Player.Supervisor.start_child(game_pid, player_name, :robot)
 
  	  IO.puts "\nturbo WALL-e....guessing \n"
 
@@ -105,11 +103,10 @@ defmodule Hangman.FSM.Test do
  	  
 		secrets = ["cumulate", "avocado"]
 
-		player_game_server_pid = Cache.get_server(player_name, secrets)			
+		game_pid = Cache.get_server(player_name, secrets)			
 
-		{:ok, notify_pid} = Hangman.Player.Events.Notify.start_link()
-
-		{:ok, player_fsm_pid} = FSM.start(player_name, :human, player_game_server_pid, notify_pid)
+    {:ok, player_fsm_pid} = 
+      Player.Supervisor.start_child(game_pid, player_name, :human)
 
 		#:sys.trace(player_fsm_pid, true)
 
