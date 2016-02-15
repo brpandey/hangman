@@ -30,7 +30,7 @@ defmodule Hangman.Player.System.Supervisor do
                                         [dictionary_cache_pid]))
 	
     {:ok, notify_pid} = 
-      Supervisor.start_child(sv, worker(Hangman.Player.Events.Notify, []))
+      Supervisor.start_child(sv, worker(Hangman.Player.Events.Server, []))
 
 		Supervisor.start_child(sv, supervisor(Hangman.Player.Supervisor, 
 			[engine_pid, notify_pid]))
