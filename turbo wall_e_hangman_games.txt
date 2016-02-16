@@ -1,0 +1,13 @@
+
+# new game 1! secret length --> 8
+# letter --> e # round 1 status --> -------E; score=1; status=KEEP_GUESSING
+# letter --> a # round 2 status --> -----A-E; score=2; status=KEEP_GUESSING
+# letter --> t # round 3 status --> -----ATE; score=3; status=KEEP_GUESSING
+# letter --> o # round 4 status --> -----ATE; score=4; status=KEEP_GUESSING
+# letter --> i # round 5 status --> -----ATE; score=5; status=KEEP_GUESSING
+# letter --> l # round 6 status --> ----LATE; score=6; status=KEEP_GUESSING
+# letter --> c # round 7 status --> C---LATE; score=7; status=KEEP_GUESSING
+# letter --> m # round 8 status --> C-M-LATE; score=8; status=KEEP_GUESSING
+# word --> cumulate  # round 9 status --> CUMULATE; score=8; status=GAME_WON
+
+# game over! --> Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8) 

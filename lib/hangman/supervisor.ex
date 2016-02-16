@@ -17,7 +17,7 @@ defmodule Hangman.Supervisor do
 		children = [
 			worker(Hangman.Process.Registry, []),
 			supervisor(Hangman.System.Supervisor, []),
-			#supervisor(Hangman.Player.System.Supervisor, [])
+			supervisor(Hangman.Player.System.Supervisor, [])
 		]
 
 		supervise(children, strategy: :rest_for_one)
