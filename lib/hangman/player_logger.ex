@@ -24,7 +24,7 @@ defmodule Hangman.Player.Logger.Handler do
 	end
 
 	def handle_event({:secret_length, _name, game_no, length}, file_pid) do
-    IO.puts "logger received event secret length"
+
 		msg = "\n# new game #{game_no}! secret length --> #{length}\n"
 
 		write(file_pid, msg)

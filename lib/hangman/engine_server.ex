@@ -96,9 +96,6 @@ defmodule Hangman.Reduction.Engine.Server do
 
 		pass_info = %Pass{ size: pass_size, tally: tally, only_word_left: ""}
 
-    IO.puts "tally is: #{inspect tally}"
-    IO.puts "pass_info is: #{inspect pass_info}"
-
 		# Store pass info into ets table for round 2 (next pass)
 		put_next_pass_chunks(chunks, pass_key)
 	
@@ -123,13 +120,9 @@ defmodule Hangman.Reduction.Engine.Server do
   # stream given regex filter
 	defp do_reduce(:regex, pass_key, regex_key, %MapSet{} = exclusion_set) do
 
-    IO.puts "In do reduce"
-
 		# retrieve pass chunks from ets
 		stored_chunks = %Chunks{} = get_pass_chunks(pass_key)
     length_key = Chunks.get_key(stored_chunks)
-
-    IO.puts "In round pass, chunks is: #{inspect stored_chunks}"
 
 		# convert chunks into word stream, 
 		# filter out words that don't regex match
@@ -140,8 +133,6 @@ defmodule Hangman.Reduction.Engine.Server do
     
 		# Populate counter object, now that we've created the new filtered chunks
     tally = Counter.new |> Counter.add_words(filtered_stream, exclusion_set)
-
-    IO.puts "In round pass, tally is: #{inspect tally}"
 
 		# Create new Chunks abstraction with filtered word stream
 		filtered_chunks = Chunks.new(length_key, filtered_stream)
@@ -177,16 +168,11 @@ defmodule Hangman.Reduction.Engine.Server do
 	# "store next pass chunks into ets table with pass key"
 	defp put_next_pass_chunks(%Chunks{} = chunks, {id, game_no, round_no})
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
-    IO.puts "made it to put_next_pass_chunks"
-
-    IO.puts("put_next_pass_chunks 0, ets #{inspect :ets.info(@ets_table_name)}")
 
 		next_pass_key = {id, game_no, round_no + 1}
 
-    IO.puts "next_pass_key is #{inspect next_pass_key}, chunks is #{inspect chunks}"
 		:ets.insert(@ets_table_name, {next_pass_key, chunks})
 
-    IO.puts("put_next_pass_chunks 1, ets #{inspect :ets.info(@ets_table_name)}")
 	end
 
 	# "get pass chunks from ets table with pass key"
@@ -203,7 +189,6 @@ defmodule Hangman.Reduction.Engine.Server do
 				# delete this current pass in the table, since we only keep 1 pass for each user
 				:ets.match_delete(@ets_table_name, {pass_key, :_})
     
-        IO.puts("get_pass_chunks, ets #{inspect :ets.info(@ets_table_name)}")
 				# return chunks :)
 				chunks
 		end
