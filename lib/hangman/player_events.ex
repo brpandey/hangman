@@ -2,7 +2,7 @@ defmodule Hangman.Player.Events.Server do
 
 	# options = [file_output: true, display_output: false]
 	def start_link(options \\ [file_output: true]) do
-		IO.puts "Starting Hangman GenEvent Server, options #{inspect options}"
+		IO.puts "Starting Hangman Event Server, options #{inspect options}"
 
 		{:ok, pid} = GenEvent.start_link()
 
