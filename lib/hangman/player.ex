@@ -10,7 +10,6 @@ defmodule Hangman.Player do
     game_server_pid: nil, 
     game_no: 0,
     round_no: 0,
-    round_choices: "",
     mystery_letter: Hangman.Game.Server.mystery_letter,
     strategy: Strategy.new,
     round: %Hangman.Types.Game.Round{},
@@ -34,24 +33,18 @@ defmodule Hangman.Player do
 
   # READ
 
-  def list_choices(%Player{} = player) do
-  	true = player.type in [@human] # assert
-		player.round_choices
+
+  def last_word?(%Player{} = p) do
+    case Strategy.last_word(p.strategy) do nil -> false; _ -> true end
   end
 
-  def last_word?(%Player{} = player) do
-    case Strategy.last_word(player.strategy) do nil -> false; _ -> true end
-  end
+  def game_won?(%Player{} = p), do: p.round.status_code == :game_won
+  def game_lost?(%Player{} = p), do: p.round.status_code == :game_lost
+  def game_over?(%Player{} = p), do: p.game_summary != nil
 
-  def game_won?(%Player{} = player), do: player.round.status_code == :game_won
+  def status(%Player{} = p, :game_round), do: Round.status(p)
 
-  def game_lost?(%Player{} = player), do: player.round.status_code == :game_lost
-
-  def game_over?(%Player{} = player), do: player.game_summary != nil
-
-  def round_status(%Player{} = player), do: Round.status(player)
-
-  def game_over_status(%Player{} = player) do
+  def status(%Player{} = player, :game_over) do
   	case game_over?(player) do
   		true -> {:game_over, player.game_summary}
   		false -> {player.round.status_code, player.round.status_text}
@@ -78,29 +71,10 @@ defmodule Hangman.Player do
     Round.start(player)
   end
 
-  def choose_letters(%Player{} = player) do
-  	true = player.type in [@human] # assert
-
-  	Round.choose_letters(player)
-  end
-
-  def robot_guess(%Player{} = player) do
-  	true = player.type in [@robot] # assert
-
-  	Round.robot_guess(player)
-	end
-
-  def guess_letter(%Player{} = player, letter) do
-  	true = player.type in [@human] # assert
-
-  	Round.guess_letter(player, letter)
-  end
-
-  def guess_last_word(%Player{} = player) do
-    true = player.type in [@human] # assert
-
-    Round.guess_last_word(player)
-  end
+  def choose(%Player{} = p, :letter), do: Round.choose(p, p.type, :letter)
+  def guess(%Player{} = p), do: Round.guess(p, p.type)
+  def guess(%Player{} = p, :last_word), do: Round.guess(p, p.type, :last_word)
+  def guess(%Player{} = p, l, :letter), do: Round.guess(p, p.type, l, :letter)
 
   # DELETE
 

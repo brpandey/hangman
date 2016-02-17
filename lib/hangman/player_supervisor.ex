@@ -13,14 +13,17 @@ defmodule Hangman.Player.Supervisor do
                           name: :hangman_player_supervisor)
 	end
 
-	def start_child(game_server_pid, player_name, player_type) do	
+	def start_child(player_name, player_type, game_server_pid) do	
 		Supervisor.start_child(:hangman_player_supervisor, 
 			[game_server_pid, player_name, player_type])
 	end
 
 	def init({engine_server_pid, event_server_pid}) do
 		children = [
-			worker(Hangman.Player.FSM, [engine_server_pid, event_server_pid]) 
+      # Use restart transient option -- only want restart if abnormal shutdown
+			worker(Hangman.Player.FSM, 
+             [engine_server_pid, event_server_pid], 
+             restart: :transient) 
 		]
 
 		# :simple_one_for_one to indicate that 

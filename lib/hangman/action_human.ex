@@ -36,16 +36,17 @@ defmodule Hangman.Action.Human do
   def action(%Player{} = player, :choose_letters) do
 
   	{name, strategy, _game_no, seq_no} = Player.Round.params(player)
-
-    choices = 
+    
+    reply = 
       case Strategy.last_word(strategy) do
-
+        
         nil ->
         	{_, status} = Player.Round.status(player)
-
+          
         	# Return top 5 letter, count pairs if possible
-        	top_choices = Strategy.most_common_letter_and_counts(strategy, 
-                                  @human_letter_choices)
+        	top_choices = 
+            Strategy.most_common_letter_and_counts(strategy, 
+                                                   @human_letter_choices)
 
         	size = length(top_choices)
 
@@ -56,17 +57,16 @@ defmodule Hangman.Action.Human do
 
           choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
 
-        	"Player #{name}, Round #{seq_no}, #{status}. " <>
-        	"#{size} weighted letter choices : #{choices_text}" <> 
-          " (* robot choice)"
-        
+        	{:game_choose_letter, 
+           "Player #{name}, Round #{seq_no}, #{status}. " <>
+        	   "#{size} weighted letter choices : #{choices_text}" <> 
+             " (* robot choice)"}
         last ->
-          "Player #{name}, Round #{seq_no}: Last word left: #{last}"
+          {:game_last_word, 
+           "Player #{name}, Round #{seq_no}: Last word left: #{last}"}
       end
 
-    player = Kernel.put_in(player.round_choices, choices)
-
-  	player
+    reply
   end
 
   def action(%Player{} = player, :guess_letter, letter)

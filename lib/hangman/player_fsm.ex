@@ -13,7 +13,6 @@ defmodule Hangman.Player.FSM do
                         [])
   end
 
-
   def stop(fsm_pid) do
     :gen_fsm.send_all_state_event(fsm_pid, :stop)
   end
@@ -42,7 +41,6 @@ defmodule Hangman.Player.FSM do
   def async_guess(fsm_pid) do 
     :gen_fsm.send_event(fsm_pid, :game_keep_guessing)
   end  
-
 
   # STATUS -- EXTRA
   def sync_status(fsm_pid) do 
@@ -107,13 +105,12 @@ defmodule Hangman.Player.FSM do
 
     case reply do
       {:game_start} ->  
-        player = Player.start(player)
-        reply = Player.list_choices(player)
+        {player, reply} = Player.start(player)
 
         { :reply, reply, :eager_socrates, {player, pid} }
 
       {:game_over} ->
-        {:game_over, reply} = Player.game_over_status(player)
+        {:game_over, _} = reply = Player.status(player, :game_over)
 
         { :reply, reply, :idle_socrates, {player, pid}}
 
@@ -133,8 +130,8 @@ defmodule Hangman.Player.FSM do
 
   def eager_socrates({:guess_letter, guess_letter}, _from, {player, pid}) do
 
-    player = Player.guess_letter(player, guess_letter)
-    {status_code, reply} = Player.round_status(player)
+    {player, {status_code, _} = reply} = 
+      Player.guess(player, guess_letter, :letter)
 
     next = 
       case status_code do
@@ -144,8 +141,7 @@ defmodule Hangman.Player.FSM do
       end
 
     if next == :eager_socrates do
-      player = Player.choose_letters(player)
-      reply = Player.list_choices(player)
+      {player, reply} = Player.choose(player, :letter)
 
       if Player.last_word?(player), do: next = :giddy_socrates
     end
@@ -163,8 +159,8 @@ defmodule Hangman.Player.FSM do
 
   def giddy_socrates(:guess_last_word, _from, {player, pid}) do
 
-    player = Player.guess_last_word(player)
-    {status_code, reply} = Player.round_status(player)
+    {player, {status_code, _} = reply} = 
+      Player.guess(player, :last_word)
 
     next = 
       case status_code do
@@ -197,12 +193,12 @@ defmodule Hangman.Player.FSM do
 
     case game_start_or_over_check(player) do
       {:game_start} -> 
-      	player = Player.start(player)
-        reply = Player.round_status(player)
+      	{player, reply} = Player.start(player)
+
         { :reply, reply, :intrigued_wall_e, {player, pid} }
       
       {:game_over} ->
-        reply = Player.game_over_status(player)
+        reply = Player.status(player, :game_over)
         { :reply, reply, :zen_wall_e, {player, pid}}
 
       _ -> 
@@ -213,8 +209,7 @@ defmodule Hangman.Player.FSM do
   # 2) 
   def intrigued_wall_e(:game_keep_guessing, _from, {player, pid}) do
 
-    player = Player.robot_guess(player)
-    {status_code, _} = reply = Player.round_status(player)
+    {player, {status_code, _} = reply} = Player.guess(player)
     
     next = 
       case status_code do
@@ -241,7 +236,8 @@ defmodule Hangman.Player.FSM do
     case game_start_or_over_check(player) do
 
       {:game_start} -> 
-        player = Player.start(player)
+        {player, _reply} = Player.start(player)
+
         Echo.echo_guess(echo_pid, self()) # Setup the next async echo event
 
         { :next_state, :spellbound_wall_e, {player, echo_pid} }
@@ -257,8 +253,7 @@ defmodule Hangman.Player.FSM do
   # 2)
   def spellbound_wall_e(:game_keep_guessing, {player, echo_pid}) do
 
-    player = Player.robot_guess(player)
-    {status_code, _}  = Player.round_status(player)
+    {player, {status_code, _}} = Player.guess(player)
 
     next_state = 
       case status_code do
@@ -325,14 +320,14 @@ defmodule Hangman.Player.FSM do
 
   def handle_sync_event(:game_over_status, _from, state_name, state = {player, _}) do
 
-    status = Player.game_over_status(player)
+    status = Player.status(player, :game_over)
 
     {:reply, status, state_name, state}
   end  
 
   def handle_sync_event(:game_status, _from, state_name, state = {player, _}) do
 
-    status = Player.round_status(player)
+    status = Player.status(player, :game_round)
 
     {:reply, status, state_name, state}
   end

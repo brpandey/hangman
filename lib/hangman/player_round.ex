@@ -12,44 +12,42 @@ defmodule Hangman.Player.Round do
 
     case player.type do
       :robot ->
-        player
-        |> do_start
-        |> do_setup(:game_start)
-        |> Robot.action(:guess)
+        p = player |> do_start |> do_setup(:game_start) |> Robot.action(:guess)
+        {p, status(p)}
 
       :human -> 
-        player
-        |> do_start
-        |> do_setup(:game_start)
-        |> Human.action(:choose_letters)
+        p = player |> do_start |> do_setup(:game_start)
+        choices = p |> Human.action(:choose_letters)
+        {p, choices}
 
       _ -> raise "Unknown player type"
     end
-
 	end
 
-	def robot_guess(%Player{} = player) do
-  	player
-  	  |> do_setup
-  		|> Robot.action(:guess)
+	def guess(%Player{} = player, :robot) do
+  	p = player |> do_setup |> Robot.action(:guess)
+
+    {p, status(p)}
 	end
 
-	def choose_letters(%Player{} = player) do
-  	player 
-  		|> do_setup
-  		|> Human.action(:choose_letters)
+	def guess(%Player{} = player, :human, letter, :letter)
+  when is_binary(letter) do
+		p = player |> Human.action(:guess_letter, letter)
+
+    {p, status(p)}
 	end
 
-	def guess_letter(%Player{} = player, letter) do
-		player
-  		|> Human.action(:guess_letter, letter)
+	def guess(%Player{} = player, :human, :last_word) do
+		p = player |> Human.action(:guess_last_word)
+
+    {p, status(p)}
 	end
 
-	def guess_last_word(%Player{} = player) do
-		player
-    	|> Human.action(:guess_last_word)
+	def choose(%Player{} = player, :human, :letter) do
+  	p = player |> do_setup
+    choices = p |> Human.action(:choose_letters)
+    {p, choices}
 	end
-
 
 
   # UPDATE
@@ -102,6 +100,8 @@ defmodule Hangman.Player.Round do
 
     Events.Server.notify_length(player.event_server_pid,
       {name, player.game_no, secret_length})
+
+    IO.puts "do start, secret_length is: #{secret_length}"
     
     player = Kernel.put_in(player.secret_length, secret_length)
     player = Kernel.put_in(player.round.status_code, :game_start)
@@ -120,10 +120,14 @@ defmodule Hangman.Player.Round do
     len = secret_length(player)
     true = is_number(len)
     context = {:game_start, len}
+    
+    IO.puts "do_setup, context is: #{inspect context}"
+
     do_setup(player, context)
   end
 
-  defp do_setup(%Player{} = player, context) when is_nil(context) == false do
+  defp do_setup(%Player{} = player, context) 
+  when is_nil(context) == false do
 
   	{name, strategy, game_no, seq_no} = params(player)
 
@@ -143,12 +147,12 @@ defmodule Hangman.Player.Round do
 
 		# Update the round strategy with the result of the reduction pass info _from the engine
 		strategy = Strategy.update(strategy, pass_info)
-
+    
 	  player = Kernel.put_in(player.strategy, strategy)
 
     player
   end
-
+  
 
   # Helpers
 
@@ -162,9 +166,7 @@ defmodule Hangman.Player.Round do
   	{name, strategy, game_no, seq_no}
   end
 
-  defp secret_length(%Player{} = player) do
-    player.secret_length
-  end
+  defp secret_length(%Player{} = player), do: player.secret_length
 
   defp do_game_summary(tuple_list) 
   when is_list(tuple_list) and is_tuple(Kernel.hd(tuple_list)) do
@@ -174,10 +176,10 @@ defmodule Hangman.Player.Round do
 		{:ok, scores} = Keyword.fetch(tuple_list, :results)
 
 		results = Enum.reduce(scores, "",  fn {k,v}, acc -> 
-								acc <> " (#{k}: #{v})"  end)
+			acc <> " (#{k}: #{v})"  end)
 			
 		"Game Over! Average Score: #{avg}, " 
-			<> "# Games: #{games}, Scores: #{results}"
+		<> "# Games: #{games}, Scores: #{results}"
 	end
 
 end # Module Round
