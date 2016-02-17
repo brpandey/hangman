@@ -12,11 +12,15 @@ defmodule Hangman.Player.Round do
 
     case player.type do
       :robot ->
-        p = player |> do_start |> do_setup(:game_start) |> Robot.action(:guess)
+        p = player 
+        |> round_start 
+        |> round_setup(:game_start) 
+        |> Robot.action(:guess)
+
         {p, status(p)}
 
       :human -> 
-        p = player |> do_start |> do_setup(:game_start)
+        p = player |> round_start |> round_setup(:game_start)
         choices = p |> Human.action(:choose_letters)
         {p, choices}
 
@@ -25,7 +29,7 @@ defmodule Hangman.Player.Round do
 	end
 
 	def guess(%Player{} = player, :robot) do
-  	p = player |> do_setup |> Robot.action(:guess)
+  	p = player |> round_setup |> Robot.action(:guess)
 
     {p, status(p)}
 	end
@@ -44,7 +48,7 @@ defmodule Hangman.Player.Round do
 	end
 
 	def choose(%Player{} = player, :human, :letter) do
-  	p = player |> do_setup
+  	p = player |> round_setup
     choices = p |> Human.action(:choose_letters)
     {p, choices}
 	end
@@ -74,7 +78,7 @@ defmodule Hangman.Player.Round do
 
 	# READ
 
-	defp do_context(%Player{} = player) do
+	defp round_context(%Player{} = player) do
 
   	case player.round.result_code do
   		:correct_letter -> 
@@ -91,7 +95,7 @@ defmodule Hangman.Player.Round do
 
   # UPDATE
 
-  defp do_start(%Player{} = player) do
+  defp round_start(%Player{} = player) do
     
     name = player.name
 
@@ -101,8 +105,6 @@ defmodule Hangman.Player.Round do
     Events.Server.notify_length(player.event_server_pid,
       {name, player.game_no, secret_length})
 
-    IO.puts "do start, secret_length is: #{secret_length}"
-    
     player = Kernel.put_in(player.secret_length, secret_length)
     player = Kernel.put_in(player.round.status_code, :game_start)
     player = Kernel.put_in(player.round.status_text, status_text)
@@ -112,21 +114,19 @@ defmodule Hangman.Player.Round do
 
   # Setup the game play round
 
-  defp do_setup(%Player{} = player) do
-    do_setup(player, do_context(player))
+  defp round_setup(%Player{} = player) do
+    do_round_setup(player, round_context(player))
   end
 
-  defp do_setup(%Player{} = player, :game_start) do
+  defp round_setup(%Player{} = player, :game_start) do
     len = secret_length(player)
     true = is_number(len)
     context = {:game_start, len}
-    
-    IO.puts "do_setup, context is: #{inspect context}"
 
-    do_setup(player, context)
+    do_round_setup(player, context)
   end
 
-  defp do_setup(%Player{} = player, context) 
+  defp do_round_setup(%Player{} = player, context) 
   when is_nil(context) == false do
 
   	{name, strategy, game_no, seq_no} = params(player)
