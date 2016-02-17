@@ -154,7 +154,7 @@ defmodule Hangman.Reduction.Engine.Server do
 
 		pass = %Pass{ size: pass_size, tally: tally, only_word_left: last_word}
 
-    IO.puts "In round pass #{inspect pass}"
+    #IO.puts "In round pass #{inspect pass}"
 
     pass
 	end

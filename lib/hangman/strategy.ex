@@ -25,13 +25,7 @@ defmodule Hangman.Strategy do
   # READ
 
   def last_word(%Hangman.Strategy{} = strategy) do
-    
-    if strategy.pass.size == 1 do
-      strategy.pass.only_word_left      
-    else
-      nil
-    end
-
+    if strategy.pass.size == 1 do strategy.pass.only_word_left else nil end
   end
 
   def make_guess(%Hangman.Strategy{} = strategy), do: strategy.guess
@@ -44,9 +38,7 @@ defmodule Hangman.Strategy do
 
   def prepare_guess(%Hangman.Strategy{} = strategy) do
   	case strategy.pass.size do 
-  		0 ->
-  			raise "word not in dictionary"
-
+  		0 ->	raise "word not in dictionary"
   		1 ->
         final_word = strategy.pass.only_word_left
 
@@ -160,68 +152,9 @@ defmodule Hangman.Strategy do
 
         tally = Counter.new(tuple_list)
 
-        [{letter, _count}] = Counter.most_common(tally, 1)
+        [letter] = Counter.most_common_key(tally, 1)
         
         letter
     end
   end
-
-  defmodule Options do
-
-    def reduce_key(%Hangman.Strategy{} = _strategy, 
-      {:game_start, secret_length} = _context) do
-    
-      Keyword.new([
-          {:game_start, true},
-          {:secret_length, secret_length}
-        ])
-    end
-
-    def reduce_key(%Hangman.Strategy{ guessed_letters: guessed } = _strategy, 
-      {_, :correct_letter, guess, _pattern, 
-       _mystery_letter} = context) do
-      
-      regex = regex_match_key(context, guessed)
-
-      Keyword.new([
-        {:correct_letter, guess}, 
-        {:guessed_letters, guessed},
-        {:regex_match_key, regex}
-      ])
-    end
-
-    def reduce_key(%Hangman.Strategy{ guessed_letters: guessed } = _strategy,
-      {_, :incorrect_letter, guess} = context) do
-      
-      regex = regex_match_key(context, guessed)
-
-      Keyword.new([
-        {:incorrect_letter, guess},
-        {:guessed_letters, guessed},
-        {:regex_match_key, regex}
-      ])
-    end
-
-    # Helper methods
-    def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
-      pattern = String.downcase(pattern)
-
-      replacement = "[^" <> Enum.join(guessed_letters) <> "]"
-
-      # For each mystery_letter replace it with [^characters-already-guessed]
-      updated_pattern = String.replace(pattern, mystery_letter, replacement)
-      Regex.compile!("^" <> updated_pattern <> "$")
-    end
-
-    def regex_match_key({_, :incorrect_letter, incorrect_letter}, _guessed) do
-        
-      # If "E" was the incorrect letter, the pattern would be "^[^E]*$"
-      # Starting from the beginning of the string to the end, any string that 
-      # contains an "E" will fail false-> Regex.match?(regex, "HELLO") 
-
-      pattern = "^[^" <> incorrect_letter <> "]*$"
-      Regex.compile!(pattern)
-    end
-
-  end # inner Options module
 end # outer Strategy module
