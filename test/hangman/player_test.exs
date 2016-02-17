@@ -15,7 +15,7 @@ defmodule Hangman.FSM.Test do
 		game_pid = Cache.get_server(name, secrets)
 
     {:ok, ppid} = 
-      Player.Supervisor.start_child(game_pid, name, :robot)
+      Player.Supervisor.start_child(name, :robot, game_pid)
 
 		#:sys.trace(ppid, true)
 
@@ -78,7 +78,7 @@ defmodule Hangman.FSM.Test do
 		game_pid = Cache.get_server(name, secrets)
 
     {:ok, ppid} = 
-      Player.Supervisor.start_child(game_pid, name, :robot)
+      Player.Supervisor.start_child(name, :robot, game_pid)
 
  	  IO.puts "\nturbo WALL-e....guessing \n"
 
@@ -106,7 +106,7 @@ defmodule Hangman.FSM.Test do
 		game_pid = Cache.get_server(name, secrets)			
 
     {:ok, ppid} = 
-      Player.Supervisor.start_child(game_pid, name, :human)
+      Player.Supervisor.start_child(name, :human, game_pid)
 
 		#:sys.trace(ppid, true)
 

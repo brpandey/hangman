@@ -20,8 +20,7 @@ defmodule Hangman.Player do
 
   # CREATE
 
-  def new(name, type, engine_pid, 
-          game_pid, event_pid) 
+  def new(name, type, engine_pid, game_pid, event_pid) 
   	when is_binary(name) and is_atom(type) and is_pid(engine_pid) 
       and is_pid(game_pid) and is_pid(event_pid) do
 
