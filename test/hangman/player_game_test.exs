@@ -1,16 +1,25 @@
 defmodule Hangman.Player.Game.Test do
 	use ExUnit.Case
 
-  alias Hangman.{Cache, Player, Supervisor}
+  alias Hangman.{Player, Supervisor}
 
-  test "test printing each game round through player stream" do 
+  test "test running 2 robot games and 2 human games" do 
 
 		{:ok, _pid} = Supervisor.start_link()
 
-		player_name = "julio"
 		secrets = ["cumulate", "avocado"]
 
-		_game_server_pid = Cache.get_server(player_name, secrets)
+    "wall_e"
+    |> Player.Game.setup(secrets)
+		|> Player.Game.play_rounds_lazy(:robot)		
+		|> Stream.each(fn text -> IO.puts("\n#{text}") end)							
+		|> Stream.run
 
+    "socrates"
+    |> Player.Game.setup(secrets)
+    |> Player.Game.play_rounds_lazy(:human)
+    |> Stream.each(fn text -> IO.puts("\n#{text}") end)							
+	  |> Stream.run
+      
 	end
 end

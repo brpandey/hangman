@@ -1,6 +1,8 @@
 defmodule Hangman.Options do
 
-	alias Hangman.{Cache, Player, Supervisor}
+	alias Hangman.{Player, Supervisor}
+
+  @min_secret_length 3
 
   def main(args) do
     args |> parse_args |> print |> run
@@ -14,12 +16,13 @@ defmodule Hangman.Options do
   defp print(parsed) do
 		case Keyword.fetch(parsed, :help) do
 			{:ok, true} ->
-
-				IO.puts "--name <player name> --word <hangman secrets> --baseline, or"
-				IO.puts "-n <player name> -w <hangman secrets> -bl"
+				IO.puts "--name <player id> --type <\"human\" or \"robot\"> --secret <hangman word(s)> --baseline, or"
+				IO.puts "-n <player id> -t <\"human\" or \"robot\"> -s <hangman word(s)> -bl"
 		    System.halt(0)
 
-			:error -> parsed
+      # if no help supplied, resume normally and return parsed output
+			:error -> 
+        {name, type, secrets} = fetch_params(parsed)
 		end
   end
 
@@ -27,33 +30,66 @@ defmodule Hangman.Options do
     {parsed, _argv, _errors} = OptionParser.parse(args, 
     	[
 	    	strict: [
-	    		help: :boolean, # --help or alias -h, boolean only
-	    		#dictfile: :string,	 # --dictfile or alias -f, string only
-	    		word: :string, # --word or alias -w, string only
-	    		baseline: :boolean, # --baseline or alias -bl, boolean only
 	    		name: :string, # --name or alias -n, string only
-	    		#type: :string # --type or alias -t, string only
+	    		type: :string, # --type or alias -t, string only
+	    		secret: :string, # --secret or alias -w, string only
+	    		baseline: :boolean, # --baseline or alias -bl, boolean only
+	    		help: :boolean # --help or alias -h, boolean only
 	    	],
 
-	    	aliases: [f: :dictfile, w: :word,	bl: :baseline, n: :name, h: :help]
-
+	    	aliases: [n: :name, t: :type, s: :secret, bl: :baseline, h: :help]
 	    ])
-    
+
     parsed
   end
 
-  defp run(args) do
-  	{:ok, player_name} = Keyword.fetch(args, :name)
-  	{:ok, word} = Keyword.fetch(args, :word)
+  defp fetch_params(args) do
 
-  	secrets = String.split(word, " ")
+    name = 
+      case Keyword.fetch(args, :name) do
+  	    {:ok, value} -> value
+        :error -> raise "name argument missing"
+      end
+
+    secrets = 
+    # first check if there is a baseline option specified
+    # so that we can get the secrets from there
+      case Keyword.fetch(args, :baseline) do
+        {:ok, true} -> ["cumulate", "avocado"]
+        :error -> 
+          # if no baseline arg is specified grab the secrets
+  	      case Keyword.fetch(args, :secret) do
+            {:ok, value} -> 
+              # split always returns a list
+              String.split(value, " ")
+            :error -> raise "secrets argument missing"
+          end
+      end
+
+    if Enum.any?(secrets, fn x -> String.length(x) < @min_secret_length end) do
+      raise "submitted secret is too short!"
+    end
+
+    type = 
+      case Keyword.fetch(args, :type) do
+        {:ok, "human"} -> :human
+        {:ok, "robot"} -> :robot
+        _ -> :robot
+      end
+    
+    {name, type, secrets}
+  end
+
+  defp run({name, type, secrets}) when is_binary(name) and is_atom(type)
+  and is_list(secrets) and is_binary(hd(secrets)) do
 
   	{:ok, _pid} = Supervisor.start_link()
 
-		game_server_pid = Cache.get_server(player_name, secrets)
+    name 
+    |> Player.Game.setup(secrets)
+		|> Player.Game.play_rounds_lazy(type)		
+		|> Stream.each(fn text -> IO.puts("\n#{text}") end)							
+		|> Stream.run
 
-		Player.Game.play_rounds_lazy(:robot, game_server_pid, player_name)		
-			|> Stream.each(fn text -> IO.puts("\n#{text}") end)							
-			|> Stream.run
   end
 end
