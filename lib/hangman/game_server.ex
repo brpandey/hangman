@@ -21,7 +21,7 @@ defmodule Hangman.Game.Server do
 	@max_wrong 5
 
 	@game_status_codes  %{
-		game_won: {:game_won, 'GAME_WON', 0}, 
+		game_won: {:game_won, 'GAME_WON', -2}, 
 		game_lost: {:game_lost, 'GAME_LOST', 25}, 
 		game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1},
 		game_reset: {:game_reset, 'GAME_RESET', 0}
@@ -296,7 +296,7 @@ defmodule Hangman.Game.Server do
 	#####
 	# Helper functions
 
-	defp check_game_status(name, state) do
+	defp check_game_status_code(state) do
 		status = cond do
 				state.secret == "" -> @game_status_codes[:game_reset]
 
@@ -308,8 +308,11 @@ defmodule Hangman.Game.Server do
 
 				true -> @game_status_codes[:game_keep_guessing]
 		end
+  end
 
-		case status do
+  defp check_game_status(name, state) do
+
+		case check_game_status_code(state) do
 			{:game_lost, text, score} -> 
 				display_text = display_game_status(state.pattern, score, text)
 				{name, :game_lost, display_text}
@@ -331,9 +334,17 @@ defmodule Hangman.Game.Server do
 	end
 
 	defp get_score(state) do
-		Set.size(state.incorrect_letters) + 
-		Set.size(state.incorrect_words) +
-		Set.size(state.correct_letters)
+
+    case check_game_status_code(state) do
+      # compute score if not lost and not reset
+      {code, _, _} when code in [:game_keep_guessing, :game_won] ->
+		    Set.size(state.incorrect_letters) + 
+		    Set.size(state.incorrect_words) +
+		    Set.size(state.correct_letters)
+      # return default lost score if game lost
+      {:game_lost, _, score} -> score
+    end
+        
 	end
 
 	defp display_game_status(pattern, score, text) do
