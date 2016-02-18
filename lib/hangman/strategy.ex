@@ -25,7 +25,7 @@ defmodule Hangman.Strategy do
   # READ
 
   def last_word(%Hangman.Strategy{} = strategy) do
-    if strategy.pass.size == 1 do strategy.pass.only_word_left else nil end
+    if strategy.pass.size == 1 do strategy.pass.last_word else nil end
   end
 
   def get_guessed(%Hangman.Strategy{} = strategy) do
@@ -42,7 +42,7 @@ defmodule Hangman.Strategy do
   	case strategy.pass.size do 
   		0 ->	raise "word not in dictionary"
   		1 ->
-        final_word = strategy.pass.only_word_left
+        final_word = strategy.pass.last_word
 
   			if {:guess_word, final_word} != strategy.prior_guess and {} != strategy.prior_guess
   				and MapSet.size(strategy.guessed_letters) > 0 do

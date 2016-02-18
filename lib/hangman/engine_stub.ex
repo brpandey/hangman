@@ -36,7 +36,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		_guess_letter = "e"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 1, 1}, pass_info}
 	end
@@ -55,7 +55,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["e"]
 		_guess_letter = "a"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 1, 2}, pass_info}
 	end
@@ -72,7 +72,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["a", "e"]
 		_guess_letter = "t"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 1, 3}, pass_info}
 	end
@@ -90,7 +90,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		_guess_letter = "o"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 1, 4}, pass_info}		
 	end
@@ -109,7 +109,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		_guess_letter = "i"
 		
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 1, 5}, pass_info}		
 	end
@@ -126,7 +126,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 	
 		_guess_letter = "l"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 1, 6}, pass_info}		
 	end
@@ -143,7 +143,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
     _guess_letter = "c"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: "" }
+		pass_info = %Pass{ size: size, tally: tally, last_word: "" }
 
 		{{id, 1, 7}, pass_info}		
 	end
@@ -160,7 +160,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		_guess_letter = "m"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: "" }
+		pass_info = %Pass{ size: size, tally: tally, last_word: "" }
 
 		{{id, 1, 8}, pass_info}		
 	end
@@ -178,7 +178,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 
 		_guess_word = "cumulate"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: "cumulate" }
+		pass_info = %Pass{ size: size, tally: tally, last_word: "cumulate" }
 
 		{{id, 1, 9}, pass_info}		
 	end
@@ -202,7 +202,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = "e"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 2, 1}, pass_info}
 	end
@@ -220,7 +220,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["e"]
 		_guess_letter = "a"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 2, 2}, pass_info}
 	end
@@ -237,7 +237,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["a", "e"]
 		_guess_letter = "s"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 2, 3}, pass_info}
 	end
@@ -253,7 +253,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["a", "e", "s"]
 		_guess_letter = "r"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 2, 4}, pass_info}
 	end
@@ -269,7 +269,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["a", "e", "r", "s"]
 		_guess_letter = "i"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 2, 5}, pass_info}
 	end
@@ -284,7 +284,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["a", "d", "e", "r", "s"]
 		_guess_letter = "d"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 2, 6}, pass_info}
 	end
@@ -298,7 +298,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: "avocado"}
+		pass_info = %Pass{ size: size, tally: tally, last_word: "avocado"}
 
 		{{id, 2, 7}, pass_info}
 	end
@@ -312,7 +312,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 2, 8}, pass_info}
 	end
@@ -326,7 +326,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 2, 9}, pass_info}
 	end
@@ -350,7 +350,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = "e"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 3, 1}, pass_info}
 	end
@@ -367,7 +367,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["e"]
 		_guess_letter = "a"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 3, 2}, pass_info}
 	end
@@ -384,7 +384,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["a", "e"]
 		_guess_letter = "i"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 3, 3}, pass_info}
 	end
@@ -400,7 +400,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["a", "e", "i"]
 		_guess_letter = "o"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 3, 4}, pass_info}
 	end
@@ -415,7 +415,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = ["a", "e", "i", "r"]
 		_guess_letter = "r"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 3, 5}, pass_info}
 	end
@@ -429,7 +429,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: "eruptive"}
+		pass_info = %Pass{ size: size, tally: tally, last_word: "eruptive"}
 
 		{{id, 3, 6}, pass_info}
 	end
@@ -443,7 +443,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 3, 7}, pass_info}
 	end
@@ -457,7 +457,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 3, 8}, pass_info}
 	end
@@ -471,7 +471,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 3, 9}, pass_info}
 	end
@@ -491,7 +491,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = "e"
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 1}, pass_info}
 	end
@@ -505,7 +505,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 2}, pass_info}
 	end
@@ -519,7 +519,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 3}, pass_info}
 	end
@@ -533,7 +533,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 4}, pass_info}
 	end
@@ -547,7 +547,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 5}, pass_info}
 	end
@@ -561,7 +561,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 6}, pass_info}
 	end
@@ -575,7 +575,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 7}, pass_info}
 	end
@@ -589,7 +589,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 8}, pass_info}
 	end
@@ -603,7 +603,7 @@ defmodule Hangman.Reduction.Engine.Stub do # Hangman Word Reduction Engine
 		_guessed = []
 		_guess_letter = ""
 
-		pass_info = %Pass{ size: size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: size, tally: tally, last_word: ""}
 
 		{{id, 4, 9}, pass_info}
 	end

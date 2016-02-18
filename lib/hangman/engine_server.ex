@@ -108,7 +108,7 @@ defmodule Hangman.Reduction.Engine.Server do
 
 		tally = %Counter{} = DictCache.Server.lookup(pid, :tally, length_key)
 
-		pass_info = %Pass{ size: pass_size, tally: tally, only_word_left: ""}
+		pass_info = %Pass{ size: pass_size, tally: tally, last_word: ""}
 
 		# Store pass info into ets table for round 2 (next pass)
 		put_next_pass_chunks(chunks, pass_key)
@@ -165,7 +165,7 @@ defmodule Hangman.Reduction.Engine.Server do
 		end
 
 		pass = %Pass{ size: pass_size, tally: tally, 
-                  possible: possible_txt, only_word_left: last_word}
+                  possible: possible_txt, last_word: last_word}
 
     #IO.puts "In round pass #{inspect pass}"
 

@@ -4,7 +4,7 @@ defmodule Hangman.Types do
     defstruct size: 0,
       tally: %{},
       possible: "",
-      only_word_left: ""
+      last_word: ""
   end
 
   defmodule Game.Round do
