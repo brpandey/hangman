@@ -1,4 +1,4 @@
-defmodule Hangman.Options do
+defmodule Hangman.CLI do
 
 	alias Hangman.{Player, Supervisor}
 
@@ -16,8 +16,10 @@ defmodule Hangman.Options do
   defp print(parsed) do
 		case Keyword.fetch(parsed, :help) do
 			{:ok, true} ->
-				IO.puts "--name <player id> --type <\"human\" or \"robot\"> --secret <hangman word(s)> --baseline, or"
-				IO.puts "-n <player id> -t <\"human\" or \"robot\"> -s <hangman word(s)> -bl"
+				IO.puts "--name <player id> --type <\"human\" or \"robot\">" <> 
+          " --secret <hangman word(s)> --baseline, or"
+				IO.puts "-n <player id> -t <\"human\" or \"robot\"> " <> 
+          "-s <hangman word(s)> -bl"
 		    System.halt(0)
 
       # if no help supplied, resume normally and return parsed output
@@ -55,7 +57,11 @@ defmodule Hangman.Options do
     # first check if there is a baseline option specified
     # so that we can get the secrets from there
       case Keyword.fetch(args, :baseline) do
-        {:ok, true} -> ["cumulate", "avocado"]
+        {:ok, true} -> 
+          ["comaker","cumulate", "elixir", "eruptive", "monadism",
+           "mus", "nagging", "oses", "remembered", "spodumenes",
+           "stereoisomers","toxics","trichromats","triose", "uniformed"]
+
         :error -> 
           # if no baseline arg is specified grab the secrets
   	      case Keyword.fetch(args, :secret) do

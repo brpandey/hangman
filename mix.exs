@@ -7,7 +7,7 @@ defmodule Hangman.Mixfile do
      elixir: "~> 1.2.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     escript: [main_module: Hangman.Options],
+     escript: [main_module: Hangman.CLI],
      deps: deps]
   end
 
