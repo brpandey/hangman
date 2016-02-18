@@ -142,7 +142,8 @@ defmodule Hangman.FSM.Test do
 
 		IO.puts "Game 1: #{inspect reply}"
 
-		assert {:game_choose_letter, "Player socrates, Round 8, C---LATE; score=7; status=KEEP_GUESSING. 3 weighted letter choices :  u:2 m*:1 p:1 (* robot choice)"} = reply
+    assert {:game_choose_letter,
+            "Possible hangman words left, 2 words: [\"cumulate\", \"cupulate\"]\n\nPlayer socrates, Round 8, C---LATE; score=7; status=KEEP_GUESSING.\n3 weighted letter choices :  u:2 m*:1 p:1 (* robot choice)"} = reply
 
 		reply = FSM.socrates_guess(ppid, "m")
 
