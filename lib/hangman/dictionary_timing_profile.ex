@@ -1,4 +1,4 @@
-defmodule Hangman.Dictionary.Cache.Profile do
+defmodule Hangman.Dictionary.Cache.Timing.Profile do
   import ExProf.Macro
 
   alias Hangman.{Dictionary, Word.Chunks, Counter}
