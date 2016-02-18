@@ -14,9 +14,10 @@ defmodule Hangman.Reduction.Engine.Server do
 	ets_engine_key :: {:words, pass_key} | {:counter, pass_key}
 
 	"""
-
-	@ets_table_name :engine_pass_table
   @name __MODULE__
+	@ets_table_name :engine_pass_table
+
+  @possible_words_left 40
 
   # External API
 
@@ -73,7 +74,20 @@ defmodule Hangman.Reduction.Engine.Server do
 		:ets.new(@ets_table_name, [:set, :named_table, :protected])
 	end
 
-	# "Initial engine reduce routine"
+  # game keep guessing engine reduce routine
+	defp do_reduce(:game_keep_guessing, 
+                 {id, game_no, round_no} = pass_key, reduce_key)
+ 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
+
+		{:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
+		{:ok, regex_key} = Keyword.fetch(reduce_key, :regex_match_key)
+
+		pass_info = do_reduce(:regex, pass_key, regex_key, exclusion_set)
+
+		{pass_key, pass_info}
+	end
+
+	# game start engine reduce routine
 	defp do_reduce(:game_start, {id, game_no, round_no} = pass_key, 
                  reduce_key, pid)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) 
@@ -103,17 +117,7 @@ defmodule Hangman.Reduction.Engine.Server do
 	end
 
 
-	defp do_reduce(:game_keep_guessing, 
-                 {id, game_no, round_no} = pass_key, reduce_key)
- 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
-		{:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
-		{:ok, regex_key} = Keyword.fetch(reduce_key, :regex_match_key)
-
-		pass_info = do_reduce(:regex, pass_key, regex_key, exclusion_set)
-
-		{pass_key, pass_info}
-	end
 
   # Private reduce method that actually does the reduce
   # Loads Chunks for the current pass, and reduces word
@@ -141,18 +145,27 @@ defmodule Hangman.Reduction.Engine.Server do
 		# Store Chunks abstraction into ets for next pass
 		put_next_pass_chunks(filtered_chunks, pass_key)
 
+    possible_txt = ""
+
 		# if down to 1 word, return the last word
 		last_word = cond do
+      pass_size == 0 -> raise "Pass size can't be zero"
 			pass_size == 1 -> 
 				Chunks.get_words_lazy(filtered_chunks)
         |> Enum.take(1) |> List.first
 
+      pass_size > 1 and pass_size < @possible_words_left ->
+        l = Chunks.get_words_lazy(filtered_chunks) |> Enum.take(pass_size)
+        possible_txt = "Possible hangman words left, #{pass_size} words: #{inspect l}"
+        ""
+
 			pass_size > 1 -> ""
 
-			true -> raise "Invalid pass_size value"
+			true -> raise "Invalid pass_size value #{pass_size}"
 		end
 
-		pass = %Pass{ size: pass_size, tally: tally, only_word_left: last_word}
+		pass = %Pass{ size: pass_size, tally: tally, 
+                  possible: possible_txt, only_word_left: last_word}
 
     #IO.puts "In round pass #{inspect pass}"
 

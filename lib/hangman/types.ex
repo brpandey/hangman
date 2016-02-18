@@ -3,6 +3,7 @@ defmodule Hangman.Types do
 	defmodule Reduction.Pass do
     defstruct size: 0,
       tally: %{},
+      possible: "",
       only_word_left: ""
   end
 

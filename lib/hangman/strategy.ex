@@ -28,15 +28,17 @@ defmodule Hangman.Strategy do
     if strategy.pass.size == 1 do strategy.pass.only_word_left else nil end
   end
 
-  def make_guess(%Hangman.Strategy{} = strategy), do: strategy.guess
-
   def get_guessed(%Hangman.Strategy{} = strategy) do
     MapSet.to_list(strategy.guessed_letters)
   end
 
+  def possible_words(%Hangman.Strategy{} = strategy) do
+    strategy.pass.possible
+  end
+
   # UPDATE
 
-  def prepare_guess(%Hangman.Strategy{} = strategy) do
+  def make_guess(%Hangman.Strategy{} = strategy) do
   	case strategy.pass.size do 
   		0 ->	raise "word not in dictionary"
   		1 ->
@@ -50,7 +52,7 @@ defmodule Hangman.Strategy do
   				raise "game over, exhausted all words, word not in dictionary"
   			end
 
-  		_ ->
+  		_pass_size ->
   			letter = retrieve_best_letter(strategy)
   			
   			if letter != nil and letter != "" 
@@ -58,11 +60,13 @@ defmodule Hangman.Strategy do
   				guessed_letters = MapSet.put(strategy.guessed_letters, letter)
   				
           strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
-          strategy = Kernel.put_in(strategy.guess, {:guess_letter, letter})                    
+          strategy = Kernel.put_in(strategy.guess, {:guess_letter, letter})            
   			else
   				raise "unable to determine next guess"
   			end
   	end
+
+    {strategy, strategy.guess}
   end
 
   def update(%Hangman.Strategy{} = strategy, {:letter, human_guessed_letter}) 
@@ -89,9 +93,6 @@ defmodule Hangman.Strategy do
   def update(%Hangman.Strategy{} = strategy, %Pass{} = pass) do
     strategy = %Hangman.Strategy{ strategy | pass: pass, 
                   prior_guess: strategy.guess}
-
-    strategy = prepare_guess(strategy)
-
     strategy
   end
 

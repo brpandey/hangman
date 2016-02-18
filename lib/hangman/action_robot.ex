@@ -7,9 +7,10 @@ defmodule Hangman.Action.Robot do
   def action(%Player{} = player, :guess) do
   	
   	{name, strategy, game_no, seq_no} = Player.Round.params(player)
+    {strategy, strategy_guess} = Strategy.make_guess(strategy)
 
     round_info = 
-	    case Strategy.make_guess(strategy) do
+	    case strategy_guess do
 	      {:guess_word, guess_word} ->
 
 	        {{^name, result, code, pattern, text}, final} =
@@ -43,6 +44,7 @@ defmodule Hangman.Action.Robot do
       			status_text: text, final_result: final}
 	    end
 
+    player = Kernel.put_in(player.strategy, strategy)
 	  Player.Round.update(player, round_info)
   end
 

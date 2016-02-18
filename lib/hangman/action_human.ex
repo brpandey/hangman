@@ -48,6 +48,12 @@ defmodule Hangman.Action.Human do
             Strategy.most_common_letter_and_counts(strategy, 
                                                    @human_letter_choices)
 
+          possible_words_txt = Strategy.possible_words(strategy)
+
+          if String.length(possible_words_txt) > 0 do
+            possible_words_txt = possible_words_txt <> "\n\n"
+          end
+
         	size = length(top_choices)
 
           choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
@@ -57,8 +63,8 @@ defmodule Hangman.Action.Human do
 
           choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
 
-        	{:game_choose_letter, 
-           "Player #{name}, Round #{seq_no}, #{status}. " <>
+        	{:game_choose_letter, possible_words_txt <>
+           "Player #{name}, Round #{seq_no}, #{status}.\n" <>
         	   "#{size} weighted letter choices : #{choices_text}" <> 
              " (* robot choice)"}
         last ->
