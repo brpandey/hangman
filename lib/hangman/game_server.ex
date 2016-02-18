@@ -297,16 +297,16 @@ defmodule Hangman.Game.Server do
 	# Helper functions
 
 	defp check_game_status_code(state) do
-		status = cond do
-				state.secret == "" -> @game_status_codes[:game_reset]
+		cond do
+			state.secret == "" -> @game_status_codes[:game_reset]
 
-				state.secret == state.pattern -> 
-					@game_status_codes[:game_won]
+			state.secret == state.pattern -> 
+				@game_status_codes[:game_won]
 
-				get_num_wrong_guesses(state) > state.max_wrong -> 
-					@game_status_codes[:game_lost]
+      get_num_wrong_guesses(state) > state.max_wrong -> 
+				@game_status_codes[:game_lost]
 
-				true -> @game_status_codes[:game_keep_guessing]
+			true -> @game_status_codes[:game_keep_guessing]
 		end
   end
 
