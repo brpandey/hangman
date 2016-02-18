@@ -17,18 +17,18 @@ defmodule Hangman.Dictionary.Cache.Profile do
   end 
 
   def run_setup_test do
-    Dictionary.Cache.setup()
+    {:ok, _pid} = Dictionary.Cache.Server.start_link()
   end
   
   def run_test do
 
-    Dictionary.Cache.setup()
+    {:ok, pid} = Dictionary.Cache.Server.start_link()
 
 		IO.puts "finished cache setup"
 
 		size = 8
 
-		lookup = Dictionary.Cache.lookup(:tally, size)
+		lookup = Dictionary.Cache.Server.lookup(pid, :tally, size)
 
 		counter_8 = Counter.new(%{"a" => 14490, "b" => 4485, 
 			"c" => 7815, "d" => 8046, "e" => 19600, "f" => 2897, "g" => 6009, 
@@ -41,7 +41,7 @@ defmodule Hangman.Dictionary.Cache.Profile do
 
 		IO.puts "#{inspect lookup}"
 
-		chunks = %Chunks{} = Dictionary.Cache.lookup(:chunks, 8)
+		chunks = %Chunks{} = Dictionary.Cache.Server.lookup(pid, :chunks, 8)
 
 		word_count = 28558
 
