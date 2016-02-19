@@ -1,17 +1,24 @@
-defmodule Hangman.Engine.Test do
-	use ExUnit.Case, async: true
+defmodule Hangman.Reduction.Engine.Server.Test do
+	use ExUnit.Case #, async: true
 
 	alias Hangman.{Reduction.Engine, Dictionary, Strategy, 
                  Counter, Types.Reduction.Pass}
 
-	test "engine reduce functionality" do
+  setup_all do
+
+    {:ok, dpid} = Dictionary.Cache.Server.start_link()
+    {:ok, epid} = Engine.Server.start_link(dpid)
+
+    {:ok, engine_pid: epid}
+  end
+
+	test "a full game with 8 rounds of engine reduce", param do
 
     # assume secret word is cumulate
 
     #### GAME SETUP
 
-		{:ok, dpid} = Dictionary.Cache.Server.start_link()
-    {:ok, epid} = Engine.Server.start_link(dpid)
+    epid = param[:engine_pid]
 
     strategy = Strategy.new
 
@@ -25,17 +32,17 @@ defmodule Hangman.Engine.Test do
 
     tally = Counter.new(%{"e" => 19600, "s" => 16560, "i" => 15530, "a" => 14490, "r" => 14211, "n" => 12186, "t" => 11870, "o" => 11462, "l" => 11026, "d" => 8046, "c" => 7815, "u" => 7377, "g" => 6009, "m" => 5793, "p" => 5763, "h" => 5111, "b" => 4485, "y" => 3395, "f" => 2897, "k" => 2628, "w" => 2313, "v" => 2156, "z" => 783, "x" => 662, "q" => 422, "j" => 384})
 
-    pass_info = %Pass{ size: 28558, tally: tally, only_word_left: ""}
+    pass_info = %Pass{ size: 28558, tally: tally, last_word: "", possible: ""}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
       Engine.Server.reduce(epid, :game_start, pass_key, reduce_key)
 
-    IO.puts "passed game start reduce"
+    IO.puts "Passed initial game start reduce"
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
-    {:guess_letter, "e"} = Strategy.make_guess(strategy)
+    {strategy, {:guess_letter, "e"}} = Strategy.make_guess(strategy)
 
     # Game Server Guess results
     context = {:game_keep_guessing, :correct_letter, "e", "-------E", "-"}
@@ -55,7 +62,7 @@ defmodule Hangman.Engine.Test do
 
 		tally = Counter.new(%{"a" => 1215, "i" => 1154, "l" => 940, "o" => 855, "t" => 807, "s" => 689, "r" => 688, "n" => 662, "u" => 548, "c" => 527, "b" => 425, "p" => 387, "m" => 380, "d" => 348, "g" => 280, "h" => 257, "k" => 228, "f" => 169, "v" => 155, "y" => 127, "z" => 112, "w" => 111, "q" => 35, "x" => 24, "j" => 18})
 
-    pass_info = %Pass{ only_word_left: "", size: 1833, tally: tally}
+    pass_info = %Pass{ last_word: "", size: 1833, tally: tally}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
@@ -63,7 +70,7 @@ defmodule Hangman.Engine.Test do
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
-    {:guess_letter, "a"} = Strategy.make_guess(strategy)
+    {strategy, {:guess_letter, "a"}} = Strategy.make_guess(strategy)
 
 
     # Game Server Guess results
@@ -84,7 +91,7 @@ defmodule Hangman.Engine.Test do
 
 		tally = Counter.new(%{"t" => 162, "i" => 121, "o" => 108, "u" => 97, "r" => 94, "l" => 89, "s" => 86, "c" => 78, "g" => 63, "n" => 58, "p" => 55, "m" => 50, "b" => 44, "d" => 36, "f" => 28, "h" => 25, "k" => 19, "v" => 13, "w" => 11, "y" => 4, "j" => 3, "x" => 2, "z" => 2, "q" => 1})
 
-    pass_info = %Pass{ size: 236, tally: tally, only_word_left: ""}
+    pass_info = %Pass{ size: 236, tally: tally, last_word: "", possible: ""}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
@@ -92,7 +99,7 @@ defmodule Hangman.Engine.Test do
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
-    {:guess_letter, "t"} = Strategy.make_guess(strategy)
+    {strategy, {:guess_letter, "t"}} = Strategy.make_guess(strategy)
 
 
     # Game Server Guess results
@@ -113,7 +120,7 @@ defmodule Hangman.Engine.Test do
 
 		tally = Counter.new(%{"i" => 43, "o" => 42, "u" => 40, "l" => 35, "c" => 29, "n" => 27, "r" => 24, "s" => 20, "m" => 17, "b" => 15, "p" => 13, "d" => 12, "h" => 9, "g" => 9, "v" => 6, "f" => 6, "j" => 3, "y" => 2, "k" => 2, "x" => 1, "z" => 1, "w" => 1})
 
-    pass_info = %Pass{ size: 79, tally: tally, only_word_left: ""}
+    pass_info = %Pass{ size: 79, tally: tally, last_word: "", possible: ""}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
@@ -121,7 +128,7 @@ defmodule Hangman.Engine.Test do
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
-    {:guess_letter, "o"} = Strategy.make_guess(strategy)
+    {strategy, {:guess_letter, "o"}} = Strategy.make_guess(strategy)
 
 
     # Game Server Guess results
@@ -142,7 +149,9 @@ defmodule Hangman.Engine.Test do
 
 		tally = Counter.new(%{"u" => 29, "i" => 24, "l" => 16, "n" => 13, "c" => 12, "s" => 12, "r" => 10, "g" => 8, "m" => 7, "p" => 7, "b" => 6, "d" => 5, "f" => 4, "h" => 3, "j" => 3, "v" => 2, "y" => 2, "k" => 1, "x" => 1, "z" => 1})
 
-    pass_info = %Pass{ size: 37, tally: tally, only_word_left: ""}
+    possible_txt = "Possible hangman words left, 37 words: [\"bijugate\", \"bunkmate\", \"crispate\", \"cruciate\", \"cumulate\", \"cupulate\", \"figurate\", \"fluxgate\", \"fumigate\", \"incubate\", \"incudate\", \"indicate\", \"indurate\", \"insulate\", \"inundate\", \"irrigate\", \"jubilate\", \"jugulate\", \"ligulate\", \"lunulate\", \"muricate\", \"pyruvate\", \"ruminate\", \"scyphate\", \"shipmate\", \"sibilate\", \"silicate\", \"simulate\", \"subulate\", \"sufflate\", \"sulphate\", \"supinate\", \"suricate\", \"uncinate\", \"undulate\", \"ungulate\", \"vizirate\"]"
+
+    pass_info = %Pass{ size: 37, tally: tally, last_word: "", possible: possible_txt}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
@@ -150,7 +159,7 @@ defmodule Hangman.Engine.Test do
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
-    {:guess_letter, "i"} = Strategy.make_guess(strategy)
+    {strategy, {:guess_letter, "i"}} = Strategy.make_guess(strategy)
 
 
     # Game Server Guess results
@@ -174,7 +183,9 @@ defmodule Hangman.Engine.Test do
 		tally = Counter.new(%{"u" => 12, "l" => 10, "n" => 4, "p" => 4, "s" => 4, "c" => 3, "g" => 3, "b" => 2, "f" => 2, "h" => 2, "m" => 2, "y" => 2, "d" => 1, "k" => 1, "j" => 1, "r" => 1, "v" => 1, "x" => 1})
 
 
-    pass_info = %Pass{ size: 13, tally: tally, only_word_left: ""}
+    possible_txt = "Possible hangman words left, 13 words: [\"bunkmate\", \"cumulate\", \"cupulate\", \"fluxgate\", \"jugulate\", \"lunulate\", \"pyruvate\", \"scyphate\", \"subulate\", \"sufflate\", \"sulphate\", \"undulate\", \"ungulate\"]"
+
+    pass_info = %Pass{ size: 13, tally: tally, last_word: "", possible: possible_txt}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
@@ -182,7 +193,7 @@ defmodule Hangman.Engine.Test do
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
-    {:guess_letter, "l"} = Strategy.make_guess(strategy)
+    {strategy, {:guess_letter, "l"}} = Strategy.make_guess(strategy)
 
 
     # Game Server Guess results
@@ -203,8 +214,9 @@ defmodule Hangman.Engine.Test do
 
 		tally = Counter.new(%{"u" => 7, "c" => 2, "g" => 2, "n" => 2, "s" => 2, "b" => 1, "d" => 1, "f" => 1, "j" => 1, "m" => 1, "p" => 1})
 
+    possible_txt =  "Possible hangman words left, 7 words: [\"cumulate\", \"cupulate\", \"jugulate\", \"subulate\", \"sufflate\", \"undulate\", \"ungulate\"]"
 
-    pass_info = %Pass{ size: 7, tally: tally, only_word_left: ""}
+    pass_info = %Pass{ size: 7, tally: tally, last_word: "", possible: possible_txt}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
@@ -212,7 +224,7 @@ defmodule Hangman.Engine.Test do
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
-    {:guess_letter, "c"} = Strategy.make_guess(strategy)
+    {strategy, {:guess_letter, "c"}} = Strategy.make_guess(strategy)
 
 
     # Game Server Guess results
@@ -234,7 +246,9 @@ defmodule Hangman.Engine.Test do
 
 		tally = Counter.new(%{"u" => 2, "m" => 1, "p" => 1})
 
-    pass_info = %Pass{ size: 2, tally: tally, only_word_left: ""}
+    possible_txt = "Possible hangman words left, 2 words: [\"cumulate\", \"cupulate\"]"
+
+    pass_info = %Pass{ size: 2, tally: tally, last_word: "", possible: possible_txt}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
@@ -242,7 +256,7 @@ defmodule Hangman.Engine.Test do
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
-    {:guess_letter, "m"} = Strategy.make_guess(strategy)
+    {strategy, {:guess_letter, "m"}} = Strategy.make_guess(strategy)
 
 
     # Game Server Guess results
@@ -262,7 +276,7 @@ defmodule Hangman.Engine.Test do
 
 		tally = Counter.new(%{"u" => 1})
 
-    pass_info = %Pass{ size: 1, tally: tally, only_word_left: "cumulate"}
+    pass_info = %Pass{ size: 1, tally: tally, last_word: "cumulate"}
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
@@ -271,7 +285,7 @@ defmodule Hangman.Engine.Test do
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
 
-    {:guess_word, "cumulate"} = Strategy.make_guess(strategy)
+    {_strategy, {:guess_word, "cumulate"}} = Strategy.make_guess(strategy)
 
 	end
 
