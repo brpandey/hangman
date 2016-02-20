@@ -1,5 +1,7 @@
-defmodule Hangman.System.Supervisor do 
+defmodule Hangman.Game.System.Supervisor do 
 	use Supervisor
+
+  require Logger
 
 	@name __MODULE__
 
@@ -8,7 +10,7 @@ defmodule Hangman.System.Supervisor do
 	# along with the Hangman.Cache GenServer
 
 	def start_link do
-		IO.puts "Starting Hangman System Supervisor"
+		Logger.info "Starting Hangman Game System Supervisor"
 
 		Supervisor.start_link(@name, nil)
 	end
@@ -16,8 +18,8 @@ defmodule Hangman.System.Supervisor do
 	def init(_) do
 
 		children = [
-				supervisor(Hangman.Server.Supervisor, []),
-				worker(Hangman.Cache, [])
+				supervisor(Hangman.Game.Server.Supervisor, []),
+				worker(Hangman.Game.Pid.Cache.Server, [])
 		]
 
 		supervise(children, strategy: :one_for_one)	

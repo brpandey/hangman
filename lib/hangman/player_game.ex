@@ -1,6 +1,6 @@
 defmodule Hangman.Player.Game do
 
-	alias Hangman.{Cache, Player.FSM}
+	alias Hangman.{Game, Player.FSM}
 
   defp start_player(name, type, game_pid) do
     Hangman.Player.Supervisor.start_child(name, type, game_pid)
@@ -8,7 +8,7 @@ defmodule Hangman.Player.Game do
 
   def setup(name, secrets) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) do
-	  game_pid = Cache.get_server(name, secrets)
+	  game_pid = Game.Pid.Cache.Server.get_server_pid(name, secrets)
     {name, game_pid}
   end
 

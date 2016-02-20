@@ -1,17 +1,19 @@
-defmodule Hangman.Server.Supervisor do
+defmodule Hangman.Game.Server.Supervisor do
 	use Supervisor
+
+  require Logger
 
 	#Hangman.Server.Supervisor is a first line supervisor
 	#which will dynamically start its children
 
 	def start_link do
-		IO.puts "Starting Hangman Server Supervisor"
+		Logger.info "Starting Hangman Game Server Supervisor"
 
-		Supervisor.start_link(__MODULE__, nil, name: :hangman_server_supervisor)
+		Supervisor.start_link(__MODULE__, nil, name: :hangman_game_server_supervisor)
 	end
 
 	def start_child(player, secret) do	
-		Supervisor.start_child(:hangman_server_supervisor, [player, secret])
+		Supervisor.start_child(:hangman_game_server_supervisor, [player, secret])
 	end
 
 	def init(_) do

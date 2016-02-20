@@ -1,10 +1,12 @@
-defmodule Hangman.Cache do 
+defmodule Hangman.Game.Pid.Cache.Server do 
 	use GenServer
+
+  require Logger
 
 	@name __MODULE__
 
 	def start_link do
-		IO.puts "Starting Hangman Server Cache"
+		Logger.info "Starting Hangman Game Pid Cache Server"
 
 		args = nil
 		options = [name: @name]
@@ -13,7 +15,7 @@ defmodule Hangman.Cache do
 	end
 
 
-	def get_server(player_name, secret) do
+	def get_server_pid(player_name, secret) do
 		
 		case Hangman.Game.Server.whereis(player_name) do
 
@@ -35,7 +37,7 @@ defmodule Hangman.Cache do
 		case Hangman.Game.Server.whereis(player_name) do
 
 			:undefined -> 
-				{:ok, pid} = Hangman.Server.Supervisor.start_child(player_name, secret)
+				{:ok, pid} = Hangman.Game.Server.Supervisor.start_child(player_name, secret)
 				pid
 
 			pid -> 
