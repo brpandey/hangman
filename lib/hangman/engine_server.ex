@@ -1,6 +1,8 @@
 defmodule Hangman.Reduction.Engine.Server do
   use GenServer
 
+  require Logger
+
   alias Hangman.{Types.Reduction.Pass, Word.Chunks, Counter}
   alias Hangman.Dictionary.Cache, as: DictCache
 
@@ -22,7 +24,7 @@ defmodule Hangman.Reduction.Engine.Server do
   # External API
 
   def start_link(dict_cache_pid) when is_pid(dict_cache_pid) do
-    IO.puts "Starting Hangman Engine Server"
+    Logger.info "Starting Hangman Engine Server"
     args = {dict_cache_pid}
     options = []
     GenServer.start_link(@name, args, options)

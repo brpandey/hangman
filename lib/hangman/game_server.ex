@@ -1,5 +1,7 @@
 defmodule Hangman.Game.Server do
 	use GenServer
+
+  require Logger
 	
 	@moduledoc "Hangman.Game.Server - hangman game server using GenServer.  
 		Interacts with player client through public interface and
@@ -36,21 +38,21 @@ defmodule Hangman.Game.Server do
 	"""
 
 	def start_link(player_name, secret, max_wrong \\ @max_wrong) do
-		IO.puts "Starting Hangman Server"
-		args = {player_name, _load_game(secret, max_wrong)}
+		Logger.info "Starting Hangman Game Server"
+		args = {player_name, do_load_game(secret, max_wrong)}
 		options = [name: via_tuple(player_name)] #,  debug: [:trace]]
 
 		GenServer.start_link(@name, args, options)
 	end
 
-	defp _load_game(secret, max_wrong) when is_binary(secret) do
+	defp do_load_game(secret, max_wrong) when is_binary(secret) do
 		pattern = String.duplicate(@mystery_letter, String.length(secret))
 
 		%State{secret: String.upcase(secret), 
 			pattern: pattern, max_wrong: max_wrong}
 	end
 
-	defp _load_game(secrets, max_wrong) when is_list(secrets) do
+	defp do_load_game(secrets, max_wrong) when is_list(secrets) do
 		#initialize the list of secrets to be uppercase 
 		#initialize the list of patterns to fit the secrets length
 		secrets = Enum.map(secrets, &String.upcase(&1))
@@ -119,7 +121,7 @@ defmodule Hangman.Game.Server do
 		Loads a new game
 	"""
 	def handle_cast({:load_game, secret, max_wrong}, {name, _state}) do
-		state = _load_game(secret, max_wrong)
+		state = do_load_game(secret, max_wrong)
 
 		{ :noreply, {name, state} }
 	end
@@ -130,7 +132,7 @@ defmodule Hangman.Game.Server do
 	"""
 
 	def handle_cast({:load_games, secret, max_wrong}, {name, _state}) do
-		state = _load_game(secret, max_wrong)
+		state = do_load_game(secret, max_wrong)
 		
 		{ :noreply, {name, state} }
 	end
@@ -287,7 +289,7 @@ defmodule Hangman.Game.Server do
 		No special cleanup other than refreshing the state
 	"""
 	def terminate(_reason, _state) do
-		#IO.puts "Terminating Hangman Server"
+		#Logger.info "Terminating Hangman Game Server"
 		#state = %State{}
 		:ok
 	end

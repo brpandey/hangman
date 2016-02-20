@@ -1,6 +1,8 @@
 defmodule Hangman.Dictionary.Cache.Server do
 	use GenServer
 
+  require Logger
+
   alias Hangman.Dictionary.File, as: DictFile
 	alias Hangman.{Counter, Word.Chunks}
 
@@ -15,7 +17,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 	# External API
 
   def start_link() do
-    IO.puts "Starting Hangman Dictionary Cache Server"
+    Logger.info "Starting Hangman Dictionary Cache Server"
     args = {}
     options = []
     GenServer.start_link(@name, args, options)
@@ -172,8 +174,8 @@ defmodule Hangman.Dictionary.Cache.Server do
     |> Stream.each(fn_ets_insert_chunks)
 		|> Stream.run
 
-    #info = :ets.info(@ets_table_name)
-		#IO.puts ":chunks, ets info is: #{inspect info}\n"		
+    info = :ets.info(@ets_table_name)
+		Logger.info ":chunks, ets info is: #{inspect info}\n"		
 	end
 
 
@@ -207,8 +209,8 @@ defmodule Hangman.Dictionary.Cache.Server do
 	  |> Stream.each(fn_ets_insert_counters)
 		|> Stream.run
 
-    #info = :ets.info(@ets_table_name)
-		#IO.puts ":counter + chunks, ets info is: #{inspect info}\n"		
+    info = :ets.info(@ets_table_name)
+		Logger.info ":counter + chunks, ets info is: #{inspect info}\n"		
 	end
 
 	# Simple helpers to generate tuple keys for ets based on word length size

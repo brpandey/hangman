@@ -1,6 +1,6 @@
 defmodule Hangman.CLI do
 
-	alias Hangman.{Player, Supervisor}
+	alias Hangman.{Player}
 
   @min_secret_length 3
 
@@ -89,7 +89,7 @@ defmodule Hangman.CLI do
   defp run({name, type, secrets}) when is_binary(name) and is_atom(type)
   and is_list(secrets) and is_binary(hd(secrets)) do
 
-  	{:ok, _pid} = Supervisor.start_link()
+  	{:ok, _pid} = Hangman.Supervisor.start_link()
 
     name 
     |> Player.Game.setup(secrets)

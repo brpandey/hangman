@@ -1,15 +1,19 @@
 defmodule Hangman.Player.FSM do
   @behaviour :gen_fsm
 
+  require Logger
+
   alias Hangman.{Player, Player.Async.Echo}
 
   # External API
   def start_link(engine_server_pid, event_server_pid, 
                  game_server_pid, player_name, player_type) do
-    IO.puts "Starting Hangman FSM Server"
 
-    :gen_fsm.start_link(__MODULE__, {engine_server_pid, event_server_pid, 
-                                     game_server_pid, player_name, player_type},
+    Logger.info "Starting Hangman Player FSM Server"
+
+    :gen_fsm.start_link(__MODULE__, 
+                        {engine_server_pid, event_server_pid, 
+                         game_server_pid, player_name, player_type},
                         [])
   end
 

@@ -1,13 +1,15 @@
 defmodule Hangman.Player.Supervisor do
 	use Supervisor
 
+  require Logger
+
 	@name __MODULE__
 	
 	# Hangman.Player.Supervisor is a first line supervisor
 	# which will dynamically start its children
 
 	def start_link(engine_server_pid, event_server_pid) do
-		IO.puts "Starting Hangman Player Supervisor"
+		Logger.info "Starting Hangman Player Supervisor"
 
 		Supervisor.start_link(@name, {engine_server_pid, event_server_pid}, 
                           name: :hangman_player_supervisor)

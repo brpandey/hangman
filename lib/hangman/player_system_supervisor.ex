@@ -1,6 +1,8 @@
 defmodule Hangman.Player.System.Supervisor do
 	use Supervisor
 
+  require Logger
+
   import Supervisor.Spec
 
 	@name __MODULE__
@@ -9,7 +11,7 @@ defmodule Hangman.Player.System.Supervisor do
 	# as it supervises a first-line supervisor, Hangman.Player.Supervisor
 
 	def start_link do
-		IO.puts "Starting Hangman Player System Supervisor"
+		Logger.info "Starting Hangman Player System Supervisor"
 
 		result = {:ok, sv} = Supervisor.start_link(@name, nil)
 

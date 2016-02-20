@@ -1,12 +1,14 @@
 defmodule Hangman.Process.Registry do
 	  use GenServer
+
+    require Logger
 	  
 	  import Kernel, except: [send: 2]
 
 	 	@name __MODULE__
 
 	  def start_link do
-	    IO.puts "Starting Hangman Process Registry"
+	    Logger.info "Starting Hangman Process Registry"
 	    GenServer.start_link(@name, nil, name: :hangman_process_registry)
 	  end
 
