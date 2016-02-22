@@ -24,18 +24,23 @@ defmodule Hangman.Player.System.Supervisor do
 	# we instantiate the children this alternate way
 
 	def start_workers(sv) do
-    {:ok, dictionary_cache_pid} = 
+    {:ok, _dictionary_cache_pid} = 
 			Supervisor.start_child(sv, worker(Hangman.Dictionary.Cache.Server, []))
 	
-		{:ok, engine_pid} = 
-			Supervisor.start_child(sv, worker(Hangman.Reduction.Engine.Server, 
-                                        [dictionary_cache_pid]))
+		{:ok, _pass_pid} = 
+			Supervisor.start_child(sv, worker(Hangman.Pass.Server, []))
 	
+    {:ok, _reduction_engine_pool_sup_pid} = 
+      Supervisor.start_child(sv, supervisor(Hangman.Reduction.Engine, []))
+
+    {:ok, _pass_writer_pool_sup_pid} = 
+      Supervisor.start_child(sv, supervisor(Hangman.Pass.Writer, []))
+
     {:ok, notify_pid} = 
       Supervisor.start_child(sv, worker(Hangman.Player.Events.Server, []))
 
 		Supervisor.start_child(sv, supervisor(Hangman.Player.Supervisor, 
-			[engine_pid, notify_pid]))
+			[notify_pid]))
 	end
 
 	def init(_) do

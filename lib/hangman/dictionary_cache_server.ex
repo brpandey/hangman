@@ -19,9 +19,27 @@ defmodule Hangman.Dictionary.Cache.Server do
   def start_link() do
     Logger.info "Starting Hangman Dictionary Cache Server"
     args = {}
-    options = []
+    options = [name: :hangman_dictionary_cache_server]
     GenServer.start_link(@name, args, options)
   end
+
+
+  def lookup(:tally, length_key)
+  when is_number(length_key) and length_key > 0 do
+    pid = Process.whereis(:hangman_dictionary_cache_server)  
+    true = is_pid(pid) 
+  
+    lookup(pid, :tally, length_key)
+  end
+
+  def lookup(:chunks, length_key)
+  when is_number(length_key) and length_key > 0 do
+    pid = Process.whereis(:hangman_dictionary_cache_server)
+    true = is_pid(pid)
+
+    lookup(pid, :chunks, length_key)
+  end
+
 
   def lookup(pid, :tally, length_key)
   when is_number(length_key) and length_key > 0 do

@@ -6,14 +6,14 @@ defmodule Hangman.Player.FSM do
   alias Hangman.{Player, Player.Async.Echo}
 
   # External API
-  def start_link(engine_server_pid, event_server_pid, 
-                 game_server_pid, player_name, player_type) do
+  def start_link(event_server_pid, game_server_pid, 
+                 player_name, player_type) do
 
     Logger.info "Starting Hangman Player FSM Server"
 
     :gen_fsm.start_link(__MODULE__, 
-                        {engine_server_pid, event_server_pid, 
-                         game_server_pid, player_name, player_type},
+                        {event_server_pid, game_server_pid, 
+                         player_name, player_type},
                         [])
   end
 
@@ -63,9 +63,9 @@ defmodule Hangman.Player.FSM do
 
   # OTP :gen_fsm Callbacks
 
-  def init({engine_pid, event_pid, game_pid, player_name, type}) do
+  def init({event_pid, game_pid, player_name, type}) do
 
-    player = Player.new(player_name, type, engine_pid, game_pid, event_pid)
+    player = Player.new(player_name, type, game_pid, event_pid)
 
     initial = 
       case player.type do

@@ -80,7 +80,7 @@ defmodule Hangman.Word.Chunks do
 		}
 	end
 
-  def get_words_lazy(%Chunks{raw_stream: raw_stream} = _stream) do
+  def get_words_lazy(%Chunks{raw_stream: raw_stream} = _chunks) do
   	Stream.flat_map(raw_stream, &unpack(&1))
   end
 
