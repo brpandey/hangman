@@ -2,7 +2,7 @@ defmodule Hangman.Pass.Server.Stub do
 
   alias Hangman.{Counter, Types.Reduction.Pass}
 
-	def read_pass(:game_start, 
+	def get_pass(:game_start, 
 		{id, game_no, 1} = pass_key, reduce_key) 
 		when is_binary(id) and is_number(game_no) do
 
@@ -12,7 +12,7 @@ defmodule Hangman.Pass.Server.Stub do
 		simulate_reduce_sequence(pass_key)
 	end
 
-	def read_pass(:game_keep_guessing, 
+	def get_pass(:game_keep_guessing, 
 		{id, game_no, round_no} = pass_key, reduce_key)
 		when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
