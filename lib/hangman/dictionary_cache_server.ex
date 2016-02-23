@@ -171,7 +171,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 		# For each words list chunk, insert into ets lambda
 
 		fn_ets_insert_chunks = fn 
-      {Nil, 0} -> ""
+      {nil, 0} -> ""
 			{words_chunk_list, length} -> 
 					ets_key = get_ets_chunk_key(length)
 
@@ -193,7 +193,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 		|> Stream.run
 
     info = :ets.info(@ets_table_name)
-		Logger.info ":chunks, ets info is: #{inspect info}\n"		
+		Logger.debug ":chunks, ets info is: #{inspect info}\n"		
 	end
 
 
@@ -228,7 +228,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 		|> Stream.run
 
     info = :ets.info(@ets_table_name)
-		Logger.info ":counter + chunks, ets info is: #{inspect info}\n"		
+		Logger.debug ":counter + chunks, ets info is: #{inspect info}\n"		
 	end
 
 	# Simple helpers to generate tuple keys for ets based on word length size

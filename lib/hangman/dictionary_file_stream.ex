@@ -32,7 +32,7 @@ defmodule Hangman.Dictionary.File.Stream do
     # serve when ready..
 
     fn_unpack = fn
-      data when data in [""] -> {Nil, 0}
+      data when data in [""] -> {nil, 0}
       bin when is_binary(bin) -> :erlang.binary_to_term(bin)
     end
 
