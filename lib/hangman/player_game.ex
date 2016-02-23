@@ -2,20 +2,49 @@ defmodule Hangman.Player.Game do
 
 	alias Hangman.{Game, Player.FSM}
 
-  defp start_player(name, type, game_pid) do
-    Hangman.Player.Supervisor.start_child(name, type, game_pid)
+  def run(name, type, secrets, log, display) when is_binary(name) 
+      and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
+      and is_boolean(log) and is_boolean(display) do
+
+    fn_display = fn
+      _, true -> 
+        # if display arg is true then don't print out round status again
+        "" 
+      text, false -> 
+        IO.puts("\n#{text}")
+    end
+
+    name 
+    |> setup(secrets, log, display)
+		|> play_rounds_lazy(type)
+		|> Stream.each(&fn_display.(&1, display))
+		|> Stream.run
+
   end
 
-  def setup(name, secrets) when is_binary(name) and
-  is_list(secrets) and is_binary(hd(secrets)) do
+  defp start_player(name, type, game_pid, notify_pid) do
+    Hangman.Player.Supervisor.start_child(name, type, game_pid, notify_pid)
+  end
+
+  defp setup(name, secrets, log, display) when is_binary(name) and
+  is_list(secrets) and is_binary(hd(secrets)) and 
+  is_boolean(log) and is_boolean(display) do
+
+    # Grab game pid first
 	  game_pid = Game.Pid.Cache.Server.get_server_pid(name, secrets)
-    {name, game_pid}
+
+    # Get event server pid next
+    {:ok, notify_pid} = 
+      Hangman.Player.Events.Supervisor.start_child(log, display)
+
+    {name, game_pid, notify_pid}
   end
 
-	def play_rounds_lazy({name, game_pid}, :robot) do
+	defp play_rounds_lazy({name, game_pid, notify_pid}, 
+                       :robot) do
 		Stream.resource(
 			fn -> 
-        {:ok, ppid} = start_player(name, :robot, game_pid)
+        {:ok, ppid} = start_player(name, :robot, game_pid, notify_pid)
         ppid
 				end,
 
@@ -28,15 +57,18 @@ defmodule Hangman.Player.Game do
 				end
 			end,
 			
-			fn ppid -> FSM.stop(ppid) end
+			fn ppid -> 
+        Hangman.Player.Events.Server.stop(notify_pid)
+        FSM.stop(ppid) 
+      end
 		)
 	end
 
 
-	def play_rounds_lazy({name, game_pid}, :human) do
+	defp play_rounds_lazy({name, game_pid, notify_pid}, :human) do
 		Stream.resource(
 			fn -> 
-        {:ok, ppid} = start_player(name, :human, game_pid)
+        {:ok, ppid} = start_player(name, :human, game_pid, notify_pid)
         {ppid, []}
 				end,
 
@@ -70,8 +102,13 @@ defmodule Hangman.Player.Game do
 				end
 			end,
 			
-			fn ppid -> FSM.stop(ppid) end
+			fn ppid -> 
+        Hangman.Player.Events.Server.stop(notify_pid)
+        FSM.stop(ppid) 
+      end
 		)
 	end
+
+
 
 end

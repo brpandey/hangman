@@ -1,8 +1,9 @@
 defmodule Hangman.Player.Events.Server do
 
-	# options = [file_output: true, display_output: false]
-	def start_link(options \\ [file_output: true]) do
-		IO.puts "Starting Hangman Event Server, options #{inspect options}"
+  require Logger
+
+	def start_link(options \\ [file_output: false, display_output: true]) do
+		Logger.info "Starting Hangman Event Server, options #{inspect options}"
 
 		{:ok, pid} = GenEvent.start_link()
 
@@ -22,7 +23,7 @@ defmodule Hangman.Player.Events.Server do
 					for event <- stream do
 						case event do
 							{:start, name} ->
-								IO.puts "##{name}_feed setup --> _HAN__AN_ has started"
+								IO.puts "##{name}_feed setup --> _Hangman_Game_ has started"
 
 							{:secret_length, name, game_no, length} ->
 								IO.puts "##{name}_feed Game #{game_no}, secret length --> #{length}"
@@ -70,6 +71,14 @@ defmodule Hangman.Player.Events.Server do
 
 	def notify_game_over(pid, name, text) do
 		GenEvent.notify(pid, {:game_over, name, text})
+	end
+
+  def stop(pid) do
+    GenEvent.stop(pid)
+  end
+
+	def terminate(_reason, _state) do
+		:ok
 	end
 
 end

@@ -4,8 +4,7 @@ defmodule Hangman.Player.Test do
   alias Hangman.{Player}
 
   setup_all do
-
-		{:ok, _pid} = Hangman.Supervisor.start_link()
+    IO.puts "Hangman.Player.Test"
 
     # initialize params map for test cases
     # each test just needs to grab the current player pid
@@ -43,8 +42,13 @@ defmodule Hangman.Player.Test do
     # Retrieve game server pid given test specific params
     game_pid = Hangman.Game.Pid.Cache.Server.get_server_pid(name, secrets)
 
+    # Get event server pid next
+    {:ok, notify_pid} = 
+      Hangman.Player.Events.Supervisor.start_child(false, false)
+
     # Retrieve player fsm pid through dynamic start
-    {:ok, player_pid} = Player.Supervisor.start_child(name, type, game_pid)
+
+    {:ok, player_pid} = Player.Supervisor.start_child(name, type, game_pid, notify_pid)
 
     # Update case context params map, for current test
     map = Map.put(map, :current_player_pid, player_pid)

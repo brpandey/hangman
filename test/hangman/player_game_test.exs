@@ -1,25 +1,22 @@
 defmodule Hangman.Player.Game.Test do
 	use ExUnit.Case
 
-  alias Hangman.{Player, Supervisor}
+  alias Hangman.{Player}
+
+  setup_all do
+    IO.puts "Hangman.Player.Game.Test"
+    :ok
+  end
 
   test "test running 2 robot games and 2 human games" do 
 
-		{:ok, _pid} = Supervisor.start_link()
+		secrets = ["asparagus", "voluptuous"]
 
-		secrets = ["cumulate", "avocado"]
+    Player.Game.run("c3po", :robot, secrets, false, true)
 
-    "wall_e"
-    |> Player.Game.setup(secrets)
-		|> Player.Game.play_rounds_lazy(:robot)		
-		|> Stream.each(fn text -> IO.puts("\n#{text}") end)							
-		|> Stream.run
+		secrets = ["mitochondria", "eject"]
 
-    "socrates"
-    |> Player.Game.setup(secrets)
-    |> Player.Game.play_rounds_lazy(:human)
-    |> Stream.each(fn text -> IO.puts("\n#{text}") end)							
-	  |> Stream.run
-      
+    Player.Game.run("jedi", :human, secrets, true, false)
+
 	end
 end

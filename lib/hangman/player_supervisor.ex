@@ -8,24 +8,23 @@ defmodule Hangman.Player.Supervisor do
 	# Hangman.Player.Supervisor is a first line supervisor
 	# which will dynamically start its children
 
-	def start_link(event_server_pid) do
+	def start_link() do
 		Logger.info "Starting Hangman Player Supervisor"
 
-		Supervisor.start_link(@name, {event_server_pid}, 
+		Supervisor.start_link(@name, {}, 
                           name: :hangman_player_supervisor)
 	end
 
-	def start_child(player_name, player_type, game_server_pid) do	
+	def start_child(player_name, player_type, game_pid, event_pid) do	
+
 		Supervisor.start_child(:hangman_player_supervisor, 
-			[game_server_pid, player_name, player_type])
+			[event_pid, game_pid, player_name, player_type])
 	end
 
-	def init({event_server_pid}) do
+	def init(_) do
 		children = [
-      # Use restart transient option -- only want restart if abnormal shutdown
-			worker(Hangman.Player.FSM, 
-             [event_server_pid], 
-             restart: :transient) 
+      # Use restart transient option -- only restart if abnormal shutdown
+			worker(Hangman.Player.FSM, [], restart: :transient) 
 		]
 
 		# :simple_one_for_one to indicate that 
