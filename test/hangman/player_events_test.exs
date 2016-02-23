@@ -3,9 +3,15 @@ defmodule Hangman.Player.Events.Server.Test do
 
   alias Hangman.{Player.Events}
 
+
+  setup_all do
+    IO.puts "Hangman.Player.Events.Server.Test"
+    :ok
+  end
+
   test "inital events server setup" do
 
-    {:ok, epid} = Events.Server.start_link([file_output: true])
+    {:ok, epid} = Events.Server.start_link([display_output: true])
 
     Events.Server.notify_start(epid, "rooster")
     Events.Server.notify_length(epid, {"rooster", 1, 8})

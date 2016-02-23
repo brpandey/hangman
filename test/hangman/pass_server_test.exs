@@ -1,26 +1,13 @@
 defmodule Hangman.Pass.Server.Test do
 	use ExUnit.Case #, async: true
 
-	alias Hangman.{Dictionary, Strategy, 
-                 Counter, Types.Reduction.Pass}
+	alias Hangman.{Strategy, Counter, Types.Reduction.Pass}
 
   alias Hangman.Pass.Server, as: PassServer
-  alias Hangman.Pass.Writer, as: PassWriter
+
 
   setup_all do
-
-    # Starting registry for use with the various workers!
-    {:ok, _pid} = Hangman.Process.Registry.start_link()
-
-    {:ok, _pid} = Dictionary.Cache.Server.start_link()
-    {:ok, _pass_pid} = PassServer.start_link()
-
-    # Starting supervisor which controls pool of reduction workers
-    {:ok, _pid} = Hangman.Reduction.Engine.start_link()
-
-    # Starting supervisor which controls pool of writer workers
-    {:ok, _pid} = PassWriter.start_link()
-
+    IO.puts "Hangman.Pass.Server.Test"
     :ok
   end
 

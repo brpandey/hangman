@@ -4,6 +4,12 @@ defmodule Hangman.Counter.Test do
 
 	alias Hangman.Counter, as: Counter
 
+  setup_all do
+    IO.puts "Hangman.Counter.Test"
+    :ok
+  end
+
+
 	# Basic CRUD Functionality: Create, Read, Update, Delete
 	
 	test "test basic counter crud" do

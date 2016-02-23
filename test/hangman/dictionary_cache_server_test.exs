@@ -3,10 +3,20 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 
 	alias Hangman.{Dictionary, Counter, Word.Chunks}
 
+  setup_all do
+    IO.puts "Hangman.Dictionary.Cache.Server.Test"
+    :ok
+  end
+
+
 	test "initial test of dictionary cache" do
 
-		{:ok, pid} = Dictionary.Cache.Server.start_link()
-
+		pid = 
+      case Dictionary.Cache.Server.start_link do
+        {:ok, pid} -> pid
+        {:error, {:already_started, pid}} -> pid
+      end
+    
 		IO.puts "finished cache setup"
 
 		size = 8

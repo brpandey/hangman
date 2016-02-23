@@ -2,6 +2,11 @@
 defmodule Hangman.Dictionary.File.Stream.Test do
 	use ExUnit.Case, async: true
 
+  setup_all do
+    IO.puts "Hangman.Dictionary.File.Stream.Test"
+    :ok
+  end
+
 
 	test "test lines only type stream, print first 5 lines" do
 

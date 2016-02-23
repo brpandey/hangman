@@ -4,7 +4,7 @@ defmodule Hangman.Game.Test do
 	alias Hangman.{Game}
 
   setup_all do
-    {:ok, _pid} = Hangman.Supervisor.start_link()
+    IO.puts "Hangman.Game.Test"
 
     # initialize params map for test cases
     # each test just needs to grab the current player pid
