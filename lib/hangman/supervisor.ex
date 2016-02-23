@@ -8,8 +8,7 @@ defmodule Hangman.Supervisor do
 	# Hangman.Server.Supervisor is a third line supervisor as
 	# it supervises Hangman.Game.System.Supervisor and 
 	# Hangman.Player.System.Supervisor, both of which
-	# are second line supervisors and 
-	# also the "error kernel" Hangman.Process.Registry
+	# are second line supervisors
 
 	def start_link() do
 		Logger.info "Starting Hangman Supervisor"
@@ -19,7 +18,6 @@ defmodule Hangman.Supervisor do
 
 	def init(_) do
 		children = [
-			worker(Hangman.Process.Registry, []),
 			supervisor(Hangman.Game.System.Supervisor, []),
 			supervisor(Hangman.Player.System.Supervisor, [])
 		]

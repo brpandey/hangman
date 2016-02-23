@@ -12,6 +12,10 @@ defmodule Hangman.Process.Registry do
 	    GenServer.start_link(@name, nil, name: :hangman_process_registry)
 	  end
 
+	  def stop(pid) do
+		  GenServer.call pid, :stop
+	  end
+
 	  def register_name(key, pid) do
 	    GenServer.call(:hangman_process_registry, {:register_name, key, pid})
 	  end
@@ -33,9 +37,15 @@ defmodule Hangman.Process.Registry do
 	    end
 	  end
 
+
 	  def init(_) do
 	    {:ok, HashDict.new}
 	  end
+
+	  def handle_call(:stop, _from, {}) do
+		  { :stop, :normal, :ok, {}}
+	  end 
+    
 
 	  def handle_call({:register_name, key, pid}, _, process_registry) do
 	    case HashDict.get(process_registry, key) do
@@ -76,6 +86,10 @@ defmodule Hangman.Process.Registry do
 	        (_, registry_acc) -> registry_acc
 	      end
 	    )
+	  end
+
+	  def terminate(_reason, _state) do
+		  :ok
 	  end
 
 end

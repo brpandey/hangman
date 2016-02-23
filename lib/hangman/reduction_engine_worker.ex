@@ -29,7 +29,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   end
 
   defp via_tuple(worker_id) do
-    {:via, Hangman.Process.Registry, {:reduction_engine_worker, worker_id}}
+    {:via, :gproc, {:n, :l, {:reduction_engine_worker, worker_id}}}
   end
 
   

@@ -64,11 +64,11 @@ defmodule Hangman.Game.Server do
 	end
 
 	def whereis(name) do
-		Hangman.Process.Registry.whereis_name({:hangman_server, name})
+    :gproc.whereis_name({:n, :l, {:hangman_server, name}})
 	end
 
 	defp via_tuple(name) do
-		{:via, Hangman.Process.Registry, {:hangman_server, name}}
+		{:via, :gproc, {:n, :l, {:hangman_server, name}}}
 	end
 
 	def mystery_letter, do: @mystery_letter

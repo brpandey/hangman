@@ -3,7 +3,7 @@ defmodule Hangman.Mixfile do
 
   def project do
     [app: :play_hangman,
-     version: "0.0.1",
+     version: "0.1.1",
      elixir: "~> 1.2.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -15,7 +15,10 @@ defmodule Hangman.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [
+      applications: [:logger, :gproc],
+      mod: {Hangman.Application, []}
+    ]
   end
 
   # Dependencies can be Hex packages:
@@ -28,6 +31,9 @@ defmodule Hangman.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:exprof, "~> 0.2.0"}]
+    [
+      {:gproc, "0.3.1"},
+      {:exprof, "~> 0.2.0"} # to facilitate profiling
+    ] 
   end
 end
