@@ -16,21 +16,24 @@ defmodule Hangman.Pass.Writer.Worker do
     GenServer.start_link(@name, args, options)
   end
 
+	def stop(pid) do
+		GenServer.call pid, :stop
+	end
+
+
   # write  is an asynchronous call, no need to wait around for response
   def write(worker_id, {id, game_no, round_no} = pass_key, 
             %Chunks{} = chunks)
   when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
-    l = [worker_id, pass_key, chunks]
-
-    Logger.debug "pass writer worker, write arg list #{inspect l}"
-
+    Logger.debug "pass writer worker, write arg list " <> 
+      "#{inspect [worker_id, pass_key, chunks]}"
 
     GenServer.cast(via_tuple(worker_id), {:write, pass_key, chunks})
   end
 
   defp via_tuple(worker_id) do
-    {:via, Hangman.Process.Registry, {:pass_writer_worker, worker_id}}
+    {:via, :gproc, {:n, :l, {:pass_writer_worker, worker_id}}}
   end
 
   def init({}) do
@@ -39,6 +42,10 @@ defmodule Hangman.Pass.Writer.Worker do
   
   def handle_cast({:write, {id, game_no, round_no} = _pass_key,
                    %Chunks{} = chunks}, {}) do
+
+		if :ets.info(@ets_table_name) == :undefined do
+      raise "table not loaded yet"
+    end
 
 		next_pass_key = {id, game_no, round_no + 1}
 		:ets.insert(@ets_table_name, {next_pass_key, chunks})
