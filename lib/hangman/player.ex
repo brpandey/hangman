@@ -1,18 +1,18 @@
 defmodule Hangman.Player do
 
-  alias Hangman.{Player, Player.Round, Player.Events, Strategy}
-
+  alias Hangman.{Player, Player.Round, Player.Events, 
+                 Round.Action, Strategy, Game}
+  
 	defstruct name: "", 
   	type: nil,
-    secret_length: nil,
-  	event_server_pid: nil,
-    game_server_pid: nil, 
-    game_no: 0,
     round_no: 0,
-    mystery_letter: Hangman.Game.Server.mystery_letter,
-    strategy: Strategy.new,
     round: %Hangman.Types.Game.Round{},
-    game_summary: nil
+    strategy: Strategy.new,
+    game_no: 0,
+    game_summary: nil,
+    game_server_pid: nil, 
+  	event_server_pid: nil,    
+    mystery_letter: Game.Server.mystery_letter
 
   @human :human
   @robot :robot
@@ -31,14 +31,30 @@ defmodule Hangman.Player do
 
   # READ
 
-
   def last_word?(%Player{} = p) do
-    case Strategy.last_word(p.strategy) do nil -> false; _ -> true end
+    case Strategy.last_word(p.strategy) do 
+      {:guess_word, ""} -> false
+      {:guess_word, _} -> true 
+    end
   end
 
   def game_won?(%Player{} = p), do: p.round.status_code == :game_won
   def game_lost?(%Player{} = p), do: p.round.status_code == :game_lost
   def game_over?(%Player{} = p), do: p.game_summary != nil
+
+  def game_summary(tuple_list) 
+  when is_list(tuple_list) and is_tuple(Kernel.hd(tuple_list)) do
+  	
+		{:ok, avg} = Keyword.fetch(tuple_list, :average_score)
+		{:ok, games} = Keyword.fetch(tuple_list, :games)
+		{:ok, scores} = Keyword.fetch(tuple_list, :results)
+
+		results = Enum.reduce(scores, "",  fn {k,v}, acc -> 
+			acc <> " (#{k}: #{v})"  end)
+			
+		"Game Over! Average Score: #{avg}, " 
+		<> "# Games: #{games}, Scores: #{results}"
+	end
 
   def status(%Player{} = p, :game_round), do: Round.status(p)
 
@@ -65,13 +81,61 @@ defmodule Hangman.Player do
       Events.Server.notify_start(player.event_server_pid, player.name)
     end
 
-    Round.start(player)
+    case player.type do
+      @robot ->
+        p = player |> Round.setup(:game_start) |> Action.action(:guess)
+
+        {p, Round.status(p)}
+
+      @human -> 
+        p = player |> Round.setup(:game_start)
+        choices = p |> Action.action(:choose_letters)
+
+        {p, choices}
+
+      _ -> raise "Unknown player type"
+    end
+	end
+
+  # human choose letter
+  def choose(%Player{} = p, :letter), do: choose(p, p.type, :letter)
+
+	def choose(%Player{} = player, @human, :letter) do
+  	p = player |> Round.setup
+    choices = p |> Action.action(:choose_letters)
+    {p, choices}
   end
 
-  def choose(%Player{} = p, :letter), do: Round.choose(p, p.type, :letter)
-  def guess(%Player{} = p), do: Round.guess(p, p.type)
-  def guess(%Player{} = p, :last_word), do: Round.guess(p, p.type, :last_word)
-  def guess(%Player{} = p, l, :letter), do: Round.guess(p, p.type, l, :letter)
+  # robot guess letter
+  def guess(%Player{} = p), do: guess(p, p.type)
+
+	def guess(%Player{} = player, @robot) do
+  	p = player |> Round.setup |> Action.action(:guess)
+
+    {p, Round.status(p)}
+	end
+
+
+  # human guess last word
+  def guess(%Player{} = p, :last_word), do: guess(p, p.type, :last_word)
+
+	def guess(%Player{} = player, @human, :last_word) do
+		p = player |> Action.action(:guess_last_word)
+
+    {p, Round.status(p)}
+	end
+
+
+  # human guess letter
+  def guess(%Player{} = p, l, :letter), do: guess(p, p.type, l, :letter)
+
+	def guess(%Player{} = player, @human, letter, :letter)
+  when is_binary(letter) do
+		p = player |> Action.action(:guess_letter, letter)
+
+    {p, Round.status(p)}
+	end
+
 
   # DELETE
 

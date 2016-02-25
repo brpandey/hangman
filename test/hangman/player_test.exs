@@ -191,7 +191,7 @@ defmodule Hangman.Player.Test do
 
 		{_code, reply} = Player.FSM.socrates_guess(ppid, "m")
 
-    assert "Player socrates, Round 9: Last word left: cumulate" = reply
+    assert "Player socrates, Round 9, C-M-LATE; score=8; status=KEEP_GUESSING.\nLast word left: cumulate" = reply
 
 		{_code, reply} = Player.FSM.socrates_win(ppid)
 

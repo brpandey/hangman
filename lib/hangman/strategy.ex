@@ -1,6 +1,6 @@
 defmodule Hangman.Strategy do
 
-  alias Hangman.{Counter, Types.Reduction.Pass}
+  alias Hangman.{Strategy, Counter, Types.Reduction.Pass}
 
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
@@ -20,25 +20,27 @@ defmodule Hangman.Strategy do
 
   # CREATE
 
-	def new(), do: %Hangman.Strategy{}
+	def new(), do: %Strategy{}
 
   # READ
 
-  def last_word(%Hangman.Strategy{} = strategy) do
-    if strategy.pass.size == 1 do strategy.pass.last_word else nil end
+  def last_word(%Strategy{} = strategy) do
+    if strategy.pass.size == 1 do
+      {:guess_word, strategy.pass.last_word}
+    else
+      {:guess_word, ""}
+    end
   end
 
-  def get_guessed(%Hangman.Strategy{} = strategy) do
+  def get_guessed(%Strategy{} = strategy) do
     MapSet.to_list(strategy.guessed_letters)
   end
 
-  def possible_words(%Hangman.Strategy{} = strategy) do
-    strategy.pass.possible
-  end
+  def possible_words(%Strategy{} = strategy), do: strategy.pass.possible
 
   # UPDATE
 
-  def make_guess(%Hangman.Strategy{} = strategy) do
+  def make_guess(%Strategy{} = strategy) do
   	case strategy.pass.size do 
   		0 ->	raise "word not in dictionary"
   		1 ->
@@ -69,46 +71,100 @@ defmodule Hangman.Strategy do
     {strategy, strategy.guess}
   end
 
-  def update(%Hangman.Strategy{} = strategy, {:letter, human_guessed_letter}) 
-    when is_binary(human_guessed_letter) do
+  def update(%Strategy{} = strategy, {:guess_letter, guessed_letter}) 
+    when is_binary(guessed_letter) do
 
-      guessed_letters = MapSet.put(strategy.guessed_letters, 
-                                    human_guessed_letter)
+      guessed_letters = MapSet.put(strategy.guessed_letters, guessed_letter)
           
       strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
       strategy = Kernel.put_in(strategy.guess, 
-                                  {:guess_letter, human_guessed_letter}) 
+                                  {:guess_letter, guessed_letter}) 
 
       strategy
   end
 
-  def update(%Hangman.Strategy{} = strategy, {:word, last_word}) 
+  def update(%Strategy{} = strategy, {:guess_word, last_word}) 
     when is_binary(last_word) do
-
-      strategy = Kernel.put_in(strategy.guess, {:guess_word, last_word})
-
-      strategy
+    %Strategy{strategy | guess: {:guess_word, last_word}}
   end
 
-  def update(%Hangman.Strategy{} = strategy, %Pass{} = pass) do
-    strategy = %Hangman.Strategy{ strategy | pass: pass, 
-                  prior_guess: strategy.guess}
-    strategy
+  def update(%Strategy{} = strategy, %Pass{} = pass) do
+    prior = strategy.guess
+    %Strategy{ strategy | pass: pass, prior_guess: prior}
   end
 
   # Helpers
 
-  def most_common_letter_and_counts(%Hangman.Strategy{} = strategy, n) 
+  def most_common_letter_and_counts(%Strategy{} = strategy, n) 
   when is_number(n) and n > 0 do
     counter = strategy.pass.tally
+
     Counter.most_common(counter, n)
   end
 
-  def most_common_letter(%Hangman.Strategy{} = strategy, n) 
+  def most_common_letter(%Strategy{} = strategy, n) 
   when is_number(n) and n > 0 do
     counter = strategy.pass.tally
+
     Counter.most_common_key(counter, n)
   end
+
+
+  def letter_in_most_common(%Strategy{} = strategy, n, letter) 
+  when is_number(n) and n > 0 and is_binary(letter) do
+
+    counter = strategy.pass.tally
+    top_choices = Counter.most_common_key(counter, n)
+
+    # If user has decided to put in a letter, not in the choices
+    # grab the letter that had the highest letter counts
+  	unless letter in top_choices, do: letter = Kernel.hd(top_choices)
+    
+    {:guess_letter, letter}
+  end
+
+
+  def choose_letters(%Strategy{} = strategy, n)
+  when is_number(n) and n > 0 do
+    
+    case Strategy.last_word(strategy) do        
+      {:guess_word, ""} ->
+        
+        # Return top 5 letter, count pairs if possible
+        top_choices = Strategy.most_common_letter_and_counts(strategy, n)
+        
+        possible_words_txt = Strategy.possible_words(strategy)
+        
+        if String.length(possible_words_txt) > 0 do
+          possible_words_txt = possible_words_txt <> "\n\n"
+        end
+        
+        size = length(top_choices)
+      
+        choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
+          acc <> " #{k}:#{v}" end)
+        
+        best_letter = Strategy.retrieve_best_letter(strategy)
+        
+        choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
+
+        text = possible_words_txt <>
+          "Player {name}, Round {round_no}, {status}.\n" <>
+        	"#{size} weighted letter choices : #{choices_text}" <> 
+          " (* robot choice)"
+        
+        {:game_choose_letter, text}
+
+      {:guess_word, last} ->
+
+        text = "Player {name}, Round {round_no}, {status}.\n" <>
+          "Last word left: #{last}"
+
+        {:game_last_word, text}
+    end
+  end
+
+
 
   @doc """
   retrieve_best_letter
@@ -126,7 +182,7 @@ defmodule Hangman.Strategy do
     Doesn't handle tie between letters
   """
 
-  def retrieve_best_letter(%Hangman.Strategy{} = strategy) do
+  def retrieve_best_letter(%Strategy{} = strategy) do
     do_retrieve_best_letter(strategy.pass.tally, strategy.pass.size)
   end
 
