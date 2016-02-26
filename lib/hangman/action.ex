@@ -29,8 +29,7 @@ defmodule Hangman.Round.Action do
 
   def feedback_dispatch(p, guess), do: Player.Round.guess(p, guess) 
 
-
-    # Updaters
+  # Updaters
 
   def updater_round_and_guess(p, round, guess) do
     Player.Round.update(p, round, guess)
@@ -90,7 +89,7 @@ defmodule Hangman.Round.Action do
   # Action functions
 
 
-  def action(%Player{} = p, :guess_letter, letter)
+  def perform(%Player{} = p, :guess_letter, letter)
   when is_binary(letter) do
 
     human_letter_guess = 
@@ -101,7 +100,7 @@ defmodule Hangman.Round.Action do
   end
 
   
-  def action(%Player{} = p, :guess_last_word) do
+  def perform(%Player{} = p, :guess_last_word) do
 
     human_last_word_guess = 
       make_data_feedback_update_action(&retrieve_human_last_word/1, 
@@ -111,7 +110,7 @@ defmodule Hangman.Round.Action do
   end
 
 
-  def action(%Player{} = p, :guess) do
+  def perform(%Player{} = p, :guess) do
   	
     robot_guess = 
       make_struct_feedback_update_action(&retrieve_strategic_guess/1, 
@@ -121,7 +120,7 @@ defmodule Hangman.Round.Action do
   end
 
 
-  def action(%Player{} = p, :choose_letters) do
+  def perform(%Player{} = p, :choose_letters) do
 
     human_choose_letters = 
       make_data_update_action(&retrieve_human_letter_options/1, 
@@ -135,7 +134,7 @@ defmodule Hangman.Round.Action do
 
 
 
-  def action0(%Player{} = p, :guess_letter, letter)
+  def perform0(%Player{} = p, :guess_letter, letter)
   when is_binary(letter) do
     
     # If user has decided to put in a letter not in the most common choices
@@ -148,7 +147,7 @@ defmodule Hangman.Round.Action do
 		Player.Round.update(p, round_info, guess)
   end
   
-  def action0(%Player{} = p, :guess_last_word) do
+  def perform0(%Player{} = p, :guess_last_word) do
 
     guess = Strategy.last_word(p.strategy)
     
@@ -158,7 +157,7 @@ defmodule Hangman.Round.Action do
   end
 
 
-  def action0(%Player{} = p, :guess) do
+  def perform0(%Player{} = p, :guess) do
   	
     {strategy, guess} = Strategy.make_guess(p.strategy)
 
@@ -168,7 +167,7 @@ defmodule Hangman.Round.Action do
   end
   
 
-  def action0(%Player{} = p, :choose_letters) do
+  def perform0(%Player{} = p, :choose_letters) do
     
     guess_prep = {_choices_code, _text} = 
       Strategy.choose_letters(p.strategy, @letter_choices)

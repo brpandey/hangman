@@ -83,13 +83,13 @@ defmodule Hangman.Player do
 
     case player.type do
       @robot ->
-        p = player |> Round.setup(:game_start) |> Action.action(:guess)
+        p = player |> Round.setup(:game_start) |> Action.perform(:guess)
 
         {p, Round.status(p)}
 
       @human -> 
         p = player |> Round.setup(:game_start)
-        choices = p |> Action.action(:choose_letters)
+        choices = p |> Action.perform(:choose_letters)
 
         {p, choices}
 
@@ -102,7 +102,7 @@ defmodule Hangman.Player do
 
 	def choose(%Player{} = player, @human, :letter) do
   	p = player |> Round.setup
-    choices = p |> Action.action(:choose_letters)
+    choices = p |> Action.perform(:choose_letters)
     {p, choices}
   end
 
@@ -110,7 +110,7 @@ defmodule Hangman.Player do
   def guess(%Player{} = p), do: guess(p, p.type)
 
 	def guess(%Player{} = player, @robot) do
-  	p = player |> Round.setup |> Action.action(:guess)
+  	p = player |> Round.setup |> Action.perform(:guess)
 
     {p, Round.status(p)}
 	end
@@ -120,7 +120,7 @@ defmodule Hangman.Player do
   def guess(%Player{} = p, :last_word), do: guess(p, p.type, :last_word)
 
 	def guess(%Player{} = player, @human, :last_word) do
-		p = player |> Action.action(:guess_last_word)
+		p = player |> Action.perform(:guess_last_word)
 
     {p, Round.status(p)}
 	end
@@ -131,7 +131,7 @@ defmodule Hangman.Player do
 
 	def guess(%Player{} = player, @human, letter, :letter)
   when is_binary(letter) do
-		p = player |> Action.action(:guess_letter, letter)
+		p = player |> Action.perform(:guess_letter, letter)
 
     {p, Round.status(p)}
 	end
