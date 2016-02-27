@@ -47,6 +47,15 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 
 		IO.puts "chunks: #{inspect chunks}"
 
+    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    IO.puts "random hangman words 1: #{inspect randoms}"
+
+    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    IO.puts "random hangman words 2: #{inspect randoms}"
+
+    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    IO.puts "random hangman words 3: #{inspect randoms}"
+
 
 		Chunks.get_words_lazy(chunks)
 		|> Stream.each(&IO.inspect/1)

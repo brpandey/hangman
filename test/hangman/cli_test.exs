@@ -13,7 +13,7 @@ defmodule Hangman.CLI.Test do
     argv = String.split(command)
     Hangman.CLI.main(argv)
     
-  end
+    end
 
 
   test "robot single word with display option only" do
@@ -24,6 +24,15 @@ defmodule Hangman.CLI.Test do
     
   end
 
+  test "robot single word with display option only and random option" do
+
+    command = "-n lulu -t robot -s exotic -d -r 2"
+    argv = String.split(command)
+    Hangman.CLI.main(argv)
+    
+  end
+
+  
   test "robot single word with log option only" do
 
     command = "-n lulu -t robot -s sleek -l"
@@ -44,6 +53,33 @@ defmodule Hangman.CLI.Test do
 
     Hangman.CLI.main(argv)
     
+  end
+
+  @tag timeout: 180_000 # 180 seconds
+  test "random words human" do
+    
+    command = "-n lulu -t human -r 4"
+    argv = String.split(command)
+    Hangman.CLI.main(argv)
+
+  end
+
+
+  test "random words robot" do
+    
+    command = "-n lulu -t robot -r 4"
+    argv = String.split(command)
+    Hangman.CLI.main(argv)
+
+  end
+
+  test "no secrets" do
+    command = "-n lulu -t robot"
+    argv = String.split(command)
+
+    assert catch_error(Hangman.CLI.main(argv)) ==
+		  %RuntimeError{message: "user must specify either --\"secret\" or --\"random\" option"}
+
   end
 
 end

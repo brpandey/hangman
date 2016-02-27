@@ -13,6 +13,14 @@ defmodule Hangman.Dictionary.Cache.Server do
   # dictionary file sizes
 	@possible_length_keys MapSet.new(2..28)
 
+
+  # Use for admin of random words extract 
+  @ets_random_words_key :random_hangman_words
+  @random_words_per_chunk 10
+  @min_random_word_length 5
+  @max_random_word_length 15
+  @max_random_words_request 10
+
   @name __MODULE__
 	# External API
 
@@ -22,6 +30,15 @@ defmodule Hangman.Dictionary.Cache.Server do
     options = [name: :hangman_dictionary_cache_server]
     GenServer.start_link(@name, args, options)
   end
+
+
+  def lookup(:random, count) do
+    pid = Process.whereis(:hangman_dictionary_cache_server)  
+    true = is_pid(pid) 
+    
+    lookup(pid, :random, count)
+  end
+
 
 
   def lookup(:tally, length_key)
@@ -41,6 +58,10 @@ defmodule Hangman.Dictionary.Cache.Server do
   end
 
 
+  def lookup(pid, :random, count) do
+    GenServer.call pid, {:lookup_random, count}
+  end
+
   def lookup(pid, :tally, length_key)
   when is_number(length_key) and length_key > 0 do
     GenServer.call pid, {:lookup_tally, length_key}
@@ -58,6 +79,11 @@ defmodule Hangman.Dictionary.Cache.Server do
   def init({}) do
     setup()
     {:ok, {}}
+  end
+
+  def handle_call({:lookup_random, count}, _from, {}) do
+    data = do_lookup(:random, count)
+    {:reply, data, {}}
   end
 
   def handle_call({:lookup_tally, length_key}, _from, {}) do
@@ -99,6 +125,42 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 
 	# READ
+
+
+	defp do_lookup(:random, count) when is_number(count) do
+
+    if count > @max_random_words_request do
+      raise "requested random words exceeds limit"
+    end
+
+		if :ets.info(@ets_table_name) == :undefined do
+      raise "table not loaded yet"
+    end
+
+    ets_key = @ets_random_words_key
+			
+		fn_reduce_random_words = fn
+			{^ets_key, ets_value}, acc ->
+
+        List.flatten(ets_value, acc)
+			_, acc -> acc	
+		end
+
+		randoms = :ets.foldl(fn_reduce_random_words, [], @ets_table_name)
+
+    # seed random number generator with random seed
+    << a :: 32, b :: 32, c :: 32 >> = :crypto.rand_bytes(12)
+    r_seed = {a, b, c}
+    :random.seed r_seed
+    :random.seed r_seed
+
+    randoms = for _x <- 1..count do Enum.random(randoms) end
+    randoms = Enum.shuffle(randoms)
+
+    randoms
+	end
+
+
 
 	# Retrieve dictionary tally counter given word secret length
 
@@ -171,17 +233,17 @@ defmodule Hangman.Dictionary.Cache.Server do
 		# For each words list chunk, insert into ets lambda
 
 		fn_ets_insert_chunks = fn 
-      {nil, 0} -> ""
-			{words_chunk_list, length} -> 
-					ets_key = get_ets_chunk_key(length)
+    {nil, 0} -> ""
+    {words_chunk_list, length} -> 
+			ets_key = get_ets_chunk_key(length)
 
-          # record actual chunk size :)
-					chunk_size = Kernel.length(words_chunk_list)
-
-          # convert chunk into binary :)
-					bin_chunk = :erlang.term_to_binary(words_chunk_list) 
-					ets_value = {bin_chunk, chunk_size}
-					:ets.insert(table_name, {ets_key, ets_value}) 
+      # record actual chunk size :)
+			chunk_size = Kernel.length(words_chunk_list)
+      
+      # convert chunk into binary :)
+			bin_chunk = :erlang.term_to_binary(words_chunk_list) 
+			ets_value = {bin_chunk, chunk_size}
+			:ets.insert(table_name, {ets_key, ets_value}) 
 		end
 
 		# Group the word stream by chunks, 
@@ -190,6 +252,7 @@ defmodule Hangman.Dictionary.Cache.Server do
     DictFile.Stream.new(:read_chunks, path)
     |> DictFile.Stream.chunks_stream
     |> Stream.each(fn_ets_insert_chunks)
+    |> Stream.each(&ets_insert_random_words/1)
 		|> Stream.run
 
     info = :ets.info(@ets_table_name)
@@ -246,9 +309,8 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 	# Tally letter frequencies from all words of similiar length
 	# as specified by length_key
-
-	# We are only generating tallys from chunks of words, not existing tallies
-	defp generate_tally(_name, {:counter, _length}), do: {0, nil}
+	# We are only generating tallys from chunks of words, 
+  # not existing tallies or randoms
 
 	defp generate_tally(table_name, ets_key = {:chunk, length}) do
 		# Use for pattern matching when we do ets.foldl
@@ -273,6 +335,8 @@ defmodule Hangman.Dictionary.Cache.Server do
 	# Lazily gets inserted ets keys, by traversing the ets table keys
 	# This is wrapped into a Stream using Stream.resource/3
 
+  # Ensure we are only gettin gkeys which match chunk keys!
+
 	defp get_ets_keys_lazy(table_name) when is_atom(table_name) do
 		eot = :"$end_of_table"
 
@@ -284,13 +348,15 @@ defmodule Hangman.Dictionary.Cache.Server do
 					[] -> 
 						case :ets.first(table_name) do
 							^eot -> {:halt, acc}
-							first_key -> {[first_key], first_key}						
+              first_key = {:chunk, _} -> {[first_key], first_key}
+							first_key -> {[], first_key}
 						end
 
 					acc -> 
 						case :ets.next(table_name, acc) do	
 							^eot -> {:halt, acc}
-							next_key ->	{[next_key], next_key}
+							next_key = {:chunk, _} ->	{[next_key], next_key}
+              next_key -> {[], next_key}
 						end
 				end
 			end,
@@ -298,6 +364,35 @@ defmodule Hangman.Dictionary.Cache.Server do
 			fn _acc -> :ok end
 		)
 	end
+
+#  defp ets_insert_random_words({nil, 0}), do: ""
+
+  defp ets_insert_random_words({words_chunk_list, length}) do
+    cond do
+
+      length >= @min_random_word_length and length <= @max_random_word_length ->
+        # seed random number generator with random seed
+        << a :: 32, b :: 32, c :: 32 >> = :crypto.rand_bytes(12)
+        r_seed = {a, b, c}
+        :random.seed r_seed
+        :random.seed r_seed
+      
+        # Grab @random_words_per_chunk random words
+      
+        rand = for _x <- 1..@random_words_per_chunk do 
+          Enum.random(words_chunk_list) 
+        end
+      
+        # Remove duplicate random words
+        random_words = rand |> Enum.sort |> Enum.dedup
+
+        :ets.insert(@ets_table_name, {@ets_random_words_key, random_words})
+
+        #Logger.debug "hangman random words, length_key #{length}: #{inspect random_words}"
+
+      true -> ""
+    end
+  end
 
 end
 
