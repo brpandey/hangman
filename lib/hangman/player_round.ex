@@ -16,7 +16,7 @@ defmodule Hangman.Player.Round do
   			{:game_keep_guessing, :incorrect_letter, player.round.guess}
 
   		true ->
-  			raise "Unknown round result"
+  			raise Hangman.Error, "Unknown round result"
   	end
   end
 

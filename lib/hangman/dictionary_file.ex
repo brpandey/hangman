@@ -86,7 +86,7 @@ defmodule Hangman.Dictionary.File do
             |> Stream.each(fn_write_chunk_lambda)
 		        |> Stream.run
           
-            _ -> raise "Unsupported type"
+            _ -> raise Hangman.Error, "Unsupported file transform type"
           
 				  File.close(write_file)
 

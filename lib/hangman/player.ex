@@ -18,15 +18,17 @@ defmodule Hangman.Player do
   @robot :robot
 
   # CREATE
-
-  def new(name, type, game_pid, event_pid) 
-  	when is_binary(name) and is_atom(type)
-    and is_pid(game_pid) and is_pid(event_pid) do
-
-  	unless type in [@human, @robot], do: raise "unknown player type"
-
+  
+  def new(name, type, game_pid, event_pid)
+  when is_binary(name) and is_atom(type)
+  and is_pid(game_pid) and is_pid(event_pid) do
+    
+  	unless type in [@human, @robot] do 
+      raise Hangman.Error, "invalid and unknown player type" 
+    end
+        
   	%Player{ name: name, type: type, 
-  		game_server_pid: game_pid, event_server_pid: event_pid }
+  		       game_server_pid: game_pid, event_server_pid: event_pid }
   end
 
   # READ
@@ -93,7 +95,7 @@ defmodule Hangman.Player do
 
         {p, choices}
 
-      _ -> raise "Unknown player type"
+      _ -> raise Hangman.Error, "Invalid and unknown player type"
     end
 	end
 

@@ -44,7 +44,7 @@ defmodule Hangman.Pass.Writer.Worker do
                    %Chunks{} = chunks}, {}) do
 
 		if :ets.info(@ets_table_name) == :undefined do
-      raise "table not loaded yet"
+      raise Hangman.Error, "table not loaded yet"
     end
 
 		next_pass_key = {id, game_no, round_no + 1}

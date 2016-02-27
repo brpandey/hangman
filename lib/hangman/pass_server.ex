@@ -96,7 +96,7 @@ defmodule Hangman.Pass.Server do
 		
 		# Using match instead of lookup, to keep processing on the ets side
 		case :ets.match_object(@ets_table_name, {pass_key, :_}) do
-			[] -> raise "counter not found for key: #{inspect pass_key}"
+			[] -> raise Hangman.Error, "counter not found for key: #{inspect pass_key}"
 
 			[{_key, chunks}] ->
 				%Chunks{} = chunks # quick assert

@@ -71,7 +71,7 @@ defmodule Hangman.Player.FSM do
       case player.type do
         :human -> :idle_socrates
         :robot -> :neutral_wall_e
-        _ -> raise "unknown player type"
+        _ -> raise Hangman.Error, "invalid and unknown player type"
       end
 
     {:ok, echo_pid} = Echo.start_link()
@@ -174,7 +174,7 @@ defmodule Hangman.Player.FSM do
       end
 
     if next == :eager_socrates do
-      raise "Shouldn't be here"
+      raise Hangman.Error, "Shouldn't be here"
     end
 
     { :reply, reply, next, {player, pid} }    

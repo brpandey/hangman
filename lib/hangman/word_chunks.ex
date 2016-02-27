@@ -48,14 +48,14 @@ defmodule Hangman.Word.Chunks do
 
 	@doc "Performs constant time lookup of number of words in stream"
 	def get_count(%Chunks{raw_stream: raw_stream} = chunks, :words) do
-		if is_nil(raw_stream), do: raise "need to create stream"
+		if is_nil(raw_stream), do: raise Hangman.Error, "need to create stream first"
 		
 		chunks.word_count
 	end
 
 	@doc "Performs constant time lookup of number of chunks in stream"
 	def get_count(%Chunks{raw_stream: raw_stream} = chunks, :chunks) do
-		if is_nil(raw_stream), do: raise "need to create stream"
+		if is_nil(raw_stream), do: raise Hangman.Error, "need to create stream first"
 		
 		chunks.chunk_count
 	end
@@ -70,7 +70,9 @@ defmodule Hangman.Word.Chunks do
 	when is_binary(binary_chunk) and is_number(word_count) 
   and word_count > 0 do
 
-		if is_nil(raw_stream), do: raise "need to invoke new before using add"
+		if is_nil(raw_stream) do
+      raise Hangman.Error, "need to invoke new before using add"
+    end
 
 		new_stream = Stream.concat(raw_stream, [binary_chunk])
 

@@ -42,16 +42,18 @@ defmodule Hangman.Strategy do
 
   def make_guess(%Strategy{} = strategy) do
   	case strategy.pass.size do 
-  		0 ->	raise "word not in dictionary"
+  		0 ->	raise Hangman.Error, "Word not in dictionary"
   		1 ->
         final_word = strategy.pass.last_word
 
-  			if {:guess_word, final_word} != strategy.prior_guess and {} != strategy.prior_guess
-  				and MapSet.size(strategy.guessed_letters) > 0 do
+  			if {:guess_word, final_word} != strategy.prior_guess 
+        and {} != strategy.prior_guess
+  			and MapSet.size(strategy.guessed_letters) > 0 do
 
-            strategy = Kernel.put_in(strategy.guess, {:guess_word, final_word})        
+          strategy = Kernel.put_in(strategy.guess, {:guess_word, final_word})        
   			else
-  				raise "game over, exhausted all words, word not in dictionary"
+  				raise Hangman.Error, 
+          "game over, exhausted all words, word not in dictionary"
   			end
 
   		_pass_size ->
@@ -64,7 +66,7 @@ defmodule Hangman.Strategy do
           strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
           strategy = Kernel.put_in(strategy.guess, {:guess_letter, letter})            
   			else
-  				raise "unable to determine next guess"
+  				raise Hangman.Error, "unable to determine next guess as no valid letter left"
   			end
   	end
 

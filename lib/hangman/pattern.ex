@@ -9,7 +9,7 @@ defmodule Hangman.Pattern do
 	defp do_update( _, [], _, value ), do: List.to_string(value)
 
 	#Base case, second is error condition, pattern can't be longer than secret
-	defp do_update( [], _,  _, _ ), do: raise "pattern can't be longer than secret"
+	defp do_update( [], _,  _, _ ), do: raise Hangman.Error, "pattern can't be longer than secret"
 
 	#Match only if head of secret is the desired letter
 	defp do_update( [ _ | p_tail ], [ letter | s_tail ], letter, value ) do 

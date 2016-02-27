@@ -119,7 +119,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 				load(@ets_table_name, path)
 
-			_ -> raise "cache already setup!"
+			_ -> raise Hangman.Error, "cache already setup!"
 		end
 	end
 
@@ -130,11 +130,11 @@ defmodule Hangman.Dictionary.Cache.Server do
 	defp do_lookup(:random, count) when is_number(count) do
 
     if count > @max_random_words_request do
-      raise "requested random words exceeds limit"
+      raise Hangman.Error, "requested random words exceeds limit"
     end
 
 		if :ets.info(@ets_table_name) == :undefined do
-      raise "table not loaded yet"
+      raise Hangman.Error, "table not loaded yet"
     end
 
     ets_key = @ets_random_words_key
@@ -168,7 +168,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 		when is_number(length_key) and length_key > 0 do
 
 		if :ets.info(@ets_table_name) == :undefined do
-      raise "table not loaded yet"
+      raise Hangman.Error, "table not loaded yet"
     end
 
 		case MapSet.member?(@possible_length_keys, length_key) do
@@ -176,20 +176,20 @@ defmodule Hangman.Dictionary.Cache.Server do
 				ets_key = get_ets_counter_key(length_key)
 				
 				case :ets.match_object(@ets_table_name, {ets_key, :_}) do
-					[] -> raise "counter not found for key: #{inspect length_key}"
+					[] -> raise Hangman.Error, "counter not found for key: #{inspect length_key}"
 					[{_key, ets_value}] -> 
 						counter = :erlang.binary_to_term(ets_value)
 						counter
 				end
 
-			false -> raise "key not in set of possible keys!"
+			false -> raise Hangman.Error, "key not in set of possible keys!"
 		end
 	end
 
 	defp do_lookup(:chunks, length_key) do
 
 		if :ets.info(@ets_table_name) == :undefined do
-      raise "table not loaded yet"
+      raise Hangman.Error, "table not loaded yet"
     end
 
 		ets_key = get_ets_chunk_key(length_key)

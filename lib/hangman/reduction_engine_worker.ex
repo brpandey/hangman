@@ -70,7 +70,7 @@ defmodule Hangman.Reduction.Engine.Worker do
 
 		# if down to 1 word, return the last word
 		cond do
-      pass_size == 0 -> raise "Pass size can't be zero"
+      pass_size == 0 -> raise Hangman.Error, "Word not in dictionary, pass size can't be zero"
 			pass_size == 1 -> 
 				last_word = Chunks.get_words_lazy(new_data)
         |> Enum.take(1) |> List.first
@@ -82,7 +82,7 @@ defmodule Hangman.Reduction.Engine.Worker do
 
 			pass_size > 1 -> last_word = ""
 
-			true -> raise "Invalid pass_size value #{pass_size}"
+			true -> raise Hangman.Error, "Invalid pass_size value #{pass_size}"
 		end
 
     # serialize writes through Hangman Pass Writer

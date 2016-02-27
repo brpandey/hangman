@@ -89,25 +89,25 @@ defmodule Hangman.CLI do
                       Dictionary.lookup(:random, value)
 
                     true ->
-                      raise "submited random count value is not valid"
+                      raise Hangman.Error, "submited random count value is not valid"
                   end
                 :error -> nil
               end
           end
 
           if secrets == nil do
-            raise "user must specify either --\"secret\" or --\"random\" option"
+            raise Hangman.Error, "user must specify either --\"secret\" or --\"random\" option"
           end
 
           secrets
       end
 
     if Enum.any?(secrets, fn x -> String.length(x) < @min_secret_length end) do
-      raise "submitted secret is too short!"
+      raise Hangman.Error, "submitted secret is too short!"
     end
 
     if Enum.any?(secrets, fn x -> String.length(x) > @max_secret_length end) do
-      raise "submitted secret is too long!"
+      raise Hangman.Error, "submitted secret is too long!"
     end
 
     secrets
@@ -118,7 +118,7 @@ defmodule Hangman.CLI do
     name = 
       case Keyword.fetch(args, :name) do
   	    {:ok, value} -> value
-        :error -> raise "name argument missing"
+        :error -> raise Hangman.Error, "name argument missing"
       end
 
     type = 
