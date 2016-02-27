@@ -143,4 +143,39 @@ defmodule Hangman.Player do
 
   def delete(%Player{} = _player), do:	%Player{}
 
+
+
+  # EXTRA
+
+  def info(%Player{} = p) do
+
+    round = [
+        no: p.round.seq_no,
+        guess: p.round.guess,
+        guess_result: p.round.result_code,
+        round_code: p.round.status_code,
+        round_status: p.round.status_text,
+        pattern: p.round.pattern]
+        
+    value = [
+      name: p.name, 
+      type: p.type,
+      round_no: p.round_no,
+      game_pid: p.game_server_pid,
+      event_pid: p.event_server_pid,
+      round_data: round
+    ]
+
+    value
+  end
+
+  defimpl Inspect do
+    import Inspect.Algebra
+
+    def inspect(t, opts) do
+      info = Inspect.List.inspect(Hangman.Player.info(t), opts)
+      concat ["#Hangman.Player<", info, ">"]
+    end
+  end
+
 end

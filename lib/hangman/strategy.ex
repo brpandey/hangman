@@ -4,6 +4,8 @@ defmodule Hangman.Strategy do
 
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
+
+  @opaque t :: %__MODULE__{}
   	
   # English letter frequency of english letters (Wikipedia)
 	@eng_letter_freq			%{
@@ -23,6 +25,8 @@ defmodule Hangman.Strategy do
 	def new(), do: %Strategy{}
 
   # READ
+
+
 
   def last_word(%Strategy{} = strategy) do
     if strategy.pass.size == 1 do
@@ -216,4 +220,36 @@ defmodule Hangman.Strategy do
         letter
     end
   end
-end # outer Strategy module
+
+  def info(%Strategy{} = s) do
+
+    pass_tally_text = 
+      case(s.pass.tally) do
+        %Counter{} -> Counter.items(s.pass.tally)
+        %{} -> []
+      end
+
+
+    pass = [
+      size: s.pass.size,
+#      possible_words: s.pass.possible,
+      last_word: s.pass.last_word,
+      tally: pass_tally_text
+    ]
+
+    guessed = MapSet.to_list(s.guessed_letters)
+
+    [guessed: guessed, guess: s.guess, pass: pass]
+  end
+
+  defimpl Inspect do
+    import Inspect.Algebra
+
+    def inspect(t, opts) do
+      info = Inspect.List.inspect(Strategy.info(t), opts)
+      concat ["#Hangman.Strategy<", info, ">"]
+    end
+  end
+
+  
+end

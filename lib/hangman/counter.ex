@@ -239,8 +239,8 @@ defmodule Hangman.Counter do
   defimpl Inspect do
     import Inspect.Algebra
 
-    def inspect(set, opts) do
-      concat ["#Hangman.Counter<", Inspect.List.inspect(Hangman.Counter.items(set), opts), ">"]
+    def inspect(t, opts) do
+      concat ["#Hangman.Counter<", Inspect.List.inspect(Hangman.Counter.items(t), opts), ">"]
     end
   end
 

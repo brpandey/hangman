@@ -15,13 +15,13 @@ defmodule Hangman.Pass.Server.Test do
 
     # assume secret word is cumulate
 
-    #### GAME SETUP
-
-    strategy = Strategy.new
-
-		IO.puts "finished engine and cache setup"
 
     #### ROUND 1
+    strategy = Strategy.new
+
+    IO.puts "strategy 1a is: #{inspect strategy}\n"
+
+
     pass_key = {id, game_no, round_no} = {"julio", 1, 1}
 
     context = {:game_start, 8} 
@@ -39,7 +39,12 @@ defmodule Hangman.Pass.Server.Test do
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
+
+    IO.puts "strategy 1b is: #{inspect strategy}\n"
+
     {strategy, {:guess_letter, "e"}} = Strategy.make_guess(strategy)
+
+    IO.puts "strategy 1c is: #{inspect strategy}\n"
 
     # Game Server Guess results
     context = {:game_keep_guessing, :correct_letter, "e", "-------E", "-"}
@@ -223,6 +228,7 @@ defmodule Hangman.Pass.Server.Test do
     strategy = Strategy.update(strategy, pass_info)
     {strategy, {:guess_letter, "c"}} = Strategy.make_guess(strategy)
 
+    IO.puts "strategy round 7 is: #{inspect strategy}"
 
     # Game Server Guess results
     context = {:game_keep_guessing, :correct_letter, "c", "C---LATE", "-"}

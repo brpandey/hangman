@@ -90,4 +90,17 @@ defmodule Hangman.Word.Chunks do
 		_words_list = :erlang.binary_to_term(binary_chunk)
   end
 
+  def info(%Chunks{} = c) do
+    [key: get_key(c), count: get_count(c, :words), chunks: get_count(c, :chunks)]
+  end
+
+  defimpl Inspect do
+    import Inspect.Algebra
+
+    def inspect(t, opts) do
+      info = Inspect.List.inspect(Hangman.Word.Chunks.info(t), opts)
+      concat ["#Hangman.Word.Chunks<", info, ">"]
+    end
+  end
+
 end
