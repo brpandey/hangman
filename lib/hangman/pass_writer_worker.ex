@@ -26,7 +26,7 @@ defmodule Hangman.Pass.Writer.Worker do
             %Chunks{} = chunks)
   when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
-    Logger.debug "pass writer worker, write arg list " <> 
+    Logger.debug "pass writer worker #{worker_id}, write arg list " <> 
       "#{inspect [worker_id, pass_key, chunks]}"
 
     GenServer.cast(via_tuple(worker_id), {:write, pass_key, chunks})

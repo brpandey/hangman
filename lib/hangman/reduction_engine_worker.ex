@@ -22,7 +22,8 @@ defmodule Hangman.Reduction.Engine.Worker do
   def reduce_and_store(worker_id, pass_key, regex_key, %MapSet{} = exc) do
     l = [worker_id, pass_key, regex_key, exc]
 
-    Logger.debug "reduction engine worker, reduce and store arg list #{inspect l}"
+    Logger.debug "reduction engine worker #{worker_id}, " <> 
+      "reduce and store arg list #{inspect l}"
 
     GenServer.call(via_tuple(worker_id), 
                    {:reduce_and_store, pass_key, regex_key, exc})
@@ -70,7 +71,9 @@ defmodule Hangman.Reduction.Engine.Worker do
 
 		# if down to 1 word, return the last word
 		cond do
-      pass_size == 0 -> raise Hangman.Error, "Word not in dictionary, pass size can't be zero"
+      pass_size == 0 -> ""
+#        raise "Word not in dictionary, pass size can't be zero"
+
 			pass_size == 1 -> 
 				last_word = Chunks.get_words_lazy(new_data)
         |> Enum.take(1) |> List.first

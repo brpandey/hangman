@@ -57,7 +57,7 @@ defmodule Hangman.Strategy do
           strategy = Kernel.put_in(strategy.guess, {:guess_word, final_word})        
   			else
   				raise Hangman.Error, 
-          "game over, exhausted all words, word not in dictionary"
+          "Exhausted all words, word not in dictionary"
   			end
 
   		_pass_size ->
@@ -70,7 +70,7 @@ defmodule Hangman.Strategy do
           strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
           strategy = Kernel.put_in(strategy.guess, {:guess_letter, letter})            
   			else
-  				raise Hangman.Error, "unable to determine next guess as no valid letter left"
+  				raise Hangman.Error, "Unable to determine next guess as no valid letter left"
   			end
   	end
 
@@ -194,7 +194,10 @@ defmodule Hangman.Strategy do
 
   defp do_retrieve_best_letter(tally, pass_size) do
 
-    false = Counter.empty?(tally) # Assert
+    if Counter.empty?(tally) do
+      raise Hangman.Error, 
+      "Word not in dictionary, no words left (tally is empty)"
+    end
 
     cond do
       pass_size > @word_set_size.small ->

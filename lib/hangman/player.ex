@@ -60,41 +60,47 @@ defmodule Hangman.Player do
 
   def status(%Player{} = p, :game_round), do: Round.status(p)
 
-  def status(%Player{} = player, :game_over) do
-  	case game_over?(player) do
-  		true -> {:game_over, player.game_summary}
-  		false -> {player.round.status_code, player.round.status_text}
+  def status(%Player{} = p, :game_over) do
+  	case game_over?(p) do
+  		true -> {:game_over, p.game_summary}
+  		false -> {p.round.status_code, p.round.status_text}
   	end
   end
 
 
 	# UPDATE
 
-	def start(%Player{} = player) do
-    if player.game_no >= 1 do
-      player = %Player{ name: player.name, type: player.type, 
-                        game_server_pid: player.game_server_pid,
-                        event_server_pid: player.event_server_pid,
-                        game_no: player.game_no + 1 }
+	def start(%Player{} = p) do
+    if p.game_no >= 1 do
+      p = %Player{ name: p.name, type: p.type, 
+                        game_server_pid: p.game_server_pid,
+                        event_server_pid: p.event_server_pid,
+                        game_no: p.game_no + 1 }
     else
-      player = Kernel.put_in(player.game_no, player.game_no + 1)
+      p = Kernel.put_in(p.game_no, p.game_no + 1)
 
       # Notify the event server that we've started playing hangman
-      Events.Server.notify_start(player.event_server_pid, player.name)
+      Events.Server.notify_start(p.event_server_pid, p.name)
     end
 
-    case player.type do
+    case p.type do
       @robot ->
-        p = player |> Round.setup(:game_start) |> Action.perform(:guess)
-
-        {p, Round.status(p)}
+        fn_run = fn ->
+          p = p |> Round.setup(:game_start) |> Action.perform(:guess)
+          {p, Round.status(p)}
+        end
+        
+        rescue_wrap(p, fn_run)
 
       @human -> 
-        p = player |> Round.setup(:game_start)
-        choices = p |> Action.perform(:choose_letters)
+        fn_run = fn ->
+          p = p |> Round.setup(:game_start)
+          choices = p |> Action.perform(:choose_letters)
+          {p, choices}
+        end
 
-        {p, choices}
-
+        rescue_wrap(p, fn_run)
+      
       _ -> raise Hangman.Error, "Invalid and unknown player type"
     end
 	end
@@ -102,47 +108,86 @@ defmodule Hangman.Player do
   # human choose letter
   def choose(%Player{} = p, :letter), do: choose(p, p.type, :letter)
 
-	def choose(%Player{} = player, @human, :letter) do
-  	p = player |> Round.setup
-    choices = p |> Action.perform(:choose_letters)
-    {p, choices}
+	def choose(%Player{} = p, @human, :letter) do
+  	
+    fn_run = fn ->
+      p = p |> Round.setup # Setup round
+      choices = Action.perform(p, :choose_letters)
+      {p, choices}
+    end
+
+    rescue_wrap(p, fn_run)
   end
 
   # robot guess letter
   def guess(%Player{} = p), do: guess(p, p.type)
 
-	def guess(%Player{} = player, @robot) do
-  	p = player |> Round.setup |> Action.perform(:guess)
+	def guess(%Player{} = p, @robot) do
 
-    {p, Round.status(p)}
+    fn_run = fn ->
+      p = p |> Round.setup # Setup round
+      p = Action.perform(p, :guess)
+      {p, Round.status(p)}
+    end
+
+    rescue_wrap(p, fn_run)
 	end
 
 
   # human guess last word
   def guess(%Player{} = p, :last_word), do: guess(p, p.type, :last_word)
 
-	def guess(%Player{} = player, @human, :last_word) do
-		p = player |> Action.perform(:guess_last_word)
+	def guess(%Player{} = p, @human, :last_word) do
 
-    {p, Round.status(p)}
+    fn_run = fn ->
+      p = Action.perform(p, :guess_last_word)
+      status = Round.status(p)
+
+      # If we can supposedly keep guessing, flag as error since this should be end
+      case status do
+        {:game_keep_guessing, _} -> 
+          raise Hangman.Error, 
+          "Last word was not actual last word, secret not in hangman dictionary"
+        _ -> {p, status} # Return normal return value
+      end
+    end
+
+    rescue_wrap(p, fn_run)
 	end
 
 
   # human guess letter
   def guess(%Player{} = p, l, :letter), do: guess(p, p.type, l, :letter)
 
-	def guess(%Player{} = player, @human, letter, :letter)
+	def guess(%Player{} = p, @human, letter, :letter)
   when is_binary(letter) do
-		p = player |> Action.perform(:guess_letter, letter)
 
-    {p, Round.status(p)}
+    fn_run = fn ->
+      p = Action.perform(p, :guess_letter, letter)
+      {p, Round.status(p)}
+    end
+
+    rescue_wrap(p, fn_run)
 	end
 
+  # Delay the running of function object until this method
+  # if error, return status code :game_reset along with error message
+  # if not return results of fn_run normally
+
+  defp rescue_wrap(%Player{} = p, fn_run) do
+    value = 
+      try do 
+        fn_run.() 
+      rescue
+        e -> {p, {:game_reset, e.message}}
+      end
+    
+    value
+  end
 
   # DELETE
 
-  def delete(%Player{} = _player), do:	%Player{}
-
+  def delete(%Player{} = _p), do:	%Player{}
 
 
   # EXTRA
@@ -155,9 +200,10 @@ defmodule Hangman.Player do
         guess_result: p.round.result_code,
         round_code: p.round.status_code,
         round_status: p.round.status_text,
-        pattern: p.round.pattern]
+        pattern: p.round.pattern
+    ]
         
-    value = [
+    _info = [
       name: p.name, 
       type: p.type,
       round_no: p.round_no,
@@ -165,8 +211,6 @@ defmodule Hangman.Player do
       event_pid: p.event_server_pid,
       round_data: round
     ]
-
-    value
   end
 
   defimpl Inspect do

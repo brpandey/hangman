@@ -140,8 +140,7 @@ defmodule Hangman.Player.FSM do
     next = 
       case status_code do
         :game_keep_guessing -> :eager_socrates
-        :game_won -> :idle_socrates
-        :game_lost -> :idle_socrates
+        _ -> :idle_socrates
       end
 
     if next == :eager_socrates do
@@ -169,13 +168,12 @@ defmodule Hangman.Player.FSM do
     next = 
       case status_code do
         :game_keep_guessing -> :eager_socrates
-        :game_won -> :idle_socrates
-        :game_lost -> :idle_socrates
+        _ -> :idle_socrates
       end
 
-    if next == :eager_socrates do
-      raise Hangman.Error, "Shouldn't be here"
-    end
+    #if next == :eager_socrates do
+    #  raise Hangman.Error, "Shouldn't be here"
+    #end
 
     { :reply, reply, next, {player, pid} }    
   end
@@ -195,6 +193,8 @@ defmodule Hangman.Player.FSM do
   # 1) 
   def neutral_wall_e(:game_keep_guessing, _from, {player, pid}) do
 
+    IO.puts "neutral wall e"
+
     case game_start_or_over_check(player) do
       {:game_start} -> 
       	{player, reply} = Player.start(player)
@@ -212,22 +212,21 @@ defmodule Hangman.Player.FSM do
 
   # 2) 
   def intrigued_wall_e(:game_keep_guessing, _from, {player, pid}) do
-
+    
     {player, {status_code, _} = reply} = Player.guess(player)
     
     next = 
       case status_code do
         :game_keep_guessing -> :intrigued_wall_e
-        :game_won -> :neutral_wall_e
-        :game_lost -> :neutral_wall_e
+        _ -> :neutral_wall_e
       end
-      
+    
     { :reply, reply, next, {player, pid} }
   end
 
   # 3)
   def zen_wall_e(:game_keep_guessing, _from, {player, pid}) do
-    { :reply, {:game_reset, "GAME RESET"}, :zen_wall_e, {player, pid}}
+    { :reply, {:game_reset, ""}, :zen_wall_e, {player, pid}}
   end
 
   #
@@ -275,6 +274,8 @@ defmodule Hangman.Player.FSM do
           # Setup the next async echo event
           Echo.echo_guess(echo_pid, self())
           :neutral_wall_e
+
+        :game_reset -> :neutral_wall_e
       end
 
     { :next_state, next_state, {player, echo_pid} }
@@ -349,6 +350,7 @@ defmodule Hangman.Player.FSM do
   end
 
   def terminate(reason, _state_name, _state) do
+    Logger.debug "Terminating Hangman.Player.FSM, reason: #{inspect reason}"
     reason
   end
 

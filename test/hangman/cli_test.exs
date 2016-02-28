@@ -9,7 +9,7 @@ defmodule Hangman.CLI.Test do
 
   test "cli baseline option" do
 
-    command = "-n lulu -t robot -bl"
+    command = "-n gustav -t robot -bl"
     argv = String.split(command)
     Hangman.CLI.main(argv)
     
@@ -18,7 +18,7 @@ defmodule Hangman.CLI.Test do
 
   test "robot single word with display option only" do
 
-    command = "-n lulu -t robot -s exotic -d"
+    command = "-n herbert -t robot -s exotic -d"
     argv = String.split(command)
     Hangman.CLI.main(argv)
     
@@ -26,7 +26,7 @@ defmodule Hangman.CLI.Test do
 
   test "robot single word with display option only and random option" do
 
-    command = "-n lulu -t robot -s exotic -d -r 2"
+    command = "-n kirtan -t robot -s exotic -d -r 2"
     argv = String.split(command)
     Hangman.CLI.main(argv)
     
@@ -35,7 +35,7 @@ defmodule Hangman.CLI.Test do
   
   test "robot single word with log option only" do
 
-    command = "-n lulu -t robot -s sleek -l"
+    command = "-n anastasia -t robot -s sleek -l"
     argv = String.split(command)
     Hangman.CLI.main(argv)
     
@@ -81,5 +81,31 @@ defmodule Hangman.CLI.Test do
 		  %Hangman.Error{message: "user must specify either --\"secret\" or --\"random\" option"}
 
   end
+
+  test "word not in dictionary, pass size zero" do
+
+    command = "-n barthalemu -t robot -s azerbaijian"
+    argv = String.split(command)
+    Hangman.CLI.main(argv)
+
+  end
+
+  test "robot, word not in dictionary - exhausted all words" do
+
+    command = "-n harrison -t robot -s azerbaijan"
+    argv = String.split(command)
+    Hangman.CLI.main(argv)
+   
+  end
+
+
+  test "human, word not in dictionary - exhausted all words" do
+
+    command = "-n oscar -t human -s azerbaijan"
+    argv = String.split(command)
+    Hangman.CLI.main(argv)
+   
+  end
+
 
 end
