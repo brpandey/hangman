@@ -16,17 +16,27 @@ defmodule Hangman.Dictionary.File do
 	@dict_big_chunked_path "lib/hangman/data/words_big_chunked.txt"
 
 	# Active dictionary paths in use by program
+#	@dict_path @dict_big_path
+#	@dict_sorted_path @dict_big_sorted_path
+#	@dict_grouped_path @dict_big_grouped_path
+#	@dict_chunked_path @dict_big_chunked_path
+
+  # Used to delimit chunk values in binary chunks file..
+  @chunks_file_delimiter :erlang.term_to_binary({8,1,8,1,8,1})
+
+	# Active dictionary paths in use by program
 	@dict_path @dict_normal_path
 	@dict_sorted_path @dict_normal_sorted_path
 	@dict_grouped_path @dict_normal_grouped_path
 	@dict_chunked_path @dict_normal_chunked_path
+
 
   # Takes input file, applies a transform type and returns new file path
   # For example, can be used to first sort a file, then upon
   # second invocation, group that file
 
   def transform(:normal, :sorted) do
-    do_transform(@dict_normal_path, @dict_sorted_path, :sorted)
+    do_transform(@dict_path, @dict_sorted_path, :sorted)
   end
 
   def transform(path, :sorted, :grouped) do
@@ -62,7 +72,13 @@ defmodule Hangman.Dictionary.File do
             bin_chunk = :erlang.term_to_binary(chunk)
             IO.binwrite(write_file, bin_chunk)
             # Add delimiter after every chunk, easier for chunk retrieval
-            IO.binwrite(write_file, DictFile.Stream.chunks_file_delimiter)
+
+            # import of attribute is not working, causing error
+            # ** (EXIT) an exception was raised:
+            # ** (UndefinedFunctionError) undefined function Hangman.Dictionary.File.Stream.chunks_file_delimiter/0
+            #    (play_hangman) Hangman.Dictionary.File.Stream.chunks_file_delimiter()
+            # IO.binwrite(write_file, DictFile.Stream.chunks_file_delimiter)
+            IO.binwrite(write_file, @chunks_file_delimiter)
         end
 
         # Process by transform type, then apply transforms

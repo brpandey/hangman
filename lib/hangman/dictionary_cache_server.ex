@@ -100,7 +100,8 @@ defmodule Hangman.Dictionary.Cache.Server do
 		{ :stop, :normal, :ok, {}}
 	end 
 
-	def terminate(_reason, _state) do
+	def terminate(reason, _state) do
+    Logger.debug("Dictionary Cache Server terminating, reason #{reason}")
 		:ok
 	end
 
