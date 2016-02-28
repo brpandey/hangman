@@ -193,8 +193,6 @@ defmodule Hangman.Player.FSM do
   # 1) 
   def neutral_wall_e(:game_keep_guessing, _from, {player, pid}) do
 
-    IO.puts "neutral wall e"
-
     case game_start_or_over_check(player) do
       {:game_start} -> 
       	{player, reply} = Player.start(player)

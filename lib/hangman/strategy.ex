@@ -56,8 +56,7 @@ defmodule Hangman.Strategy do
 
           strategy = Kernel.put_in(strategy.guess, {:guess_word, final_word})        
   			else
-  				raise Hangman.Error, 
-          "Exhausted all words, word not in dictionary"
+  				raise Hangman.Error, "Exhausted all words, word not in dictionary"
   			end
 
   		_pass_size ->

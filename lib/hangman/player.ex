@@ -179,7 +179,7 @@ defmodule Hangman.Player do
       try do 
         fn_run.() 
       rescue
-        e -> {p, {:game_reset, e.message}}
+        e in Hangman.Error -> {p, {:game_reset, e.message}}
       end
     
     value
