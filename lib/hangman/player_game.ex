@@ -54,7 +54,7 @@ defmodule Hangman.Player.Game do
 			fn ppid ->
 				case FSM.wall_e_guess(ppid) do
 					{:game_reset, reply} -> 
-            IO.puts "#{reply}"
+            IO.puts "\n#{reply}"
             {:halt, ppid}
           
 					# All other game states :game_keep_guessing ... :game_over
@@ -92,7 +92,7 @@ defmodule Hangman.Player.Game do
 
 				    case {code, reply} do
 					    {:game_reset, reply} -> 
-                IO.puts "#{reply}"
+                IO.puts "\n#{reply}"
                 {:halt, ppid}
               _ -> {[reply], {ppid, code}}
             end
@@ -102,7 +102,7 @@ defmodule Hangman.Player.Game do
 
 				    case {code, reply} do
 					    {:game_reset, reply} -> 
-                IO.puts "#{reply}"
+                IO.puts "\n#{reply}"
                 {:halt, ppid}
               _ -> {[reply], {ppid, code}}
             end
