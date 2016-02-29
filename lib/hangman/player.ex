@@ -3,6 +3,9 @@ defmodule Hangman.Player do
   alias Hangman.{Player, Player.Round, Player.Events, 
                  Round.Action, Strategy, Game}
   
+
+  @type t :: %__MODULE__{}
+
 	defstruct name: "", 
   	type: nil,
     round_no: 0,
