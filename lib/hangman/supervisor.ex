@@ -10,16 +10,16 @@ defmodule Hangman.Supervisor do
 	# Hangman.Player.System.Supervisor, both of which
 	# are second line supervisors
 
-	def start_link() do
-		Logger.info "Starting Hangman Supervisor"
+	def start_link(args) do
+		Logger.info "Starting Hangman Supervisor, args: #{inspect args}"
 
-		Supervisor.start_link(@name, nil)
+		Supervisor.start_link(@name, args)
 	end
 
-	def init(_) do
+	def init(args) do
 		children = [
 			supervisor(Hangman.Game.System.Supervisor, []),
-			supervisor(Hangman.Player.System.Supervisor, [])
+			supervisor(Hangman.Player.System.Supervisor, [args])
 		]
 
 		supervise(children, strategy: :rest_for_one)

@@ -10,16 +10,16 @@ defmodule Hangman.Player.System.Supervisor do
 	# Hangman.Player.System.Supervisor is a second line supervisor
 	# as it supervises a first-line supervisor, Hangman.Player.Supervisor
 
-	def start_link do
-		Logger.info "Starting Hangman Player System Supervisor"
+	def start_link(args) do
+		Logger.info "Starting Hangman Player System Supervisor, args: #{inspect args}"
 
-    Supervisor.start_link(@name, nil)
+    Supervisor.start_link(@name, args)
 	end
 
-	def init(_) do
+	def init(args) do
 
     children = [
-      worker(Hangman.Dictionary.Cache.Server, []),
+      worker(Hangman.Dictionary.Cache.Server, [args]),
       worker(Hangman.Pass.Server, []),
       supervisor(Hangman.Reduction.Engine, []),
       supervisor(Hangman.Pass.Writer, []),

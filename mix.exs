@@ -15,9 +15,12 @@ defmodule Hangman.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
+    args = [{:normal_dictionary, true}]
+    # args = [{:big_dictionary, true}]
+
     [
       applications: [:logger, :gproc],
-      mod: {Hangman.Application, []}
+      mod: {Hangman.Application, args}
     ]
   end
 

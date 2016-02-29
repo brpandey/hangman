@@ -3,48 +3,70 @@ defmodule Hangman.Dictionary.File do
   alias Hangman.Dictionary.File, as: DictFile
 	alias Hangman.{Word.Chunks}
 
+
+  @normal :normal_dictionary
+  @big :big_dictionary
  
-  # Dictionary path file names
-	@dict_normal_path "lib/hangman/data/words.txt"
-	@dict_normal_sorted_path "lib/hangman/data/words_sorted.txt"
-  @dict_normal_grouped_path "lib/hangman/data/words_grouped.txt"
-  @dict_normal_chunked_path "lib/hangman/data/words_chunked.txt"
+  # Dictionary path file names 
+  # arranged by dictionary file sizes normal and big
 
-	@dict_big_path "lib/hangman/data/words_big.txt"
-	@dict_big_sorted_path "lib/hangman/data/words_big_sorted.txt"
-	@dict_big_grouped_path "lib/hangman/data/words_big_grouped.txt"
-	@dict_big_chunked_path "lib/hangman/data/words_big_chunked.txt"
+	@normal_paths %{
+    :path => "lib/hangman/data/words.txt",
+	  :sorted_path => "lib/hangman/data/words_sorted.txt",
+    :grouped_path => "lib/hangman/data/words_grouped.txt",
+    :chunked_path => "lib/hangman/data/words_chunked.txt"
+  }
 
-	# Active dictionary paths in use by program
-#	@dict_path @dict_big_path
-#	@dict_sorted_path @dict_big_sorted_path
-#	@dict_grouped_path @dict_big_grouped_path
-#	@dict_chunked_path @dict_big_chunked_path
+	@big_paths %{
+    :path => "lib/hangman/data/words_big.txt",
+	  :sorted_path => "lib/hangman/data/words_big_sorted.txt",
+	  :grouped_path => "lib/hangman/data/words_big_grouped.txt",
+	  :chunked_path => "lib/hangman/data/words_big_chunked.txt"
+  }
 
   # Used to delimit chunk values in binary chunks file..
   @chunks_file_delimiter :erlang.term_to_binary({8,1,8,1,8,1})
-
-	# Active dictionary paths in use by program
-	@dict_path @dict_normal_path
-	@dict_sorted_path @dict_normal_sorted_path
-	@dict_grouped_path @dict_normal_grouped_path
-	@dict_chunked_path @dict_normal_chunked_path
-
 
   # Takes input file, applies a transform type and returns new file path
   # For example, can be used to first sort a file, then upon
   # second invocation, group that file
 
-  def transform(:normal, :sorted) do
-    do_transform(@dict_path, @dict_sorted_path, :sorted)
+  def transform(:sorted, @normal) do
+    path = Map.get(@normal_paths, :path)
+    sorted_path = Map.get(@normal_paths, :sorted_path)
+    do_transform(path, sorted_path, :sorted)
   end
 
-  def transform(path, :sorted, :grouped) do
-    do_transform(path, @dict_grouped_path, :grouped)
+  def transform(:sorted, @big) do
+    path = Map.get(@big_paths, :path)
+    sorted_path = Map.get(@big_paths, :sorted_path)
+    do_transform(path, sorted_path, :sorted)
   end
 
-  def transform(path, :grouped, :chunked) do
-    do_transform(path, @dict_chunked_path, :chunked)
+
+  def transform(path, :sorted, :grouped, @normal)
+  when is_binary(path) do
+    grouped_path = Map.get(@normal_paths, :grouped_path)
+    do_transform(path, grouped_path, :grouped)
+  end
+
+  def transform(path, :sorted, :grouped, @big)
+  when is_binary(path) do
+    grouped_path = Map.get(@big_paths, :grouped_path)
+    do_transform(path, grouped_path, :grouped)
+  end
+
+
+  def transform(path, :grouped, :chunked, @normal)
+  when is_binary(path) do
+    chunked_path = Map.get(@normal_paths, :chunked_path)
+    do_transform(path, chunked_path, :chunked)
+  end
+
+  def transform(path, :grouped, :chunked, @big)
+  when is_binary(path) do
+    chunked_path = Map.get(@big_paths, :chunked_path)
+    do_transform(path, chunked_path, :chunked)
   end
 
 

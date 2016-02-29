@@ -13,6 +13,9 @@ defmodule Hangman.Dictionary.Cache.Server do
   # dictionary file sizes
 	@possible_length_keys MapSet.new(2..28)
 
+  @normal :normal_dictionary
+  @big :big_dictionary
+ 
 
   # Use for admin of random words extract 
   @ets_random_words_key :random_hangman_words
@@ -24,9 +27,8 @@ defmodule Hangman.Dictionary.Cache.Server do
   @name __MODULE__
 	# External API
 
-  def start_link() do
-    Logger.info "Starting Hangman Dictionary Cache Server"
-    args = {}
+  def start_link(args) do
+    Logger.info "Starting Hangman Dictionary Cache Server, args #{inspect args}"
     options = [name: :hangman_dictionary_cache_server]
     GenServer.start_link(@name, args, options)
   end
@@ -38,8 +40,6 @@ defmodule Hangman.Dictionary.Cache.Server do
     
     lookup(pid, :random, count)
   end
-
-
 
   def lookup(:tally, length_key)
   when is_number(length_key) and length_key > 0 do
@@ -76,8 +76,8 @@ defmodule Hangman.Dictionary.Cache.Server do
 		GenServer.call pid, :stop
 	end
 
-  def init({}) do
-    setup()
+  def init(args) do
+    setup(args)
     {:ok, {}}
   end
 
@@ -110,13 +110,33 @@ defmodule Hangman.Dictionary.Cache.Server do
 	# CREATE (and UPDATE)
 
 	# Setup cache ets
-	defp setup() do
+	defp setup(args) do
+
 		case :ets.info(@ets_table_name) do
 			:undefined ->
         # transform dictionary file, 3 times if necessary
-        path = DictFile.transform(:normal, :sorted)
-        |> DictFile.transform(:sorted, :grouped)
-        |> DictFile.transform(:grouped, :chunked)
+
+        # handle normal dictionary size ~ 174k words
+        case Keyword.fetch(args, @normal) do
+          {:ok, true} -> 
+
+            path = DictFile.transform(:sorted, @normal)
+            |> DictFile.transform(:sorted, :grouped, @normal)
+            |> DictFile.transform(:grouped, :chunked, @normal)
+
+          _ -> ""
+        end
+        
+        # handle big dictionary size ~ 340k words
+        case Keyword.fetch(args, @big) do
+          {:ok, true} ->
+
+            path = DictFile.transform(:sorted, @big)
+            |> DictFile.transform(:sorted, :grouped, @big)
+            |> DictFile.transform(:grouped, :chunked, @big)
+
+          _ -> ""
+        end
 
 				load(@ets_table_name, path)
 
