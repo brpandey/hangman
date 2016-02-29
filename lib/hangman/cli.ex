@@ -1,4 +1,18 @@
 defmodule Hangman.CLI do
+  @moduledoc """
+  Hangman.CLI
+  Module handles command line interpreter interface
+  to running Hangman games.
+
+  Able to run interactive human games with manually specified
+  secrets and also randomly generated secrets.
+
+  Able to run strategic games with letter guesses robotically
+  auto determined.
+
+  Game archival can be captured through logging, e.g. --log option
+  """
+
 
 	alias Hangman.{Player}
 
