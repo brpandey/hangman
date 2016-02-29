@@ -1,5 +1,6 @@
 defmodule Hangman.Counter do
   @moduledoc """
+  Hangman.Counter
   A set of functions for working with letter frequency counters
   Counters are key value stores where keys are letter strings 
   and values are positive integers
