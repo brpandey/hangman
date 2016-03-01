@@ -22,10 +22,16 @@ defmodule Hangman.CLI do
   @max_secret_length 28
   @max_random_words_request 10
 
+  @doc """
+  Gateway cli function to fetch and validate parameters, before
+  running the game
+  """
+  @spec main([String.t]) :: :ok
   def main(args) do
     args |> parse_args |> print |> fetch_params |> run
   end
 
+  @spec parse_args([String.t]) :: Keyword.t
   defp parse_args(args) do
     {parsed, _argv, _errors} = OptionParser.parse(args, 
     	[
@@ -46,12 +52,14 @@ defmodule Hangman.CLI do
 
     parsed
   end
-
+  
+  @spec print([]) :: no_return
   defp print([]) do
     IO.puts "No arguments given, try --help or -h"
     System.halt(0)
   end
 
+  @spec print(Keyword.t) :: Keyword.t | no_return
   defp print(parsed) do
 
 		case Keyword.fetch(parsed, :help) do
@@ -70,6 +78,7 @@ defmodule Hangman.CLI do
 
   end
 
+  @spec fetch_secrets(Keyword.t) :: [String.t] | no_return
   defp fetch_secrets(args) do
     # first check if there is a baseline option specified
     # so that we can get the secrets from there
@@ -103,7 +112,7 @@ defmodule Hangman.CLI do
                       Dictionary.lookup(:random, value)
 
                     true ->
-                      raise Hangman.Error, "submited random count value is not valid"
+                      raise Hangman.Error, "submitted random count value is not valid"
                   end
                 :error -> nil
               end
@@ -127,6 +136,7 @@ defmodule Hangman.CLI do
     secrets
   end
 
+  @spec fetch_params(Keyword.t) :: {} | no_return
   defp fetch_params(args) do
 
     name = 
@@ -162,6 +172,7 @@ defmodule Hangman.CLI do
     {name, type, secrets, log, display}
   end
 
+  @spec run({}) :: :ok
   defp run({name, type, secrets, log, display}) when is_binary(name) 
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
