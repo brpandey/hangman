@@ -15,8 +15,9 @@ defmodule Hangman.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    args = [{:normal_dictionary, true}]
-    # args = [{:big_dictionary, true}]
+    dict_type = Hangman.Dictionary.Attribute.Tokens.type_normal
+    # dict_type = Hangman.Dictionary.Attribute.Tokens.type_big
+    args = [{dict_type, true}]
 
     [
       applications: [:logger, :gproc],

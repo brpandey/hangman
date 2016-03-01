@@ -3,7 +3,7 @@ defmodule Hangman.Word.Chunks.Stream do
 	# A chunk contains at most 2_000 words
 	@chunk_words_size 2_000
 
-  def transform(stream, :sorted, :grouped) do
+  def transform(stream, :grouped, :chunked) do
 
 	  # lambda to split stream into chunks based on generated chunk id
 		# Uses 1 + div() function to group consecutive, sorted words

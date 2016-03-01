@@ -1,49 +1,30 @@
 defmodule Hangman.Dictionary.File.Stream do
   
+  alias Hangman.{Dictionary.Attribute.Tokens}
+
+  @unsorted Tokens.unsorted
+  @sorted Tokens.sorted
+  @grouped Tokens.grouped
+  @chunked Tokens.chunked
+
+  @chunks_file_delimiter Tokens.chunks_file_delimiter
+
 	defmodule State do
 		defstruct file: nil, type: nil, group_id: -1, group_index: -1
 	end
 
-  # Used to delimit chunk values in binary chunks file..
-  @chunks_file_delimiter :erlang.term_to_binary({8,1,8,1,8,1})
-
-
 	# Create
 
-	def new(type = :read_sorted, path), do: do_new(type, path)
-	def new(type = :read_unsorted, path), do: do_new(type, path)
-  def new(type = :read_grouped, path), do: do_new(type, path)
-  def new(type = :read_chunks, path), do: do_new(type, path)
-
-  defp do_new(type, path) do
+  def new(type = {:read, dict_file_type}, path)
+  when dict_file_type in [@sorted, @unsorted, @grouped, @chunked] do
     file = File.open!(path)
     %State{ file: file, type: type}
   end
 
+
 	# Read / Update
-	def chunks_stream(%State{} = state) do
 
-    # Assert we are in correct type
-    :read_chunks = state.type
-
-    # Given the chunks file, read it in raw binary mode all it once
-    # split it based on the delimiter
-    # unpack each chunk with the binary_to_term method
-    # serve when ready..
-
-    fn_unpack = fn
-      data when data in [""] -> {nil, 0}
-      bin when is_binary(bin) -> :erlang.binary_to_term(bin)
-    end
-
-    chunks_stream = state.file
-    |> IO.binread(:all)
-    |> :binary.split(@chunks_file_delimiter, [:global])
-    |> Stream.map(fn_unpack)
-
-    chunks_stream
-	end
-
+  def gets_lazy(%State{} = state), do: file_handler(state, state.type)
 
 	# Delete
 
@@ -53,11 +34,29 @@ defmodule Hangman.Dictionary.File.Stream do
 	end	
 
 
-	def get_data_lazy(%State{} = state), do: read_data(state, state.type)
-
 	# Private
 
-	defp read_data(%State{} = state, :read_grouped) do
+  defp file_handler(%State{} = state, {:read, @chunked}) do
+
+    # Given the chunks file, read it in raw binary mode all it once
+    # split it based on the delimiter
+    # unpack each chunk with the binary_to_term method
+    # serve when ready..
+
+    fn_unpack = fn
+      data when data in [""] -> {nil, 0}
+    bin when is_binary(bin) -> :erlang.binary_to_term(bin)
+    end
+
+    chunks_stream = state.file
+    |> IO.binread(:all)
+    |> :binary.split(@chunks_file_delimiter, [:global])
+    |> Stream.map(fn_unpack)
+    
+    chunks_stream
+  end
+
+	defp file_handler(%State{} = state, {:read, @grouped}) do
 		Stream.resource(
 			fn -> state end,
 		
@@ -79,7 +78,7 @@ defmodule Hangman.Dictionary.File.Stream do
 			fn state -> File.close(state.file) end)
 	end
 
-	defp read_data(%State{} = state, :read_sorted) do
+	defp file_handler(%State{} = state, {:read, @sorted}) do
 		Stream.resource(
 			fn ->	state	end,
 		
@@ -115,7 +114,7 @@ defmodule Hangman.Dictionary.File.Stream do
 			fn state -> File.close(state.file) end)
 	end
 
-	defp read_data(%State{} = state, :read_unsorted) do
+	defp file_handler(%State{} = state, {:read, @unsorted}) do
 		Stream.resource(
 			fn -> state end,
 		

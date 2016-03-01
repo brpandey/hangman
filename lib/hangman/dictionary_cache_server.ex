@@ -3,8 +3,24 @@ defmodule Hangman.Dictionary.Cache.Server do
 
   require Logger
 
-  alias Hangman.Dictionary.File, as: DictFile
-	alias Hangman.{Counter, Word.Chunks}
+  @module_doc """
+  Module loads dictionary file words into chunks and stores
+  into ets.  Letter frequency tallies are computed and stored into ets
+  upon startup, alongside random words.
+
+  Provides lookup routines to access chunks, tallys, and random words
+  """
+
+  alias Hangman.Dictionary, as: Dict
+	alias Hangman.{Counter, Word.Chunks, Dictionary.Attribute.Tokens}
+
+  # Dictionary attribute tokens
+  @type_normal Tokens.type_normal
+
+  @unsorted Tokens.unsorted
+  @sorted Tokens.sorted
+  @grouped Tokens.grouped
+  @chunked Tokens.chunked
 
 	@ets_table_name :dictionary_cache_table
 
@@ -13,9 +29,6 @@ defmodule Hangman.Dictionary.Cache.Server do
   # dictionary file sizes
 	@possible_length_keys MapSet.new(2..28)
 
-  @normal :normal_dictionary
-  @big :big_dictionary
- 
 
   # Use for admin of random words extract 
   @ets_random_words_key :random_hangman_words
@@ -27,13 +40,14 @@ defmodule Hangman.Dictionary.Cache.Server do
   @name __MODULE__
 	# External API
 
-  def start_link(args) do
+  @spec start_link(Keyword.t) :: {:ok, pid}
+  def start_link(args \\ [{@type_normal, true}]) do
     Logger.info "Starting Hangman Dictionary Cache Server, args #{inspect args}"
     options = [name: :hangman_dictionary_cache_server]
     GenServer.start_link(@name, args, options)
   end
 
-
+  @spec lookup(atom, pos_integer) :: {}
   def lookup(:random, count) do
     pid = Process.whereis(:hangman_dictionary_cache_server)  
     true = is_pid(pid) 
@@ -41,41 +55,47 @@ defmodule Hangman.Dictionary.Cache.Server do
     lookup(pid, :random, count)
   end
 
+  @spec lookup(atom, pos_integer) :: {}
   def lookup(:tally, length_key)
-  when is_number(length_key) and length_key > 0 do
+  when is_integer(length_key) and length_key > 0 do
     pid = Process.whereis(:hangman_dictionary_cache_server)  
     true = is_pid(pid) 
   
     lookup(pid, :tally, length_key)
   end
 
+  @spec lookup(atom, pos_integer) :: {}
   def lookup(:chunks, length_key)
-  when is_number(length_key) and length_key > 0 do
+  when is_integer(length_key) and length_key > 0 do
     pid = Process.whereis(:hangman_dictionary_cache_server)
     true = is_pid(pid)
 
     lookup(pid, :chunks, length_key)
   end
 
-
+  @spec lookup(pid, atom, pos_integer) :: {}
   def lookup(pid, :random, count) do
     GenServer.call pid, {:lookup_random, count}
   end
 
+  @spec lookup(pid, atom, pos_integer) :: {}
   def lookup(pid, :tally, length_key)
   when is_number(length_key) and length_key > 0 do
     GenServer.call pid, {:lookup_tally, length_key}
   end
 
+  @spec lookup(pid, atom, pos_integer) :: {}
   def lookup(pid, :chunks, length_key)
   when is_number(length_key) and length_key > 0 do
     GenServer.call pid, {:lookup_chunks, length_key}
   end
 
+  @spec stop(pid) :: {}
 	def stop(pid) do
 		GenServer.call pid, :stop
 	end
 
+  @spec init(Keyword.t) :: {}
   def init(args) do
     setup(args)
     {:ok, {}}
@@ -110,30 +130,35 @@ defmodule Hangman.Dictionary.Cache.Server do
 	# CREATE (and UPDATE)
 
 	# Setup cache ets
+  @spec setup(Keyword.t) :: :ok | no_return
 	defp setup(args) do
 
 		case :ets.info(@ets_table_name) do
 			:undefined ->
         # transform dictionary file, 3 times if necessary
+        normal = Tokens.type_normal
+        big = Tokens.type_big
 
         # handle normal dictionary size ~ 174k words
-        case Keyword.fetch(args, @normal) do
+        case Keyword.fetch(args, normal) do
           {:ok, true} -> 
 
-            path = DictFile.transform(:sorted, @normal)
-            |> DictFile.transform(:sorted, :grouped, @normal)
-            |> DictFile.transform(:grouped, :chunked, @normal)
-
+            path = nil 
+            |> Dict.File.transform({@unsorted, @sorted}, normal)
+            |> Dict.File.transform({@sorted, @grouped}, normal)
+            |> Dict.File.transform({@grouped, @chunked}, normal)
+          
           _ -> ""
         end
         
         # handle big dictionary size ~ 340k words
-        case Keyword.fetch(args, @big) do
+        case Keyword.fetch(args, big) do
           {:ok, true} ->
 
-            path = DictFile.transform(:sorted, @big)
-            |> DictFile.transform(:sorted, :grouped, @big)
-            |> DictFile.transform(:grouped, :chunked, @big)
+            path = nil 
+            |> Dict.File.transform({@unsorted, @sorted}, big)
+            |> Dict.File.transform({@sorted, @grouped}, big)
+            |> Dict.File.transform({@grouped, @chunked}, big)
 
           _ -> ""
         end
@@ -142,13 +167,16 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 			_ -> raise Hangman.Error, "cache already setup!"
 		end
+
+    :ok
 	end
 
 
 	# READ
 
-
-	defp do_lookup(:random, count) when is_number(count) do
+  @spec do_lookup(atom, pos_integer) :: [String.t]
+	defp do_lookup(:random, count) 
+  when is_integer(count) and count > 0 do
 
     if count > @max_random_words_request do
       raise Hangman.Error, "requested random words exceeds limit"
@@ -246,6 +274,8 @@ defmodule Hangman.Dictionary.Cache.Server do
     
 		do_load(:chunks, {table_name, dict_path})
 		do_load(:counters, table_name)
+
+    :ok
 	end
 
 
@@ -270,8 +300,8 @@ defmodule Hangman.Dictionary.Cache.Server do
 		# Group the word stream by chunks, 
     # normalize the chunks then insert into ets
 		
-    DictFile.Stream.new(:read_chunks, path)
-    |> DictFile.Stream.chunks_stream
+    Dict.File.Stream.new({:read, @chunked}, path)
+    |> Dict.File.Stream.gets_lazy
     |> Stream.each(fn_ets_insert_chunks)
     |> Stream.each(&ets_insert_random_words/1)
 		|> Stream.run
