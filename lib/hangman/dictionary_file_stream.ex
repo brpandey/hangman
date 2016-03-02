@@ -1,7 +1,18 @@
 defmodule Hangman.Dictionary.File.Stream do
+  @moduledoc """
+  Module for accessing input file stream for 
+  various dictionary file types
+  """
+
+  alias Hangman.Dictionary.File.Stream, as: FileStream
+
+	defstruct file: nil, type: nil, group_id: -1, group_index: -1
+
+  @type t :: %__MODULE__{}
   
   alias Hangman.{Dictionary.Attribute.Tokens}
 
+  # Dictionary attribute tokens
   @unsorted Tokens.unsorted
   @sorted Tokens.sorted
   @grouped Tokens.grouped
@@ -9,34 +20,47 @@ defmodule Hangman.Dictionary.File.Stream do
 
   @chunks_file_delimiter Tokens.chunks_file_delimiter
 
-	defmodule State do
-		defstruct file: nil, type: nil, group_id: -1, group_index: -1
-	end
 
 	# Create
+  @doc """
+  Returns a new empty file stream
+  """
 
+  @spec new({:atom, :atom}, String.t) :: t
   def new(type = {:read, dict_file_type}, path)
   when dict_file_type in [@sorted, @unsorted, @grouped, @chunked] do
     file = File.open!(path)
-    %State{ file: file, type: type}
+    %FileStream{ file: file, type: type}
   end
 
 
 	# Read / Update
+  @doc """
+  Returns input file stream
+  """
 
-  def gets_lazy(%State{} = state), do: file_handler(state, state.type)
+  @spec gets_lazy(t) :: Enumerable.t
+  def gets_lazy(%FileStream{} = state), do: file_handler(state, state.type)
 
 	# Delete
 
-	def delete(%State{} = state) do
+  @doc """
+  Deletes state, returns empty file stream
+  """
+
+  @spec delete(t) :: t
+	def delete(%FileStream{} = state) do
 		File.close(state.file)
-		%State{}
+		%FileStream{}
 	end	
 
 
 	# Private
 
-  defp file_handler(%State{} = state, {:read, @chunked}) do
+  # chunked file specific input stream, wrapping underlying file
+
+  @spec file_handler(t, {:atom, :atom}) :: Enumerable.t
+  defp file_handler(%FileStream{} = state, {:read, @chunked}) do
 
     # Given the chunks file, read it in raw binary mode all it once
     # split it based on the delimiter
@@ -44,8 +68,10 @@ defmodule Hangman.Dictionary.File.Stream do
     # serve when ready..
 
     fn_unpack = fn
-      data when data in [""] -> {nil, 0}
-    bin when is_binary(bin) -> :erlang.binary_to_term(bin)
+      data when data in [""] -> 
+        {nil, 0}
+      bin when is_binary(bin) -> 
+        :erlang.binary_to_term(bin)
     end
 
     chunks_stream = state.file
@@ -55,16 +81,21 @@ defmodule Hangman.Dictionary.File.Stream do
     
     chunks_stream
   end
+  
+  # grouped file specific input stream generator, wrapping underlying file
 
-	defp file_handler(%State{} = state, {:read, @grouped}) do
+  @spec file_handler(t, {:atom, :atom}) :: Enumerable.t
+	defp file_handler(%FileStream{} = state, {:read, @grouped}) do
 		Stream.resource(
 			fn -> state end,
 		
 			fn state ->
 				case IO.read(state.file, :line) do
+          # if newline or empty binary prompt for next value in stream
 					data when data in ["\n", ""] -> {[], state}
 					
 					data when is_binary(data) ->
+              # split line into group attributes
               [len, ind, word] = String.split(data, " ")
               length = String.to_integer(len)
               index = String.to_integer(ind)
@@ -75,15 +106,21 @@ defmodule Hangman.Dictionary.File.Stream do
 				end
 			end,
 			
+      # be a responsible file user upon stream end
 			fn state -> File.close(state.file) end)
 	end
 
-	defp file_handler(%State{} = state, {:read, @sorted}) do
+  # sorted file specific input stream generator, wrapping underlying file
+  # since we know the input is sorted, we can create a grouping output
+
+  @spec file_handler(t, {:atom, :atom}) :: Enumerable.t
+	defp file_handler(%FileStream{} = state, {:read, @sorted}) do
 		Stream.resource(
 			fn ->	state	end,
 		
 			fn state ->
 				case IO.read(state.file, :line) do
+          # if newline or empty binary prompt for next value in stream
 					data when data in ["\n", ""] -> {[], state}
 
 					data when is_binary(data) ->
@@ -110,27 +147,36 @@ defmodule Hangman.Dictionary.File.Stream do
 					_ -> {:halt, state}
 				end
 			end,
-			
+
+      # be a responsible file user upon stream end			
 			fn state -> File.close(state.file) end)
 	end
 
-	defp file_handler(%State{} = state, {:read, @unsorted}) do
+  # unsorted file specific input stream generator, wrapping underlying file
+  # likely handles original dictionary file
+
+  @spec file_handler(t, {:atom, :atom}) :: Enumerable.t
+	defp file_handler(%FileStream{} = state, {:read, @unsorted}) do
 		Stream.resource(
 			fn -> state end,
 		
 			fn state ->
 				case IO.read(state.file, :line) do
+          # if newline or empty binary prompt for next value in stream
 					data when data in ["\n", ""] -> {[], state}
 					
 					data when is_binary(data) ->
-						data = data |> String.downcase
+              # Since we are dealing with the original dictionary file
+              # make sure words are lowercased
+						  data = data |> String.downcase
             
 						{ [data], state }
 
 					_ -> {:halt, state}
 				end
 			end,
-			
+
+      # be a responsible file user upon stream end			
 			fn state -> File.close(state.file) end)
 	end
 

@@ -4,6 +4,8 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 	alias Hangman.{Dictionary, Counter, Word.Chunks}
 
   setup_all do
+    # stop cache server started by application callback
+    Dictionary.Cache.Server.stop
     IO.puts "Hangman.Dictionary.Cache.Server.Test"
     :ok
   end
@@ -14,7 +16,7 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 		pid = 
       case Dictionary.Cache.Server.start_link do
         {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
+#        {:error, {:already_started, pid}} -> pid
       end
     
 		IO.puts "finished cache setup"
@@ -22,7 +24,7 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 		size = 8
 
 #		assert catch_error(Dictionary.Cache.Server.lookup(pid, :tally, 3383)) ==
-#		  %RuntimeError{message: "key not in set of possible keys!"}
+#		  %Hangman.Error{message: "key not in set of possible keys!"}
 
 		lookup = Dictionary.Cache.Server.lookup(pid, :tally, size)
 

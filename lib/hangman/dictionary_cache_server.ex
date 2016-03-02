@@ -131,6 +131,13 @@ defmodule Hangman.Dictionary.Cache.Server do
 		GenServer.call pid, :stop
 	end
 
+  @spec stop(none) :: {}
+  def stop do
+    pid = Process.whereis(:hangman_dictionary_cache_server)
+    true = is_pid(pid)
+    GenServer.call pid, :stop
+  end
+
   @doc """
   GenServer callback to initalize server process
   """
@@ -289,7 +296,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 				# Grab the matching tally counter -- not sure if match_object or lookup is faster
 				case :ets.match_object(@ets_table_name, {ets_key, :_}) do
-					[] -> raise Hangman.Error, "counter not found for key: #{inspect length_key}"
+					[] -> raise Hangman.Error, "counter not found for key: #{length_key}"
 					[{_key, ets_value}] -> 
 						counter = :erlang.binary_to_term(ets_value)
 						counter
@@ -516,7 +523,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 
   # Ensure we are only getting keys which match chunk keys!
 
-  @spec get_ets_keys_lazy(:atom) :: Enum.t
+  @spec get_ets_keys_lazy(:atom) :: Enumerable.t
 	defp get_ets_keys_lazy(table_name) when is_atom(table_name) do
 		eot = :"$end_of_table"
 
