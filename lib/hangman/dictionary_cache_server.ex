@@ -127,15 +127,15 @@ defmodule Hangman.Dictionary.Cache.Server do
   """
 
   @spec stop(pid) :: {}
-	def stop(pid) do
+	def stop(pid) when is_pid(pid) do
 		GenServer.call pid, :stop
 	end
 
   @spec stop(none) :: {}
   def stop do
     pid = Process.whereis(:hangman_dictionary_cache_server)
-    true = is_pid(pid)
-    GenServer.call pid, :stop
+
+    if is_pid(pid), do: GenServer.call pid, :stop
   end
 
   @doc """
