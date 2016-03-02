@@ -69,10 +69,13 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 
 	test "initial test of big dictionary cache" do
 
+    big = Hangman.Dictionary.Attribute.Tokens.type_big
+    args =  [{big, true}]
+
 		pid = 
-      case Dictionary.Cache.Server.start_link do
+      case Dictionary.Cache.Server.start_link(args) do
         {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
+        #{:error, {:already_started, pid}} -> pid
       end
     
 		IO.puts "finished cache setup"
