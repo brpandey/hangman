@@ -14,9 +14,9 @@ defmodule Hangman.Dictionary.File.Stream.Test do
 		
 		path = "lib/hangman/data/words.txt"
 
-		stream = Hangman.Dictionary.File.Stream.new(:read_unsorted, path)
+		stream = Hangman.Dictionary.File.Stream.new({:read, :unsorted}, path)
 
-		Hangman.Dictionary.File.Stream.get_data_lazy(stream)
+		Hangman.Dictionary.File.Stream.gets_lazy(stream)
 			|> Stream.each(&IO.inspect/1)
 			|> Enum.take(5)
 
@@ -30,9 +30,9 @@ defmodule Hangman.Dictionary.File.Stream.Test do
 
 		path = "lib/hangman/data/words_sorted.txt"
 
-		sorted_stream = Hangman.Dictionary.File.Stream.new(:read_sorted, path)
+		sorted_stream = Hangman.Dictionary.File.Stream.new({:read, :sorted}, path)
 
-		Hangman.Dictionary.File.Stream.get_data_lazy(sorted_stream)
+		Hangman.Dictionary.File.Stream.gets_lazy(sorted_stream)
 			|> Stream.each(&IO.inspect/1)
 			|> Enum.take(5)
 
