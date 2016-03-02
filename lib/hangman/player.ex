@@ -4,22 +4,18 @@ defmodule Hangman.Player do
                  Round.Action, Strategy, Game}
   
 
+	defstruct name: "", type: nil,
+  round_no: 0,  round: %Hangman.Types.Game.Round{},
+  strategy: Strategy.new,
+  game_no: 0, game_summary: nil, game_server_pid: nil, 
+  event_server_pid: nil,    
+  mystery_letter: Game.Server.mystery_letter
+  
   @type t :: %__MODULE__{}
-
-	defstruct name: "", 
-  	type: nil,
-    round_no: 0,
-    round: %Hangman.Types.Game.Round{},
-    strategy: Strategy.new,
-    game_no: 0,
-    game_summary: nil,
-    game_server_pid: nil, 
-  	event_server_pid: nil,    
-    mystery_letter: Game.Server.mystery_letter
 
   @human :human
   @robot :robot
-
+    
   # CREATE
   
   def new(name, type, game_pid, event_pid)
@@ -29,7 +25,7 @@ defmodule Hangman.Player do
   	unless type in [@human, @robot] do 
       raise Hangman.Error, "invalid and unknown player type" 
     end
-        
+    
   	%Player{ name: name, type: type, 
   		       game_server_pid: game_pid, event_server_pid: event_pid }
   end
