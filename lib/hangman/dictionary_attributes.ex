@@ -1,4 +1,8 @@
 defmodule Hangman.Dictionary.Attribute.Tokens do
+  @moduledoc """
+  Module defines common attribute 'tokens' used by dictionary
+  functionality.  Serves as a central point to access or update such tokens
+  """
 
   def unsorted, do: :unsorted
   def sorted, do: :sorted
