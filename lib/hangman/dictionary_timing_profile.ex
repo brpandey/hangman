@@ -1,26 +1,42 @@
 defmodule Hangman.Dictionary.Cache.Timing.Profile do
   import ExProf.Macro
 
+  @moduledoc """
+  Module to time dictionary cache server
+  """
+
   alias Hangman.{Dictionary, Word.Chunks, Counter}
 
+  @doc """
+  Profiling routine that conducts a simple test
+  """
 
+  @spec go_simple :: none
   def go_simple do
     profile do
       run_setup_test
     end
   end 
 
+  @doc """
+  Profiling routine that conducts a long test
+  """
+
+  @spec go_hard :: none
   def go_hard do
     :fprof.apply(&run_test/0, [])
     :fprof.profile()
     :fprof.analyse()
   end 
 
-  def run_setup_test do
+  defp run_setup_test do
+    Dictionary.Cache.Server.stop
+
     {:ok, _pid} = Dictionary.Cache.Server.start_link()
   end
   
-  def run_test do
+  defp run_test do
+    Dictionary.Cache.Server.stop
 
     {:ok, pid} = Dictionary.Cache.Server.start_link()
 
