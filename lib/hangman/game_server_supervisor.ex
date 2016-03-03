@@ -2,22 +2,22 @@ defmodule Hangman.Game.Server.Supervisor do
 	use Supervisor
   
   @moduledoc """
-  Module implements supervisor behaviour, overseeing
-  dynamically started Game Server child
+  Module implements supervisor behaviour.
+
+	Module is a first line supervisor
+	which will dynamically start its Game.Server children
   """
   
   require Logger
   
   @name __MODULE__
   
-	# Hangman.Server.Supervisor is a first line supervisor
-	# which will dynamically start its children
   
   @doc """
   Supervisor start_link wrapper function
   """
   
-  @spec start_link :: {:ok, pid}
+  @spec start_link :: Supervisor.on_start
 	def start_link do
 		Logger.info "Starting Hangman Game Server Supervisor"
 		Supervisor.start_link(@name, nil, name: 
@@ -39,7 +39,7 @@ defmodule Hangman.Game.Server.Supervisor do
   Supervisor callback to initialize server process
   """
 
-  @callback init(term) :: {}
+  @callback init(term) :: {:ok, tuple}
 	def init(_) do
 		children = [
 			worker(Hangman.Game.Server, []) 
