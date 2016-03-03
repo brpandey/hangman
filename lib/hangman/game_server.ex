@@ -59,7 +59,7 @@ defmodule Hangman.Game.Server do
 	end
   
   # Used to register / lookup process in process registry via gproc
-  @spec via_tuple(String.t) :: {}
+  @spec via_tuple(String.t) :: tuple
 	defp via_tuple(name) do
 		{:via, :gproc, {:n, :l, {:hangman_server, name}}}
 	end
