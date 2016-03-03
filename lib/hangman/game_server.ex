@@ -151,7 +151,7 @@ defmodule Hangman.Game.Server do
 	Loads a new game
 	"""
   
-  @spec handle_cast({}, {}) :: {}
+  @callback handle_cast({}, {}) :: {}
 	def handle_cast({:load_game, secret, max_wrong}, {name, _state}) do
 		state = do_load_game(secret, max_wrong)
     
@@ -162,7 +162,7 @@ defmodule Hangman.Game.Server do
 	Loads a set of games
 	"""
   
-  @spec handle_cast({}, {}) :: {}  
+  @callback handle_cast({}, {}) :: {}  
 	def handle_cast({:load_games, secret, max_wrong}, {name, _state}) do
 		state = do_load_game(secret, max_wrong)
 		
@@ -180,7 +180,7 @@ defmodule Hangman.Game.Server do
 	otherwise, returns the :incorrect atom and nil
 	"""
   
-  @spec handle_call({}, {}, {}) :: {}
+  @callback handle_call({}, {}, {}) :: {}
 	def handle_call({:guess_letter, letter}, _from, {name, state}) do
 		{ _, :game_keep_guessing, _} = check_game_status(name, state)
     
@@ -235,7 +235,7 @@ defmodule Hangman.Game.Server do
 	If incorrect, returns the :incorrect atom and nil	
 	"""
   
-  @spec handle_call({}, {}, {}) :: {}
+  @callback handle_call({}, {}, {}) :: {}
 	def handle_call({:guess_word, word}, _from, {name, state}) do
 		{ _, :game_keep_guessing, _ } = check_game_status(name, state) # Assert
     
@@ -273,7 +273,7 @@ defmodule Hangman.Game.Server do
 	Returns the game status text
 	"""
 
-  @spec handle_call(:atom, {}, {}) :: {}
+  @callback handle_call(:atom, {}, {}) :: {}
 	def handle_call(:game_status, _from, {name, state}) do
 		{ :reply, check_game_status(name, state), {name, state} }
 	end
@@ -282,7 +282,7 @@ defmodule Hangman.Game.Server do
 	Returns the hangman secret length
 	"""
   
-  @spec handle_call(:atom, {}, {}) :: {}
+  @callback handle_call(:atom, {}, {}) :: {}
 	def handle_call(:secret_length, _from, {name, state}) do
 		{_, _, status_text} = check_game_status(name, state)
 		length = String.length(state.secret)
@@ -296,7 +296,7 @@ defmodule Hangman.Game.Server do
 	Stops the server is a normal graceful way
 	"""
   
-  @spec handle_call(:atom, {}, {}) :: {}
+  @callback handle_call(:atom, {}, {}) :: {}
 	def handle_call(:stop, _from, {name, state}) do
 		{ :stop, :normal, {:ok, name}, state }
 	end
@@ -333,7 +333,7 @@ defmodule Hangman.Game.Server do
 	No special cleanup other than refreshing the state
 	"""
   
-  @spec terminate(term, term) :: :ok
+  @callback terminate(term, term) :: :ok
 	def terminate(_reason, _state) do
 		#Logger.info "Terminating Hangman Game Server"
 		#state = %State{}
