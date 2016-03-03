@@ -49,7 +49,6 @@ defmodule Hangman.Game.Pid.Cache.Server do
   @callback init(term) :: {}
 	def init(_), do:	{:ok, nil}
   
-  
   @doc """
   GenServer callback to retrieve game server pid
   """

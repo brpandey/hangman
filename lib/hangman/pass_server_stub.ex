@@ -1,7 +1,15 @@
 defmodule Hangman.Pass.Server.Stub do 
+  @moduledoc """
+  Stub module to test out Pass Server functionality
+  """
 
   alias Hangman.{Counter, Types.Reduction.Pass}
 
+  @doc """
+  Stub Routine retrieves stub pass tally given game start pass key
+  """
+
+  @spec get_pass(atom, tuple, Keyword.t) :: tuple
 	def get_pass(:game_start, 
 		{id, game_no, 1} = pass_key, reduce_key) 
 		when is_binary(id) and is_number(game_no) do
@@ -12,6 +20,11 @@ defmodule Hangman.Pass.Server.Stub do
 		simulate_reduce_sequence(pass_key)
 	end
 
+  @doc """
+  Stub Routine retrieves stub pass tally given pass key
+  """
+
+  @spec get_pass(atom, tuple, Keyword.t) :: tuple
 	def get_pass(:game_keep_guessing, 
 		{id, game_no, round_no} = pass_key, reduce_key)
 		when is_binary(id) and is_number(game_no) and is_number(round_no) do
@@ -26,7 +39,7 @@ defmodule Hangman.Pass.Server.Stub do
 
 	# Game 1 - word is: cumulate
 
-	def simulate_reduce_sequence({id, 1, 1}) do
+	defp simulate_reduce_sequence({id, 1, 1}) do
 
 		size = 28558
 
@@ -41,7 +54,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 1, 1}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 1, 2}) do
+	defp simulate_reduce_sequence({id, 1, 2}) do
 
 		size = 1833
 
@@ -60,7 +73,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 1, 2}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 1, 3}) do
+	defp simulate_reduce_sequence({id, 1, 3}) do
 
 		size = 236
 
@@ -77,7 +90,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 1, 3}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 1, 4}) do
+	defp simulate_reduce_sequence({id, 1, 4}) do
 
 		size = 79
 
@@ -95,7 +108,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 1, 4}, pass_info}		
 	end
 
-	def simulate_reduce_sequence({id, 1, 5}) do
+	defp simulate_reduce_sequence({id, 1, 5}) do
 
 		size = 37
 
@@ -114,7 +127,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 1, 5}, pass_info}		
 	end
 
-	def simulate_reduce_sequence({id, 1, 6}) do
+	defp simulate_reduce_sequence({id, 1, 6}) do
 
 		size = 13
 
@@ -131,7 +144,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 1, 6}, pass_info}		
 	end
 
-	def simulate_reduce_sequence({id, 1, 7}) do
+	defp simulate_reduce_sequence({id, 1, 7}) do
 
 		size = 7
 
@@ -148,7 +161,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 1, 7}, pass_info}		
 	end
 
-	def simulate_reduce_sequence({id, 1, 8}) do
+	defp simulate_reduce_sequence({id, 1, 8}) do
 
 		size = 2
 
@@ -165,7 +178,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 1, 8}, pass_info}		
 	end
 
-	def simulate_reduce_sequence({id, 1, 9}) do
+	defp simulate_reduce_sequence({id, 1, 9}) do
 
 		size = 1
 
@@ -187,7 +200,7 @@ defmodule Hangman.Pass.Server.Stub do
 
 	# Game 2, word is: avocado
 
-	def simulate_reduce_sequence({id, 2, 1}) do
+	defp simulate_reduce_sequence({id, 2, 1}) do
 		
 		size = 23208
 
@@ -207,7 +220,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 2, 1}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 2, 2}) do
+	defp simulate_reduce_sequence({id, 2, 2}) do
 
 		size = 7395
 
@@ -225,7 +238,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 2, 2}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 2, 3}) do
+	defp simulate_reduce_sequence({id, 2, 3}) do
 		
 		size = 48
 
@@ -242,7 +255,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 2, 3}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 2, 4}) do
+	defp simulate_reduce_sequence({id, 2, 4}) do
 
 		size = 23
 
@@ -258,7 +271,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 2, 4}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 2, 5}) do
+	defp simulate_reduce_sequence({id, 2, 5}) do
 
 		size = 10
 
@@ -274,7 +287,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 2, 5}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 2, 6}) do
+	defp simulate_reduce_sequence({id, 2, 6}) do
 
 		size = 4
 
@@ -289,7 +302,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 2, 6}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 2, 7}) do
+	defp simulate_reduce_sequence({id, 2, 7}) do
 
 		size = 1
 
@@ -303,7 +316,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 2, 7}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 2, 8}) do
+	defp simulate_reduce_sequence({id, 2, 8}) do
 
 		size = 0
 
@@ -317,7 +330,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 2, 8}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 2, 9}) do
+	defp simulate_reduce_sequence({id, 2, 9}) do
 
 		size = 0
 
@@ -335,7 +348,7 @@ defmodule Hangman.Pass.Server.Stub do
 
 	# Game 3, word is eruptive
 
-	def simulate_reduce_sequence({id, 3, 1}) do
+	defp simulate_reduce_sequence({id, 3, 1}) do
 		
 		size = 28558
 
@@ -355,7 +368,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 3, 1}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 3, 2}) do
+	defp simulate_reduce_sequence({id, 3, 2}) do
 
 		size = 101
 
@@ -372,7 +385,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 3, 2}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 3, 3}) do
+	defp simulate_reduce_sequence({id, 3, 3}) do
 		
 		size = 45
 
@@ -389,7 +402,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 3, 3}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 3, 4}) do
+	defp simulate_reduce_sequence({id, 3, 4}) do
 
 		size = 14
 
@@ -405,7 +418,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 3, 4}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 3, 5}) do
+	defp simulate_reduce_sequence({id, 3, 5}) do
 
 		size = 5
 
@@ -420,7 +433,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 3, 5}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 3, 6}) do
+	defp simulate_reduce_sequence({id, 3, 6}) do
 
 		size = 1
 
@@ -434,7 +447,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 3, 6}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 3, 7}) do
+	defp simulate_reduce_sequence({id, 3, 7}) do
 
 		size = 0
 
@@ -448,7 +461,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 3, 7}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 3, 8}) do
+	defp simulate_reduce_sequence({id, 3, 8}) do
 
 		size = 0
 
@@ -462,7 +475,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 3, 8}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 3, 9}) do
+	defp simulate_reduce_sequence({id, 3, 9}) do
 
 		size = 0
 
@@ -480,7 +493,7 @@ defmodule Hangman.Pass.Server.Stub do
 
 	# Game 4
 
-	def simulate_reduce_sequence({id, 4, 1}) do
+	defp simulate_reduce_sequence({id, 4, 1}) do
 
 		size = 0
 
@@ -496,7 +509,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 4, 1}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 4, 2}) do
+	defp simulate_reduce_sequence({id, 4, 2}) do
 
 		size = 0
 
@@ -510,7 +523,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 4, 2}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 4, 3}) do
+	defp simulate_reduce_sequence({id, 4, 3}) do
 		
 		size = 0
 
@@ -524,7 +537,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 4, 3}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 4, 4}) do
+	defp simulate_reduce_sequence({id, 4, 4}) do
 
 		size = 0
 
@@ -538,7 +551,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 4, 4}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 4, 5}) do
+	defp simulate_reduce_sequence({id, 4, 5}) do
 
 		size = 0
 
@@ -552,7 +565,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 4, 5}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 4, 6}) do
+	defp simulate_reduce_sequence({id, 4, 6}) do
 
 		size = 0
 
@@ -566,7 +579,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 4, 6}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 4, 7}) do
+	defp simulate_reduce_sequence({id, 4, 7}) do
 
 		size = 0
 
@@ -580,7 +593,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 4, 7}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 4, 8}) do
+	defp simulate_reduce_sequence({id, 4, 8}) do
 
 		size = 0
 
@@ -594,7 +607,7 @@ defmodule Hangman.Pass.Server.Stub do
 		{{id, 4, 8}, pass_info}
 	end
 
-	def simulate_reduce_sequence({id, 4, 9}) do
+	defp simulate_reduce_sequence({id, 4, 9}) do
 
 		size = 0
 
