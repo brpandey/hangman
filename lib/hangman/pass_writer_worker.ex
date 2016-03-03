@@ -36,7 +36,8 @@ defmodule Hangman.Pass.Writer.Worker do
 	end
 
   @doc """
-  Write is an asynchronous call, insert Chunk into ets pass table
+  Write is an asynchronous call.
+  Insert chunks into ets pass table
   """
 
   @spec write(pos_integer, tuple, Chunks.t) :: :ok
