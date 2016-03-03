@@ -7,7 +7,7 @@ defmodule Hangman.Player do
 	defstruct name: "", type: nil,
   round_no: 0,  round: %Hangman.Types.Game.Round{},
   strategy: Strategy.new,
-  game_no: 0, game_summary: nil, game_server_pid: nil, 
+  game_no: 0, games_summary: nil, game_server_pid: nil, 
   event_server_pid: nil,    
   mystery_letter: Game.Server.mystery_letter
   
@@ -41,9 +41,9 @@ defmodule Hangman.Player do
 
   def game_won?(%Player{} = p), do: p.round.status_code == :game_won
   def game_lost?(%Player{} = p), do: p.round.status_code == :game_lost
-  def game_over?(%Player{} = p), do: p.game_summary != nil
+  def game_over?(%Player{} = p), do: p.games_summary != nil
 
-  def game_summary(tuple_list) 
+  def games_summary(tuple_list) 
   when is_list(tuple_list) and is_tuple(Kernel.hd(tuple_list)) do
   	
 		{:ok, avg} = Keyword.fetch(tuple_list, :average_score)
@@ -61,7 +61,7 @@ defmodule Hangman.Player do
 
   def status(%Player{} = p, :game_over) do
   	case game_over?(p) do
-  		true -> {:game_over, p.game_summary}
+  		true -> {:game_over, p.games_summary}
   		false -> {p.round.status_code, p.round.status_text}
   	end
   end

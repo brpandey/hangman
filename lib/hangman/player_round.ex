@@ -167,8 +167,8 @@ defmodule Hangman.Player.Round do
     if (round.final_result != "" and round.final_result != [] and
     	List.first(round.final_result) == {:status, :game_over}) do
 
-    	summary = Player.game_summary(round.final_result)
-    	player = Kernel.put_in(player.game_summary, summary)
+    	summary = Player.games_summary(round.final_result)
+    	player = Kernel.put_in(player.games_summary, summary)
 
     	Events.Server.notify_game_over(player.event_server_pid, player.name, summary)
     end
