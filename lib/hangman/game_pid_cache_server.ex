@@ -45,6 +45,7 @@ defmodule Hangman.Game.Pid.Cache.Server do
   @doc """
   GenServer callback to initialize server process
   """
+
   @callback init(term) :: {}
 	def init(_), do:	{:ok, nil}
   
