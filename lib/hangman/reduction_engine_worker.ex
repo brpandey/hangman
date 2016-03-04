@@ -33,6 +33,19 @@ defmodule Hangman.Reduction.Engine.Worker do
     {:via, :gproc, {:n, :l, {:reduction_engine_worker, worker_id}}}
   end
 
+
+	@doc """
+	Terminate callback
+	No special cleanup
+	"""
+  
+  @callback terminate(term, term) :: :ok
+	def terminate(_reason, _state) do
+		Logger.info "Terminating Reduction Engine Worker Server"
+		:ok
+	end
+  
+
   
   # instead of passing data, may want to call pass engine read data directly
   # leave it for now
