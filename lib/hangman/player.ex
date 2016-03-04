@@ -1,4 +1,12 @@
 defmodule Hangman.Player do
+  @moduledoc """
+  Module handles player abstraction and defines player type
+
+  Implements functionality to start a player, 
+  choose letters, guess letters and words
+
+  Heavily relies upon Player.Round and Round.Action functionality
+  """
 
   alias Hangman.{Player, Player.Round, Player.Events, 
                  Round.Action, Strategy, Game}
@@ -17,7 +25,12 @@ defmodule Hangman.Player do
   @robot :robot
     
   # CREATE
-  
+
+  @doc """
+  Returns new player, validates player type
+  """
+
+  @spec new(String.t, :atom, pid, pid) :: t
   def new(name, type, game_pid, event_pid)
   when is_binary(name) and is_atom(type)
   and is_pid(game_pid) and is_pid(event_pid) do
@@ -31,7 +44,13 @@ defmodule Hangman.Player do
   end
 
   # READ
+  
+  @doc """
+  Returns true or false whether we've arrived at 
+  the last word in possible words set
+  """
 
+  @spec last_word?(t) :: boolean
   def last_word?(%Player{} = p) do
     case Strategy.last_word(p.strategy) do 
       {:guess_word, ""} -> false
@@ -39,16 +58,38 @@ defmodule Hangman.Player do
     end
   end
 
-  def game_won?(%Player{} = p), do: p.round.status_code == :game_won
-  def game_lost?(%Player{} = p), do: p.round.status_code == :game_lost
-  def game_over?(%Player{} = p), do: p.games_summary != nil
+  @doc """
+  Returns true or false whether the game has been won
+  """
 
-  def games_summary(tuple_list) 
-  when is_list(tuple_list) and is_tuple(Kernel.hd(tuple_list)) do
+  @spec game_won?(t) :: boolean
+  def game_won?(%Player{} = p), do: p.round.status_code == :game_won
+
+
+  @doc """
+  Returns true or false whether the game has been lost
+  """
+
+  @spec game_lost?(t) :: boolean
+  def game_lost?(%Player{} = p), do: p.round.status_code == :game_lost
+
+  @doc """
+  Returns true or false whether all games are over
+  """
+
+  @spec games_over?(t) :: boolean
+  def games_over?(%Player{} = p), do: p.games_summary != nil
+
+  @doc """
+  Returns game summary as a string
+  """
+
+  @spec games_summary(Keyword.t) :: String.t
+  def games_summary(args) when is_list(args) and is_tuple(Kernel.hd(args)) do
   	
-		{:ok, avg} = Keyword.fetch(tuple_list, :average_score)
-		{:ok, games} = Keyword.fetch(tuple_list, :games)
-		{:ok, scores} = Keyword.fetch(tuple_list, :results)
+		{:ok, avg} = Keyword.fetch(args, :average_score)
+		{:ok, games} = Keyword.fetch(args, :games)
+		{:ok, scores} = Keyword.fetch(args, :results)
 
 		results = Enum.reduce(scores, "",  fn {k,v}, acc -> 
 			acc <> " (#{k}: #{v})"  end)
@@ -57,18 +98,40 @@ defmodule Hangman.Player do
 		<> "# Games: #{games}, Scores: #{results}"
 	end
 
+  @doc """
+  Returns game round status
+  """
+
+  @spec status(t, :atom) :: tuple
   def status(%Player{} = p, :game_round), do: Round.status(p)
 
-  def status(%Player{} = p, :game_over) do
-  	case game_over?(p) do
-  		true -> {:game_over, p.games_summary}
-  		false -> {p.round.status_code, p.round.status_text}
+  @doc """
+  Returns games over status
+  """
+
+  @spec status(t, :atom) :: tuple
+  def status(%Player{} = p, :games_over) do
+  	case games_over?(p) do
+  		true -> {:games_over, p.games_summary}
+  		false -> status(p, :game_round)
   	end
   end
 
 
 	# UPDATE
 
+  @doc """
+  Routine starts a new player abstraction.
+
+  Notifies player specific event server
+
+  Setups game round.
+
+  If player type is robot, makes first guess, and returns round status
+  If player type is human retrieves letter choices to display
+  """
+
+  @spec start(t) :: {t, tuple}
 	def start(%Player{} = p) do
     if p.game_no >= 1 do
       p = %Player{ name: p.name, type: p.type, 
@@ -104,9 +167,16 @@ defmodule Hangman.Player do
     end
 	end
 
-  # human choose letter
+
+  @doc """
+  Routine for human player type retrieves letter choices
+  Setups new round, retrieves and returns letter choices
+  """
+
+  @spec choose(t, :atom) :: {t, tuple}
   def choose(%Player{} = p, :letter), do: choose(p, p.type, :letter)
 
+  @spec choose(t, :atom, :atom) :: {t, tuple}
 	def choose(%Player{} = p, @human, :letter) do
   	
     fn_run = fn ->
@@ -118,9 +188,16 @@ defmodule Hangman.Player do
     rescue_wrap(p, fn_run)
   end
 
-  # robot guess letter
+
+  @doc """
+  Routine for robot player type guess
+  Setups new round, performs guess, returns round status
+  """
+
+  @spec guess(t) :: {t, tuple}
   def guess(%Player{} = p), do: guess(p, p.type)
 
+  @spec guess(t, :atom) :: {t, tuple}
 	def guess(%Player{} = p, @robot) do
 
     fn_run = fn ->
@@ -132,10 +209,17 @@ defmodule Hangman.Player do
     rescue_wrap(p, fn_run)
 	end
 
+  @doc """
+  Routine for human player type which perform guess of last remaining word
 
-  # human guess last word
+  Note: Somewhat of a hack for a human guess word, 
+  we simplify the human guessing of words to just the last word
+  """
+
+  @spec guess(t, :atom) :: {t, tuple}
   def guess(%Player{} = p, :last_word), do: guess(p, p.type, :last_word)
 
+  @spec guess(t, :atom, :atom) :: {t, tuple}
 	def guess(%Player{} = p, @human, :last_word) do
 
     fn_run = fn ->
@@ -154,10 +238,18 @@ defmodule Hangman.Player do
     rescue_wrap(p, fn_run)
 	end
 
+  @doc """
+  Routine for human player type which perform letter guesses
 
-  # human guess letter
+  Doesn't setup round since it was setup during choose letters stage.
+  Issues action to guess letter and returns round status
+  """
+
+
+  @spec guess(t, String.t, :atom) :: {t, tuple}
   def guess(%Player{} = p, l, :letter), do: guess(p, p.type, l, :letter)
 
+  @spec guess(t, :atom, String.t, :atom) :: {t, tuple}
 	def guess(%Player{} = p, @human, letter, :letter)
   when is_binary(letter) do
 
@@ -171,8 +263,9 @@ defmodule Hangman.Player do
 
   # Delay the running of function object until this method
   # if error, return status code :game_reset along with error message
-  # if not return results of fn_run normally
+  # if not, return results of fn_run normally
 
+  @spec rescue_wrap(t, (() -> {t, tuple} | no_return)) :: {t, tuple}
   defp rescue_wrap(%Player{} = p, fn_run) do
     value = 
       try do 
@@ -186,11 +279,17 @@ defmodule Hangman.Player do
 
   # DELETE
 
+  @doc """
+  Method returns empty player state
+  """
+
+  @spec delete(t) :: t
   def delete(%Player{} = _p), do:	%Player{}
 
 
   # EXTRA
 
+  @spec info(t) :: Keyword.t
   def info(%Player{} = p) do
 
     round = [
@@ -212,6 +311,7 @@ defmodule Hangman.Player do
     ]
   end
 
+  # Allows users to inspect this module type in a controlled manner
   defimpl Inspect do
     import Inspect.Algebra
 

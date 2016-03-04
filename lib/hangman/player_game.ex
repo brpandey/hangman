@@ -1,7 +1,26 @@
 defmodule Hangman.Player.Game do
+  @moduledoc """
+  Module handles relationship between 
+  player, game server and player event server
+
+  Supports both synchronous human and synchronous robot types
+
+  Loads up player specific game components : 
+  dynamic game server, and event server given player
+
+  Manages specific player fsm behaviour (human or robot).
+
+  Wraps fsm game play into an enumerable for easy running.
+  """
 
 	alias Hangman.{Game, Player.FSM}
 
+  @doc """
+  Function run connects all the player specific components together 
+  and runs the player game
+  """
+
+  @spec run(String.t, :atom, [String.t], boolean, boolean) :: :ok
   def run(name, type, secrets, log, display) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
@@ -16,23 +35,28 @@ defmodule Hangman.Player.Game do
     
     name 
     |> setup(secrets, log, display)
-		|> play_rounds_lazy(type)
+		|> rounds_handler(type)
 		|> Stream.each(&fn_display.(&1, display))
 		|> Stream.run
     
   end
   
-  # Start
+  # Start dynamic player worker
+  
+  @spec start_player(String.t, :atom, pid, pid) :: Supervisor.on_start_child
   defp start_player(name, type, game_pid, notify_pid) do
     Hangman.Player.Supervisor.start_child(name, type, game_pid, notify_pid)
   end
   
-  # Setup the game pid and per game event server
+  # Function setup loads the player specific game components
+  # Setup the game server and per player event server
+
+  @spec setup(String.t, [String.t], boolean, boolean) :: tuple
   defp setup(name, secrets, log, display) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) and 
   is_boolean(log) and is_boolean(display) do
     
-    # Grab game pid first
+    # Grab game pid first from game pid cache
 	  game_pid = Game.Pid.Cache.Server.get_server_pid(name, secrets)
     
     # Get event server pid next
@@ -43,10 +67,16 @@ defmodule Hangman.Player.Game do
   end
 
   # Robot round playing!
-	defp play_rounds_lazy({name, game_pid, notify_pid}, 
+  @spec rounds_handler(tuple, :atom) :: Enumerable.t
+	defp rounds_handler({name, game_pid, notify_pid}, 
                        :robot) do
+
+    # Wrap the player fsm game play in a stream
+    # Stream resource returns an enumerable
+
 		Stream.resource(
 			fn -> 
+        # Dynamically start hangman player
         {:ok, ppid} = start_player(name, :robot, game_pid, notify_pid)
         ppid
 				end,
@@ -57,13 +87,14 @@ defmodule Hangman.Player.Game do
             IO.puts "\n#{reply}"
             {:halt, ppid}
           
-					# All other game states :game_keep_guessing ... :game_over
+					# All other game states :game_keep_guessing ... :games_over
 					{_, reply} -> {[reply], ppid}							
 				end
         
 			end,
 			
 			fn ppid -> 
+        # Be a good functional citizen and cleanup server resources
         Hangman.Player.Events.Server.stop(notify_pid)
         FSM.stop(ppid) 
       end
@@ -71,9 +102,15 @@ defmodule Hangman.Player.Game do
 	end
 
   # Human round playing!
-	defp play_rounds_lazy({name, game_pid, notify_pid}, :human) do
+  @spec rounds_handler(tuple, :atom) :: Enumerable.t
+	defp rounds_handler({name, game_pid, notify_pid}, :human) do
+
+    # Wrap the player fsm game play in a stream
+    # Stream resource returns an enumerable
+
 		Stream.resource(
 			fn -> 
+        # Dynamically start hangman player
         {:ok, ppid} = start_player(name, :human, game_pid, notify_pid)
         {ppid, []}
 				end,
@@ -115,15 +152,17 @@ defmodule Hangman.Player.Game do
             {code, reply} = FSM.socrates_proceed(ppid)
             {[reply], {ppid, code}}          
 
-          :game_over -> 
+          :games_over -> 
             {:halt, ppid}
 
-            :game_over
+            #:games_over
 
 				end
 			end,
 			
+                    
 			fn ppid -> 
+        # Be a good functional citizen and cleanup server resources
         Hangman.Player.Events.Server.stop(notify_pid)
         FSM.stop(ppid) 
       end

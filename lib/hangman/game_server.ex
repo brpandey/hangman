@@ -335,7 +335,7 @@ defmodule Hangman.Game.Server do
   
   @callback terminate(term, term) :: :ok
 	def terminate(_reason, _state) do
-		#Logger.info "Terminating Hangman Game Server"
+		Logger.info "Terminating Hangman Game Server"
 		#state = %State{}
 		:ok
 	end
@@ -479,7 +479,7 @@ defmodule Hangman.Game.Server do
     
 		results = Enum.zip(state.secrets, state.scores)
     
-		[status: :game_over, average_score: average_score, 
+		[status: :games_over, average_score: average_score, 
 		 games: games_played, results: results]
 	end
   
