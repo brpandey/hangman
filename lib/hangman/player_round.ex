@@ -1,10 +1,23 @@
 defmodule Hangman.Player.Round do
+  @moduledoc """
+  Module to implement player game round abstraction.
+
+  Works in conjuction with Hangman.Action and Hangman.Player
+  to orchestrate actual round game play.
+
+  Basic round functionality includes as setup, guess, update, status
+  """
 
 	alias Hangman.{Game, Pass, Strategy, Strategy.Options, 
                  Types.Game.Round, Player, Player.Events}
 
 	# READ
 
+  @doc """
+  Returns round context based on results of last guess
+  """
+
+  @spec context(Player.t) :: tuple | no_return
 	def context(%Player{} = player) do
 
   	case player.round.result_code do
@@ -23,6 +36,11 @@ defmodule Hangman.Player.Round do
   	end
   end
 
+  @doc """
+  Returns round status tuple
+  """
+
+  @spec status(Player.t) :: tuple
   def status(%Player{} = player) do
 		{player.round.status_code, player.round.status_text}
 	end
@@ -31,8 +49,21 @@ defmodule Hangman.Player.Round do
   
   # Setup the game play round
 
+  @doc """
+  Setups game play round
+
+  For game start stage, retrieves secret length from game server
+  uses secret length to filter possible hangman words from pass server
+
+  On subsequent rounds, generates a reduce key based on the result of the
+  last guess to filter possible hangman words from word pass server
+  """
+
+  @spec setup(Player.t) :: Player.t
   def setup(%Player{} = player), do: setup(player, context(player))
 
+
+  @spec setup(Player.t, :atom) :: Player.t
   def setup(%Player{} = player, :game_start) do
 
     name = player.name
@@ -53,7 +84,7 @@ defmodule Hangman.Player.Round do
     setup(player, context)
   end
 
-
+  @spec setup(Player.t, tuple) :: Player.t
   def setup(%Player{} = player, context) 
   when is_nil(context) == false do
 
@@ -80,8 +111,11 @@ defmodule Hangman.Player.Round do
   end
 
 
-  # Fill in round specific params into choices text
+  @doc """
+  Interjects round specific parameters into choices text
+  """
 
+  @spec augment_choices(Player.t, tuple) :: tuple
   def augment_choices(%Player{} = player, {code, choices_text})
   when is_binary(choices_text) do
     
@@ -96,8 +130,15 @@ defmodule Hangman.Player.Round do
     {code, text}
   end
 
-  # guess functions
 
+  @doc """
+  Issues a client guess (either letter or word) against Game Server.
+  Notifies player events server of guess results.
+
+  Returns received round data
+  """
+
+  @spec guess(Player.t, tuple) :: struct
   def guess(%Player{} = player, {:guess_letter, letter})
   when is_binary(letter) do
     
@@ -118,7 +159,7 @@ defmodule Hangman.Player.Round do
       		 status_text: text, final_result: final}
   end
 
-
+  @spec guess(Player.t, tuple) :: struct
   def guess(%Player{} = player, {:guess_word, word})
   when is_binary(word) do
 
@@ -139,26 +180,38 @@ defmodule Hangman.Player.Round do
       		 status_text: text, final_result: final}      
   end
 
-  # update round functions
 
+  @doc """
+  Updates player abstraction with round results.  If games are over, updates
+  games summary and notifies player events server.
+
+  Under human guessing, player round update will update the strategy abstraction
+  with the guess particulars.  If robot guessing, the strategy abstraction will also
+  be updated.
+  """
+
+  @spec update(Player.t, struct, tuple) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_letter, letter}) do
 
     strategy = Strategy.update(player.strategy, {:guess_letter, letter})
 	  update(player, round, strategy)
   end
 
+  @spec update(Player.t, struct, tuple) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_word, word}) do
 
     strategy = Strategy.update(player.strategy, {:guess_word, word})
 	  update(player, round, strategy)
   end
 
+  @spec update(Player.t, struct, Strategy.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, %Strategy{} = strategy) do
 
     player = Kernel.put_in(player.strategy, strategy)
 	  update(player, round)
   end
 
+  @spec update(Player.t, struct) :: Player.t
   def update(%Player{} = player, %Round{} = round) do
 
   	player = Kernel.put_in(player.round, round)
@@ -180,6 +233,9 @@ defmodule Hangman.Player.Round do
 
   # Helper
 
+  # Returns round relevant data parameters
+
+  @spec params(Player.t) :: tuple
   defp params(%Player{} = player) do
 
   	name = player.name

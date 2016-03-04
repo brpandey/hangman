@@ -5,8 +5,8 @@ defmodule Hangman.Strategy do
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
 
-  @opaque t :: %__MODULE__{}
-  	
+  @type t :: %__MODULE__{}
+
   # English letter frequency of english letters (Wikipedia)
 	@eng_letter_freq			%{
 		"a" => 8.167, "b" => 1.492, "c" => 2.782, "d" => 4.253, "e" => 12.702, 
