@@ -20,10 +20,10 @@ defmodule Hangman.Pass.Writer.Pool.Supervisor do
 
   @doc """
   For each worker in pool, creates a Writer Worker process
-  to be supervised
+  specification to be supervised once supervisor started
   """
 
-  @spec init(tuple) :: {:ok, tuple}
+  @callback init(tuple) :: {:ok, tuple}
   def init({pool_size}) do
 
     # Use list comp to generate worker specification
