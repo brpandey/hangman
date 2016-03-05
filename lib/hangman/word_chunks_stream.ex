@@ -1,8 +1,27 @@
 defmodule Hangman.Word.Chunks.Stream do
+  @moduledoc """
+  Module implements transform routine to take
+  a grouped stream and return a chunked stream
+
+  Similiar functionality to transform handlers in
+  Dictionary.File but more closely associated with chunks
+  and chunking
+  """
 
 	# A chunk contains at most 2_000 words
 	@chunk_words_size 2_000
 
+  @doc """
+  Transforms grouped word stream of the form 
+  {length_key, word, group_index}
+
+  to chunked word stream of the form
+  {[word1, word2, ..., wordN], word_count}
+
+  Returns stream enumerable
+  """
+
+  @spec transform(Enumerable.t, :atom, :atom) :: Enumerable.t
   def transform(stream, :grouped, :chunked) do
 
 	  # lambda to split stream into chunks based on generated chunk id
@@ -28,6 +47,9 @@ defmodule Hangman.Word.Chunks.Stream do
 		# B) Example of chunk, before normalization
 		#	[{6, "mugful", 8509}, {6, "muggar", 8510}, {6, "mugged", 8511},
 		#	 {6, "muggee", ...}, {6, ...}, {...}, ...]
+
+    # Does a Enum.map_reduce, in that the length_key is the acc
+    # and the word because the mapped value that is enumerated out
 
 		fn_normalize_chunks = fn 
 			chunk -> 

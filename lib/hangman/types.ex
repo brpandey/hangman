@@ -1,6 +1,7 @@
 defmodule Hangman.Types do
   @moduledoc """
-  Catch all module for types used within Hangman application
+  Catch all module for types used within Hangman application 
+  not already defined within modules
   """
 
   defmodule Guess do
@@ -24,7 +25,7 @@ defmodule Hangman.Types do
 
 	defmodule Reduction.Pass do
     @moduledoc """
-    Defines reduction pass
+    Defines reduction pass and pass type
     """
 
     defstruct size: 0, tally: %{}, possible: "", last_word: ""
@@ -42,7 +43,7 @@ defmodule Hangman.Types do
 
   defmodule Game.Round do
     @moduledoc """
-    Defines Game Round
+    Defines game round and game round type
     """
 
   	defstruct seq_no: 0,

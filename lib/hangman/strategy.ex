@@ -1,4 +1,13 @@
 defmodule Hangman.Strategy do
+  @moduledoc """
+  Handles letter guessing strategy for player
+
+  For robot player type, retrieves best letter, considering english
+  letter frequencies and letter tally counts
+
+  For human player type, retries a set of top letter choices, to
+  be presented to human to manually choose
+  """
 
   alias Hangman.{Strategy, Counter, Types.Reduction.Pass, Types.Guess}
 
@@ -22,11 +31,19 @@ defmodule Hangman.Strategy do
 	@top_threshhold		2
 
   # CREATE
+  @doc """
+  Returns a new strategy
+  """
 
   @spec new :: t
 	def new, do: %Strategy{}
 
   # READ
+
+  @doc """
+  If we have reached the last possible hangman word
+  return it so we can guess it
+  """
 
   @spec last_word(t) :: Guess.t
   def last_word(%Strategy{} = strategy) do
@@ -37,15 +54,25 @@ defmodule Hangman.Strategy do
     end
   end
 
+  @doc """
+  Returns a list of guessed letters up to this point
+  """
+
   @spec get_guessed(t) :: list
   def get_guessed(%Strategy{} = strategy) do
     MapSet.to_list(strategy.guessed_letters)
   end
 
+
   @spec possible_words(t) :: String.t
-  def possible_words(%Strategy{} = strategy), do: strategy.pass.possible
+  defp possible_words(%Strategy{} = strategy), do: strategy.pass.possible
 
   # UPDATE
+
+  @doc """
+  Returns best letter guess as deemed by strategy heuristics
+  """
+
   @spec make_guess(t) :: result
   def make_guess(%Strategy{} = strategy) do
   	case strategy.pass.size do 
@@ -79,6 +106,10 @@ defmodule Hangman.Strategy do
     {strategy, strategy.guess}
   end
 
+  @doc """
+  Updates strategy with guess particulars
+  """
+
   @spec update(t, Guess.t) :: t
   def update(%Strategy{} = strategy, {:guess_letter, guessed_letter})
   when is_binary(guessed_letter) do
@@ -97,6 +128,10 @@ defmodule Hangman.Strategy do
     %Strategy{strategy | guess: {:guess_word, last_word}}
   end
 
+  @doc """
+  Updates strategy with pass data
+  """
+
   @spec update(t, Pass.t) :: t
   def update(%Strategy{} = strategy, %Pass{} = pass) do
     prior = strategy.guess
@@ -104,6 +139,9 @@ defmodule Hangman.Strategy do
   end
 
   # Helpers
+  @doc """
+  Returns most common n letters along with their counts
+  """
 
   @spec most_common_letter_and_counts(t, pos_integer) :: Keyword.t
   def most_common_letter_and_counts(%Strategy{} = strategy, n) 
@@ -113,6 +151,10 @@ defmodule Hangman.Strategy do
     Counter.most_common(counter, n)
   end
 
+  @doc """
+  Returns most common n letters
+  """
+
   @spec most_common_letter(t, pos_integer) :: list
   def most_common_letter(%Strategy{} = strategy, n) 
   when is_number(n) and n > 0 do
@@ -120,6 +162,11 @@ defmodule Hangman.Strategy do
 
     Counter.most_common_key(counter, n)
   end
+
+  @doc """
+  Validates letter is within the top strategy letter choices,
+  if not, picks the top letter as deemed by letter frequency
+  """
 
   @spec letter_in_most_common(t, pos_integer, String.t) :: Guess.t
   def letter_in_most_common(%Strategy{} = strategy, n, letter) 
@@ -134,6 +181,11 @@ defmodule Hangman.Strategy do
     
     {:guess_letter, letter}
   end
+
+  @doc """
+  Retrieves strategy letter choices options text.  Denotes
+  strategy letter pick with an asterisk
+  """
 
   @spec choose_letters(t, pos_integer) :: {:atom, String.t}
   def choose_letters(%Strategy{} = strategy, n)
@@ -180,14 +232,15 @@ defmodule Hangman.Strategy do
 
   @doc """
   Method implements most common letter retrieval strategy with a twist
-  Get the first letter with the highest frequency for when the current possible
-  hangman word set space is > "small". Twist is added when we combine the english 
-  language letter relative frequency.
+  Gets the first letter with the highest frequency for when the 
+  current possible hangman word set space is > "small". 
+  Twist is added when we combine the english language letter relative 
+  frequency. For the cases where the word set is less than small, 
+  only take the letter whose frequencies are less than or equal to half 
+  the possible hagman word pass size
   
-  For the cases where the word set is less than small, only take the letter whose
-  frequencies are less than or equal to half the possible hagman word pass size
-  
-  E.g.for size 10, the letter counts would need to be 5 or lower to be chosen
+  E.g.for size 10, the letter counts would need to be 5 
+  or lower to be chosen
   
   Doesn't handle tie between letters
   """
@@ -199,36 +252,47 @@ defmodule Hangman.Strategy do
 
   @spec do_retrieve_best_letter(Counter.t, integer) :: String.t
   defp do_retrieve_best_letter(tally, pass_size) do
-
+    
     if Counter.empty?(tally) do
       raise Hangman.Error, 
       "Word not in dictionary, no words left (tally is empty)"
     end
-
+    
     cond do
       pass_size > @word_set_size.small ->
-
+        
         [{letter1, count1}, {letter2, count2}] = Counter.most_common(tally, 2)
-
+        
         size_1 = ( 1 + @eng_letter_freq[letter1] ) * count1
         size_2 = ( 1 + @eng_letter_freq[letter2] ) * count2
-
+        
         if size_2 > size_1, do: letter2, else: letter1
-
       true ->
-        tuple_list = for {k,v} <- Counter.items(tally), v <= pass_size/2, do: {k,v}
 
-        if Kernel.length(tuple_list) == 0 do 
-          tuple_list = for {k,v} <- Counter.items(tally), do: {k,v}
+        # counter is the generator, pass_size/2 is filter guard
+        # grab those key value pairs where value is <= 1/2 pass size
+
+        # returns pairs list
+        kv_list =
+        for {k,v} <- Counter.items(tally), v <= pass_size/2, do: {k,v}
+        
+            
+        # if no pairs in our list, remove the filter guard and run again
+        if Kernel.length(kv_list) == 0 do
+          kv_list = for {k,v} <- Counter.items(tally), do: {k,v}
         end
-
-        tally = Counter.new(tuple_list)
-
+        
+        # retrieve letter with highest frequency count
+        tally = Counter.new(kv_list)
         [letter] = Counter.most_common_key(tally, 1)
         
         letter
     end
   end
+
+  @doc """
+  Returns strategy information
+  """
 
   @spec info(t) :: Keyword.t
   def info(%Strategy{} = s) do
@@ -252,6 +316,7 @@ defmodule Hangman.Strategy do
     [guessed: guessed, guess: s.guess, pass: pass]
   end
 
+  # Allows users to inspect this module type in a controlled manner
   defimpl Inspect do
     import Inspect.Algebra
 

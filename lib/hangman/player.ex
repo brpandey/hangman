@@ -290,7 +290,7 @@ defmodule Hangman.Player do
 
 
   # EXTRA
-
+  # Returns player information 
   @spec info(t) :: Keyword.t
   def info(%Player{} = p) do
 
