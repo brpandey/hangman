@@ -1,7 +1,7 @@
 defmodule Hangman.Pass.Writer do
   
   @moduledoc """
-  Module implements pass writer functionality.
+  Module implements words pass writer functionality.
   Write load is handled through pool.
   Distributes write request based on pass key id attribute (name)
   Pool size writer workers are started up as part of writer pool

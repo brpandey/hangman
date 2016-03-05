@@ -1,6 +1,10 @@
 defmodule Hangman.Strategy.Options do
 
-  def reduce_key(%Hangman.Strategy{} = _strategy, 
+  alias Hangman.Strategy, as: Strategy
+  alias Hangman.Types.Reduction, as: Reduction
+
+  @spec reduce_key(Strategy.t, tuple) :: Reduction.Key
+  def reduce_key(%Strategy{} = _strategy, 
                  {:game_start, secret_length} = _context) do
     
     Keyword.new([
@@ -9,7 +13,8 @@ defmodule Hangman.Strategy.Options do
     ])
   end
   
-  def reduce_key(%Hangman.Strategy{ guessed_letters: guessed } = _strategy, 
+  @spec reduce_key(Strategy.t, tuple) :: Reduction.Key
+  def reduce_key(%Strategy{ guessed_letters: guessed } = _strategy, 
                  {_, :correct_letter, guess, _pattern, 
                   _mystery_letter} = context) do
     
@@ -22,7 +27,8 @@ defmodule Hangman.Strategy.Options do
     ])
   end
   
-  def reduce_key(%Hangman.Strategy{ guessed_letters: guessed } = _strategy,
+  @spec reduce_key(Strategy.t, tuple) :: Reduction.Key
+  def reduce_key(%Strategy{ guessed_letters: guessed } = _strategy,
                  {_, :incorrect_letter, guess} = context) do
     
     regex = regex_match_key(context, guessed)
@@ -35,6 +41,7 @@ defmodule Hangman.Strategy.Options do
   end
   
   # Helper methods
+  @spec regex_match_key(tuple, MapSet.t) :: Regex.t
   def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
     pattern = String.downcase(pattern)
     
@@ -45,6 +52,7 @@ defmodule Hangman.Strategy.Options do
     Regex.compile!("^" <> updated_pattern <> "$")
   end
   
+  @spec regex_match_key(tuple, MapSet.t) :: Regex.t
   def regex_match_key({_, :incorrect_letter, incorrect_letter}, _guessed) do
     
     # If "E" was the incorrect letter, the pattern would be "^[^E]*$"

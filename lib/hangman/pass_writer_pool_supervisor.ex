@@ -3,7 +3,7 @@ defmodule Hangman.Pass.Writer.Pool.Supervisor do
 
   @moduledoc """
   Module is a Supervisor that supervises a pool
-  of Pass Writer Workers
+  of pass writer workers
   """
 
   @name __MODULE__
@@ -19,7 +19,7 @@ defmodule Hangman.Pass.Writer.Pool.Supervisor do
   end
 
   @doc """
-  For each worker in pool, creates a Writer Worker process
+  For each worker in pool, creates a writer worker process
   specification to be supervised once supervisor started
   """
 

@@ -3,7 +3,12 @@ defmodule Hangman.Pass.Writer.Worker do
 
   @moduledoc """
   Module is a GenServer that implements writer worker functionality.
-  Specifically, performs async write into pass ets table
+  Specifically, module is a write operation specific module that 
+  performs async write into pass ets table.
+
+  If write operation fails for whatever reason, doesn't bring down
+  the reads and table-owning pass ets owning process.  Hence the 
+  separation.
   """
   
   require Logger

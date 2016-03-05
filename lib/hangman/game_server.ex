@@ -17,6 +17,8 @@ defmodule Hangman.Game.Server do
 		secrets: [],	patterns: [], scores: [],
 		max_wrong: 0, correct_letters: HashSet.new, 
 		incorrect_letters: HashSet.new, incorrect_words: HashSet.new
+
+    @type t :: %__MODULE__{}
 	end
   
 	@vsn "0"
@@ -346,7 +348,7 @@ defmodule Hangman.Game.Server do
   
   # Loads a new game state given new secrets
   
-  @spec do_load_game(String.t, pos_integer) :: struct()
+  @spec do_load_game(String.t, pos_integer) :: State.t
 	defp do_load_game(secret, max_wrong) when is_binary(secret) do
 		pattern = String.duplicate(@mystery_letter, String.length(secret))
     
@@ -354,7 +356,7 @@ defmodule Hangman.Game.Server do
 			     pattern: pattern, max_wrong: max_wrong}
 	end
   
-  @spec do_load_game([String.t], pos_integer) :: struct()
+  @spec do_load_game([String.t], pos_integer) :: State.t
   defp do_load_game(secrets, max_wrong) when is_list(secrets) do
 		#initialize the list of secrets to be uppercase 
 		#initialize the list of patterns to fit the secrets length
@@ -370,7 +372,7 @@ defmodule Hangman.Game.Server do
   
   # Helper function to check current game status code
   
-  @spec check_game_status_code(struct) :: {}
+  @spec check_game_status_code(State.t) :: {}
 	defp check_game_status_code(state) do
 		cond do
 			state.secret == "" -> @game_status_codes[:game_reset]
@@ -388,7 +390,7 @@ defmodule Hangman.Game.Server do
 
   # Helper function to return game status text
 
-  @spec check_game_status(String.t, struct) :: {}
+  @spec check_game_status(String.t, State.t) :: {}
   defp check_game_status(name, state) do
 
 		case check_game_status_code(state) do
@@ -407,7 +409,7 @@ defmodule Hangman.Game.Server do
   
   # Helper function to return current number of wrong guesses
 
-  @spec get_num_wrong_guesses(struct) :: non_neg_integer
+  @spec get_num_wrong_guesses(State.t) :: non_neg_integer
 	defp get_num_wrong_guesses(state) do
 		Set.size(state.incorrect_letters) + 
 		Set.size(state.incorrect_words)
@@ -415,7 +417,7 @@ defmodule Hangman.Game.Server do
 
   # Helper function to return current game score
   
-  @spec get_score(struct) :: integer
+  @spec get_score(State.t) :: integer
 	defp get_score(state) do
     
     case check_game_status_code(state) do
@@ -443,7 +445,7 @@ defmodule Hangman.Game.Server do
   # If there are games left to play, updates state and transitions
   # to next game 
   
-  @spec check_all_games_over(([] | [String.t]), struct, term) :: {}
+  @spec check_all_games_over(([] | [String.t]), State.t, term) :: {}
   
 	defp check_all_games_over([], _state, data), do: {%State{}, data} 
   
@@ -471,7 +473,7 @@ defmodule Hangman.Game.Server do
 
   # Returns games summary status for when all games are over
   
-  @spec all_games_over_status(struct) :: Keyword.t
+  @spec all_games_over_status(State.t) :: Keyword.t
 	defp all_games_over_status(state) do
 		total_score = Enum.reduce(state.scores, 0, &(&1 + &2))
 		games_played = state.current + 1
@@ -485,7 +487,7 @@ defmodule Hangman.Game.Server do
   
   # Saves result from current game, loads next game
   
-  @spec save_and_load_next_game(struct) :: struct
+  @spec save_and_load_next_game(State.t) :: State.t
 	defp save_and_load_next_game(state) do
 		'''
 		First, do game archival steps

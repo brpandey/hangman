@@ -1,6 +1,10 @@
 defmodule Hangman.Reduction.Engine.Worker do
   use GenServer
 
+  @moduledoc """
+  Module is a GenServer that implements worker word reducer functionality.
+  """
+
   require Logger
 
   @name __MODULE__
@@ -10,15 +14,24 @@ defmodule Hangman.Reduction.Engine.Worker do
   alias Hangman.Pass.Server, as: PassServer
   alias Hangman.Pass.Writer, as: PassWriter
 
+  @doc """
+  GenServer start_link wrapper function
+  """
+  
+  @spec start_link(pos_integer) :: GenServer.on_start
   def start_link(worker_id) do
     Logger.debug "Starting Engine Reduce Worker #{worker_id}"
 
     args = {}
     options = [name: via_tuple(worker_id)]
-
     GenServer.start_link(@name, args, options)
   end
-
+  
+  @doc """
+  Primary worker function, returns results of reduction pass
+  """
+  
+  @spec reduce_and_store(pos_integer, tuple, Regex.t, MapSet.t) :: Pass.t
   def reduce_and_store(worker_id, pass_key, regex_key, %MapSet{} = exc) do
     l = [worker_id, pass_key, regex_key, exc]
 
@@ -29,6 +42,9 @@ defmodule Hangman.Reduction.Engine.Worker do
                    {:reduce_and_store, pass_key, regex_key, exc})
   end
 
+  # Used to register / lookup process in process registry via gproc
+
+  @spec via_tuple(String.t) :: tuple
   defp via_tuple(worker_id) do
     {:via, :gproc, {:n, :l, {:reduction_engine_worker, worker_id}}}
   end
@@ -44,22 +60,35 @@ defmodule Hangman.Reduction.Engine.Worker do
 		Logger.info "Terminating Reduction Engine Worker Server"
 		:ok
 	end
-  
 
   
-  # instead of passing data, may want to call pass engine read data directly
-  # leave it for now
+  @doc """
+  GenServer callback function to handle reduce and store request
+  """
+
+  @callback handle_call(:atom, tuple, Regex.t, MapSet.t) :: tuple
   def handle_call({:reduce_and_store, pass_key, regex_key, exclusion}, 
                   _from, {}) do
 
     pass_info = do_reduce_and_store(pass_key, regex_key, exclusion)
     {:reply, pass_info, {}}
   end
-  
 
+  @docp """
+  Primary worker function which retrieves current pass chunks data,
+  filters words with regex, tallies reduced word stream, creates new
+  Chunk abstraction and stores it back into words pass table
+
+  If pass size happens to be small enough, will also return
+  remaining hangman possible words left to aid in guess selection. 
+
+  Returns pass data
+  """
+
+  @spec do_reduce_and_store(tuple, Regex.t, MapSet.t) :: Pass.t
   defp do_reduce_and_store(pass_key, regex_key, %MapSet{} = exclusion) do
 
-
+    # Request chunks data from Pass Server
     data = %Chunks{} = PassServer.read_chunks(pass_key)
 
     length_key = Chunks.get_key(data)
@@ -71,7 +100,7 @@ defmodule Hangman.Reduction.Engine.Worker do
     filtered_stream = data 
     |> Chunks.get_words_lazy |> Stream.filter(&regex_match?(&1, regex_key))
     
-		# Populate counter object, now that we've created the new filtered chunks
+		# Populate counter object, now that we've created new filtered chunks
     tally = Counter.new |> Counter.add_words(filtered_stream, exclusion)
     
 		# Create new Chunks abstraction with filtered word stream
@@ -81,11 +110,15 @@ defmodule Hangman.Reduction.Engine.Worker do
 
     possible_txt = ""
     last_word = ""
+    
+    # let's collect possible hangman words if pass size is small enough
+    # and return them for guessing aid
 
 		# if down to 1 word, return the last word
 		cond do
       pass_size == 0 -> ""
-#        raise "Word not in dictionary, pass size can't be zero"
+      # Note: lets strategy handle error higher up, don't crash process
+      # raise "Word not in dictionary, pass size can't be zero"
 
 			pass_size == 1 -> 
 				last_word = Chunks.get_words_lazy(new_data)
@@ -93,7 +126,10 @@ defmodule Hangman.Reduction.Engine.Worker do
 
       pass_size > 1 and pass_size < @possible_words_left ->
         l = Chunks.get_words_lazy(new_data) |> Enum.take(pass_size)
-        possible_txt = "Possible hangman words left, #{pass_size} words: #{inspect l}"
+
+        possible_txt = 
+            "Possible hangman words left, #{pass_size} words: #{inspect l}"
+
         last_word = ""
 
 			pass_size > 1 -> last_word = ""
@@ -108,6 +144,9 @@ defmodule Hangman.Reduction.Engine.Worker do
            possible: possible_txt, last_word: last_word}    
   end
   
+
+  # Helper function to perform actual regex match
+  @spec regex_match?(String.t, Regex.t) :: boolean
 	defp regex_match?(word, compiled_regex)
   when is_binary(word) and is_nil(compiled_regex) == false do
     Regex.match?(compiled_regex, word)

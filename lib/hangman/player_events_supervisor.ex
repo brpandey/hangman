@@ -40,7 +40,7 @@ defmodule Hangman.Player.Events.Supervisor do
   For each worker instantiated through start_child, 
   defines the worker specification to be supervised.
 
-  Supervises the player events server
+  Supervises each player events server
   """
   
   @callback init(term) :: {:ok, tuple}

@@ -9,7 +9,12 @@ defmodule Hangman.Player.Round do
   """
 
 	alias Hangman.{Game, Pass, Strategy, Strategy.Options, 
-                 Types.Game.Round, Player, Player.Events}
+                 Types.Game.Round, Types.Guess, Player, Player.Events}
+
+  @type status_code :: :atom
+  @type status_txt :: String.t
+
+  @type result :: {status_code, status_txt}
 
 	# READ
 
@@ -40,7 +45,7 @@ defmodule Hangman.Player.Round do
   Returns round status tuple
   """
 
-  @spec status(Player.t) :: tuple
+  @spec status(Player.t) :: result
   def status(%Player{} = player) do
 		{player.round.status_code, player.round.status_text}
 	end
@@ -138,7 +143,7 @@ defmodule Hangman.Player.Round do
   Returns received round data
   """
 
-  @spec guess(Player.t, tuple) :: struct
+  @spec guess(Player.t, Guess.t) :: Round.t
   def guess(%Player{} = player, {:guess_letter, letter})
   when is_binary(letter) do
     
@@ -159,7 +164,7 @@ defmodule Hangman.Player.Round do
       		 status_text: text, final_result: final}
   end
 
-  @spec guess(Player.t, tuple) :: struct
+  @spec guess(Player.t, Guess.t) :: Round.t
   def guess(%Player{} = player, {:guess_word, word})
   when is_binary(word) do
 
@@ -190,28 +195,28 @@ defmodule Hangman.Player.Round do
   be updated.
   """
 
-  @spec update(Player.t, struct, tuple) :: Player.t
+  @spec update(Player.t, Round.t, Guess.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_letter, letter}) do
 
     strategy = Strategy.update(player.strategy, {:guess_letter, letter})
 	  update(player, round, strategy)
   end
 
-  @spec update(Player.t, struct, tuple) :: Player.t
+  @spec update(Player.t, Round.t, Guess.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_word, word}) do
 
     strategy = Strategy.update(player.strategy, {:guess_word, word})
 	  update(player, round, strategy)
   end
 
-  @spec update(Player.t, struct, Strategy.t) :: Player.t
+  @spec update(Player.t, Round.t, Strategy.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, %Strategy{} = strategy) do
 
     player = Kernel.put_in(player.strategy, strategy)
 	  update(player, round)
   end
 
-  @spec update(Player.t, struct) :: Player.t
+  @spec update(Player.t, Round.t) :: Player.t
   def update(%Player{} = player, %Round{} = round) do
 
   	player = Kernel.put_in(player.round, round)

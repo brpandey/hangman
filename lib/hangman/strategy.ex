@@ -1,11 +1,12 @@
 defmodule Hangman.Strategy do
 
-  alias Hangman.{Strategy, Counter, Types.Reduction.Pass}
+  alias Hangman.{Strategy, Counter, Types.Reduction.Pass, Types.Guess}
 
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
 
   @type t :: %__MODULE__{}
+  @type result :: {t, Guess.t}
 
   # English letter frequency of english letters (Wikipedia)
 	@eng_letter_freq			%{
@@ -22,12 +23,12 @@ defmodule Hangman.Strategy do
 
   # CREATE
 
-	def new(), do: %Strategy{}
+  @spec new :: t
+	def new, do: %Strategy{}
 
   # READ
 
-
-
+  @spec last_word(t) :: Guess.t
   def last_word(%Strategy{} = strategy) do
     if strategy.pass.size == 1 do
       {:guess_word, strategy.pass.last_word}
@@ -36,14 +37,16 @@ defmodule Hangman.Strategy do
     end
   end
 
+  @spec get_guessed(t) :: list
   def get_guessed(%Strategy{} = strategy) do
     MapSet.to_list(strategy.guessed_letters)
   end
 
+  @spec possible_words(t) :: String.t
   def possible_words(%Strategy{} = strategy), do: strategy.pass.possible
 
   # UPDATE
-
+  @spec make_guess(t) :: result
   def make_guess(%Strategy{} = strategy) do
   	case strategy.pass.size do 
   		0 ->	raise Hangman.Error, "Word not in dictionary"
@@ -76,23 +79,25 @@ defmodule Hangman.Strategy do
     {strategy, strategy.guess}
   end
 
-  def update(%Strategy{} = strategy, {:guess_letter, guessed_letter}) 
-    when is_binary(guessed_letter) do
+  @spec update(t, Guess.t) :: t
+  def update(%Strategy{} = strategy, {:guess_letter, guessed_letter})
+  when is_binary(guessed_letter) do
 
-      guessed_letters = MapSet.put(strategy.guessed_letters, guessed_letter)
-          
-      strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
-      strategy = Kernel.put_in(strategy.guess, 
-                                  {:guess_letter, guessed_letter}) 
-
-      strategy
+    guessed_letters = MapSet.put(strategy.guessed_letters, guessed_letter)
+    
+    strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
+    strategy = Kernel.put_in(strategy.guess, {:guess_letter, guessed_letter}) 
+    
+    strategy
   end
 
-  def update(%Strategy{} = strategy, {:guess_word, last_word}) 
-    when is_binary(last_word) do
+  @spec update(t, Guess.t) :: t
+  def update(%Strategy{} = strategy, {:guess_word, last_word})
+  when is_binary(last_word) do
     %Strategy{strategy | guess: {:guess_word, last_word}}
   end
 
+  @spec update(t, Pass.t) :: t
   def update(%Strategy{} = strategy, %Pass{} = pass) do
     prior = strategy.guess
     %Strategy{ strategy | pass: pass, prior_guess: prior}
@@ -100,6 +105,7 @@ defmodule Hangman.Strategy do
 
   # Helpers
 
+  @spec most_common_letter_and_counts(t, pos_integer) :: Keyword.t
   def most_common_letter_and_counts(%Strategy{} = strategy, n) 
   when is_number(n) and n > 0 do
     counter = strategy.pass.tally
@@ -107,6 +113,7 @@ defmodule Hangman.Strategy do
     Counter.most_common(counter, n)
   end
 
+  @spec most_common_letter(t, pos_integer) :: list
   def most_common_letter(%Strategy{} = strategy, n) 
   when is_number(n) and n > 0 do
     counter = strategy.pass.tally
@@ -114,7 +121,7 @@ defmodule Hangman.Strategy do
     Counter.most_common_key(counter, n)
   end
 
-
+  @spec letter_in_most_common(t, pos_integer, String.t) :: Guess.t
   def letter_in_most_common(%Strategy{} = strategy, n, letter) 
   when is_number(n) and n > 0 and is_binary(letter) do
 
@@ -128,7 +135,7 @@ defmodule Hangman.Strategy do
     {:guess_letter, letter}
   end
 
-
+  @spec choose_letters(t, pos_integer) :: {:atom, String.t}
   def choose_letters(%Strategy{} = strategy, n)
   when is_number(n) and n > 0 do
     
@@ -136,9 +143,9 @@ defmodule Hangman.Strategy do
       {:guess_word, ""} ->
         
         # Return top 5 letter, count pairs if possible
-        top_choices = Strategy.most_common_letter_and_counts(strategy, n)
+        top_choices = most_common_letter_and_counts(strategy, n)
         
-        possible_words_txt = Strategy.possible_words(strategy)
+        possible_words_txt = possible_words(strategy)
         
         if String.length(possible_words_txt) > 0 do
           possible_words_txt = possible_words_txt <> "\n\n"
@@ -149,7 +156,7 @@ defmodule Hangman.Strategy do
         choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
           acc <> " #{k}:#{v}" end)
         
-        best_letter = Strategy.retrieve_best_letter(strategy)
+        best_letter = retrieve_best_letter(strategy)
         
         choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
 
@@ -172,25 +179,25 @@ defmodule Hangman.Strategy do
 
 
   @doc """
-  retrieve_best_letter
-
-    Most common letter retrieval strategy with a twist
-    Get the first letter with the highest frequency for when the current possible
-    hangman word set space is > "small". Twist is added when we combine the english 
-    language letter relative frequency.
-
-    For the cases where the word set is less than small, only take the letter whose
-    frequencies are less than or equal to half the possible hagman word pass size
-
-    E.g.for size 10, the letter counts would need to be 5 or lower to be chosen
-
-    Doesn't handle tie between letters
+  Method implements most common letter retrieval strategy with a twist
+  Get the first letter with the highest frequency for when the current possible
+  hangman word set space is > "small". Twist is added when we combine the english 
+  language letter relative frequency.
+  
+  For the cases where the word set is less than small, only take the letter whose
+  frequencies are less than or equal to half the possible hagman word pass size
+  
+  E.g.for size 10, the letter counts would need to be 5 or lower to be chosen
+  
+  Doesn't handle tie between letters
   """
 
+  @spec retrieve_best_letter(t) :: String.t
   def retrieve_best_letter(%Strategy{} = strategy) do
     do_retrieve_best_letter(strategy.pass.tally, strategy.pass.size)
   end
 
+  @spec do_retrieve_best_letter(Counter.t, integer) :: String.t
   defp do_retrieve_best_letter(tally, pass_size) do
 
     if Counter.empty?(tally) do
@@ -223,6 +230,7 @@ defmodule Hangman.Strategy do
     end
   end
 
+  @spec info(t) :: Keyword.t
   def info(%Strategy{} = s) do
 
     pass_tally_text = 

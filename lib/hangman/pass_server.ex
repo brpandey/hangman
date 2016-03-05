@@ -6,15 +6,11 @@ defmodule Hangman.Pass.Server do
   pass state for a given player, round number.
   
   Performs primarily unserialized reads
-
-	pass_key :: {id, game_no, round_no}
-  reduce_key :: [{guess_letter, letter}, {regex_match_key, key}] |
-                  [{:game_start, bool}, {secret_length, pos_integer}]
 	"""
 
   require Logger
   
-  alias Hangman.{Types.Reduction.Pass, Word.Chunks, 
+  alias Hangman.{Types.Reduction, Types.Reduction.Pass, Word.Chunks, 
                  Counter, Reduction.Engine}
   
   alias Hangman.Dictionary.Cache, as: DictCache
@@ -86,7 +82,7 @@ defmodule Hangman.Pass.Server do
   Request not serialized through server process, since we are doing reads
   """
 
-  @spec get_pass(atom, tuple, Keyword.t) :: tuple
+  @spec get_pass(atom, Pass.Key.t, Reduction.Key.t) :: {Pass.Key.t, Pass.t}
 	def get_pass(:game_start, {id, game_no, round_no} = pass_key, reduce_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
@@ -119,7 +115,7 @@ defmodule Hangman.Pass.Server do
   Request not serialized through server process, since we are doing reads
   """
 
-  @spec get_pass(atom, tuple, Keyword.t) :: tuple
+  @spec get_pass(atom, Pass.Key.t, Reduction.Key.t) :: {Pass.Key.t, Pass.t}
 	def get_pass(:game_keep_guessing, {id, game_no, round_no} = pass_key, 
                reduce_key)
  	when is_binary(id) and is_number(game_no) and is_number(round_no) do
@@ -139,7 +135,7 @@ defmodule Hangman.Pass.Server do
   Retrieves pass chunks from ets table with pass key"
   """
   
-  @spec read_chunks(tuple) :: Chunks.t | no_return
+  @spec read_chunks(Pass.Key.t) :: Chunks.t | no_return
 	def read_chunks({id, game_no, round_no} = pass_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 		

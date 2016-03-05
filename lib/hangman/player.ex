@@ -21,6 +21,8 @@ defmodule Hangman.Player do
   
   @type t :: %__MODULE__{}
 
+  @type result :: {t, Round.result}
+
   @human :human
   @robot :robot
     
@@ -102,7 +104,7 @@ defmodule Hangman.Player do
   Returns game round status
   """
 
-  @spec status(t, :atom) :: tuple
+  @spec status(t, :atom) :: Round.result
   def status(%Player{} = p, :game_round), do: Round.status(p)
 
   @doc """
@@ -131,7 +133,7 @@ defmodule Hangman.Player do
   If player type is human retrieves letter choices to display
   """
 
-  @spec start(t) :: {t, tuple}
+  @spec start(t) :: result
 	def start(%Player{} = p) do
     if p.game_no >= 1 do
       p = %Player{ name: p.name, type: p.type, 
@@ -173,10 +175,10 @@ defmodule Hangman.Player do
   Setups new round, retrieves and returns letter choices
   """
 
-  @spec choose(t, :atom) :: {t, tuple}
+  @spec choose(t, :atom) :: result
   def choose(%Player{} = p, :letter), do: choose(p, p.type, :letter)
 
-  @spec choose(t, :atom, :atom) :: {t, tuple}
+  @spec choose(t, :atom, :atom) :: result
 	def choose(%Player{} = p, @human, :letter) do
   	
     fn_run = fn ->
@@ -194,10 +196,10 @@ defmodule Hangman.Player do
   Setups new round, performs guess, returns round status
   """
 
-  @spec guess(t) :: {t, tuple}
+  @spec guess(t) :: result
   def guess(%Player{} = p), do: guess(p, p.type)
 
-  @spec guess(t, :atom) :: {t, tuple}
+  @spec guess(t, :atom) :: result
 	def guess(%Player{} = p, @robot) do
 
     fn_run = fn ->
@@ -216,10 +218,10 @@ defmodule Hangman.Player do
   we simplify the human guessing of words to just the last word
   """
 
-  @spec guess(t, :atom) :: {t, tuple}
+  @spec guess(t, :atom) :: result
   def guess(%Player{} = p, :last_word), do: guess(p, p.type, :last_word)
 
-  @spec guess(t, :atom, :atom) :: {t, tuple}
+  @spec guess(t, :atom, :atom) :: result
 	def guess(%Player{} = p, @human, :last_word) do
 
     fn_run = fn ->
@@ -246,10 +248,10 @@ defmodule Hangman.Player do
   """
 
 
-  @spec guess(t, String.t, :atom) :: {t, tuple}
+  @spec guess(t, String.t, :atom) :: result
   def guess(%Player{} = p, l, :letter), do: guess(p, p.type, l, :letter)
 
-  @spec guess(t, :atom, String.t, :atom) :: {t, tuple}
+  @spec guess(t, :atom, String.t, :atom) :: result
 	def guess(%Player{} = p, @human, letter, :letter)
   when is_binary(letter) do
 
@@ -265,7 +267,7 @@ defmodule Hangman.Player do
   # if error, return status code :game_reset along with error message
   # if not, return results of fn_run normally
 
-  @spec rescue_wrap(t, (() -> {t, tuple} | no_return)) :: {t, tuple}
+  @spec rescue_wrap(t, (() -> {t, tuple} | no_return)) :: result
   defp rescue_wrap(%Player{} = p, fn_run) do
     value = 
       try do 
