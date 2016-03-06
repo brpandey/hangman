@@ -1,8 +1,10 @@
-defmodule Hangman.Word.Chunks do
+defmodule Hangman.Chunks do
 	defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
 
 	@moduledoc """
 		Module to handle Hangman word list chunks for a given length
+
+    Chunks big words list into smaller more manageable list chunks
 		Encapsulates raw stream consisting of binary chunks
 	"""
 
@@ -10,7 +12,7 @@ defmodule Hangman.Word.Chunks do
   @type binary_chunk ::  {binary, integer}
 
 
-	alias Hangman.{Word.Chunks}
+	alias Hangman.{Chunks}
 
   @chunk_words_size 500
 
@@ -146,8 +148,8 @@ defmodule Hangman.Word.Chunks do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      info = Inspect.List.inspect(Hangman.Word.Chunks.info(t), opts)
-      concat ["#Hangman.Word.Chunks<", info, ">"]
+      info = Inspect.List.inspect(Hangman.Chunks.info(t), opts)
+      concat ["#Hangman.Chunks<", info, ">"]
     end
   end
 

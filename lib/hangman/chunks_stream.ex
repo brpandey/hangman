@@ -1,7 +1,7 @@
-defmodule Hangman.Word.Chunks.Stream do
+defmodule Hangman.Chunks.Stream do
   @moduledoc """
   Module implements transform routine to take
-  a grouped stream and return a chunked stream
+  a grouped words stream and return a chunked words stream
 
   Similiar functionality to transform handlers in
   Dictionary.File but more closely associated with chunks
