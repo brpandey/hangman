@@ -9,21 +9,21 @@ defmodule Hangman.Game.Server do
 	maintains hangman game state
 	"""
   
-	alias Hangman.Pattern, as: Pattern
+	alias Hangman.{Game, Pattern}
   
 	defmodule State do
 		defstruct current: 0, #Current game index
 		secret: "", pattern: "", score: 0,
 		secrets: [],	patterns: [], scores: [],
-		max_wrong: 0, correct_letters: HashSet.new, 
-		incorrect_letters: HashSet.new, incorrect_words: HashSet.new
+		max_wrong: 0, correct_letters: MapSet.new, 
+		incorrect_letters: MapSet.new, incorrect_words: MapSet.new
 
     @type t :: %__MODULE__{}
 	end
   
 	@vsn "0"
 	@name __MODULE__
-	@mystery_letter "-"
+
 	@max_wrong 5
   
 	@game_status_codes  %{
@@ -65,10 +65,6 @@ defmodule Hangman.Game.Server do
 	defp via_tuple(name) do
 		{:via, :gproc, {:n, :l, {:hangman_server, name}}}
 	end
-  
-  # Returns module attribute constant
-  @spec mystery_letter :: String.t
-	def mystery_letter, do: @mystery_letter
   
   @doc """
   Loads new game state into server process. 
@@ -196,7 +192,7 @@ defmodule Hangman.Game.Server do
         
 				state = %{ state | 
 					         correct_letters: 
-                   HashSet.put(state.correct_letters, letter),					   
+                   MapSet.put(state.correct_letters, letter),					   
                    pattern: pattern }
         
 				:correct_letter
@@ -205,7 +201,7 @@ defmodule Hangman.Game.Server do
           
 				  state = %{ state | 
 					           incorrect_letters: 
-                     HashSet.put(state.incorrect_letters, letter) }
+                     MapSet.put(state.incorrect_letters, letter) }
         
 				:incorrect_letter
 		end
@@ -252,7 +248,7 @@ defmodule Hangman.Game.Server do
 				true ->
 				state = %{ state | 
 						       incorrect_words: 
-                   HashSet.put(state.incorrect_words, word) }
+                   MapSet.put(state.incorrect_words, word) }
         
 				:incorrect_word
 		end
@@ -312,9 +308,9 @@ defmodule Hangman.Game.Server do
   
   state = %State{secret: String.upcase(secret), max_wrong: max_wrong, pattern: pattern}
   
-  state = %State{ state | correct_letters: HashSet.new, 
-  incorrect_letters: HashSet.new, 
-  incorrect_words: HashSet.new}
+  state = %State{ state | correct_letters: MapSet.new, 
+  incorrect_letters: MapSet.new, 
+  incorrect_words: MapSet.new}
   
   { :noreply, state }
   
@@ -350,7 +346,7 @@ defmodule Hangman.Game.Server do
   
   @spec do_load_game(String.t, pos_integer) :: State.t
 	defp do_load_game(secret, max_wrong) when is_binary(secret) do
-		pattern = String.duplicate(@mystery_letter, String.length(secret))
+		pattern = String.duplicate(Game.mystery_letter, String.length(secret))
     
 		%State{secret: String.upcase(secret), 
 			     pattern: pattern, max_wrong: max_wrong}
@@ -363,7 +359,7 @@ defmodule Hangman.Game.Server do
 		secrets = Enum.map(secrets, &String.upcase(&1))
     
 		patterns = Enum.map(secrets, 
-                        &String.duplicate(mystery_letter, String.length(&1)))
+                        &String.duplicate(Game.mystery_letter, String.length(&1)))
     
 		%State{secret: List.first(secrets), pattern: List.first(patterns),
 			     secrets: secrets, patterns: patterns, max_wrong: max_wrong}
@@ -517,9 +513,9 @@ defmodule Hangman.Game.Server do
 		#Update state
 		%{ state | pattern: Enum.at(state.patterns, state.current),
 			 secret: Enum.at(state.secrets, state.current),
-			 correct_letters: HashSet.new, 
-			 incorrect_letters: HashSet.new, 
-			 incorrect_words: HashSet.new}
+			 correct_letters: MapSet.new, 
+			 incorrect_letters: MapSet.new, 
+			 incorrect_words: MapSet.new}
 	end
   
 end
