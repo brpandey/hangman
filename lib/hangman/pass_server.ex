@@ -10,10 +10,8 @@ defmodule Hangman.Pass.Server do
 
   require Logger
   
-  alias Hangman.{Types.Reduction, Types.Reduction.Pass, Word.Chunks, 
-                 Counter, Reduction.Engine}
-  
-  alias Hangman.Dictionary.Cache, as: DictCache
+  alias Hangman.{Pass, Chunks, Counter, Reduction}
+  alias Hangman.Dictionary.Cache.Server, as: Cache
   
   @name __MODULE__
 	@ets_table_name :engine_pass_table
@@ -82,7 +80,7 @@ defmodule Hangman.Pass.Server do
   Request not serialized through server process, since we are doing reads
   """
 
-  @spec get_pass(atom, Pass.Key.t, Reduction.Key.t) :: {Pass.Key.t, Pass.t}
+  @spec get_pass(atom, Pass.key, Reduction.key) :: {Pass.key, Pass.t}
 	def get_pass(:game_start, {id, game_no, round_no} = pass_key, reduce_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
@@ -95,8 +93,8 @@ defmodule Hangman.Pass.Server do
 
 		# Subsequent lookups will be from the pass table
 
-		chunks = %Chunks{} = DictCache.Server.lookup(:chunks, length_key)
-		tally = %Counter{} = DictCache.Server.lookup(:tally, length_key)
+		chunks = %Chunks{} = Cache.lookup(:chunks, length_key)
+		tally = %Counter{} = Cache.lookup(:tally, length_key)
 
 		pass_size = Chunks.get_count(chunks, :words)
 		pass_info = %Pass{ size: pass_size, tally: tally, last_word: ""}
@@ -115,7 +113,7 @@ defmodule Hangman.Pass.Server do
   Request not serialized through server process, since we are doing reads
   """
 
-  @spec get_pass(atom, Pass.Key.t, Reduction.Key.t) :: {Pass.Key.t, Pass.t}
+  @spec get_pass(atom, Pass.key, Reduction.key) :: {Pass.key, Pass.t}
 	def get_pass(:game_keep_guessing, {id, game_no, round_no} = pass_key, 
                reduce_key)
  	when is_binary(id) and is_number(game_no) and is_number(round_no) do
@@ -125,7 +123,7 @@ defmodule Hangman.Pass.Server do
   
     # Send pass and reduce information off to Engine server
     # to execute (and distribute) as appropriate
-    pass_info = Engine.reduce(pass_key, regex_key, exclusion_set)
+    pass_info = Reduction.Engine.reduce(pass_key, regex_key, exclusion_set)
 
 		{pass_key, pass_info}
 	end
@@ -135,7 +133,7 @@ defmodule Hangman.Pass.Server do
   Retrieves pass chunks from ets table with pass key"
   """
   
-  @spec read_chunks(Pass.Key.t) :: Chunks.t | no_return
+  @spec read_chunks(Pass.key) :: Chunks.t | no_return
 	def read_chunks({id, game_no, round_no} = pass_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 		

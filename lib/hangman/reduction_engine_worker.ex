@@ -10,9 +10,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   @name __MODULE__
   @possible_words_left 40
 
-  alias Hangman.{Types.Reduction.Pass, Word.Chunks, Counter}
-  alias Hangman.Pass.Server, as: PassServer
-  alias Hangman.Pass.Writer, as: PassWriter
+  alias Hangman.{Pass, Chunks, Counter}
 
   @doc """
   GenServer start_link wrapper function
@@ -31,7 +29,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   Primary worker function, returns results of reduction pass
   """
   
-  @spec reduce_and_store(pos_integer, tuple, Regex.t, MapSet.t) :: Pass.t
+  @spec reduce_and_store(pos_integer, Pass.key, Regex.t, map) :: Pass.t
   def reduce_and_store(worker_id, pass_key, regex_key, %MapSet{} = exc) do
     l = [worker_id, pass_key, regex_key, exc]
 
@@ -66,7 +64,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   GenServer callback function to handle reduce and store request
   """
 
-  @callback handle_call(:atom, tuple, Regex.t, MapSet.t) :: tuple
+  @callback handle_call(:atom, Pass.key, Regex.t, map) :: tuple
   def handle_call({:reduce_and_store, pass_key, regex_key, exclusion}, 
                   _from, {}) do
 
@@ -85,11 +83,11 @@ defmodule Hangman.Reduction.Engine.Worker do
   Returns pass data
   """
 
-  @spec do_reduce_and_store(tuple, Regex.t, MapSet.t) :: Pass.t
+  @spec do_reduce_and_store(Pass.key, Regex.t, map) :: Pass.t
   defp do_reduce_and_store(pass_key, regex_key, %MapSet{} = exclusion) do
 
     # Request chunks data from Pass Server
-    data = %Chunks{} = PassServer.read_chunks(pass_key)
+    data = %Chunks{} = Pass.Server.read_chunks(pass_key)
 
     length_key = Chunks.get_key(data)
 
@@ -138,7 +136,7 @@ defmodule Hangman.Reduction.Engine.Worker do
 		end
 
     # serialize writes through Hangman Pass Writer
-    PassWriter.write(pass_key, new_data)
+    Pass.Writer.write(pass_key, new_data)
 
 		%Pass{size: pass_size, tally: tally, 
            possible: possible_txt, last_word: last_word}    

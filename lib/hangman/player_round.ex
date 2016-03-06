@@ -8,13 +8,20 @@ defmodule Hangman.Player.Round do
   Basic round functionality includes as setup, guess, update, status
   """
 
-	alias Hangman.{Game, Pass, Strategy, Strategy.Options, 
-                 Types.Game.Round, Types.Guess, Player, Player.Events}
+	alias Hangman.{Game, Pass, Guess, Strategy, Strategy.Options, 
+                 Player, Player.Round, Player.Events}
 
-  @type status_code :: :atom
-  @type status_txt :: String.t
+  defstruct seq_no: 0,
+  guess: "",
+  result_code: nil, 
+  status_code: nil, 
+  status_text: "",
+  pattern: "", 
+  final_result: ""
 
-  @type result :: {status_code, status_txt}
+  @type result :: {status_code :: :atom, status_txt :: String.t}
+
+  @type t :: %__MODULE__{} 
 
 	# READ
 
@@ -22,7 +29,7 @@ defmodule Hangman.Player.Round do
   Returns round context based on results of last guess
   """
 
-  @spec context(Player.t) :: tuple | no_return
+  @spec context(Player.t) :: Guess.context | no_return
 	def context(%Player{} = player) do
 
   	case player.round.result_code do
@@ -89,7 +96,7 @@ defmodule Hangman.Player.Round do
     setup(player, context)
   end
 
-  @spec setup(Player.t, tuple) :: Player.t
+  @spec setup(Player.t, Guess.context) :: Player.t
   def setup(%Player{} = player, context) 
   when is_nil(context) == false do
 
@@ -120,7 +127,7 @@ defmodule Hangman.Player.Round do
   Interjects round specific parameters into choices text
   """
 
-  @spec augment_choices(Player.t, tuple) :: tuple
+  @spec augment_choices(Player.t, result) :: result
   def augment_choices(%Player{} = player, {code, choices_text})
   when is_binary(choices_text) do
     
@@ -143,7 +150,7 @@ defmodule Hangman.Player.Round do
   Returns received round data
   """
 
-  @spec guess(Player.t, Guess.t) :: Round.t
+  @spec guess(Player.t, Strategy.guess) :: t
   def guess(%Player{} = player, {:guess_letter, letter})
   when is_binary(letter) do
     
@@ -164,7 +171,7 @@ defmodule Hangman.Player.Round do
       		 status_text: text, final_result: final}
   end
 
-  @spec guess(Player.t, Guess.t) :: Round.t
+  @spec guess(Player.t, Strategy.guess) :: t
   def guess(%Player{} = player, {:guess_word, word})
   when is_binary(word) do
 
@@ -195,14 +202,14 @@ defmodule Hangman.Player.Round do
   be updated.
   """
 
-  @spec update(Player.t, Round.t, Guess.t) :: Player.t
+  @spec update(Player.t, Round.t, Strategy.guess) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_letter, letter}) do
 
     strategy = Strategy.update(player.strategy, {:guess_letter, letter})
 	  update(player, round, strategy)
   end
 
-  @spec update(Player.t, Round.t, Guess.t) :: Player.t
+  @spec update(Player.t, Round.t, Strategy.guess) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_word, word}) do
 
     strategy = Strategy.update(player.strategy, {:guess_word, word})

@@ -13,7 +13,7 @@ defmodule Hangman.Pass.Writer.Worker do
   
   require Logger
 
-  alias Hangman.{Word.Chunks}
+  alias Hangman.{Pass, Chunks}
 
   @name __MODULE__
   @ets_table_name :engine_pass_table
@@ -45,7 +45,7 @@ defmodule Hangman.Pass.Writer.Worker do
   Insert chunks into ets pass table
   """
 
-  @spec write(pos_integer, tuple, Chunks.t) :: :ok
+  @spec write(pos_integer, Pass.key, Chunks.t) :: :ok
   def write(worker_id, {id, game_no, round_no} = pass_key, 
             %Chunks{} = chunks)
   when is_binary(id) and is_number(game_no) and is_number(round_no) do
@@ -76,7 +76,7 @@ defmodule Hangman.Pass.Writer.Worker do
 	Writes pass data chunk, uses pass_key for ets insertion
 	"""
   
-  @callback handle_cast(:atom, tuple, Chunks.t, {}) :: tuple
+  @callback handle_cast(:atom, Pass.key, Chunks.t, {}) :: tuple
   def handle_cast({:write, {id, game_no, round_no} = _pass_key,
                    %Chunks{} = chunks}, {}) do
     

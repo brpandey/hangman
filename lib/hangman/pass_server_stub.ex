@@ -1,15 +1,18 @@
 defmodule Hangman.Pass.Server.Stub do 
   @moduledoc """
-  Stub module to test out Pass Server functionality
+  Stub module to mimic Pass Server functionality
+
+  Provides a simple scaffold implementation 
+  to provide simple, predictable behavior
   """
 
-  alias Hangman.{Counter, Types.Reduction.Pass}
+  alias Hangman.{Counter, Pass, Reduction}
 
   @doc """
   Stub Routine retrieves stub pass tally given game start pass key
   """
 
-  @spec get_pass(atom, tuple, Keyword.t) :: tuple
+  @spec get_pass(atom, Pass.key, Reduction.key) :: tuple
 	def get_pass(:game_start, 
 		{id, game_no, 1} = pass_key, reduce_key) 
 		when is_binary(id) and is_number(game_no) do
@@ -24,7 +27,7 @@ defmodule Hangman.Pass.Server.Stub do
   Stub Routine retrieves stub pass tally given pass key
   """
 
-  @spec get_pass(atom, tuple, Keyword.t) :: tuple
+  @spec get_pass(atom, Pass.key, Reduction.key) :: tuple
 	def get_pass(:game_keep_guessing, 
 		{id, game_no, round_no} = pass_key, reduce_key)
 		when is_binary(id) and is_number(game_no) and is_number(round_no) do

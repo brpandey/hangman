@@ -1,8 +1,10 @@
 defmodule Hangman.Round.Action do
   @moduledoc """
-  Hangman.Round.Action 
+
   Module encapsulates hangman round actions and the data associated 
-  with carrying them out. Uses function builder strategy to easily be
+  with carrying them out. 
+
+  Uses function builder strategy to easily be
   able to add new data retrievers, feedback dispatchers, and updaters
 
   Two sets of implementation are given. One has a
@@ -10,7 +12,7 @@ defmodule Hangman.Round.Action do
   function body.
   """
 
-	alias Hangman.{Strategy, Player}
+	alias Hangman.{Strategy, Player, Player.Round}
 
 	@letter_choices 5
 
@@ -18,54 +20,54 @@ defmodule Hangman.Round.Action do
   # CODE w/ function builders
 
   # Data retrievers
-  @spec retrieve_letter_options(Hangman.Player.t) :: {}
+  @spec retrieve_letter_options(Player.t) :: {}
   defp retrieve_letter_options(%Player{} = p) do
     Strategy.choose_letters(p.strategy, @letter_choices)
   end
 
-  @spec retrieve_guess_letter(Hangman.Player.t, String.t) :: {}
+  @spec retrieve_guess_letter(Player.t, String.t) :: {}
   defp retrieve_guess_letter(%Player{} = p, l) do
     Strategy.letter_in_most_common(p.strategy, @letter_choices, l)
   end
 
-  @spec retrieve_last_word(Hangman.Player.t) :: {}
+  @spec retrieve_last_word(Player.t) :: {}
   defp retrieve_last_word(%Player{} = p) do
     Strategy.last_word(p.strategy) 
   end
 
-  @spec retrieve_strategic_guess(Hangman.Player.t) :: {}
+  @spec retrieve_strategic_guess(Player.t) :: {}
   defp retrieve_strategic_guess(%Player{} = p) do
     Strategy.make_guess(p.strategy)
   end
 
   # Feedback dispatcher
-  @spec feedback_dispatch(Hangman.Player.t, {}) :: %{}
-  defp feedback_dispatch(p, guess), do: Player.Round.guess(p, guess) 
+  @spec feedback_dispatch(Player.t, {}) :: %{}
+  defp feedback_dispatch(p, guess), do: Round.guess(p, guess) 
 
   # Updaters
-  @spec updater_round_and_guess(Hangman.Player.t, %{}, {}) :: Hangman.Player.t
+  @spec updater_round_and_guess(Player.t, %{}, {}) :: Player.t
   defp updater_round_and_guess(p, round, guess) do
-    Player.Round.update(p, round, guess)
+    Round.update(p, round, guess)
   end
 
-  @spec updater_round_and_strategy(Hangman.Player.t, %{}, %{}) :: Hangman.Player.t
+  @spec updater_round_and_strategy(Player.t, %{}, %{}) :: Player.t
   defp updater_round_and_strategy(p, round, strategy) do
-    Player.Round.update(p, round, strategy)
+    Round.update(p, round, strategy)
   end
 
-  @spec updater_letter_options_text(Hangman.Player.t, {}) :: {}
+  @spec updater_letter_options_text(Player.t, {}) :: {}
   defp updater_letter_options_text(p, choices) do
-    Player.Round.augment_choices(p, choices)
+    Round.augment_choices(p, choices)
   end
 
 
 
   # Action function maker templates
   @spec make_data_feedback_update_action(
-  (Hangman.Player.t -> {}) | (Hangman.Player.t, String.t -> {}),
-  (Hangman.Player.t, {} -> %{}),
-  (Hangman.Player.t, %{}, {} -> Hangman.Player.t)
-  ) :: Hangman.Player.t
+  (Player.t -> {}) | (Player.t, String.t -> {}),
+  (Player.t, {} -> %{}),
+  (Player.t, %{}, {} -> Player.t)
+  ) :: Player.t
   defp make_data_feedback_update_action(fn_data_retriever, 
                                        fn_feedback_dispatcher, 
                                        fn_updater) do
@@ -85,10 +87,10 @@ defmodule Hangman.Round.Action do
   end
 
   @spec make_struct_feedback_update_action(
-  (Hangman.Player.t -> {}),
-  (Hangman.Player.t, {} -> %{}),
-  (Hangman.Player.t, %{}, %{} -> Hangman.Player.t)
-  ) :: Hangman.Player.t
+  (Player.t -> {}),
+  (Player.t, {} -> %{}),
+  (Player.t, %{}, %{} -> Player.t)
+  ) :: Player.t
   defp make_struct_feedback_update_action(fn_data_retriever, 
                                          fn_feedback_dispatcher, 
                                          fn_updater) do
@@ -100,8 +102,8 @@ defmodule Hangman.Round.Action do
   end
 
   @spec make_data_update_action(
-  (Hangman.Player.t -> {}),
-  (Hangman.Player.t, {} -> {})
+  (Player.t -> {}),
+  (Player.t, {} -> {})
   ) :: {}
   defp make_data_update_action(fn_data_retriever, fn_updater) do
     fn (%Player{} = player) -> 
@@ -118,7 +120,7 @@ defmodule Hangman.Round.Action do
   the top strategy letter choices, performing game server guess, and updating
   player with round results and guess data
   """
-  @spec perform(Hangman.Player.t, atom(), String.t) :: Hangman.Player.t
+  @spec perform(Player.t, atom(), String.t) :: Player.t
   def perform(%Player{} = p, :guess_letter, letter)
   when is_binary(letter) do
 
@@ -134,7 +136,7 @@ defmodule Hangman.Round.Action do
   of possible hangman words, performing game server guess, and updating player
   with round results and guess data
   """
-  @spec perform(Hangman.Player.t, atom()) :: Hangman.Player.t
+  @spec perform(Player.t, atom()) :: Player.t
   def perform(%Player{} = p, :guess_last_word) do
 
     human_last_word_guess = 
@@ -149,7 +151,7 @@ defmodule Hangman.Round.Action do
   performing game server guess, and updating player with round results and
   strategy data
   """
-  @spec perform(Hangman.Player.t, atom()) :: Hangman.Player.t
+  @spec perform(Player.t, atom()) :: Player.t
   def perform(%Player{} = p, :guess) do
   	
     robot_guess = 
@@ -163,7 +165,7 @@ defmodule Hangman.Round.Action do
   Performs human :choose_letters action by retrieve top letter strategy options,
   and then updating updating options with round specific information
   """
-  @spec perform(Hangman.Player.t, atom()) :: {}
+  @spec perform(Player.t, atom()) :: {}
   def perform(%Player{} = p, :choose_letters) do
 
     human_choose_letters = 
@@ -181,7 +183,7 @@ defmodule Hangman.Round.Action do
   the top strategy letter choices, performing game server guess, and updating
   player with round results and guess data
   """
-  @spec perform0(Hangman.Player.t, atom(), String.t) :: Hangman.Player.t
+  @spec perform0(Player.t, atom(), String.t) :: Player.t
   def perform0(%Player{} = p, :guess_letter, letter)
   when is_binary(letter) do
     
@@ -190,9 +192,9 @@ defmodule Hangman.Round.Action do
     
   	guess = Strategy.letter_in_most_common(p.strategy, @letter_choices, letter)
     
-    round_info = Player.Round.guess(p, guess)
+    round_info = Round.guess(p, guess)
     
-		Player.Round.update(p, round_info, guess)
+		Round.update(p, round_info, guess)
   end
 
   @doc """
@@ -200,14 +202,14 @@ defmodule Hangman.Round.Action do
   of possible hangman words, performing game server guess, and updating player
   with round results and guess data
   """  
-  @spec perform0(Hangman.Player.t, atom()) :: Hangman.Player.t
+  @spec perform0(Player.t, atom()) :: Player.t
   def perform0(%Player{} = p, :guess_last_word) do
 
     guess = Strategy.last_word(p.strategy)
     
-    round_info = Player.Round.guess(p, guess)
+    round_info = Round.guess(p, guess)
 
-    Player.Round.update(p, round_info, guess)
+    Round.update(p, round_info, guess)
   end
 
   @doc """
@@ -215,21 +217,21 @@ defmodule Hangman.Round.Action do
   performing game server guess, and updating player with round results and
   strategy data
   """
-  @spec perform0(Hangman.Player.t, atom()) :: Hangman.Player.t
+  @spec perform0(Player.t, atom()) :: Player.t
   def perform0(%Player{} = p, :guess) do
   	
     {strategy, guess} = Strategy.make_guess(p.strategy)
 
-    round_info = Player.Round.guess(p, guess)
+    round_info = Round.guess(p, guess)
 
-    Player.Round.update(p, round_info, strategy)
+    Round.update(p, round_info, strategy)
   end
   
   @doc """
   Performs human :choose_letters action by retrieve top letter strategy options,
   and then updating updating options with round specific information
   """
-  @spec perform0(Hangman.Player.t, atom()) :: {}
+  @spec perform0(Player.t, atom()) :: {}
   def perform0(%Player{} = p, :choose_letters) do
     
     guess_prep = {_choices_code, _text} = 
@@ -237,7 +239,7 @@ defmodule Hangman.Round.Action do
 
     _round_info = nil
 
-    Player.Round.augment_choices(p, guess_prep)
+    Round.augment_choices(p, guess_prep)
   end
 
 end

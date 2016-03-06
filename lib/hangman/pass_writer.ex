@@ -8,7 +8,7 @@ defmodule Hangman.Pass.Writer do
   Pool supervisor supervises writer workers
   """
   
-  alias Hangman.{Word.Chunks, Pass.Writer}
+  alias Hangman.{Chunks, Pass}
   
   @pool_size 10
   
@@ -19,7 +19,7 @@ defmodule Hangman.Pass.Writer do
   
   @spec start_link :: Supervisor.on_start
   def start_link do
-    Writer.Pool.Supervisor.start_link(@pool_size)
+    Pass.Writer.Pool.Supervisor.start_link(@pool_size)
   end
   
   
@@ -28,14 +28,14 @@ defmodule Hangman.Pass.Writer do
   Based on key id, selects writer worker to hand off request to
   """
   
-  @spec write(tuple, Chunks.t) :: :ok
+  @spec write(Pass.key, Chunks.t) :: :ok
   def write({id, game_no, round_no} = pass_key, %Chunks{} = chunks)
   when is_binary(id) and is_number(game_no) and is_number(round_no) do
     {id_key, _, _} = pass_key
     
     id_key 
     |> choose_worker
-    |> Writer.Worker.write(pass_key, chunks)
+    |> Pass.Writer.Worker.write(pass_key, chunks)
   end
   
   

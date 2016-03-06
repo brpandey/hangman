@@ -13,7 +13,7 @@ defmodule Hangman.Dictionary.File do
   """
 
   alias Hangman.Dictionary, as: Dict
-	alias Hangman.{Word.Chunks, Dictionary.Attribute.Tokens}
+	alias Hangman.{Chunks, Dictionary.Attribute.Tokens}
 
   # Dictionary attribute tokens
   @type_normal Tokens.type_normal

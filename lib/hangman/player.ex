@@ -10,14 +10,17 @@ defmodule Hangman.Player do
 
   alias Hangman.{Player, Player.Round, Player.Events, 
                  Round.Action, Strategy, Game}
-  
 
-	defstruct name: "", type: nil,
-  round_no: 0,  round: %Hangman.Types.Game.Round{},
+	defstruct name: "", 
+  type: nil,
+  round_no: 0,  
+  round: %Round{},
   strategy: Strategy.new,
-  game_no: 0, games_summary: nil, game_server_pid: nil, 
+  game_no: 0, 
+  games_summary: nil, 
+  game_server_pid: nil, 
   event_server_pid: nil,    
-  mystery_letter: Game.Server.mystery_letter
+  mystery_letter: Game.mystery_letter
   
   @type t :: %__MODULE__{}
 
@@ -111,7 +114,7 @@ defmodule Hangman.Player do
   Returns games over status
   """
 
-  @spec status(t, :atom) :: tuple
+  @spec status(t, :atom) :: Round.result
   def status(%Player{} = p, :games_over) do
   	case games_over?(p) do
   		true -> {:games_over, p.games_summary}
@@ -267,7 +270,7 @@ defmodule Hangman.Player do
   # if error, return status code :game_reset along with error message
   # if not, return results of fn_run normally
 
-  @spec rescue_wrap(t, (() -> {t, tuple} | no_return)) :: result
+  @spec rescue_wrap(t, (() -> result | no_return)) :: result
   defp rescue_wrap(%Player{} = p, fn_run) do
     value = 
       try do 

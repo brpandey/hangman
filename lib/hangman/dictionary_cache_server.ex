@@ -12,7 +12,7 @@ defmodule Hangman.Dictionary.Cache.Server do
   """
 
   alias Hangman.Dictionary, as: Dict
-	alias Hangman.{Counter, Word.Chunks, Dictionary.Attribute.Tokens}
+	alias Hangman.{Counter, Chunks, Dictionary.Attribute.Tokens}
 
   # Dictionary attribute tokens
   @type_normal Tokens.type_normal

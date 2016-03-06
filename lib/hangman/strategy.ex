@@ -9,12 +9,13 @@ defmodule Hangman.Strategy do
   be presented to human to manually choose
   """
 
-  alias Hangman.{Strategy, Counter, Types.Reduction.Pass, Types.Guess}
+  alias Hangman.{Strategy, Counter, Pass, Guess}
 
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
 
   @type t :: %__MODULE__{}
+
   @type result :: {t, Guess.t}
 
   # English letter frequency of english letters (Wikipedia)

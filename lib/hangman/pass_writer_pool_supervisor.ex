@@ -8,6 +8,8 @@ defmodule Hangman.Pass.Writer.Pool.Supervisor do
 
   @name __MODULE__
 
+  alias Hangman.{Pass}
+
   @doc """
   Supervisor start_link wrapper function
   Accepts pool size as arg
@@ -31,7 +33,7 @@ defmodule Hangman.Pass.Writer.Pool.Supervisor do
     processes = for worker_id <- 1..pool_size do
       # Create worker spec for each value
       worker(
-        Hangman.Pass.Writer.Worker, [worker_id],
+        Pass.Writer.Worker, [worker_id],
         id: {:pass_writer_worker, worker_id}
       )
     end

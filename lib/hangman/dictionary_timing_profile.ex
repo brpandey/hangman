@@ -5,7 +5,7 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
   Module to time dictionary cache server
   """
 
-  alias Hangman.{Dictionary, Word.Chunks, Counter}
+  alias Hangman.{Dictionary, Chunks, Counter}
 
   @doc """
   Profiling routine that conducts a simple test

@@ -3,13 +3,13 @@ defmodule Hangman.Reduction.Engine do
   @moduledoc """
   Module implements words reduction engine.
 
-  Reduce load is handled through pool.
+  Reduction load is handled through pool.
   Distributes reduce requests based on pass key id attribute (name)
   Pool size reduction workers are started up as part of reducer pool
   Pool supervisor supervises reduction workers
   """
 
-  alias Hangman.{Reduction.Engine, Types.Reduction.Pass}
+  alias Hangman.{Reduction.Engine, Pass}
 
   @pool_size 10
 
@@ -28,7 +28,7 @@ defmodule Hangman.Reduction.Engine do
   Based on key id, selects reduction worker to hand off request to
   """
   
-  @spec reduce(tuple, term, Regex.t) :: Pass.t
+  @spec reduce(Pass.key, Regex.t, map) :: Pass.t
   def reduce(pass_key, regex_key, %MapSet{} = exclusion_set) do
     {id_key, _, _} = pass_key
 

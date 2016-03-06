@@ -7,15 +7,14 @@ defmodule Hangman.Strategy.Options do
   """
 
 
-  alias Hangman.Strategy, as: Strategy
-  alias Hangman.Types.Reduction, as: Reduction
+  alias Hangman.{Guess, Strategy, Reduction}
 
 
   @doc """
   Generates reduction key given round context
   """
 
-  @spec reduce_key(Strategy.t, tuple) :: Reduction.Key
+  @spec reduce_key(Strategy.t, Guess.context) :: Reduction.key
   def reduce_key(%Strategy{} = _strategy, 
                  {:game_start, secret_length} = _context) do
     
@@ -25,7 +24,7 @@ defmodule Hangman.Strategy.Options do
     ])
   end
   
-  @spec reduce_key(Strategy.t, tuple) :: Reduction.Key
+  @spec reduce_key(Strategy.t, Guess.context) :: Reduction.key
   def reduce_key(%Strategy{ guessed_letters: guessed } = _strategy, 
                  {_, :correct_letter, guess, _pattern, 
                   _mystery_letter} = context) do
@@ -40,7 +39,7 @@ defmodule Hangman.Strategy.Options do
     ])
   end
   
-  @spec reduce_key(Strategy.t, tuple) :: Reduction.Key
+  @spec reduce_key(Strategy.t, Guess.context) :: Reduction.key
   def reduce_key(%Strategy{ guessed_letters: guessed } = _strategy,
                  {_, :incorrect_letter, guess} = context) do
 
@@ -64,7 +63,7 @@ defmodule Hangman.Strategy.Options do
   We create a regex to reflect this information
   """
 
-  @spec regex_match_key(tuple, MapSet.t) :: Regex.t
+  @spec regex_match_key(Guess.context, map) :: Regex.t
   def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
     pattern = String.downcase(pattern)
     
@@ -85,7 +84,7 @@ defmodule Hangman.Strategy.Options do
   We create a regex to reflect this information
   """
   
-  @spec regex_match_key(tuple, MapSet.t) :: Regex.t
+  @spec regex_match_key(Guess.context, map) :: Regex.t
   def regex_match_key({_, :incorrect_letter, incorrect_letter}, _guessed) do
     
     # If "E" was the incorrect letter, the pattern would be "^[^E]*$"
