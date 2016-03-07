@@ -324,4 +324,46 @@ defmodule Hangman.Game do
 	end
   
 
+
+  @doc """
+  Returns strategy information
+  """
+
+  @spec info(t) :: Keyword.t
+  def info(%Game{} = g) do
+
+    correct_letters = MapSet.to_list(g.correct_letters)
+    incorrect_letters = MapSet.to_list(g.incorrect_letters)
+    incorrect_words = MapSet.to_list(g.incorrect_words)
+    
+    letters = [correct: correct_letters, incorrect: incorrect_letters]
+    words = [incorrect: incorrect_words]
+    
+    info = [
+      id: g.id,
+      current_game_index: g.current,
+      secret: g.secret,
+      pattern: g.pattern,
+      score: g.score,
+      secrets: g.secrets,
+      patterns: g.patterns,
+      scores: g.scores,
+      max_wrong_guesses: g.max_wrong,
+      guessed_letters: letters, 
+      guessed_words: words
+    ]
+
+    info
+  end
+
+  # Allows users to inspect this module type in a controlled manner
+  defimpl Inspect do
+    import Inspect.Algebra
+
+    def inspect(t, opts) do
+      info = Inspect.List.inspect(Game.info(t), opts)
+      concat ["#Hangman.Game<", info, ">"]
+    end
+  end
+
 end
