@@ -1,4 +1,4 @@
-defmodule Hangman.Round.Action do
+defmodule Hangman.Guess.Action do
   @moduledoc """
 
   Module encapsulates hangman round actions and the data associated 

@@ -9,7 +9,7 @@ defmodule Hangman.Player do
   """
 
   alias Hangman.{Player, Player.Round, Player.Events, 
-                 Round.Action, Strategy, Game}
+                 Guess.Action, Strategy, Game}
 
 	defstruct name: "", 
   type: nil,
