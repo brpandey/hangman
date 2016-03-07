@@ -259,12 +259,14 @@ defmodule Hangman.Player.FSM do
   event tuple :guess_letter
   """
 
-  @callback eager_socrates(tuple, tuple, tuple) :: tuple
+  @callback eager_socrates(Guess.t, tuple, tuple) :: tuple
   def eager_socrates({:guess_letter, guess_letter}, _from, {player, pid}) do
 
-    {player, {status_code, _} = reply} = 
-      Player.guess(player, guess_letter, :letter)
+    {player, reply} = 
+      Player.guess(player, {:guess_letter, guess_letter})
 
+    {status_code, _} = reply
+    
     next = 
       case status_code do
         :game_keep_guessing -> :eager_socrates
@@ -272,7 +274,7 @@ defmodule Hangman.Player.FSM do
       end
 
     if next == :eager_socrates do
-      {player, reply} = Player.choose(player, :letter)
+      {player, reply} = Player.choices(player, :choose_letters)
 
       if Player.last_word?(player), do: next = :giddy_socrates
     end
@@ -307,21 +309,18 @@ defmodule Hangman.Player.FSM do
   event :guess_last_word
   """
 
-  @callback giddy_socrates(:atom, tuple, tuple) :: tuple
+  @callback giddy_socrates(Guess.directive, tuple, tuple) :: tuple
   def giddy_socrates(:guess_last_word, _from, {player, pid}) do
 
-    {player, {status_code, _} = reply} = 
-      Player.guess(player, :last_word)
+    {player, reply} = Player.guess(player, :guess_last_word)
+
+    {status_code, _} = reply
 
     next = 
       case status_code do
         :game_keep_guessing -> :eager_socrates
         _ -> :idle_socrates
       end
-
-    #if next == :eager_socrates do
-    #  raise Hangman.Error, "Shouldn't be here"
-    #end
 
     { :reply, reply, next, {player, pid} }    
   end
@@ -373,8 +372,8 @@ defmodule Hangman.Player.FSM do
   @callback intrigued_wall_e(:atom, tuple, tuple) :: tuple
   def intrigued_wall_e(:game_keep_guessing, _from, {player, pid}) do
     
-    {player, {status_code, _} = reply} = Player.guess(player)
-    
+    {player, reply} = Player.guess(player)
+    {status_code, _} = reply
     next = 
       case status_code do
         :game_keep_guessing -> :intrigued_wall_e

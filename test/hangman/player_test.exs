@@ -108,7 +108,7 @@ defmodule Hangman.Player.Test do
 
     assert "CUMULATE; score=8; status=GAME_WON" = reply
 
-    {:game_over, reply} = Player.FSM.wall_e_guess(ppid)
+    {:games_over, reply} = Player.FSM.wall_e_guess(ppid)
 
  	  assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
 

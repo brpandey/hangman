@@ -1,7 +1,7 @@
 defmodule Hangman.Dictionary.Cache.Server.Test do
 	use ExUnit.Case #, async: true
 
-	alias Hangman.{Dictionary, Counter, Word.Chunks}
+	alias Hangman.{Dictionary, Counter, Chunks}
 
   setup_all do
     # stop cache server started by application callback

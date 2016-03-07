@@ -1,9 +1,7 @@
 defmodule Hangman.Pass.Server.Test do
 	use ExUnit.Case #, async: true
 
-	alias Hangman.{Strategy, Counter, Types.Reduction.Pass}
-
-  alias Hangman.Pass.Server, as: PassServer
+	alias Hangman.{Strategy, Counter, Pass}
 
 
   setup_all do
@@ -33,7 +31,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_start, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -68,7 +66,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_keep_guessing, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -97,7 +95,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_keep_guessing, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -126,7 +124,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_keep_guessing, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -157,7 +155,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_keep_guessing, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -191,7 +189,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_keep_guessing, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -222,7 +220,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_keep_guessing, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -255,7 +253,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_keep_guessing, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -283,7 +281,7 @@ defmodule Hangman.Pass.Server.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      PassServer.get_pass(:game_keep_guessing, pass_key, reduce_key)
+      Pass.Server.get_pass(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)

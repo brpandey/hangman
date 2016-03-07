@@ -28,6 +28,10 @@ defmodule Hangman.Player do
 
   @human :human
   @robot :robot
+  
+
+  @type player_type :: :human | :robot
+
     
   # CREATE
 
@@ -150,43 +154,45 @@ defmodule Hangman.Player do
       Events.Server.notify_start(p.event_server_pid, p.name)
     end
 
-    case p.type do
-      @robot ->
-        fn_run = fn ->
-          p = p |> Round.setup(:game_start) |> Action.perform(:guess)
-          {p, Round.status(p)}
-        end
-        
-        rescue_wrap(p, fn_run)
-
-      @human -> 
-        fn_run = fn ->
-          p = p |> Round.setup(:game_start)
-          choices = p |> Action.perform(:choose_letters)
-          {p, choices}
-        end
-
-        rescue_wrap(p, fn_run)
-      
-      _ -> raise Hangman.Error, "Invalid and unknown player type"
+    result = 
+      case p.type do
+        @robot -> guess(p, :game_start)
+        @human -> choices(p, :choose_letters, :game_start)
+        _ -> raise Hangman.Error, "Invalid and unknown player type"
     end
+
+    result
 	end
 
 
   @doc """
-  Routine for human player type retrieves letter choices
+  HUMAN Routine for human player type retrieves letter choices
   Setups new round, retrieves and returns letter choices
   """
 
-  @spec choose(t, :atom) :: result
-  def choose(%Player{} = p, :letter), do: choose(p, p.type, :letter)
 
-  @spec choose(t, :atom, :atom) :: result
-	def choose(%Player{} = p, @human, :letter) do
+
+  @spec choices(t, Guess.directive, :atom) :: {t, Guess.option}
+	def choices(%Player{} = p, :choose_letters, options \\ nil) do
   	
+    @human = p.type
+
     fn_run = fn ->
-      p = p |> Round.setup # Setup round
-      choices = Action.perform(p, :choose_letters)
+
+      p = 
+        case options do
+          :game_start -> 
+            p |> Round.setup(:game_start) # Setup round
+          nil ->
+            p |> Round.setup # Setup round
+        end
+      
+      # Retrieve top letter strategy options,
+      # and then updating updating options with round specific information
+
+      choices = Strategy.choose_letters(p.strategy)
+      choices = Round.augment_choices(p, choices)
+
       {p, choices}
     end
 
@@ -195,19 +201,30 @@ defmodule Hangman.Player do
 
 
   @doc """
-  Routine for robot player type guess
+  ROBOT Routine for robot player type guess
   Setups new round, performs guess, returns round status
   """
 
   @spec guess(t) :: result
-  def guess(%Player{} = p), do: guess(p, p.type)
-
-  @spec guess(t, :atom) :: result
-	def guess(%Player{} = p, @robot) do
+  def guess(%Player{} = p) do
+    @robot = p.type
 
     fn_run = fn ->
       p = p |> Round.setup # Setup round
-      p = Action.perform(p, :guess)
+      p = Action.perform(p, :robot_guess)
+      {p, Round.status(p)}
+    end
+
+    rescue_wrap(p, fn_run)
+	end
+
+  @spec guess(t) :: result
+  def guess(%Player{} = p, :game_start) do
+    @robot = p.type
+
+    fn_run = fn ->
+      p = p |> Round.setup(:game_start) # Setup game start round
+      p = Action.perform(p, :robot_guess)
       {p, Round.status(p)}
     end
 
@@ -215,17 +232,15 @@ defmodule Hangman.Player do
 	end
 
   @doc """
-  Routine for human player type which perform guess of last remaining word
+  HUMAN Routine for human player type which perform guess of last remaining word
 
   Note: Somewhat of a hack for a human guess word, 
   we simplify the human guessing of words to just the last word
   """
 
-  @spec guess(t, :atom) :: result
-  def guess(%Player{} = p, :last_word), do: guess(p, p.type, :last_word)
-
-  @spec guess(t, :atom, :atom) :: result
-	def guess(%Player{} = p, @human, :last_word) do
+  @spec guess(t, Guess.directive) :: result
+	def guess(%Player{} = p, :guess_last_word) do
+    @human = p.type
 
     fn_run = fn ->
       p = Action.perform(p, :guess_last_word)
@@ -244,22 +259,21 @@ defmodule Hangman.Player do
 	end
 
   @doc """
-  Routine for human player type which perform letter guesses
+  HUMAN Routine for human player type which perform letter guesses
 
   Doesn't setup round since it was setup during choose letters stage.
   Issues action to guess letter and returns round status
   """
 
 
-  @spec guess(t, String.t, :atom) :: result
-  def guess(%Player{} = p, l, :letter), do: guess(p, p.type, l, :letter)
+  @spec guess(t, Guess.t) :: result
+  def guess(%Player{} = p, guess = {:guess_letter, l})
+  when is_binary(l) do 
 
-  @spec guess(t, :atom, String.t, :atom) :: result
-	def guess(%Player{} = p, @human, letter, :letter)
-  when is_binary(letter) do
+    @human = p.type
 
     fn_run = fn ->
-      p = Action.perform(p, :guess_letter, letter)
+      p = Action.perform(p, guess)
       {p, Round.status(p)}
     end
 
@@ -297,11 +311,15 @@ defmodule Hangman.Player do
   @spec info(t) :: Keyword.t
   def info(%Player{} = p) do
 
-    {_, guess_token} = p.round.guess
-
+    guess = 
+      case p.round.guess do
+        {} -> ""
+        {_atom, token} -> token
+      end
+    
     round = [
         no: p.round.seq_no,
-        guess: guess_token,
+        guess: guess,
         guess_result: p.round.result_code,
         round_code: p.round.status_code,
         round_status: p.round.status_text,

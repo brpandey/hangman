@@ -31,6 +31,8 @@ defmodule Hangman.Strategy do
 	
 	@top_threshhold		2
 
+  @letter_choices 5
+
   # CREATE
   @doc """
   Returns a new strategy
@@ -170,7 +172,7 @@ defmodule Hangman.Strategy do
   """
 
   @spec letter_in_most_common(t, pos_integer, String.t) :: Guess.t
-  def letter_in_most_common(%Strategy{} = strategy, n, letter) 
+  def letter_in_most_common(%Strategy{} = strategy, letter, n \\ @letter_choices) 
   when is_number(n) and n > 0 and is_binary(letter) do
 
     counter = strategy.pass.tally
@@ -188,8 +190,8 @@ defmodule Hangman.Strategy do
   strategy letter pick with an asterisk
   """
 
-  @spec choose_letters(t, pos_integer) :: {:atom, String.t}
-  def choose_letters(%Strategy{} = strategy, n)
+  @spec choose_letters(t, pos_integer) :: Guess.option
+  def choose_letters(%Strategy{} = strategy, n \\ @letter_choices)
   when is_number(n) and n > 0 do
     
     case Strategy.last_word(strategy) do        
