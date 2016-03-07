@@ -30,7 +30,7 @@ defmodule Hangman.Player do
   @robot :robot
   
 
-  @type player_type :: :human | :robot
+  @type kind :: :human | :robot
 
     
   # CREATE

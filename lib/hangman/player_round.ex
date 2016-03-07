@@ -120,7 +120,7 @@ defmodule Hangman.Player.Round do
       Pass.Server.get_pass(match_key, pass_key, reduce_key)
 
 		# Update the round strategy with the result of the reduction pass info _from the engine
-		strategy = Strategy.update(strategy, pass_info)
+		strategy = Strategy.update(strategy, pass_info, player.type)
     
 	  player = Kernel.put_in(player.strategy, strategy)
 
@@ -199,22 +199,18 @@ defmodule Hangman.Player.Round do
   def update(%Player{} = player, %Round{} = round, {:guess_letter, letter}) do
 
     strategy = Strategy.update(player.strategy, {:guess_letter, letter})
-	  update(player, round, strategy)
+    player = Kernel.put_in(player.strategy, strategy)
+	  update(player, round)
   end
 
   @spec update(Player.t, Round.t, Guess.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_word, word}) do
 
     strategy = Strategy.update(player.strategy, {:guess_word, word})
-	  update(player, round, strategy)
-  end
-
-  @spec update(Player.t, Round.t, Strategy.t) :: Player.t
-  def update(%Player{} = player, %Round{} = round, %Strategy{} = strategy) do
-
     player = Kernel.put_in(player.strategy, strategy)
 	  update(player, round)
   end
+
 
   @spec update(Player.t, Round.t) :: Player.t
   def update(%Player{} = player, %Round{} = round) do

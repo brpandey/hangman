@@ -72,12 +72,12 @@ defmodule Hangman.Strategy do
 
   # UPDATE
 
-  @doc """
-  Returns best letter guess as deemed by strategy heuristics
+  @docp """
+  Prepares best letter guess as deemed by strategy heuristics
   """
 
-  @spec make_guess(t) :: result
-  def make_guess(%Strategy{} = strategy) do
+  @spec prepare_guess(t) :: t
+  defp prepare_guess(%Strategy{} = strategy) do
   	case strategy.pass.size do 
   		0 ->	raise Hangman.Error, "Word not in dictionary"
   		1 ->
@@ -106,7 +106,16 @@ defmodule Hangman.Strategy do
   			end
   	end
 
-    {strategy, strategy.guess}
+    strategy
+  end
+
+  @doc """
+  Returns best letter guess as deemed by strategy heuristics
+  """
+
+  @spec make_guess(t) :: Guess.t
+  def make_guess(%Strategy{} = strategy) do
+    strategy.guess
   end
 
   @doc """
@@ -133,13 +142,28 @@ defmodule Hangman.Strategy do
 
   @doc """
   Updates strategy with pass data
+  For robot player type, get a head start on guess prep
   """
 
-  @spec update(t, Pass.t) :: t
-  def update(%Strategy{} = strategy, %Pass{} = pass) do
+  @spec update(t, Pass.t, Player.kind) :: t
+  def update(%Strategy{} = strategy, %Pass{} = pass, :human) do
     prior = strategy.guess
+    
     %Strategy{ strategy | pass: pass, prior_guess: prior}
   end
+
+  @spec update(t, Pass.t, Player.kind) :: t
+  def update(%Strategy{} = strategy, %Pass{} = pass, :robot) do
+    prior = strategy.guess
+    
+    strategy = Kernel.put_in(strategy.pass, pass)
+    strategy = Kernel.put_in(strategy.prior_guess, prior)
+
+    strategy = prepare_guess(strategy)
+
+    strategy
+  end
+
 
   # Helpers
   @doc """
