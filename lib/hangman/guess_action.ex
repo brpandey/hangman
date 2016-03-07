@@ -16,6 +16,8 @@ defmodule Hangman.Guess.Action do
 
 	alias Hangman.{Strategy, Player, Player.Round, Guess}
 
+  @human Player.human
+  @robot Player.robot
 
   # CODE w/ function builders
 
@@ -40,13 +42,13 @@ defmodule Hangman.Guess.Action do
 
   # Updaters
   @spec updater_round_and_guess(Player.t, Player.kind, Round.t, Guess.t) :: Player.t
-  defp updater_round_and_guess(p, :human, round, guess) do
+  defp updater_round_and_guess(p, @human, round, guess) do
     Round.update(p, round, guess)
   end
 
 
   @spec updater_round(Player.t, Player.kind, Round.t, Guess.t) :: Player.t
-  defp updater_round(p, :robot, round, _guess) do
+  defp updater_round(p, @robot, round, _guess) do
     Round.update(p, round)
   end
 
@@ -60,13 +62,12 @@ defmodule Hangman.Guess.Action do
 
     # return two headed-function
     fn
-      %Player{} = player, letter when is_binary(letter) ->
-        data = fn_data_retriever.(player, letter)
-        feedback = Round.guess(player, data)
-        fn_updater.(player, player.type, feedback, data)
-
       %Player{} = player, "" ->
         data = fn_data_retriever.(player)
+        feedback = Round.guess(player, data)
+        fn_updater.(player, player.type, feedback, data)
+      %Player{} = player, letter when is_binary(letter) ->
+        data = fn_data_retriever.(player, letter)
         feedback = Round.guess(player, data)
         fn_updater.(player, player.type, feedback, data)
     end
@@ -83,8 +84,8 @@ defmodule Hangman.Guess.Action do
   player with round results and guess data
   """
 
-  @spec perform1(Player.t, Guess.t) :: Player.t
-  def perform1(%Player{} = p, {:guess_letter, letter})
+  @spec perform(Player.t, Guess.t) :: Player.t
+  def perform(%Player{} = p, {:guess_letter, letter})
   when is_binary(letter) do
 
     guess = make_guess_action(&retrieve_letter_guess/2, 
@@ -99,8 +100,8 @@ defmodule Hangman.Guess.Action do
   with round results and guess data
   """
 
-  @spec perform1(Player.t, Guess.directive) :: Player.t
-  def perform1(%Player{} = p, :guess_last_word) do
+  @spec perform(Player.t, Guess.directive) :: Player.t
+  def perform(%Player{} = p, :guess_last_word) do
 
     guess = make_guess_action(&retrieve_last_guess/1, 
                               &updater_round_and_guess/4)
@@ -114,8 +115,8 @@ defmodule Hangman.Guess.Action do
   strategy data
   """
 
-  @spec perform1(Player.t, Guess.directive) :: Player.t
-  def perform1(%Player{} = p, :robot_guess) do
+  @spec perform(Player.t, Guess.directive) :: Player.t
+  def perform(%Player{} = p, :robot_guess) do
 
     guess = make_guess_action(&retrieve_strategic_guess/1, &updater_round/4)
     
@@ -132,8 +133,8 @@ defmodule Hangman.Guess.Action do
   player with round results and guess data
   """
 
-  @spec perform(Player.t, Guess.t) :: Player.t
-  def perform(%Player{} = p, {:guess_letter, letter})
+  @spec perform0(Player.t, Guess.t) :: Player.t
+  def perform0(%Player{} = p, {:guess_letter, letter})
   when is_binary(letter) do
     
     # If user has decided to put in a letter not in the most common choices
@@ -152,8 +153,8 @@ defmodule Hangman.Guess.Action do
   with round results and guess data
   """  
 
-  @spec perform(Player.t, Guess.directive) :: Player.t
-  def perform(%Player{} = p, :guess_last_word) do
+  @spec perform0(Player.t, Guess.directive) :: Player.t
+  def perform0(%Player{} = p, :guess_last_word) do
 
     guess = Strategy.last_word(p.strategy)
     
@@ -168,8 +169,8 @@ defmodule Hangman.Guess.Action do
   strategy data
   """
 
-  @spec perform(Player.t, Guess.directive) :: Player.t
-  def perform(%Player{} = p, :robot_guess) do
+  @spec perform0(Player.t, Guess.directive) :: Player.t
+  def perform0(%Player{} = p, :robot_guess) do
   	
     guess = Strategy.make_guess(p.strategy)
 
