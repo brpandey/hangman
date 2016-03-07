@@ -132,7 +132,7 @@ defmodule Hangman.Player.Round do
   Interjects round specific parameters into choices text
   """
 
-  @spec augment_choices(Player.t, result) :: result
+  @spec augment_choices(Player.t, Guess.option) :: Guess.option
   def augment_choices(%Player{} = player, {code, choices_text})
   when is_binary(choices_text) do
     

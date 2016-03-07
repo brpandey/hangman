@@ -13,14 +13,17 @@ defmodule Hangman.Player.Game do
   Wraps fsm game play into an enumerable for easy running.
   """
 
-	alias Hangman.{Game, Player.FSM}
+	alias Hangman.{Game, Player}
+
+  @human Player.human
+  @robot Player.robot
 
   @doc """
   Function run connects all the player specific components together 
   and runs the player game
   """
 
-  @spec run(String.t, :atom, [String.t], boolean, boolean) :: :ok
+  @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
   def run(name, type, secrets, log, display) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
@@ -43,7 +46,7 @@ defmodule Hangman.Player.Game do
   
   # Start dynamic player worker
   
-  @spec start_player(String.t, :atom, pid, pid) :: Supervisor.on_start_child
+  @spec start_player(String.t, Player.kind, pid, pid) :: Supervisor.on_start_child
   defp start_player(name, type, game_pid, notify_pid) do
     Hangman.Player.Supervisor.start_child(name, type, game_pid, notify_pid)
   end
@@ -67,9 +70,9 @@ defmodule Hangman.Player.Game do
   end
 
   # Robot round playing!
-  @spec rounds_handler(tuple, :atom) :: Enumerable.t
+  @spec rounds_handler(tuple, Player.kind) :: Enumerable.t
 	defp rounds_handler({name, game_pid, notify_pid}, 
-                       :robot) do
+                       @robot) do
 
     # Wrap the player fsm game play in a stream
     # Stream resource returns an enumerable
@@ -77,12 +80,12 @@ defmodule Hangman.Player.Game do
 		Stream.resource(
 			fn -> 
         # Dynamically start hangman player
-        {:ok, ppid} = start_player(name, :robot, game_pid, notify_pid)
+        {:ok, ppid} = start_player(name, @robot, game_pid, notify_pid)
         ppid
 				end,
 
 			fn ppid ->
-				case FSM.wall_e_guess(ppid) do
+				case Player.FSM.wall_e_guess(ppid) do
 					{:game_reset, reply} -> 
             IO.puts "\n#{reply}"
             {:halt, ppid}
@@ -96,14 +99,14 @@ defmodule Hangman.Player.Game do
 			fn ppid -> 
         # Be a good functional citizen and cleanup server resources
         Hangman.Player.Events.Server.stop(notify_pid)
-        FSM.stop(ppid) 
+        Player.FSM.stop(ppid) 
       end
 		)
 	end
 
   # Human round playing!
-  @spec rounds_handler(tuple, :atom) :: Enumerable.t
-	defp rounds_handler({name, game_pid, notify_pid}, :human) do
+  @spec rounds_handler(tuple, Player.kind) :: Enumerable.t
+	defp rounds_handler({name, game_pid, notify_pid}, @human) do
 
     # Wrap the player fsm game play in a stream
     # Stream resource returns an enumerable
@@ -111,7 +114,7 @@ defmodule Hangman.Player.Game do
 		Stream.resource(
 			fn -> 
         # Dynamically start hangman player
-        {:ok, ppid} = start_player(name, :human, game_pid, notify_pid)
+        {:ok, ppid} = start_player(name, @human, game_pid, notify_pid)
         {ppid, []}
 				end,
 
@@ -119,13 +122,13 @@ defmodule Hangman.Player.Game do
 
         case code do
           [] -> 
-            {code, reply} = FSM.socrates_proceed(ppid)
+            {code, reply} = Player.FSM.socrates_proceed(ppid)
             {[reply], {ppid, code}}
 
           :game_choose_letter ->
             choice = IO.gets("[Please input letter choice] ")
             letter = String.strip(choice)
-            {code, reply} = FSM.socrates_guess(ppid, letter)
+            {code, reply} = Player.FSM.socrates_guess(ppid, letter)
 
 				    case {code, reply} do
 					    {:game_reset, reply} -> 
@@ -135,7 +138,7 @@ defmodule Hangman.Player.Game do
             end
           
           :game_last_word ->
-            {code, reply} = FSM.socrates_win(ppid)
+            {code, reply} = Player.FSM.socrates_win(ppid)
 
 				    case {code, reply} do
 					    {:game_reset, reply} -> 
@@ -145,11 +148,11 @@ defmodule Hangman.Player.Game do
             end
 
           :game_won -> 
-            {code, reply} = FSM.socrates_proceed(ppid)
+            {code, reply} = Player.FSM.socrates_proceed(ppid)
             {[reply], {ppid, code}}
 
           :game_lost -> 
-            {code, reply} = FSM.socrates_proceed(ppid)
+            {code, reply} = Player.FSM.socrates_proceed(ppid)
             {[reply], {ppid, code}}          
 
           :games_over -> 
@@ -164,7 +167,7 @@ defmodule Hangman.Player.Game do
 			fn ppid -> 
         # Be a good functional citizen and cleanup server resources
         Hangman.Player.Events.Server.stop(notify_pid)
-        FSM.stop(ppid) 
+        Player.FSM.stop(ppid) 
       end
 		)
 	end

@@ -21,6 +21,9 @@ defmodule Hangman.Player.FSM do
 
   alias Hangman.{Player, Player.Async.Echo}
 
+  @human Player.human
+  @robot Player.robot
+
   # External API
 
   @doc """
@@ -153,8 +156,8 @@ defmodule Hangman.Player.FSM do
 
     initial = 
       case player.type do
-        :human -> :idle_socrates
-        :robot -> :neutral_wall_e
+        @human -> :idle_socrates
+        @robot -> :neutral_wall_e
         _ -> raise Hangman.Error, "invalid and unknown player type"
       end
 

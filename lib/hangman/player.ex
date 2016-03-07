@@ -32,7 +32,10 @@ defmodule Hangman.Player do
 
   @type kind :: :human | :robot
 
-    
+  def human, do: @human
+  def robot, do: @robot
+  
+  
   # CREATE
 
   @doc """
@@ -178,7 +181,6 @@ defmodule Hangman.Player do
     @human = p.type
 
     fn_run = fn ->
-
       p = 
         case options do
           :game_start -> 

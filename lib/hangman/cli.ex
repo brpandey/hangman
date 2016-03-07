@@ -22,6 +22,9 @@ defmodule Hangman.CLI do
   @max_secret_length 28
   @max_random_words_request 10
 
+  @human Player.human
+  @robot Player.robot
+
   @doc """
   Gateway cli function to fetch and validate parameters, before
   running the game
@@ -147,8 +150,8 @@ defmodule Hangman.CLI do
 
     type = 
       case Keyword.fetch(args, :type) do
-        {:ok, "human"} -> :human
-        {:ok, "robot"} -> :robot
+        {:ok, "human"} -> @human
+        {:ok, "robot"} -> @robot
         _ -> :robot
       end
 

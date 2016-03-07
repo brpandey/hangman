@@ -9,7 +9,7 @@ defmodule Hangman.Strategy do
   be presented to human to manually choose
   """
 
-  alias Hangman.{Strategy, Counter, Pass, Guess}
+  alias Hangman.{Strategy, Counter, Pass, Guess, Player}
 
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
@@ -32,6 +32,9 @@ defmodule Hangman.Strategy do
 	@top_threshhold		2
 
   @letter_choices 5
+
+  @human :human
+  @robot :robot
 
   # CREATE
   @doc """
@@ -146,14 +149,14 @@ defmodule Hangman.Strategy do
   """
 
   @spec update(t, Pass.t, Player.kind) :: t
-  def update(%Strategy{} = strategy, %Pass{} = pass, :human) do
+  def update(%Strategy{} = strategy, %Pass{} = pass, @human) do
     prior = strategy.guess
     
     %Strategy{ strategy | pass: pass, prior_guess: prior}
   end
 
   @spec update(t, Pass.t, Player.kind) :: t
-  def update(%Strategy{} = strategy, %Pass{} = pass, :robot) do
+  def update(%Strategy{} = strategy, %Pass{} = pass, @robot) do
     prior = strategy.guess
     
     strategy = Kernel.put_in(strategy.pass, pass)
