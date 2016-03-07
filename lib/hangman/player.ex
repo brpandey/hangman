@@ -297,9 +297,11 @@ defmodule Hangman.Player do
   @spec info(t) :: Keyword.t
   def info(%Player{} = p) do
 
+    {_, guess_token} = p.round.guess
+
     round = [
         no: p.round.seq_no,
-        guess: p.round.guess,
+        guess: guess_token,
         guess_result: p.round.result_code,
         round_code: p.round.status_code,
         round_status: p.round.status_text,

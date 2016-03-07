@@ -6,6 +6,7 @@ defmodule Hangman.Player.Logger.Handler do
   Each event is logged to a file named after player id (name)
   """
 
+  alias Hangman.{Guess}
   require Logger
 
 
@@ -64,8 +65,8 @@ defmodule Hangman.Player.Logger.Handler do
   Writes to player logger file
   """
 
-  @callback handle_event(tuple, pid) :: tuple
-	def handle_event({:guessed_word, _name, _game_no, word}, file_pid) do
+  @callback handle_event({Guess.t, tuple}, pid) :: tuple
+	def handle_event({{:guess_word, word}, _info}, file_pid) do
 
 		msg = "# word --> #{word} "
 
@@ -79,10 +80,10 @@ defmodule Hangman.Player.Logger.Handler do
   Writes to player logger file
   """
 
-  @callback handle_event(tuple, pid) :: tuple
-	def handle_event({:guessed_letter, _name, _game_no, letter}, file_pid) do
+  @callback handle_event({Guess.t, tuple}, pid) :: tuple
+	def handle_event({{:guess_letter, letter}, _info}, file_pid) do
 
-		msg = "# letter --> #{letter}"
+		msg = "# letter --> #{letter} "
 
 		write(file_pid, msg)
 

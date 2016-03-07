@@ -2,6 +2,7 @@ defmodule Hangman.Player.Events.Server do
   @moduledoc """
   Module implements events manager for player abstraction
   """
+  alias Hangman.{Guess}
 
   require Logger
 
@@ -43,11 +44,11 @@ defmodule Hangman.Player.Events.Server do
 								IO.puts "##{name}_feed Game #{game_no}, " <> 
                   "secret length --> #{length}"
 
-							{:guessed_letter, name, game_no, letter} ->
+							{{:guess_letter, letter}, {name, game_no}} ->
 								IO.puts "##{name}_feed Game #{game_no}, " <> 
                   "letter --> #{letter}"
 
-							{:guessed_word, name, game_no, word} ->
+							{{:guess_word, word}, {name, game_no}} ->
 								IO.puts "##{name}_feed Game #{game_no}, " <> 
                   "word --> #{word}"
 
@@ -86,22 +87,29 @@ defmodule Hangman.Player.Events.Server do
 	end
 
   @doc """
-  Sends :guessed_letter tuple event notification to event manager
+  Sends :guess_letter tuple event notification to event manager
   """
 
-  @spec notify_letter(pid, tuple) :: :ok
-	def notify_letter(pid, {name, game_no, letter}) when is_binary(letter) do
-		GenEvent.notify(pid, {:guessed_letter, name, game_no, letter})
+  @spec notify_guess(pid, Guess.t, tuple) :: :ok
+	def notify_guess(pid, {:guess_letter, letter}, {name, game_no}) when is_binary(letter) do
+    guess = {:guess_letter, letter}
+    info = {name, game_no}
+
+		GenEvent.notify(pid, {guess, info})
 	end
 
   @doc """
-  Sends :guessed_word tuple event notification to event manager
+  Sends :guess_word tuple event notification to event manager
   """
 
-  @spec notify_word(pid, tuple) :: :ok
-	def notify_word(pid, {name, game_no, word}) when is_binary(word) do
-		GenEvent.notify(pid, {:guessed_word, name, game_no, word})
+  @spec notify_guess(pid, Guess.t, tuple) :: :ok
+	def notify_guess(pid, {:guess_word, word}, {name, game_no}) when is_binary(word) do
+    guess = {:guess_word, word}
+    info = {name, game_no}
+
+		GenEvent.notify(pid, {guess, info})
 	end
+
 
   @doc """
   Sends :round_status tuple event notification to event manager

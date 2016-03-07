@@ -2,7 +2,7 @@ defmodule Hangman.Player.Round do
   @moduledoc """
   Module to implement player game round abstraction.
 
-  Works in conjuction with Hangman.Action and Hangman.Player
+  Works in conjuction with Strategy
   to orchestrate actual round game play.
 
   Basic round functionality includes as setup, guess, update, status
@@ -12,7 +12,7 @@ defmodule Hangman.Player.Round do
                  Player, Player.Round, Player.Events}
 
   defstruct seq_no: 0,
-  guess: "",
+  guess: {},
   result_code: nil, 
   status_code: nil, 
   status_text: "",
@@ -32,13 +32,18 @@ defmodule Hangman.Player.Round do
   @spec context(Player.t) :: Guess.context | no_return
 	def context(%Player{} = player) do
 
+
   	case player.round.result_code do
   		:correct_letter -> 
-  			{:game_keep_guessing, :correct_letter, player.round.guess, 
+        {:guess_letter, letter} = player.round.guess
+
+  			{:game_keep_guessing, :correct_letter, letter, 
   					player.round.pattern, player.mystery_letter}
 
   		:incorrect_letter -> 
-  			{:game_keep_guessing, :incorrect_letter, player.round.guess}
+        {:guess_letter, letter} = player.round.guess
+
+  			{:game_keep_guessing, :incorrect_letter, letter}
 
       :incorrect_word ->
         {:game_keep_guessing, :incorrect_letter, " "}
@@ -150,44 +155,32 @@ defmodule Hangman.Player.Round do
   Returns received round data
   """
 
-  @spec guess(Player.t, Strategy.guess) :: t
-  def guess(%Player{} = player, {:guess_letter, letter})
-  when is_binary(letter) do
-    
-  	{name, _strategy, game_no, seq_no} = params(player)
-
-    {{^name, result, code, pattern, text}, final} =
-	    Game.Server.guess_letter(player.game_server_pid, letter)
-    
-		Events.Server.notify_letter(player.event_server_pid, 
-						                    {name, game_no, letter})
-    
-		Events.Server.notify_status(player.event_server_pid,
-						                    {name, game_no, seq_no, text})
-    
-	  %Round{seq_no: seq_no,
-      		 guess: letter, result_code: result, 
-      		 status_code: code, pattern: pattern, 
-      		 status_text: text, final_result: final}
+  @spec guess(Player.t, Guess.t) :: t
+  def guess(%Player{} = p, guess = {:guess_letter, letter}) when is_binary(letter) do
+    do_guess(p, guess)
   end
-
-  @spec guess(Player.t, Strategy.guess) :: t
-  def guess(%Player{} = player, {:guess_word, word})
-  when is_binary(word) do
-
-  	{name, _strategy, game_no, seq_no} = params(player)
-
-    {{^name, result, code, pattern, text}, final} =
-	    Game.Server.guess_word(player.game_server_pid, word)
+  
+  @spec guess(Player.t, Guess.t) :: t
+  def guess(%Player{} = p, guess = {:guess_word, word}) when is_binary(word) do
+    do_guess(p, guess)
+  end
+  
+  @spec do_guess(Player.t, Guess.t) :: t
+  defp do_guess(%Player{} = player, guess) do
     
-	  Events.Server.notify_word(player.event_server_pid, 
-	        	                  {name, game_no, word})
+  	{name, _strategy, game_no, seq_no} = params(player)
+    
+    {{^name, result, code, pattern, text}, final} =
+	    Game.Server.guess(player.game_server_pid, guess)
+    
+	  Events.Server.notify_guess(player.event_server_pid, guess,
+	        	                   {name, game_no})
     
 	  Events.Server.notify_status(player.event_server_pid,
 						                    {name, game_no, seq_no, text})
-
+    
 	  %Round{seq_no: seq_no,
-      		 guess: word, result_code: result, 
+      		 guess: guess, result_code: result, 
       		 status_code: code, pattern: pattern, 
       		 status_text: text, final_result: final}      
   end
@@ -202,14 +195,14 @@ defmodule Hangman.Player.Round do
   be updated.
   """
 
-  @spec update(Player.t, Round.t, Strategy.guess) :: Player.t
+  @spec update(Player.t, Round.t, Guess.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_letter, letter}) do
 
     strategy = Strategy.update(player.strategy, {:guess_letter, letter})
 	  update(player, round, strategy)
   end
 
-  @spec update(Player.t, Round.t, Strategy.guess) :: Player.t
+  @spec update(Player.t, Round.t, Guess.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_word, word}) do
 
     strategy = Strategy.update(player.strategy, {:guess_word, word})

@@ -57,56 +57,56 @@ defmodule Hangman.Game.Test do
 
 		assert {"stanley", :game_keep_guessing, 
             "-------; score=0; status=KEEP_GUESSING"} = 
-			Game.Server.game_status(game_pid)
+			Game.Server.status(game_pid)
 
 		assert {{"stanley", :correct_letter, :game_keep_guessing, "--C----",
   		"--C----; score=1; status=KEEP_GUESSING"}, []} = 
-			Game.Server.guess_letter(game_pid, "c")
+			Game.Server.guess(game_pid, {:guess_letter, "c"})
 
 		assert {{"stanley", :correct_letter, :game_keep_guessing, "--C-U--",
 		  "--C-U--; score=2; status=KEEP_GUESSING"}, []} = 
-			Game.Server.guess_letter(game_pid, "u")
+			Game.Server.guess(game_pid, {:guess_letter, "u"})
 
 		assert {{"stanley", :correct_letter, :game_keep_guessing, "-AC-UA-",
   		"-AC-UA-; score=3; status=KEEP_GUESSING"}, []} = 
-  		Game.Server.guess_letter(game_pid, "a")
+  		Game.Server.guess(game_pid, {:guess_letter, "a"})
 
   	assert {{"stanley", :correct_letter, :game_keep_guessing, "FAC-UA-",
   		"FAC-UA-; score=4; status=KEEP_GUESSING"}, []} =
-  		Game.Server.guess_letter(game_pid, "f")
+  		Game.Server.guess(game_pid, {:guess_letter, "f"})
 
   	assert {{"stanley", :correct_letter, :game_keep_guessing, "FACTUA-",
   		"FACTUA-; score=5; status=KEEP_GUESSING"}, []} =
-  		Game.Server.guess_letter(game_pid, "t")
+  		Game.Server.guess(game_pid, {:guess_letter, "t"})
 
   	assert {{"stanley", :correct_letter, :game_won, "FACTUAL", 
              "FACTUAL; score=6; status=GAME_WON"},
- 			[]} = Game.Server.guess_letter(game_pid, "l")
+ 			[]} = Game.Server.guess(game_pid, {:guess_letter, "l"})
 
  		assert {"stanley", :game_keep_guessing, 
             "--------; score=0; status=KEEP_GUESSING"} =
- 			Game.Server.game_status(game_pid) 
+ 			Game.Server.status(game_pid) 
 
  		assert {{"stanley", :correct_letter, :game_keep_guessing, "--C---C-",
   		"--C---C-; score=1; status=KEEP_GUESSING"}, []} = 
-  		Game.Server.guess_letter(game_pid, "c")
+  		Game.Server.guess(game_pid, {:guess_letter, "c"})
 
   	assert {{"stanley", :correct_letter, :game_keep_guessing, "-AC--AC-",
   		"-AC--AC-; score=2; status=KEEP_GUESSING"}, []} = 
-  		Game.Server.guess_letter(game_pid, "a")
+  		Game.Server.guess(game_pid, {:guess_letter, "a"})
 
   	assert {{"stanley", :correct_letter, :game_keep_guessing, "-ACK-ACK",
   		"-ACK-ACK; score=3; status=KEEP_GUESSING"}, []} = 
-  		Game.Server.guess_letter(game_pid, "k")
+  		Game.Server.guess(game_pid, {:guess_letter, "k"})
 
   	assert {{"stanley", :correct_word, :game_won, "BACKPACK", 
              "BACKPACK; score=3; status=GAME_WON"},
- 			[status: :game_over, average_score: 4.5, games: 2,
+ 			[status: :games_over, average_score: 4.5, games: 2,
   		results: [{"FACTUAL", 6}, {"BACKPACK", 3}]]} = 
-  		Game.Server.guess_word(game_pid, "backpack") 
+  		Game.Server.guess(game_pid, {:guess_word, "backpack"}) 
 
-  	assert {"stanley", :game_reset, 'GAME_RESET'} =
-  		Game.Server.game_status(game_pid)
+  	assert {nil, :game_reset, 'GAME_RESET'} =
+  		Game.Server.status(game_pid)
 
   end
 
@@ -119,60 +119,60 @@ defmodule Hangman.Game.Test do
 
 		assert {"hugo", :game_keep_guessing, 
             "-----; score=0; status=KEEP_GUESSING"} =
-			Game.Server.game_status(game_pid)                             
+			Game.Server.status(game_pid)                             
 
 		assert {{"hugo", :correct_letter, :game_keep_guessing, "H----",
 		  "H----; score=1; status=KEEP_GUESSING"}, []} = 
-		  Game.Server.guess_letter(game_pid, "h")
+		  Game.Server.guess(game_pid, {:guess_letter, "h"})
 
 		assert {{"hugo", :incorrect_letter, :game_keep_guessing, "H----",
 		  "H----; score=2; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "l")
+		  Game.Server.guess(game_pid, {:guess_letter, "l"})
 
 		assert {{"hugo", :incorrect_letter, :game_keep_guessing, "H----",
 		  "H----; score=3; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "g")
+		  Game.Server.guess(game_pid, {:guess_letter, "g"})
 
 		assert {{"hugo", :correct_letter, :game_keep_guessing, "H-A--",
 		  "H-A--; score=4; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "a")
+		  Game.Server.guess(game_pid, {:guess_letter, "a"})
 
 		assert {{"hugo", :correct_letter, :game_keep_guessing, "H-AR-",
 		  "H-AR-; score=5; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "r")
+		  Game.Server.guess(game_pid, {:guess_letter, "r"})
 
 		assert {{"hugo", :correct_word, :game_won, "HEART", 
              "HEART; score=5; status=GAME_WON"}, []} =
-			Game.Server.guess_word(game_pid, "heart")  
+			Game.Server.guess(game_pid, {:guess_word, "heart"})  
 
 		assert {"hugo", :game_keep_guessing, 
             "-------; score=0; status=KEEP_GUESSING"} = 
-			Game.Server.game_status(game_pid)        
+			Game.Server.status(game_pid)        
 
 		assert {{"hugo", :correct_letter, :game_keep_guessing, "----A--",
 		  "----A--; score=1; status=KEEP_GUESSING"}, []} = 
-		  Game.Server.guess_letter(game_pid, "a")  
+		  Game.Server.guess(game_pid, {:guess_letter, "a"})  
 
 		assert {{"hugo", :correct_letter, :game_keep_guessing, "----A-Y",
 		  "----A-Y; score=2; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "y")
+		  Game.Server.guess(game_pid, {:guess_letter, "y"})
 
 		assert {{"hugo", :incorrect_letter, :game_keep_guessing, "----A-Y",
 		  "----A-Y; score=3; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "s")
+		  Game.Server.guess(game_pid, {:guess_letter, "s"})
 
 		assert {{"hugo", :correct_letter, :game_keep_guessing, "L-LLA-Y",
 		  "L-LLA-Y; score=4; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "l")
+		  Game.Server.guess(game_pid, {:guess_letter, "l"})
 
 		assert {{"hugo", :correct_word, :game_won, "LULLABY", 
              "LULLABY; score=4; status=GAME_WON"},
-		 [status: :game_over, average_score: 4.5, games: 2,
+		 [status: :games_over, average_score: 4.5, games: 2,
 		  results: [{"HEART", 5}, {"LULLABY", 4}]]} =
-		  Game.Server.guess_word(game_pid, "lullaby")  
+		  Game.Server.guess(game_pid, {:guess_word, "lullaby"})  
 
-		assert {"hugo", :game_reset, 'GAME_RESET'} =
-			Game.Server.game_status(game_pid)    
+		assert {nil, :game_reset, 'GAME_RESET'} =
+			Game.Server.status(game_pid)    
 
   end
 
@@ -188,21 +188,21 @@ defmodule Hangman.Game.Test do
 
 		assert {{"stanley", :correct_letter, :game_keep_guessing, "-----L",
 		  "-----L; score=1; status=KEEP_GUESSING"}, []} =
-		   Game.Server.guess_letter(game_pid, "l")                 
+		   Game.Server.guess(game_pid, {:guess_letter, "l"})                 
 
 		assert {{"stanley", :correct_letter, :game_keep_guessing, "----AL",
 		  "----AL; score=2; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "a")
+		  Game.Server.guess(game_pid, {:guess_letter, "a"})
 
 		assert {{"stanley", :correct_letter, :game_keep_guessing, "J---AL",
 		  "J---AL; score=3; status=KEEP_GUESSING"}, []} =
-		  Game.Server.guess_letter(game_pid, "j")
+		  Game.Server.guess(game_pid, {:guess_letter, "j"})
 
 		assert {{"stanley", :correct_word, :game_won, "JOVIAL", 
              "JOVIAL; score=3; status=GAME_WON"},
-		        [status: :game_over, average_score: 3.0, games: 1, 
+		        [status: :games_over, average_score: 3.0, games: 1, 
              results: [{"JOVIAL", 3}]]} =
-		 Game.Server.guess_word(game_pid, "jovial")
+		 Game.Server.guess(game_pid, {:guess_word, "jovial"})
 
 
 	end
@@ -220,7 +220,7 @@ defmodule Hangman.Game.Test do
 		#Game.Server.guess_letter(123)
 
 		assert {:game_keep_guessing, "-A--A----; score=1; status=KEEP_GUESSING"} =
-			Game.Server.game_status()
+			Game.Server.status()
 
 		assert {{:correct_letter, :game_keep_guessing, "-A--A---C", _text}, []} =
 			Game.Server.guess_letter("c")
@@ -228,7 +228,7 @@ defmodule Hangman.Game.Test do
 		#Game.Server.guess_word(456)
 
 		assert {:game_keep_guessing, "-A--A---C; score=2; status=KEEP_GUESSING"} =
-			Game.Server.game_status()
+			Game.Server.status()
 
 		assert {{:correct_letter, :game_keep_guessing, "-AN-A---C", _text}, []} =
 			Game.Server.guess_letter("n") 
@@ -270,7 +270,7 @@ defmodule Hangman.Game.Test do
 		#Game 1
 		#avocado
 
-		{:ok, _pid} = Game.Server.start_link_link("avocado", 5)
+		{:ok, _pid} = Game.Server.start_link("avocado", 5)
 
 		assert {:correct_letter, :game_keep_guessing, "A---A--", _text} =
 			Game.Server.guess_letter("a")
@@ -325,7 +325,7 @@ defmodule Hangman.Game.Test do
 			Game.Server.guess_word("lampoon")
 
 		assert {:game_won, 3, "LAMPOON; score=3; status=GAME_WON"} =
-			Game.Server.game_status()
+			Game.Server.status()
 
 		#Game 4
 		#dexterity
@@ -338,7 +338,7 @@ defmodule Hangman.Game.Test do
 			Game.Server.guess_word("dexterity")
 
 		assert {:game_won, 1, "DEXTERITY; score=1; status=GAME_WON"} = 
-			Game.Server.game_status()
+			Game.Server.status()
 
 		assert Game.Server.stop() == :ok
 

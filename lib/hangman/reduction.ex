@@ -4,7 +4,7 @@ defmodule Hangman.Reduction do
   """
 
   @typedoc """
-  Defines reduction key type format
+  Defines reduction key type format used to reduce words set
   """
   
   @type key :: ( [{:game_start, boolean}, {:secret_length, pos_integer}] ) |
