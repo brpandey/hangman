@@ -122,12 +122,9 @@ defmodule Hangman.Game do
 	@doc """
 	Guess the specified word and update the pattern state accordingly
   
-	If correct, returns the :correct_word data tuple with game abstraction
-	as the game has been won (effectively saving another client call 
-	to get the game_status here) we also signal to shutdown the 
-	server at this point
+	If correct, returns the :correct_word data tuple along with game
   
-	If incorrect, returns the :incorrect_word data tuple with game abstraction
+	If incorrect, returns the :incorrect_word data tuple with game
 	"""
   
   @spec guess(t, Guess.t) :: result
