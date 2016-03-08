@@ -3,8 +3,8 @@ defmodule Hangman.Mixfile do
 
   def project do
     [app: :play_hangman,
-     name: "Elixir Hangman",
-     version: "0.1.1",
+     name: "Hangman",
+     version: "0.9.1",
      elixir: "~> 1.2.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
