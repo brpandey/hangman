@@ -1,9 +1,8 @@
-
-defmodule Hangman.Dictionary.File.Stream.Test do
+defmodule Dictionary.File.Stream.Test do
 	use ExUnit.Case, async: true
 
   setup_all do
-    IO.puts "Hangman.Dictionary.File.Stream.Test"
+    IO.puts "Dictionary File Stream Test"
     :ok
   end
 
@@ -14,13 +13,13 @@ defmodule Hangman.Dictionary.File.Stream.Test do
 		
 		path = "lib/hangman/data/words.txt"
 
-		stream = Hangman.Dictionary.File.Stream.new({:read, :unsorted}, path)
+		stream = Dictionary.File.Stream.new({:read, :unsorted}, path)
 
-		Hangman.Dictionary.File.Stream.gets_lazy(stream)
+		Dictionary.File.Stream.gets_lazy(stream)
 			|> Stream.each(&IO.inspect/1)
 			|> Enum.take(5)
 
-		Hangman.Dictionary.File.Stream.delete(stream)			
+		Dictionary.File.Stream.delete(stream)			
 	end
 
 
@@ -30,13 +29,13 @@ defmodule Hangman.Dictionary.File.Stream.Test do
 
 		path = "lib/hangman/data/words_sorted.txt"
 
-		sorted_stream = Hangman.Dictionary.File.Stream.new({:read, :sorted}, path)
+		sorted_stream = Dictionary.File.Stream.new({:read, :sorted}, path)
 
-		Hangman.Dictionary.File.Stream.gets_lazy(sorted_stream)
+		Dictionary.File.Stream.gets_lazy(sorted_stream)
 			|> Stream.each(&IO.inspect/1)
 			|> Enum.take(5)
 
-		Hangman.Dictionary.File.Stream.delete(sorted_stream)	
+		Dictionary.File.Stream.delete(sorted_stream)	
 	end
 
 

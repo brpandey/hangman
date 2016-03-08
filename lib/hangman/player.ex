@@ -1,15 +1,16 @@
-defmodule Hangman.Player do
+defmodule Player do
   @moduledoc """
   Module handles player abstraction and defines player type
 
   Implements functionality to start a player, 
   choose letters, guess letters and words
 
-  Heavily relies upon Player.Round and Round.Action functionality
+  Heavily relies upon Player.Round and Guess.Action functionality
   """
 
-  alias Hangman.{Player, Player.Round, Player.Events, 
-                 Guess.Action, Strategy, Game}
+  alias Guess.Action, as: Action
+  alias Player.Round, as: Round
+  alias Player.Events, as: Events
 
 	defstruct name: "", 
   type: nil,
@@ -48,7 +49,7 @@ defmodule Hangman.Player do
   and is_pid(game_pid) and is_pid(event_pid) do
     
   	unless type in [@human, @robot] do 
-      raise Hangman.Error, "invalid and unknown player type" 
+      raise HangmanError, "invalid and unknown player type" 
     end
     
   	%Player{ name: name, type: type, 
@@ -161,7 +162,7 @@ defmodule Hangman.Player do
       case p.type do
         @robot -> guess(p, :game_start)
         @human -> choices(p, :choose_letters, :game_start)
-        _ -> raise Hangman.Error, "Invalid and unknown player type"
+        _ -> raise HangmanError, "Invalid and unknown player type"
     end
 
     result
@@ -251,7 +252,7 @@ defmodule Hangman.Player do
       # If we can supposedly keep guessing, flag as error since this should be end
       case status do
         {:game_keep_guessing, _} -> 
-          raise Hangman.Error, 
+          raise HangmanError, 
           "Last word was not actual last word, secret not in hangman dictionary"
         _ -> {p, status} # Return normal return value
       end
@@ -292,7 +293,7 @@ defmodule Hangman.Player do
       try do 
         fn_run.() 
       rescue
-        e in Hangman.Error -> {p, {:game_reset, e.message}}
+        e in HangmanError -> {p, {:game_reset, e.message}}
       end
     
     value
@@ -343,8 +344,8 @@ defmodule Hangman.Player do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      info = Inspect.List.inspect(Hangman.Player.info(t), opts)
-      concat ["#Hangman.Player<", info, ">"]
+      info = Inspect.List.inspect(Player.info(t), opts)
+      concat ["#Player<", info, ">"]
     end
   end
 

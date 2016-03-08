@@ -1,12 +1,15 @@
-defmodule Hangman.Counter do
+defmodule Counter do
   @moduledoc """
-  Hangman.Counter
-  A set of functions for working with letter frequency counters
+
+  Module implements a set of functions for working 
+  with letter frequency counters.
+
+  Conventional hangman strategy deals exclusively with 
+  letter frequency data
+
   Counters are key value stores where keys are letter strings 
   and values are positive integers
   """
-
-  alias Hangman.{Counter}
 
   @doc false
 	defstruct map: %{}
@@ -241,7 +244,7 @@ defmodule Hangman.Counter do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      concat ["#Hangman.Counter<", Inspect.List.inspect(Hangman.Counter.items(t), opts), ">"]
+      concat ["#Counter<", Inspect.List.inspect(Counter.items(t), opts), ">"]
     end
   end
 

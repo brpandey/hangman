@@ -1,4 +1,4 @@
-defmodule Hangman.Guess.Action do
+defmodule Guess.Action do
   @moduledoc """
 
   Module encapsulates hangman round actions 
@@ -14,7 +14,7 @@ defmodule Hangman.Guess.Action do
   Written this way for purely erudition purposes
   """
 
-	alias Hangman.{Strategy, Player, Player.Round, Guess}
+  alias Player.Round, as: Round
 
   @human Player.human
   @robot Player.robot

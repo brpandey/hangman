@@ -1,13 +1,10 @@
-defmodule Hangman.Strategy.Options do
+defmodule Strategy.Options do
   @moduledoc """
   Module generates reduction key for use when reducing possible words set
 
   Used primarily by player round abstraction before guessing,
   when setting up a round
   """
-
-
-  alias Hangman.{Guess, Strategy, Reduction}
 
 
   @doc """

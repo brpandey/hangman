@@ -1,4 +1,4 @@
-defmodule Hangman.Guess do
+defmodule Guess do
   @moduledoc """
   Module primarily implements guess types
   """

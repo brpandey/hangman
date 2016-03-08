@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Supervisor do
+defmodule Player.Supervisor do
 	use Supervisor
 
   @moduledoc """
@@ -52,7 +52,7 @@ defmodule Hangman.Player.Supervisor do
 	def init(_) do
 		children = [
       # Use restart transient option -- only restart if abnormal shutdown
-			worker(Hangman.Player.FSM, [], restart: :transient) 
+			worker(Player.FSM, [], restart: :transient) 
 		]
 
 		# :simple_one_for_one to indicate that 

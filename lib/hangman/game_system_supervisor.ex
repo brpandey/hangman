@@ -1,12 +1,12 @@
-defmodule Hangman.Game.System.Supervisor do 
+defmodule Game.System.Supervisor do 
 	use Supervisor
 
   @moduledoc """
   Module implements supervisor behaviour.
 
   Module is a second line supervisor
-	as it supervises a first-line supervisor, Hangman.Game.Server.Supervisor
-	along with the Hangman.Game.Pid.Cache GenServer
+	as it supervises a first-line supervisor, Game.Server.Supervisor
+	along with the Game.Pid.Cache GenServer
   """
   
   require Logger
@@ -33,8 +33,8 @@ defmodule Hangman.Game.System.Supervisor do
 	def init(_) do
 
 		children = [
-				supervisor(Hangman.Game.Server.Supervisor, []),
-				worker(Hangman.Game.Pid.Cache.Server, [])
+				supervisor(Game.Server.Supervisor, []),
+				worker(Game.Pid.Cache.Server, [])
 		]
 
 		supervise(children, strategy: :one_for_one)	

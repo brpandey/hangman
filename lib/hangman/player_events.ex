@@ -1,8 +1,7 @@
-defmodule Hangman.Player.Events.Server do
+defmodule Player.Events.Server do
   @moduledoc """
   Module implements events manager for player abstraction
   """
-  alias Hangman.{Guess}
 
   require Logger
 
@@ -19,7 +18,7 @@ defmodule Hangman.Player.Events.Server do
     # Given file_output is specified, add logger event handler to log events to file
 		case Keyword.fetch(options, :file_output) do
 			{:ok, true} ->
-				GenEvent.add_handler(pid, Hangman.Player.Logger.Handler, [])
+				GenEvent.add_handler(pid, Player.Logger.Handler, [])
 			_ -> ""
 		end
 

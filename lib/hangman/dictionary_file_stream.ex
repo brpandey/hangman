@@ -1,24 +1,23 @@
-defmodule Hangman.Dictionary.File.Stream do
+defmodule Dictionary.File.Stream do
   @moduledoc """
   Module for accessing input file stream for 
   various dictionary file types
   """
 
-  alias Hangman.Dictionary.File.Stream, as: FileStream
+  alias Dictionary.File.Stream, as: FileStream
 
 	defstruct file: nil, type: nil, group_id: -1, group_index: -1
 
   @type t :: %__MODULE__{}
-  
-  alias Hangman.{Dictionary.Attribute.Tokens}
+
 
   # Dictionary attribute tokens
-  @unsorted Tokens.unsorted
-  @sorted Tokens.sorted
-  @grouped Tokens.grouped
-  @chunked Tokens.chunked
+  @unsorted Dictionary.unsorted
+  @sorted Dictionary.sorted
+  @grouped Dictionary.grouped
+  @chunked Dictionary.chunked
 
-  @chunks_file_delimiter Tokens.chunks_file_delimiter
+  @chunks_file_delimiter Dictionary.chunks_file_delimiter
 
 
 	# Create

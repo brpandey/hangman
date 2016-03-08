@@ -1,12 +1,14 @@
-defmodule Hangman.Chunks.Stream do
+defmodule Chunks.Stream do
   @moduledoc """
   Module implements transform routine to take
   a grouped words stream and return a chunked words stream
 
-  Similiar functionality to transform handlers in
-  Dictionary.File but more closely associated with chunks
-  and chunking
+  Similiar functionality to dictionary file transform handlers
+  but more closely associated with `Chunks`.
   """
+
+  @grouped Dictionary.grouped
+  @chunked Dictionary.chunked
 
 	# A chunk contains at most 2_000 words
 	@chunk_words_size 2_000
@@ -22,7 +24,7 @@ defmodule Hangman.Chunks.Stream do
   """
 
   @spec transform(Enumerable.t, :atom, :atom) :: Enumerable.t
-  def transform(stream, :grouped, :chunked) do
+  def transform(stream, @grouped, @chunked) do
 
 	  # lambda to split stream into chunks based on generated chunk id
 		# Uses 1 + div() function to group consecutive, sorted words

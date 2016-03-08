@@ -1,4 +1,4 @@
-defmodule Hangman.Game.Pid.Cache.Server do 
+defmodule Game.Pid.Cache.Server do 
 	use GenServer
   
   @moduledoc """
@@ -33,11 +33,11 @@ defmodule Hangman.Game.Pid.Cache.Server do
   @spec get_server_pid(String.t, String.t) :: pid
 	def get_server_pid(player_name, secret) do
 		
-		case Hangman.Game.Server.whereis(player_name) do
+		case Game.Server.whereis(player_name) do
 			:undefined ->
 				GenServer.call(@name, {:get_server, player_name, secret})
 			pid -> 
-				Hangman.Game.Server.load(pid, player_name, secret)
+				Game.Server.load(pid, player_name, secret)
 				pid
 		end
 	end
@@ -58,13 +58,13 @@ defmodule Hangman.Game.Pid.Cache.Server do
     
 		#Check the registry again for the pid -- safeguard against race condition
 		pid = 
-		  case Hangman.Game.Server.whereis(player_name) do
+		  case Game.Server.whereis(player_name) do
 			  :undefined -> 
 				  {:ok, pid} = 
-            Hangman.Game.Server.Supervisor.start_child(player_name, secret)
+            Game.Server.Supervisor.start_child(player_name, secret)
 				  pid
 			  pid ->
-          Hangman.Game.Server.load(pid, player_name, secret)
+          Game.Server.load(pid, player_name, secret)
 				  pid
 		  end
     

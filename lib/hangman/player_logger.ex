@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Logger.Handler do
+defmodule Player.Logger.Handler do
 	use GenEvent
 
   @moduledoc """
@@ -6,7 +6,6 @@ defmodule Hangman.Player.Logger.Handler do
   Each event is logged to a file named after player id (name)
   """
 
-  alias Hangman.{Guess}
   require Logger
 
 

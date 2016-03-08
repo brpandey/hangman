@@ -1,4 +1,4 @@
-defmodule Hangman.Game.Server do
+defmodule Game.Server do
 	use GenServer
   
   require Logger
@@ -14,9 +14,6 @@ defmodule Hangman.Game.Server do
 	"""
   
   @type id :: String.t
-
-	alias Hangman.{Game}
-
   
 	@vsn "0"
 	@name __MODULE__
@@ -261,7 +258,5 @@ defmodule Hangman.Game.Server do
 		Logger.info "Terminating Hangman Game Server"
 		:ok
 	end
-  
-
   
 end

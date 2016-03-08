@@ -1,6 +1,6 @@
-defmodule Hangman.Pass do
+defmodule Pass do
   @moduledoc """
-  Module implements pass abstraction types and pass module struct
+  Module implements words pass types and words pass module struct
   """
 
 

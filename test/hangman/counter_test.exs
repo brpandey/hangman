@@ -1,11 +1,11 @@
 
-defmodule Hangman.Counter.Test do
+defmodule Counter.Test do
 	use ExUnit.Case, async: true
 
-	alias Hangman.Counter, as: Counter
+	alias Counter, as: Counter
 
   setup_all do
-    IO.puts "Hangman.Counter.Test"
+    IO.puts "Counter Test"
     :ok
   end
 

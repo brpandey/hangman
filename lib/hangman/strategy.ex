@@ -1,4 +1,4 @@
-defmodule Hangman.Strategy do
+defmodule Strategy do
   @moduledoc """
   Handles letter guessing strategy for player
 
@@ -8,8 +8,6 @@ defmodule Hangman.Strategy do
   For human player type, retries a set of top letter choices, to
   be presented to human to manually choose
   """
-
-  alias Hangman.{Strategy, Counter, Pass, Guess, Player}
 
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
@@ -82,7 +80,7 @@ defmodule Hangman.Strategy do
   @spec prepare_guess(t) :: t
   defp prepare_guess(%Strategy{} = strategy) do
   	case strategy.pass.size do 
-  		0 ->	raise Hangman.Error, "Word not in dictionary"
+  		0 ->	raise HangmanError, "Word not in dictionary"
   		1 ->
         final_word = strategy.pass.last_word
 
@@ -92,7 +90,7 @@ defmodule Hangman.Strategy do
 
           strategy = Kernel.put_in(strategy.guess, {:guess_word, final_word})        
   			else
-  				raise Hangman.Error, "Exhausted all words, word not in dictionary"
+  				raise HangmanError, "Exhausted all words, word not in dictionary"
   			end
 
   		_pass_size ->
@@ -105,7 +103,7 @@ defmodule Hangman.Strategy do
           strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
           strategy = Kernel.put_in(strategy.guess, {:guess_letter, letter})            
   			else
-  				raise Hangman.Error, "Unable to determine next guess as no valid letter left"
+  				raise HangmanError, "Unable to determine next guess as no valid letter left"
   			end
   	end
 
@@ -284,7 +282,7 @@ defmodule Hangman.Strategy do
   defp do_retrieve_best_letter(tally, pass_size) do
     
     if Counter.empty?(tally) do
-      raise Hangman.Error, 
+      raise HangmanError, 
       "Word not in dictionary, no words left (tally is empty)"
     end
     
@@ -352,7 +350,7 @@ defmodule Hangman.Strategy do
 
     def inspect(t, opts) do
       info = Inspect.List.inspect(Strategy.info(t), opts)
-      concat ["#Hangman.Strategy<", info, ">"]
+      concat ["#Strategy<", info, ">"]
     end
   end
 

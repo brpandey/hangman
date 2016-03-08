@@ -1,4 +1,4 @@
-defmodule Hangman.Pattern do
+defmodule Pattern do
   @moduledoc """
   Module handles hangman pattern update given letter
   """
@@ -20,7 +20,7 @@ defmodule Hangman.Pattern do
 
 	# Base case, second is error condition, pattern can't be longer than secret
 	@spec do_update([], term, term, term) :: no_return
-	defp do_update( [], _,  _, _ ), do: raise Hangman.Error, "pattern can't be longer than secret"
+	defp do_update( [], _,  _, _ ), do: raise HangmanError, "pattern can't be longer than secret"
 
 
 	# Match only if head of secret is the desired letter
@@ -38,4 +38,4 @@ defmodule Hangman.Pattern do
 
 end
 
-#Hangman.Pattern.update "-------", "beloved",  "e"
+#Pattern.update "-------", "beloved",  "e"

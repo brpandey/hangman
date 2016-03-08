@@ -1,4 +1,4 @@
-defmodule Hangman.Pass.Writer do
+defmodule Pass.Writer do
   
   @moduledoc """
   Module implements words pass writer functionality.
@@ -7,9 +7,7 @@ defmodule Hangman.Pass.Writer do
   Pool size writer workers are started up as part of writer pool
   Pool supervisor supervises writer workers
   """
-  
-  alias Hangman.{Chunks, Pass}
-  
+    
   @pool_size 10
   
   @doc """

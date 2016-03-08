@@ -8,7 +8,7 @@ defmodule Hangman.Mixfile do
      elixir: "~> 1.2.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     escript: [main_module: Hangman.CLI],
+     escript: [main_module: CLI],
      deps: deps]
   end
 
@@ -16,13 +16,13 @@ defmodule Hangman.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    dict_type = Hangman.Dictionary.Attribute.Tokens.type_normal
-    # dict_type = Hangman.Dictionary.Attribute.Tokens.type_big
+    dict_type = Dictionary.regular
+    # dict_type = Dictionary.big
     args = [{dict_type, true}]
 
     [
       applications: [:logger, :gproc],
-      mod: {Hangman.Application, args}
+      mod: {Root.Application, args}
     ]
   end
 

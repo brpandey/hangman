@@ -1,18 +1,28 @@
-defmodule Hangman.Chunks do
+defmodule Chunks do
 	defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
 
 	@moduledoc """
-		Module to handle Hangman word list chunks for a given length
+	Module to handle word list chunks for a given length key.  
+  Internally maintains standardized containers for word lists and 
+  keeps track of total word and chunks counts.
+  
+  Splits big words list into smaller more manageable list chunks
 
-    Chunks big words list into smaller more manageable list chunks
-		Encapsulates raw stream consisting of binary chunks
+  The need for chunking arises when we may have arbitrary long word
+  lists/streams, so we chunk the word list to a standard size of 500 words.  
+  
+  A single `Chunks` abstraction can contain a single chunked word list or 
+  multiple chunked word lists.
+  
+  `Chunks` provide more manageability especially when we store into the database because
+  the abstraction automatically binaries data leaving a smaller footprint.
+
+  Primary functions are new, count, and add
 	"""
-
+  
   @type t :: %__MODULE__{}
   @type binary_chunk ::  {binary, integer}
 
-
-	alias Hangman.{Chunks}
 
   @chunk_words_size 500
 
@@ -26,9 +36,9 @@ defmodule Hangman.Chunks do
 	end
 
   @doc """
-  Returns new chunks abstraction, populated with stream encapsulation
-  Stream data is split up into chunks and word lists are binaried for
-  compactness for storage purposes
+  Returns new chunks abstraction.  Does this by splitting and encapsulating 
+  words lists from enumerable into standardized chunk containers.  
+  Word lists are binaried for compactness.
   """
 
   @spec new(pos_integer, Enumerable.t) :: t
@@ -37,10 +47,32 @@ defmodule Hangman.Chunks do
     # Take the stream, wrap it with indexes, apply chunking
     # then normalize..
 
+	  # lambda to split stream into chunks based on generated chunk id
+		# Uses 1 + div() function to group consecutive, sorted words
+		# Takes into account the current word index position and 
+		# specified words-chunk buffer size, to determine chunk id
+
+		#	A) Example of word stream before chunking
+		#	{"mugful", 8509}
+		#	{"muggar", 8510}
+		#	{"mugged", 8511}
+		#	{"muggee", 8512}
+
     fn_split_into_chunks = fn
       {_word, index} -> 
         _chunk_id = div(index, @chunk_words_size)
     end
+
+		# lambda to normalize chunks
+		# Flatten out / normalize chunks so that they contain 
+    # only a list of words, and word length size
+
+		# B) Example of chunk, before normalization
+		#	[{"mugful", 8509}, {"muggar", 8510}, {"mugged", 8511},
+		#	 {"muggee", ...}, { ...}, {...}, ...]
+
+    # Does a Enum.map_reduce, in that the length_key is the acc
+    # and the word because the mapped value that is enumerated out
 
 		fn_normalize_chunks = fn 
 			chunk -> 
@@ -48,12 +80,15 @@ defmodule Hangman.Chunks do
 					fn {word, _index}, _acc -> {word, length_key} end)
 		end
 
+		#	C) Example of chunk after normalization
+		#	{["mugful", "muggar", "mugged", "muggee", ...], 6}
+
 		fn_reduce_chunks = fn 
 			{word_list, _} = _head, acc ->
 	    	bin_chunk = :erlang.term_to_binary(word_list)
 	    	chunk_size = Kernel.length(word_list)
 	    	value = {bin_chunk, chunk_size}
-	    	Chunks.add(acc, value)
+	    	Chunks.add(acc, value) # Adds to Chunks abstraction
     end
 
     chunks = words
@@ -65,46 +100,50 @@ defmodule Hangman.Chunks do
     chunks
   end
 
-	@doc "Performs constant time lookup of number of words in stream"
+	@doc "Returns total word count across all chunk containers"
 
-  @spec get_count(t, :atom) :: integer
-	def get_count(%Chunks{raw_stream: raw_stream} = chunks, :words) do
+  @spec count(t) :: integer
+	def count(%Chunks{raw_stream: raw_stream} = chunks) do
 		if is_nil(raw_stream) do
-      raise Hangman.Error, "need to create stream first"
+      raise HangmanError, "need to create stream first"
     end
 		
 		chunks.word_count
 	end
 
-	@doc "Performs constant time lookup of number of chunks in stream"
+	@doc "Return total number of chunk containers"
 
-  @spec get_count(t, :atom) :: integer
-	def get_count(%Chunks{raw_stream: raw_stream} = chunks, :chunks) do
-		if is_nil(raw_stream), do: raise Hangman.Error, "need to create stream first"
+  @spec size(t) :: integer
+	def size(%Chunks{raw_stream: raw_stream} = chunks) do
+		if is_nil(raw_stream), do: raise HangmanError, "need to create stream first"
 		
 		chunks.chunk_count
 	end
 
   @doc """
-  Returns word length key associated with Chunks abstraction
+  Returns Chunks word length key
   """
 
-  @spec get_key(t) :: pos_integer
-  def get_key(%Chunks{key: key} = _chunks), do: key
+  @spec key(t) :: pos_integer
+  def key(%Chunks{key: key} = _chunks), do: key
 
 	@doc """
-  Takes an existing chunk stream and a tuple value
-	The tuple head is a binary chunk and the tail is the number of words
+  Takes an existing chunk and adds the passed in binary chunk tuple.
+
+  Heavily used in reduce methods to add a {binary, word_count} to the
+  Chunks accumulator value.
+
+  The tuple head is a binaried word list and the tail is the word count
   """
 
   @spec add(t, binary_chunk) :: t
 	def add(%Chunks{raw_stream: raw_stream} = chunks, 
-          {binary_chunk, word_count} = _v)
+          {binary_chunk, word_count} = _value)
 	when is_binary(binary_chunk) and is_number(word_count) 
   and word_count > 0 do
 
 		if is_nil(raw_stream) do
-      raise Hangman.Error, "need to invoke new before using add"
+      raise HangmanError, "need to invoke new before using add"
     end
 
 		new_stream = Stream.concat(raw_stream, [binary_chunk])
@@ -116,8 +155,7 @@ defmodule Hangman.Chunks do
 	end
 
   @doc """
-  Applies binary unpack function to raw stream then flattens result
-  Returns stream of words (un-binaried)
+  Returns words in lazy enumerable fashion.
   """
 
   @spec get_words_lazy(t) :: Enumerable.t
@@ -139,8 +177,8 @@ defmodule Hangman.Chunks do
   """
 
   @spec info(t) :: Keyword.t
-  def info(%Chunks{} = c) do
-    [key: get_key(c), count: get_count(c, :words), chunks: get_count(c, :chunks)]
+  def info(%Chunks{} = chunks) do
+    [key: key(chunks), words: count(chunks), chunks: size(chunks)]
   end
 
   # Allows users to inspect this module type in a controlled manner  
@@ -148,8 +186,8 @@ defmodule Hangman.Chunks do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      info = Inspect.List.inspect(Hangman.Chunks.info(t), opts)
-      concat ["#Hangman.Chunks<", info, ">"]
+      info = Inspect.List.inspect(Chunks.info(t), opts)
+      concat ["#Chunks<", info, ">"]
     end
   end
 

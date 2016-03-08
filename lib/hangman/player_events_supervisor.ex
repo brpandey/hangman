@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Events.Supervisor do
+defmodule Player.Events.Supervisor do
   use Supervisor
 
   @moduledoc """
@@ -49,7 +49,7 @@ defmodule Hangman.Player.Events.Supervisor do
     # since we are starting children dynamically
 
     children = [
-      worker(Hangman.Player.Events.Server, [], restart: :transient)
+      worker(Player.Events.Server, [], restart: :transient)
     ]
 
 		# :simple_one_for_one to indicate that 

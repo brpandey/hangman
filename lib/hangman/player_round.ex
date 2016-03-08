@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Round do
+defmodule Player.Round do
   @moduledoc """
   Module to implement player game round abstraction.
 
@@ -8,8 +8,8 @@ defmodule Hangman.Player.Round do
   Basic round functionality includes as setup, guess, update, status
   """
 
-	alias Hangman.{Game, Pass, Guess, Strategy, Strategy.Options, 
-                 Player, Player.Round, Player.Events}
+  alias Player.Round, as: Round
+  alias Player.Events, as: Events
 
   defstruct seq_no: 0,
   guess: {},
@@ -49,7 +49,7 @@ defmodule Hangman.Player.Round do
         {:game_keep_guessing, :incorrect_letter, " "}
 
   		true ->
-  			raise Hangman.Error, "Unknown round result"
+  			raise HangmanError, "Unknown round result"
   	end
   end
 
@@ -110,7 +110,7 @@ defmodule Hangman.Player.Round do
   	pass_key = {name, game_no, seq_no}
 
   	# Generate the word filter options for the words reduction engine
-		reduce_key = Options.reduce_key(strategy, context)
+		reduce_key = Strategy.Options.reduce_key(strategy, context)
 
 		match_key = Kernel.elem(context, 0)
 

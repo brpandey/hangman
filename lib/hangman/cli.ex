@@ -1,22 +1,20 @@
-defmodule Hangman.CLI do
+defmodule CLI do
   @moduledoc """
-  Hangman.CLI
+
   Module handles command line interpreter interface
-  to running Hangman games.
+  to application.
 
   Able to run interactive human games with manually specified
-  secrets and also randomly generated secrets.
+  secrets and also able to run human and robot games with 
+  randomly generated secrets.
 
-  Able to run strategic games with letter guesses robotically
-  auto determined.
+  Robot games are auto-guessed based on simple strategy heuristics.
 
   Game archival can be captured through logging, e.g. --log option
   """
 
 
-	alias Hangman.{Player}
-
-  alias Hangman.Dictionary.Cache.Server, as: Dictionary
+  alias Dictionary.Cache.Server, as: Dictionary
 
   @min_secret_length 3
   @max_secret_length 28
@@ -26,9 +24,10 @@ defmodule Hangman.CLI do
   @robot Player.robot
 
   @doc """
-  Gateway cli function to fetch and validate parameters, before
-  running the game
+  Gateway function to fetch and validate parameters.  Handles display
+  of help information.  Proceeds to run the hangman game from the command line.
   """
+
   @spec main([String.t]) :: :ok
   def main(args) do
     args |> parse_args |> print |> fetch_params |> run
@@ -115,25 +114,25 @@ defmodule Hangman.CLI do
                       Dictionary.lookup(:random, value)
 
                     true ->
-                      raise Hangman.Error, "submitted random count value is not valid"
+                      raise HangmanError, "submitted random count value is not valid"
                   end
                 :error -> nil
               end
           end
 
           if secrets == nil do
-            raise Hangman.Error, "user must specify either --\"secret\" or --\"random\" option"
+            raise HangmanError, "user must specify either --\"secret\" or --\"random\" option"
           end
 
           secrets
       end
 
     if Enum.any?(secrets, fn x -> String.length(x) < @min_secret_length end) do
-      raise Hangman.Error, "submitted secret is too short!"
+      raise HangmanError, "submitted secret is too short!"
     end
 
     if Enum.any?(secrets, fn x -> String.length(x) > @max_secret_length end) do
-      raise Hangman.Error, "submitted secret is too long!"
+      raise HangmanError, "submitted secret is too long!"
     end
 
     secrets
@@ -145,7 +144,7 @@ defmodule Hangman.CLI do
     name = 
       case Keyword.fetch(args, :name) do
   	    {:ok, value} -> value
-        :error -> raise Hangman.Error, "name argument missing"
+        :error -> raise HangmanError, "name argument missing"
       end
 
     type = 

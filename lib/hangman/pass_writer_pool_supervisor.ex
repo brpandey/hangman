@@ -1,4 +1,4 @@
-defmodule Hangman.Pass.Writer.Pool.Supervisor do
+defmodule Pass.Writer.Pool.Supervisor do
   use Supervisor
 
   @moduledoc """
@@ -7,8 +7,6 @@ defmodule Hangman.Pass.Writer.Pool.Supervisor do
   """
 
   @name __MODULE__
-
-  alias Hangman.{Pass}
 
   @doc """
   Supervisor start_link wrapper function

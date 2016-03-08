@@ -1,4 +1,4 @@
-defmodule Hangman.Pass.Server do
+defmodule Pass.Server do
   use GenServer
 
 	@moduledoc """
@@ -10,8 +10,7 @@ defmodule Hangman.Pass.Server do
 
   require Logger
   
-  alias Hangman.{Pass, Chunks, Counter, Reduction}
-  alias Hangman.Dictionary.Cache.Server, as: Cache
+  alias Dictionary.Cache.Server, as: Cache
   
   @name __MODULE__
 	@ets_table_name :engine_pass_table
@@ -96,12 +95,12 @@ defmodule Hangman.Pass.Server do
 		chunks = %Chunks{} = Cache.lookup(:chunks, length_key)
 		tally = %Counter{} = Cache.lookup(:tally, length_key)
 
-		pass_size = Chunks.get_count(chunks, :words)
+		pass_size = Chunks.count(chunks)
 		pass_info = %Pass{ size: pass_size, tally: tally, last_word: ""}
 
 		# Store pass info into ets table for round 2 (next pass)
     # Allow writer engine to execute (and distribute) as necessary
-    Hangman.Pass.Writer.write(pass_key, chunks)
+    Pass.Writer.write(pass_key, chunks)
 	
 		{pass_key, pass_info}
 	end
@@ -140,7 +139,7 @@ defmodule Hangman.Pass.Server do
 		# Using match instead of lookup, to keep processing on the ets side
 		case :ets.match_object(@ets_table_name, {pass_key, :_}) do
 			[] -> 
-        raise Hangman.Error, 
+        raise HangmanError, 
         "counter not found for key: #{inspect pass_key}"
 
 			[{_key, chunks}] ->

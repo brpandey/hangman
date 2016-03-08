@@ -1,4 +1,4 @@
-defmodule Hangman.Reduction.Engine.Pool.Supervisor do
+defmodule Reduction.Engine.Pool.Supervisor do
   use Supervisor
 
   @moduledoc """
@@ -28,7 +28,7 @@ defmodule Hangman.Reduction.Engine.Pool.Supervisor do
     processes = for worker_id <- 1..pool_size do
       # Create worker spec for each value
       worker(
-        Hangman.Reduction.Engine.Worker, [worker_id],
+        Reduction.Engine.Worker, [worker_id],
         id: {:reduction_engine_worker, worker_id}
       )
     end

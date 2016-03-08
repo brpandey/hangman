@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Group.Supervisor do
+defmodule Player.Group.Supervisor do
 	use Supervisor
 
   @moduledoc """
@@ -38,8 +38,8 @@ defmodule Hangman.Player.Group.Supervisor do
 	def init(_) do
 
     children = [
-      supervisor(Hangman.Player.Supervisor, []),
-      supervisor(Hangman.Player.Events.Supervisor, [])
+      supervisor(Player.Supervisor, []),
+      supervisor(Player.Events.Supervisor, [])
     ]
 
 		supervise(children, strategy: :rest_for_one)

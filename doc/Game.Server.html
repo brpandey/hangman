@@ -1,0 +1,593 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.11.4">
+    <title>Game.Server – Hangman v0.9.1</title>
+    <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+  <button class="sidebar-toggle">
+    <i class="icon-menu"></i>
+  </button>
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Hangman
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.9.1
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">Hangman v0.9.1</small>
+        Game.Server
+        
+          <small>behaviour</small>
+        
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p> Module implements hangman game using GenServer process.
+ Wraps hangman game abstraction as server state</p>
+<p> Runs each game or set of games sequentially</p>
+<p>Interacts with player client through public interface and
+maintains game state</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:id/0">id()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#format_status/2">format_status(reason, list)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Used for debugging purposes, returns game data of server process</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#guess/2">guess(game_pid, arg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Issues guess word call to GenServer, returns guess result</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#load/4">load(game_pid, id_key, secret, max_wrong \\ 5)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Loads new game state into server process. 
+Used primarily by game pid cache server</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#secret_length/1">secret_length(game_pid)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Retrieves game secret length number</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_link/3">start_link(player_name, secret, max_wrong \\ 5)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Start public interface method with secret</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#status/1">status(game_pid)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Retrieves game server status data</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#stop/1">stop(game_pid)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Issues request to stop GenServer</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#whereis/1">whereis(id_key)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Routine returns game server pid from process registry using gproc
+If not found, returns :undefined</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+  <div class="summary-callbacks summary">
+    <h2>
+      <a href="#callbacks">Callbacks</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:handle_call/3">handle_call(atom, tuple, arg2)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Stops the server is a normal graceful way</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:handle_cast/2">handle_cast(tuple, arg1)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Loads a set of games</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:init/1">init(arg0)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>GenServer callback to initalize server process</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:terminate/2">terminate(term, term)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Terminates the hangman game server
+No special cleanup other than refreshing the state</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+        </section>
+      
+
+      
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:id/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:id/0">id</a> :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a></code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="format_status/2">
+  <div class="detail-header">
+    <a href="#format_status/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">format_status(reason, list)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">format_status(term, [...]) :: [...]</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Used for debugging purposes, returns game data of server process</p>
+
+  </section>
+</div>
+<div class="detail" id="guess/2">
+  <div class="detail-header">
+    <a href="#guess/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">guess(game_pid, arg)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">guess(pid, <a href="Guess.html#t:t/0">Guess.t</a>) :: tuple</code></pre>
+        
+          <pre><code class="elixir">guess(pid, <a href="Guess.html#t:t/0">Guess.t</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Issues guess word call to GenServer, returns guess result</p>
+
+  </section>
+</div>
+<div class="detail" id="load/4">
+  <div class="detail-header">
+    <a href="#load/4" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">load(game_pid, id_key, secret, max_wrong \\ 5)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">load(pid, <a href="#t:id/0">id</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], pos_integer) :: :ok</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Loads new game state into server process. 
+Used primarily by game pid cache server</p>
+
+  </section>
+</div>
+<div class="detail" id="secret_length/1">
+  <div class="detail-header">
+    <a href="#secret_length/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">secret_length(game_pid)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">secret_length(pid) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Retrieves game secret length number</p>
+
+  </section>
+</div>
+<div class="detail" id="start_link/3">
+  <div class="detail-header">
+    <a href="#start_link/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">start_link(player_name, secret, max_wrong \\ 5)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">start_link(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], pos_integer) :: {:ok, pid}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Start public interface method with secret</p>
+
+  </section>
+</div>
+<div class="detail" id="status/1">
+  <div class="detail-header">
+    <a href="#status/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">status(game_pid)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">status(pid) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Retrieves game server status data</p>
+
+  </section>
+</div>
+<div class="detail" id="stop/1">
+  <div class="detail-header">
+    <a href="#stop/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">stop(game_pid)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">stop(pid) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Issues request to stop GenServer</p>
+
+  </section>
+</div>
+<div class="detail" id="whereis/1">
+  <div class="detail-header">
+    <a href="#whereis/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">whereis(id_key)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">whereis(<a href="#t:id/0">id</a>) :: pid | :atom</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Routine returns game server pid from process registry using gproc
+If not found, returns :undefined</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+        <section id="callbacks" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#callbacks">
+              <i class="icon-link"></i>
+            </a>
+            Callbacks
+          </h1>
+          <div class="detail" id="c:handle_call/3">
+  <div class="detail-header">
+    <a href="#c:handle_call/3" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">handle_call(atom, tuple, arg2)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">handle_call(:atom, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
+        
+          <pre><code class="elixir">handle_call(:atom, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
+        
+          <pre><code class="elixir">handle_call(:atom, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
+        
+          <pre><code class="elixir">handle_call(<a href="Guess.html#t:t/0">Guess.t</a>, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
+        
+          <pre><code class="elixir">handle_call(<a href="Guess.html#t:t/0">Guess.t</a>, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Stops the server is a normal graceful way</p>
+
+  </section>
+</div>
+<div class="detail" id="c:handle_cast/2">
+  <div class="detail-header">
+    <a href="#c:handle_cast/2" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">handle_cast(tuple, arg1)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">handle_cast(tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
+        
+          <pre><code class="elixir">handle_cast(tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Loads a set of games</p>
+
+  </section>
+</div>
+<div class="detail" id="c:init/1">
+  <div class="detail-header">
+    <a href="#c:init/1" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">init(arg0)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">init(<a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>GenServer callback to initalize server process</p>
+
+  </section>
+</div>
+<div class="detail" id="c:terminate/2">
+  <div class="detail-header">
+    <a href="#c:terminate/2" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">terminate(term, term)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">terminate(term, term) :: :ok</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Terminates the hangman game server
+No special cleanup other than refreshing the state</p>
+
+  </section>
+</div>
+
+        </section>
+      
+        <footer class="footer">
+      <p>
+        <span class="line">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.11.4),
+        </span>
+        <span class="line">
+          designed by
+          <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+      </p>
+      <button class="night-mode-toggle" />
+    </footer>
+  </div>
+</section>
+</div>
+  <script src="dist/app-6d2e071366.js"></script>
+  </body>
+</html>
+

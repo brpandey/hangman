@@ -1,4 +1,4 @@
-defmodule Hangman.Reduction.Engine.Worker do
+defmodule Reduction.Engine.Worker do
   use GenServer
 
   @moduledoc """
@@ -9,8 +9,6 @@ defmodule Hangman.Reduction.Engine.Worker do
 
   @name __MODULE__
   @possible_words_left 40
-
-  alias Hangman.{Pass, Chunks, Counter}
 
   @doc """
   GenServer start_link wrapper function
@@ -89,7 +87,7 @@ defmodule Hangman.Reduction.Engine.Worker do
     # Request chunks data from Pass Server
     data = %Chunks{} = Pass.Server.read_chunks(pass_key)
 
-    length_key = Chunks.get_key(data)
+    length_key = Chunks.key(data)
 
 		# convert chunks into word stream, 
 		# filter out words that don't regex match
@@ -104,7 +102,7 @@ defmodule Hangman.Reduction.Engine.Worker do
 		# Create new Chunks abstraction with filtered word stream
 		new_data = Chunks.new(length_key, filtered_stream)
 
-		pass_size = Chunks.get_count(new_data, :words)
+		pass_size = Chunks.count(new_data)
 
     possible_txt = ""
     last_word = ""
@@ -132,7 +130,7 @@ defmodule Hangman.Reduction.Engine.Worker do
 
 			pass_size > 1 -> last_word = ""
 
-			true -> raise Hangman.Error, "Invalid pass_size value #{pass_size}"
+			true -> raise HangmanError, "Invalid pass_size value #{pass_size}"
 		end
 
     # serialize writes through Hangman Pass Writer

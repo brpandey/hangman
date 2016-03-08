@@ -1,4 +1,4 @@
-defmodule Hangman.Player.System.Supervisor do
+defmodule Player.System.Supervisor do
 	use Supervisor
 
   @moduledoc """
@@ -39,11 +39,11 @@ defmodule Hangman.Player.System.Supervisor do
 	def init(args) do
 
     children = [
-      worker(Hangman.Dictionary.Cache.Server, [args]),
-      worker(Hangman.Pass.Server, []),
-      supervisor(Hangman.Reduction.Engine, []),
-      supervisor(Hangman.Pass.Writer, []),
-      supervisor(Hangman.Player.Group.Supervisor, []),
+      worker(Dictionary.Cache.Server, [args]),
+      worker(Pass.Server, []),
+      supervisor(Reduction.Engine, []),
+      supervisor(Pass.Writer, []),
+      supervisor(Player.Group.Supervisor, []),
     ]
 
 		supervise(children, strategy: :rest_for_one)

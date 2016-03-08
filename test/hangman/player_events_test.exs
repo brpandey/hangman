@@ -1,11 +1,11 @@
-defmodule Hangman.Player.Events.Server.Test do
+defmodule Player.Events.Server.Test do
 	use ExUnit.Case, async: false
 
-  alias Hangman.{Player.Events}
+#  alias Hangman.{Player.Events}
 
 
   setup_all do
-    IO.puts "Hangman.Player.Events.Server.Test"
+    IO.puts "Player Events Server Test"
     :ok
   end
 

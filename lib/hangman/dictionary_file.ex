@@ -1,4 +1,4 @@
-defmodule Hangman.Dictionary.File do
+defmodule Dictionary.File do
   @moduledoc """
   Provides abstraction for various dictionary files.
 
@@ -12,20 +12,19 @@ defmodule Hangman.Dictionary.File do
   Each transform handler encapsulates each layers transform procedure
   """
 
-  alias Hangman.Dictionary, as: Dict
-	alias Hangman.{Chunks, Dictionary.Attribute.Tokens}
+  alias Dictionary, as: Dict
 
   # Dictionary attribute tokens
-  @type_normal Tokens.type_normal
-  @type_big Tokens.type_big
+  @regular Dict.regular
+  @big Dict.big
 
-  @unsorted Tokens.unsorted
-  @sorted Tokens.sorted
-  @grouped Tokens.grouped
-  @chunked Tokens.chunked
+  @unsorted Dict.unsorted
+  @sorted Dict.sorted
+  @grouped Dict.grouped
+  @chunked Dict.chunked
 
-  @paths Tokens.paths
-  @chunks_file_delimiter Tokens.chunks_file_delimiter
+  @paths Dict.paths
+  @chunks_file_delimiter Dict.chunks_file_delimiter
 
 
   @doc """
@@ -39,7 +38,7 @@ defmodule Hangman.Dictionary.File do
   when is_atom(from) and is_atom(to) and is_atom(dict_type) do
 
     # assert size_type is valid
-    true = dict_type in [@type_normal, @type_big]
+    true = dict_type in [@regular, @big]
     
     # assert from, to pairs are valid
     true = pair in [{@unsorted, @sorted}, 

@@ -1,4 +1,4 @@
-defmodule Hangman.Game.Server.Supervisor do
+defmodule Game.Server.Supervisor do
 	use Supervisor
   
   @moduledoc """
@@ -42,7 +42,7 @@ defmodule Hangman.Game.Server.Supervisor do
   @callback init(term) :: {:ok, tuple}
 	def init(_) do
 		children = [
-			worker(Hangman.Game.Server, []) 
+			worker(Game.Server, []) 
 		]
     
 		# :simple_one_for_one to indicate that 

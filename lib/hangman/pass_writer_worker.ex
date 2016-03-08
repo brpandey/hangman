@@ -1,4 +1,4 @@
-defmodule Hangman.Pass.Writer.Worker do
+defmodule Pass.Writer.Worker do
   use GenServer
 
   @moduledoc """
@@ -12,8 +12,6 @@ defmodule Hangman.Pass.Writer.Worker do
   """
   
   require Logger
-
-  alias Hangman.{Pass, Chunks}
 
   @name __MODULE__
   @ets_table_name :engine_pass_table
@@ -81,7 +79,7 @@ defmodule Hangman.Pass.Writer.Worker do
                    %Chunks{} = chunks}, {}) do
     
 		if :ets.info(@ets_table_name) == :undefined do
-      raise Hangman.Error, "table not loaded yet"
+      raise HangmanError, "table not loaded yet"
     end
     
 		next_pass_key = {id, game_no, round_no + 1}

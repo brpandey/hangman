@@ -1,12 +1,10 @@
-defmodule Hangman.Dictionary.Cache.Server.Test do
+defmodule Dictionary.Cache.Server.Test do
 	use ExUnit.Case #, async: true
-
-	alias Hangman.{Dictionary, Counter, Chunks}
 
   setup_all do
     # stop cache server started by application callback
     Dictionary.Cache.Server.stop
-    IO.puts "Hangman.Dictionary.Cache.Server.Test"
+    IO.puts "Dictionary Cache Server Test"
     :ok
   end
 
@@ -46,7 +44,7 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 		word_count = 28558
 
 
-		assert word_count == Chunks.get_count(chunks, :words)    
+		assert word_count == Chunks.count(chunks)    
 
 		IO.puts "chunks: #{inspect chunks}"
 
@@ -71,8 +69,7 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 
 	test "initial test of big dictionary cache" do
 
-    big = Hangman.Dictionary.Attribute.Tokens.type_big
-    args =  [{big, true}]
+    args =  [{Dictionary.big, true}]
 
 		pid = 
       case Dictionary.Cache.Server.start_link(args) do
@@ -102,7 +99,7 @@ defmodule Hangman.Dictionary.Cache.Server.Test do
 
     big_word_count = 54500
 
-		assert big_word_count == Chunks.get_count(chunks, :words)
+		assert big_word_count == Chunks.count(chunks)
 
 		IO.puts "chunks: #{inspect chunks}"
 

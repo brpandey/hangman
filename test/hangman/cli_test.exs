@@ -1,8 +1,9 @@
-defmodule Hangman.CLI.Test do
+defmodule CLI.Test do
   use ExUnit.Case, async: true
 
+
   setup_all do
-    IO.puts "Hangman.CLI.Test"
+    IO.puts "CLI Test"
     :ok
   end
 
@@ -11,7 +12,7 @@ defmodule Hangman.CLI.Test do
 
     command = "-n gustav -t robot -bl"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
     
     end
 
@@ -20,7 +21,7 @@ defmodule Hangman.CLI.Test do
 
     command = "-n herbert -t robot -s exotic -d"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
     
   end
 
@@ -28,7 +29,7 @@ defmodule Hangman.CLI.Test do
 
     command = "-n kirtan -t robot -s exotic -d -r 2"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
     
   end
 
@@ -37,7 +38,7 @@ defmodule Hangman.CLI.Test do
 
     command = "-n anastasia -t robot -s sleek -l"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
     
   end
 
@@ -51,7 +52,7 @@ defmodule Hangman.CLI.Test do
 
     IO.puts "argv is #{inspect argv}"
 
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
     
   end
 
@@ -60,7 +61,7 @@ defmodule Hangman.CLI.Test do
     
     command = "-n lulu -t human -r 4"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
 
   end
 
@@ -69,7 +70,7 @@ defmodule Hangman.CLI.Test do
     
     command = "-n lulu -t robot -r 4"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
 
   end
 
@@ -77,8 +78,8 @@ defmodule Hangman.CLI.Test do
     command = "-n lulu -t robot"
     argv = String.split(command)
 
-    assert catch_error(Hangman.CLI.main(argv)) ==
-		  %Hangman.Error{message: "user must specify either --\"secret\" or --\"random\" option"}
+    assert catch_error(CLI.main(argv)) ==
+		  %HangmanError{message: "user must specify either --\"secret\" or --\"random\" option"}
 
   end
 
@@ -86,7 +87,7 @@ defmodule Hangman.CLI.Test do
 
     command = "-n barthalemu -t robot -s azerbaijian"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
 
   end
 
@@ -94,7 +95,7 @@ defmodule Hangman.CLI.Test do
 
     command = "-n harrison -t robot -s azerbaijan"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
    
   end
 
@@ -103,7 +104,7 @@ defmodule Hangman.CLI.Test do
 
     command = "-n oscar -t human -s azerbaijan"
     argv = String.split(command)
-    Hangman.CLI.main(argv)
+    CLI.main(argv)
    
   end
 

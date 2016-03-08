@@ -1,4 +1,4 @@
-defmodule Hangman.Dictionary.Cache.Server do
+defmodule Dictionary.Cache.Server do
 	use GenServer
 
   require Logger
@@ -11,16 +11,16 @@ defmodule Hangman.Dictionary.Cache.Server do
   Provides lookup routines to access chunks, tallys, and random words
   """
 
-  alias Hangman.Dictionary, as: Dict
-	alias Hangman.{Counter, Chunks, Dictionary.Attribute.Tokens}
+  alias Dictionary, as: Dict
 
   # Dictionary attribute tokens
-  @type_normal Tokens.type_normal
+  @regular Dict.regular
+  @big Dict.big
 
-  @unsorted Tokens.unsorted
-  @sorted Tokens.sorted
-  @grouped Tokens.grouped
-  @chunked Tokens.chunked
+  @unsorted Dict.unsorted
+  @sorted Dict.sorted
+  @grouped Dict.grouped
+  @chunked Dict.chunked
 
 	@ets_table_name :dictionary_cache_table
 
@@ -45,7 +45,7 @@ defmodule Hangman.Dictionary.Cache.Server do
   """
 
   @spec start_link(Keyword.t) :: {:ok, pid}
-  def start_link(args \\ [{@type_normal, true}]) do
+  def start_link(args \\ [{@regular, true}]) do
     Logger.info "Starting Hangman Dictionary Cache Server, args #{inspect args}"
     options = [name: :hangman_dictionary_cache_server]
     GenServer.start_link(@name, args, options)
@@ -220,7 +220,7 @@ defmodule Hangman.Dictionary.Cache.Server do
         # normalize then load into table
         normalize(:file, args) |> load(@ets_table_name)
 
-			_ -> raise Hangman.Error, "cache already setup!"
+			_ -> raise HangmanError, "cache already setup!"
 		end
 
     :ok
@@ -240,11 +240,11 @@ defmodule Hangman.Dictionary.Cache.Server do
   when is_integer(count) and count > 0 do
 
     if count > @max_random_words_request do
-      raise Hangman.Error, "requested random words exceeds limit"
+      raise HangmanError, "requested random words exceeds limit"
     end
 
 		if :ets.info(@ets_table_name) == :undefined do
-      raise Hangman.Error, "table not loaded yet"
+      raise HangmanError, "table not loaded yet"
     end
 
     # we use a module constant since the key doesn't change
@@ -286,7 +286,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 	when is_number(length_key) and length_key > 0 do
 
 		if :ets.info(@ets_table_name) == :undefined do
-      raise Hangman.Error, "table not loaded yet"
+      raise HangmanError, "table not loaded yet"
     end
 
     # validate that the key is within our valid set
@@ -296,13 +296,13 @@ defmodule Hangman.Dictionary.Cache.Server do
 
 				# Grab the matching tally counter -- not sure if match_object or lookup is faster
 				case :ets.match_object(@ets_table_name, {ets_key, :_}) do
-					[] -> raise Hangman.Error, "counter not found for key: #{length_key}"
+					[] -> raise HangmanError, "counter not found for key: #{length_key}"
 					[{_key, ets_value}] -> 
 						counter = :erlang.binary_to_term(ets_value)
 						counter
 				end
       
-			  false -> raise Hangman.Error, "key not in set of possible keys!"
+			  false -> raise HangmanError, "key not in set of possible keys!"
 		end
 	end
 
@@ -312,7 +312,7 @@ defmodule Hangman.Dictionary.Cache.Server do
 	defp do_lookup(:chunks, length_key) do
 
 		if :ets.info(@ets_table_name) == :undefined do
-      raise Hangman.Error, "table not loaded yet"
+      raise HangmanError, "table not loaded yet"
     end
 
     # create chunk key given length
@@ -343,18 +343,15 @@ defmodule Hangman.Dictionary.Cache.Server do
   defp normalize(:file, args) do
 
     # transform dictionary file, 3 times if necessary
-    normal = Tokens.type_normal
-    big = Tokens.type_big
-
     # handle normal dictionary size ~ 174k words
     path = 
-      case Keyword.fetch(args, normal) do
+      case Keyword.fetch(args, @regular) do
         {:ok, true} -> 
           
           nil 
-          |> Dict.File.transform({@unsorted, @sorted}, normal)
-          |> Dict.File.transform({@sorted, @grouped}, normal)
-          |> Dict.File.transform({@grouped, @chunked}, normal)
+          |> Dict.File.transform({@unsorted, @sorted}, @regular)
+          |> Dict.File.transform({@sorted, @grouped}, @regular)
+          |> Dict.File.transform({@grouped, @chunked}, @regular)
 
         _ -> nil
       end
@@ -362,13 +359,13 @@ defmodule Hangman.Dictionary.Cache.Server do
     # handle big dictionary size ~ 340k words
     if path == nil do
       path = 
-        case Keyword.fetch(args, big) do
+        case Keyword.fetch(args, @big) do
           {:ok, true} ->
     
             nil 
-            |> Dict.File.transform({@unsorted, @sorted}, big)
-            |> Dict.File.transform({@sorted, @grouped}, big)
-            |> Dict.File.transform({@grouped, @chunked}, big)
+            |> Dict.File.transform({@unsorted, @sorted}, @big)
+            |> Dict.File.transform({@sorted, @grouped}, @big)
+            |> Dict.File.transform({@grouped, @chunked}, @big)
 
           _ -> nil
         end

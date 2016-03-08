@@ -1,10 +1,10 @@
-defmodule Hangman.Player.Test do
+defmodule Player.Test do
 	use ExUnit.Case, async: true
 
-  alias Hangman.{Player}
+#  alias Hangman.{Player}
 
   setup_all do
-    IO.puts "Hangman.Player.Test"
+    IO.puts "Player Test"
 
     # initialize params map for test cases
     # each test just needs to grab the current player pid
@@ -40,11 +40,10 @@ defmodule Hangman.Player.Test do
     IO.puts " "
 
     # Retrieve game server pid given test specific params
-    game_pid = Hangman.Game.Pid.Cache.Server.get_server_pid(name, secrets)
+    game_pid = Game.Pid.Cache.Server.get_server_pid(name, secrets)
 
     # Get event server pid next
-    {:ok, notify_pid} = 
-      Hangman.Player.Events.Supervisor.start_child(false, false)
+    {:ok, notify_pid} = Player.Events.Supervisor.start_child(false, false)
 
     # Retrieve player fsm pid through dynamic start
 
@@ -54,7 +53,7 @@ defmodule Hangman.Player.Test do
     map = Map.put(map, :current_player_pid, player_pid)
 
     on_exit fn ->
-      Hangman.Player.FSM.stop(player_pid)
+      Player.FSM.stop(player_pid)
       # Hangman.Game.Server.stop(game_pid)
       IO.puts "Test finished"
     end

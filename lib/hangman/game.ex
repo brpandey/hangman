@@ -1,4 +1,4 @@
-defmodule Hangman.Game do
+defmodule Game do
   @moduledoc """
   Module defines game abstraction which can handle
   a single hangman game or multiple hangman games
@@ -9,7 +9,6 @@ defmodule Hangman.Game do
   Primary functions are load, guess, status
   """
   
-  alias Hangman.{Game, Guess, Pattern}
   
 	defstruct id: nil, 
   current: 0, #Current game index
@@ -359,7 +358,7 @@ defmodule Hangman.Game do
 
     def inspect(t, opts) do
       info = Inspect.List.inspect(Game.info(t), opts)
-      concat ["#Hangman.Game<", info, ">"]
+      concat ["#Game<", info, ">"]
     end
   end
 

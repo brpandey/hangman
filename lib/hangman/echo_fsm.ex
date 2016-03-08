@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Async.Echo do
+defmodule Player.Async.Echo do
 	@behaviour :gen_fsm
 
   @moduledoc """
@@ -53,7 +53,7 @@ defmodule Hangman.Player.Async.Echo do
 
   @callback echo({:atom, pid}, []) :: {:atom, :atom, []}
   def echo({:echo_guess, other_pid}, state) do
-  	Hangman.Player.FSM.async_guess(other_pid)
+  	Player.FSM.async_guess(other_pid)
   	{:next_state, :echo, state}
   end
 

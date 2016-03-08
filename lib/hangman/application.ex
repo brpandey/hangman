@@ -1,8 +1,9 @@
-defmodule Hangman.Application do
+defmodule Root.Application do
   use Application
 
   @moduledoc """
-  Main application callback module
+  Main hangman application callback module.  
+  Invokes root level supervisor
   """
 
   require Logger
@@ -15,6 +16,6 @@ defmodule Hangman.Application do
   @spec start(term, Keyword.t) :: Supervisor.on_start
   def start(_type, args) do
 		Logger.info "Starting Hangman Application, args: #{inspect args}"
-    Hangman.Supervisor.start_link args
+    Root.Supervisor.start_link args
   end
 end

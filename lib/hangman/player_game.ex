@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Game do
+defmodule Player.Game do
   @moduledoc """
   Module handles relationship between 
   player, game server and player event server
@@ -13,7 +13,6 @@ defmodule Hangman.Player.Game do
   Wraps fsm game play into an enumerable for easy running.
   """
 
-	alias Hangman.{Game, Player}
 
   @human Player.human
   @robot Player.robot
@@ -48,7 +47,7 @@ defmodule Hangman.Player.Game do
   
   @spec start_player(String.t, Player.kind, pid, pid) :: Supervisor.on_start_child
   defp start_player(name, type, game_pid, notify_pid) do
-    Hangman.Player.Supervisor.start_child(name, type, game_pid, notify_pid)
+    Player.Supervisor.start_child(name, type, game_pid, notify_pid)
   end
   
   # Function setup loads the player specific game components
@@ -64,7 +63,7 @@ defmodule Hangman.Player.Game do
     
     # Get event server pid next
     {:ok, notify_pid} = 
-      Hangman.Player.Events.Supervisor.start_child(log, display)
+      Player.Events.Supervisor.start_child(log, display)
 
     {name, game_pid, notify_pid}
   end
@@ -98,7 +97,7 @@ defmodule Hangman.Player.Game do
 			
 			fn ppid -> 
         # Be a good functional citizen and cleanup server resources
-        Hangman.Player.Events.Server.stop(notify_pid)
+        Player.Events.Server.stop(notify_pid)
         Player.FSM.stop(ppid) 
       end
 		)
@@ -166,7 +165,7 @@ defmodule Hangman.Player.Game do
                     
 			fn ppid -> 
         # Be a good functional citizen and cleanup server resources
-        Hangman.Player.Events.Server.stop(notify_pid)
+        Player.Events.Server.stop(notify_pid)
         Player.FSM.stop(ppid) 
       end
 		)

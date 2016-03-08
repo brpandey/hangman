@@ -1,4 +1,4 @@
-defmodule Hangman.Supervisor do 
+defmodule Root.Supervisor do 
 	use Supervisor
 
   @moduledoc """
@@ -32,8 +32,8 @@ defmodule Hangman.Supervisor do
   @callback init(Keyword.t) :: {:ok, tuple}
 	def init(args) do
 		children = [
-			supervisor(Hangman.Game.System.Supervisor, []),
-			supervisor(Hangman.Player.System.Supervisor, [args])
+			supervisor(Game.System.Supervisor, []),
+			supervisor(Player.System.Supervisor, [args])
 		]
 
 		supervise(children, strategy: :rest_for_one)

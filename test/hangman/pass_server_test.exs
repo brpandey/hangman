@@ -1,11 +1,11 @@
-defmodule Hangman.Pass.Server.Test do
+defmodule Pass.Server.Test do
 	use ExUnit.Case #, async: true
 
-	alias Hangman.{Strategy, Counter, Pass}
+#	alias Hangman.{Strategy, Counter, Pass}
 
 
   setup_all do
-    IO.puts "Hangman.Pass.Server.Test"
+    IO.puts "Pass Server Test"
     :ok
   end
 

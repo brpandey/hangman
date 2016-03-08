@@ -1,4 +1,4 @@
-defmodule Hangman.Error do
+defmodule HangmanError do
   @moduledoc """
   Module serves as hangman specific, runtime error module
   """

@@ -1,0 +1,593 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.11.4">
+    <title>Strategy – Hangman v0.9.1</title>
+    <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+  <button class="sidebar-toggle">
+    <i class="icon-menu"></i>
+  </button>
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Hangman
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.9.1
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">Hangman v0.9.1</small>
+        Strategy
+        
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p>Handles letter guessing strategy for player</p>
+<p>For robot player type, retrieves best letter, considering english
+letter frequencies and letter tally counts</p>
+<p>For human player type, retries a set of top letter choices, to
+be presented to human to manually choose</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:result/0">result()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#choose_letters/2">choose_letters(strategy, n \\ 5)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Retrieves strategy letter choices options text.  Denotes
+strategy letter pick with an asterisk</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_guessed/1">get_guessed(strategy)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns a list of guessed letters up to this point</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#info/1">info(s)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns strategy information</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#last_word/1">last_word(strategy)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>If we have reached the last possible hangman word
+return it so we can guess it</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#letter_in_most_common/3">letter_in_most_common(strategy, letter, n \\ 5)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Validates letter is within the top strategy letter choices,
+if not, picks the top letter as deemed by letter frequency</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#make_guess/1">make_guess(strategy)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns best letter guess as deemed by strategy heuristics</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#most_common_letter/2">most_common_letter(strategy, n)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns most common n letters</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#most_common_letter_and_counts/2">most_common_letter_and_counts(strategy, n)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns most common n letters along with their counts</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#new/0">new()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns a new strategy</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#retrieve_best_letter/1">retrieve_best_letter(strategy)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Method implements most common letter retrieval strategy with a twist
+Gets the first letter with the highest frequency for when the 
+current possible hangman word set space is &gt; “small”. 
+Twist is added when we combine the english language letter relative 
+frequency. For the cases where the word set is less than small, 
+only take the letter whose frequencies are less than or equal to half 
+the possible hagman word pass size</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update/2">update(strategy, arg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Updates strategy with guess particulars</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update/3">update(strategy, pass, atom)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Updates strategy with pass data
+For robot player type, get a head start on guess prep</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+
+        </section>
+      
+
+      
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:result/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:result/0">result</a> :: {<a href="#t:t/0">t</a>, <a href="Guess.html#t:t/0">Guess.t</a>}</code></pre>
+  
+</div>
+<div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Strategy{guess: term, guessed_letters: term, pass: term, prior_guess: term}</code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="choose_letters/2">
+  <div class="detail-header">
+    <a href="#choose_letters/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">choose_letters(strategy, n \\ 5)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">choose_letters(<a href="#t:t/0">t</a>, pos_integer) :: <a href="Guess.html#t:option/0">Guess.option</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Retrieves strategy letter choices options text.  Denotes
+strategy letter pick with an asterisk</p>
+
+  </section>
+</div>
+<div class="detail" id="get_guessed/1">
+  <div class="detail-header">
+    <a href="#get_guessed/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">get_guessed(strategy)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">get_guessed(<a href="#t:t/0">t</a>) :: list</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns a list of guessed letters up to this point</p>
+
+  </section>
+</div>
+<div class="detail" id="info/1">
+  <div class="detail-header">
+    <a href="#info/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">info(s)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">info(<a href="#t:t/0">t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns strategy information</p>
+
+  </section>
+</div>
+<div class="detail" id="last_word/1">
+  <div class="detail-header">
+    <a href="#last_word/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">last_word(strategy)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">last_word(<a href="#t:t/0">t</a>) :: <a href="Guess.html#t:t/0">Guess.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>If we have reached the last possible hangman word
+return it so we can guess it</p>
+
+  </section>
+</div>
+<div class="detail" id="letter_in_most_common/3">
+  <div class="detail-header">
+    <a href="#letter_in_most_common/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">letter_in_most_common(strategy, letter, n \\ 5)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">letter_in_most_common(<a href="#t:t/0">t</a>, pos_integer, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: <a href="Guess.html#t:t/0">Guess.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Validates letter is within the top strategy letter choices,
+if not, picks the top letter as deemed by letter frequency</p>
+
+  </section>
+</div>
+<div class="detail" id="make_guess/1">
+  <div class="detail-header">
+    <a href="#make_guess/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">make_guess(strategy)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">make_guess(<a href="#t:t/0">t</a>) :: <a href="Guess.html#t:t/0">Guess.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns best letter guess as deemed by strategy heuristics</p>
+
+  </section>
+</div>
+<div class="detail" id="most_common_letter/2">
+  <div class="detail-header">
+    <a href="#most_common_letter/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">most_common_letter(strategy, n)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">most_common_letter(<a href="#t:t/0">t</a>, pos_integer) :: list</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns most common n letters</p>
+
+  </section>
+</div>
+<div class="detail" id="most_common_letter_and_counts/2">
+  <div class="detail-header">
+    <a href="#most_common_letter_and_counts/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">most_common_letter_and_counts(strategy, n)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">most_common_letter_and_counts(<a href="#t:t/0">t</a>, pos_integer) :: <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns most common n letters along with their counts</p>
+
+  </section>
+</div>
+<div class="detail" id="new/0">
+  <div class="detail-header">
+    <a href="#new/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">new()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">new :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns a new strategy</p>
+
+  </section>
+</div>
+<div class="detail" id="retrieve_best_letter/1">
+  <div class="detail-header">
+    <a href="#retrieve_best_letter/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">retrieve_best_letter(strategy)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">retrieve_best_letter(<a href="#t:t/0">t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Method implements most common letter retrieval strategy with a twist
+Gets the first letter with the highest frequency for when the 
+current possible hangman word set space is &gt; “small”. 
+Twist is added when we combine the english language letter relative 
+frequency. For the cases where the word set is less than small, 
+only take the letter whose frequencies are less than or equal to half 
+the possible hagman word pass size</p>
+<p>E.g.for size 10, the letter counts would need to be 5 
+or lower to be chosen</p>
+<p>Doesn’t handle tie between letters</p>
+
+  </section>
+</div>
+<div class="detail" id="update/2">
+  <div class="detail-header">
+    <a href="#update/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">update(strategy, arg)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">update(<a href="#t:t/0">t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+          <pre><code class="elixir">update(<a href="#t:t/0">t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Updates strategy with guess particulars</p>
+
+  </section>
+</div>
+<div class="detail" id="update/3">
+  <div class="detail-header">
+    <a href="#update/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">update(strategy, pass, atom)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">update(<a href="#t:t/0">t</a>, <a href="Pass.html#t:t/0">Pass.t</a>, <a href="Player.html#t:kind/0">Player.kind</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+          <pre><code class="elixir">update(<a href="#t:t/0">t</a>, <a href="Pass.html#t:t/0">Pass.t</a>, <a href="Player.html#t:kind/0">Player.kind</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Updates strategy with pass data
+For robot player type, get a head start on guess prep</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+        <footer class="footer">
+      <p>
+        <span class="line">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.11.4),
+        </span>
+        <span class="line">
+          designed by
+          <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+      </p>
+      <button class="night-mode-toggle" />
+    </footer>
+  </div>
+</section>
+</div>
+  <script src="dist/app-6d2e071366.js"></script>
+  </body>
+</html>
+

@@ -1,11 +1,9 @@
-defmodule Hangman.Dictionary.Cache.Timing.Profile do
+defmodule Dictionary.Cache.Timing.Profile do
   import ExProf.Macro
 
   @moduledoc """
   Module to time dictionary cache server
   """
-
-  alias Hangman.{Dictionary, Chunks, Counter}
 
   @doc """
   Profiling routine that conducts a simple test
@@ -61,7 +59,7 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
 
 		word_count = 28558
 
-		^word_count = Chunks.get_count(chunks, :words)
+		^word_count = Chunks.count(chunks)
 
 		IO.puts "chunks: #{inspect chunks}"
 

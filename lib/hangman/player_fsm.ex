@@ -1,4 +1,4 @@
-defmodule Hangman.Player.FSM do
+defmodule Player.FSM do
   @behaviour :gen_fsm
 
   @moduledoc """
@@ -19,7 +19,7 @@ defmodule Hangman.Player.FSM do
 
   require Logger
 
-  alias Hangman.{Player, Player.Async.Echo}
+  alias Player.Async.Echo, as: Echo
 
   @human Player.human
   @robot Player.robot
@@ -158,7 +158,7 @@ defmodule Hangman.Player.FSM do
       case player.type do
         @human -> :idle_socrates
         @robot -> :neutral_wall_e
-        _ -> raise Hangman.Error, "invalid and unknown player type"
+        _ -> raise HangmanError, "invalid and unknown player type"
       end
 
     {:ok, echo_pid} = Echo.start_link()

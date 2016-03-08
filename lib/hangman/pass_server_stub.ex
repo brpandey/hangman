@@ -1,12 +1,10 @@
-defmodule Hangman.Pass.Server.Stub do 
+defmodule Pass.Server.Stub do 
   @moduledoc """
   Stub module to mimic Pass Server functionality
 
   Provides a simple scaffold implementation 
   to provide simple, predictable behavior
   """
-
-  alias Hangman.{Counter, Pass, Reduction}
 
   @doc """
   Stub Routine retrieves stub pass tally given game start pass key

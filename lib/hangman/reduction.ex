@@ -1,4 +1,4 @@
-defmodule Hangman.Reduction do
+defmodule Reduction do
   @moduledoc """
   Module implements reduction abstraction key type only
   """

@@ -1,10 +1,10 @@
-defmodule Hangman.Player.Game.Test do
+defmodule Player.Game.Test do
 	use ExUnit.Case
 
-  alias Hangman.{Player}
+#  alias Hangman.{Player}
 
   setup_all do
-    IO.puts "Hangman.Player.Game.Test"
+    IO.puts "Player Game Test"
     :ok
   end
 

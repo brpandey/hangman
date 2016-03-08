@@ -1,10 +1,10 @@
-defmodule Hangman.Game.Server.Test do
+defmodule Game.Server.Test do
 	use ExUnit.Case, async: true
 
-	alias Hangman.{Game}
+#	alias Hangman.{Game}
 
   setup_all do
-    IO.puts "Hangman.Game.Test"
+    IO.puts "Game Test"
 
     # initialize params map for test cases
     # each test just needs to grab the current player pid
