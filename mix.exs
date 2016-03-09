@@ -22,7 +22,7 @@ defmodule Hangman.Mixfile do
 
     [
       applications: [:logger, :gproc],
-      mod: {Root.Application, args}
+      mod: {Hangman.Application, args}
     ]
   end
 
