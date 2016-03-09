@@ -1,4 +1,4 @@
-defmodule Dictionary.Cache.Server do
+defmodule Dictionary.Cache do
 	use GenServer
 
   require Logger
@@ -41,7 +41,7 @@ defmodule Dictionary.Cache.Server do
 	# External API
 
   @doc """
-  GenServer start_link wrapper function
+  GenServer start link wrapper function
   """
 
   @spec start_link(Keyword.t) :: {:ok, pid}
@@ -52,72 +52,55 @@ defmodule Dictionary.Cache.Server do
   end
 
   @doc """
-  Lookup routine to extract count number of random hangman words. 
-  Uses global server name to retrieve the server pid
+  Cache lookup routines
+
+  The allowed modes:
+    * `:random` - extracts count number of random hangman words. 
+    * `:tally` - retrieve letter tally associated with word length key
+    * `:chunk` -  retrieve the word data chunk associated with the word length key
+
   """
 
-  @spec lookup(atom, pos_integer) :: {}
+  @spec lookup(atom, pos_integer) :: (Chunks.t | Counter.t | [String.t] | no_return)
+
+
   def lookup(:random, count) do
+    # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)  
     true = is_pid(pid) 
     
     lookup(pid, :random, count)
   end
 
-  @doc """
-  Lookup routine to retrieve letter tally associated with word length key
-  Uses global server name to retrieve the server pid
-  """
-
-  @spec lookup(atom, pos_integer) :: {}
   def lookup(:tally, length_key)
   when is_integer(length_key) and length_key > 0 do
+    # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)  
     true = is_pid(pid) 
   
     lookup(pid, :tally, length_key)
   end
 
-  @doc """
-  Lookup routine to retrieve the word data chunk 
-  associated with the word length key
-  Uses global server name to retrieve the server pid
-  """
-
-  @spec lookup(atom, pos_integer) :: {}
   def lookup(:chunks, length_key)
   when is_integer(length_key) and length_key > 0 do
+    # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)
     true = is_pid(pid)
 
     lookup(pid, :chunks, length_key)
   end
 
-  @doc """
-  Lookup routine to extract count number of random hangman words. 
-  """
-
-  @spec lookup(pid, atom, pos_integer) :: {}
-  def lookup(pid, :random, count) do
+  @spec lookup(pid, atom, pos_integer) :: Chunks.t | Counter.t | [String.t] | no_return
+  defp lookup(pid, :random, count) do
     GenServer.call pid, {:lookup_random, count}
   end
 
-  @doc """
-  Lookup routine to retrieve letter tally associated with word length key
-  """
-
-  @spec lookup(pid, atom, pos_integer) :: {}
-  def lookup(pid, :tally, length_key)
+  defp lookup(pid, :tally, length_key)
   when is_number(length_key) and length_key > 0 do
     GenServer.call pid, {:lookup_tally, length_key}
   end
 
-  @doc """
-  Lookup routine to retrieve the word data chunk 
-  """
-
-  @spec lookup(pid, atom, pos_integer) :: {}
-  def lookup(pid, :chunks, length_key)
+  defp lookup(pid, :chunks, length_key)
   when is_number(length_key) and length_key > 0 do
     GenServer.call pid, {:lookup_chunks, length_key}
   end
@@ -126,71 +109,71 @@ defmodule Dictionary.Cache.Server do
   Routine to stop server normally
   """
 
-  @spec stop(pid) :: {}
+  @spec stop(none | pid) :: {}
 	def stop(pid) when is_pid(pid) do
 		GenServer.call pid, :stop
 	end
 
-  @spec stop(none) :: {}
   def stop do
     pid = Process.whereis(:hangman_dictionary_cache_server)
 
     if is_pid(pid), do: GenServer.call pid, :stop
   end
 
-  @doc """
+  @docp """
   GenServer callback to initalize server process
   """
 
-  @callback init(Keyword.t) :: {}
+  #@callback init(Keyword.t) :: {}
   def init(args) do
     setup(args)
     {:ok, {}}
   end
 
-  @doc """
+  @docp """
   GenServer callback to retrieve random hangman word
   """
 
-  @callback handle_call({:atom, pos_integer}, {}, {}) :: {}
+  #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_random, count}, _from, {}) do
     data = do_lookup(:random, count)
     {:reply, data, {}}
   end
 
-  @doc """
+  @docp """
   GenServer callback to retrieve tally given word length key
   """
 
-  @callback handle_call({:atom, pos_integer}, {}, {}) :: {}
+  #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_tally, length_key}, _from, {})
   when is_integer(length_key) do
     data = do_lookup(:tally, length_key)
     {:reply, data, {}}
   end
 
-  @doc """
+  @docp """
   GenServer callback to retrieve data chunk given word length key
   """
-  @callback handle_call({:atom, pos_integer}, {}, {}) :: {}
+  #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_chunks, length_key}, _from, {}) do
     data = do_lookup(:chunks, length_key)
     {:reply, data, {}}
   end
  
-  @doc """
+  @docp """
   GenServer callback to stop server normally
   """
 
-  @callback handle_call(:atom, pid, {}) :: {}
+  #@callback handle_call(:atom, pid, {}) :: {}
 	def handle_call(:stop, _from, {}) do
 		{ :stop, :normal, :ok, {}}
 	end 
 
-  @doc """
+  @docp """
   GenServer callback to cleanup server state
   """
-  @callback terminate(reason :: term, {}) :: term | no_return
+
+  #@callback terminate(reason :: term, {}) :: term | no_return
 	def terminate(reason, _state) do
     Logger.debug("Dictionary Cache Server terminating, reason #{reason}")
 		:ok
@@ -199,17 +182,14 @@ defmodule Dictionary.Cache.Server do
   # Dictionary Cache Abstraction Methods
 
 
-
-
 	# CREATE (and UPDATE)
 
 	# Setup cache ets
 
   @doc """
-  Sets up ets table with dictionary words arranged in chunks, 
-  tallies arranged by word length size, and tags random words.
-  Normalizes the original dictionary file to be loaded into the 
-  ets table
+  Loads normalized dictionary file into `ETS`. Calculates and 
+  loads chunked dictionary word lists. Computes and stores letter 
+  tallies  by word length size.  Tags and stores random words.
   """
 
   @spec setup(Keyword.t) :: :ok | no_return

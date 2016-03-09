@@ -28,21 +28,21 @@ defmodule Dictionary.Cache.Timing.Profile do
   end 
 
   defp run_setup_test do
-    Dictionary.Cache.Server.stop
+    Dictionary.Cache.stop
 
-    {:ok, _pid} = Dictionary.Cache.Server.start_link()
+    {:ok, _pid} = Dictionary.Cache.start_link()
   end
   
   defp run_test do
-    Dictionary.Cache.Server.stop
+    Dictionary.Cache.stop
 
-    {:ok, pid} = Dictionary.Cache.Server.start_link()
+    {:ok, pid} = Dictionary.Cache.start_link()
 
 		IO.puts "finished cache setup"
 
 		size = 8
 
-		lookup = Dictionary.Cache.Server.lookup(pid, :tally, size)
+		lookup = Dictionary.Cache.lookup(pid, :tally, size)
 
 		counter_8 = Counter.new(%{"a" => 14490, "b" => 4485, 
 			"c" => 7815, "d" => 8046, "e" => 19600, "f" => 2897, "g" => 6009, 
@@ -55,7 +55,7 @@ defmodule Dictionary.Cache.Timing.Profile do
 
 		IO.puts "#{inspect lookup}"
 
-		chunks = %Chunks{} = Dictionary.Cache.Server.lookup(pid, :chunks, 8)
+		chunks = %Chunks{} = Dictionary.Cache.lookup(pid, :chunks, 8)
 
 		word_count = 28558
 

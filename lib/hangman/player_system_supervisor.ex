@@ -39,7 +39,7 @@ defmodule Player.System.Supervisor do
 	def init(args) do
 
     children = [
-      worker(Dictionary.Cache.Server, [args]),
+      worker(Dictionary.Cache, [args]),
       worker(Pass.Server, []),
       supervisor(Reduction.Engine, []),
       supervisor(Pass.Writer, []),

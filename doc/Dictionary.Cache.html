@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Dictionary.Cache.Server – Hangman v0.9.1</title>
+    <title>Dictionary.Cache – Hangman v0.9.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -62,9 +62,7 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.1</small>
-        Dictionary.Cache.Server
-        
-          <small>behaviour</small>
+        Dictionary.Cache
         
         
       </h1>
@@ -99,18 +97,7 @@ upon startup. Words identified as ‘random’ are tagged and stored.</p>
     <a href="#lookup/2">lookup(atom, count)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Lookup routine to retrieve the word data chunk 
-associated with the word length key
-Uses global server name to retrieve the server pid</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#lookup/3">lookup(pid, atom, count)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Lookup routine to retrieve the word data chunk</p>
+    <div class="summary-synopsis"><p>Cache lookup routines</p>
 </div>
   
 </div>
@@ -119,10 +106,9 @@ Uses global server name to retrieve the server pid</p>
     <a href="#setup/1">setup(args)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sets up ets table with dictionary words arranged in chunks, 
-tallies arranged by word length size, and tags random words.
-Normalizes the original dictionary file to be loaded into the 
-ets table</p>
+    <div class="summary-synopsis"><p>Loads normalized dictionary file into <code class="inline">ETS</code>. Calculates and 
+loads chunked dictionary word lists. Computes and stores letter 
+tallies  by word length size.  Tags and stores random words</p>
 </div>
   
 </div>
@@ -131,7 +117,7 @@ ets table</p>
     <a href="#start_link/1">start_link(args \\ [regular: true])</a>
   </div>
   
-    <div class="summary-synopsis"><p>GenServer start_link wrapper function</p>
+    <div class="summary-synopsis"><p>GenServer start link wrapper function</p>
 </div>
   
 </div>
@@ -157,40 +143,6 @@ ets table</p>
           
 
           
-  <div class="summary-callbacks summary">
-    <h2>
-      <a href="#callbacks">Callbacks</a>
-    </h2>
-    <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:handle_call/3">handle_call(atom, pid, {})</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>GenServer callback to stop server normally</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:init/1">init(arg0)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>GenServer callback to initalize server process</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:terminate/2">terminate(reason, {})</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>GenServer callback to cleanup server state</p>
-</div>
-  
-</div>
-
-  </div>
-
 
         </section>
       
@@ -218,46 +170,26 @@ ets table</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">lookup(atom, pos_integer) :: {}</code></pre>
-        
-          <pre><code class="elixir">lookup(atom, pos_integer) :: {}</code></pre>
-        
-          <pre><code class="elixir">lookup(atom, pos_integer) :: {}</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Lookup routine to retrieve the word data chunk 
-associated with the word length key
-Uses global server name to retrieve the server pid</p>
-
-  </section>
-</div>
-<div class="detail" id="lookup/3">
-  <div class="detail-header">
-    <a href="#lookup/3" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">lookup(pid, atom, count)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">lookup(pid, atom, pos_integer) :: {}</code></pre>
-        
-          <pre><code class="elixir">lookup(pid, atom, pos_integer) :: {}</code></pre>
-        
-          <pre><code class="elixir">lookup(pid, atom, pos_integer) :: {}</code></pre>
+          <pre><code class="elixir">lookup(atom, pos_integer) ::
+  <a href="Chunks.html#t:t/0">Chunks.t</a> |
+  <a href="Counter.html#t:t/0">Counter.t</a> |
+  [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] |
+  no_return</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Lookup routine to retrieve the word data chunk </p>
+    <p>Cache lookup routines</p>
+<p>The allowed modes:</p>
+<ul>
+<li><code class="inline">:random</code> - extracts count number of random hangman words. 
+</li>
+<li><code class="inline">:tally</code> - retrieve letter tally associated with word length key
+</li>
+<li><code class="inline">:chunk</code> -  retrieve the word data chunk associated with the word length key
+</li>
+</ul>
 
   </section>
 </div>
@@ -280,10 +212,9 @@ Uses global server name to retrieve the server pid</p>
     </div>
   
   <section class="docstring">
-    <p>Sets up ets table with dictionary words arranged in chunks, 
-tallies arranged by word length size, and tags random words.
-Normalizes the original dictionary file to be loaded into the 
-ets table</p>
+    <p>Loads normalized dictionary file into <code class="inline">ETS</code>. Calculates and 
+loads chunked dictionary word lists. Computes and stores letter 
+tallies  by word length size.  Tags and stores random words.</p>
 
   </section>
 </div>
@@ -306,7 +237,7 @@ ets table</p>
     </div>
   
   <section class="docstring">
-    <p>GenServer start_link wrapper function</p>
+    <p>GenServer start link wrapper function</p>
 
   </section>
 </div>
@@ -336,9 +267,7 @@ ets table</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">stop(none) :: {}</code></pre>
-        
-          <pre><code class="elixir">stop(pid) :: {}</code></pre>
+          <pre><code class="elixir">stop(none | pid) :: {}</code></pre>
         
       </div>
     </div>
@@ -354,91 +283,6 @@ ets table</p>
 
       
 
-      
-        <section id="callbacks" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#callbacks">
-              <i class="icon-link"></i>
-            </a>
-            Callbacks
-          </h1>
-          <div class="detail" id="c:handle_call/3">
-  <div class="detail-header">
-    <a href="#c:handle_call/3" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">handle_call(atom, pid, {})</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">handle_call(:atom, pid, {}) :: {}</code></pre>
-        
-          <pre><code class="elixir">handle_call({:atom, pos_integer}, {}, {}) :: {}</code></pre>
-        
-          <pre><code class="elixir">handle_call({:atom, pos_integer}, {}, {}) :: {}</code></pre>
-        
-          <pre><code class="elixir">handle_call({:atom, pos_integer}, {}, {}) :: {}</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>GenServer callback to stop server normally</p>
-
-  </section>
-</div>
-<div class="detail" id="c:init/1">
-  <div class="detail-header">
-    <a href="#c:init/1" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">init(arg0)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">init(<a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a>) :: {}</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>GenServer callback to initalize server process</p>
-
-  </section>
-</div>
-<div class="detail" id="c:terminate/2">
-  <div class="detail-header">
-    <a href="#c:terminate/2" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">terminate(reason, {})</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">terminate(reason :: term, {}) :: term | no_return</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>GenServer callback to cleanup server state</p>
-
-  </section>
-</div>
-
-        </section>
       
         <footer class="footer">
       <p>

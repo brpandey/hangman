@@ -1,9 +1,9 @@
-defmodule Dictionary.Cache.Server.Test do
+defmodule Dictionary.Cache.Test do
 	use ExUnit.Case #, async: true
 
   setup_all do
     # stop cache server started by application callback
-    Dictionary.Cache.Server.stop
+    Dictionary.Cache.stop
     IO.puts "Dictionary Cache Server Test"
     :ok
   end
@@ -12,7 +12,7 @@ defmodule Dictionary.Cache.Server.Test do
 	test "initial test of normal dictionary cache" do
 
 		pid = 
-      case Dictionary.Cache.Server.start_link do
+      case Dictionary.Cache.start_link do
         {:ok, pid} -> pid
 #        {:error, {:already_started, pid}} -> pid
       end
@@ -21,10 +21,10 @@ defmodule Dictionary.Cache.Server.Test do
 
 		size = 8
 
-#		assert catch_error(Dictionary.Cache.Server.lookup(pid, :tally, 3383)) ==
+#		assert catch_error(Dictionary.Cache.lookup(pid, :tally, 3383)) ==
 #		  %Hangman.Error{message: "key not in set of possible keys!"}
 
-		lookup = Dictionary.Cache.Server.lookup(pid, :tally, size)
+		lookup = Dictionary.Cache.lookup(pid, :tally, size)
 
 		counter_8 = Counter.new(%{"a" => 14490, "b" => 4485, 
 			"c" => 7815, "d" => 8046, "e" => 19600, "f" => 2897, "g" => 6009, 
@@ -39,7 +39,7 @@ defmodule Dictionary.Cache.Server.Test do
 		
 		IO.puts "Counters match\n\n"
 	
-		chunks = %Chunks{} = Dictionary.Cache.Server.lookup(pid, :chunks, 8)
+		chunks = %Chunks{} = Dictionary.Cache.lookup(pid, :chunks, 8)
 
 		word_count = 28558
 
@@ -48,13 +48,13 @@ defmodule Dictionary.Cache.Server.Test do
 
 		IO.puts "chunks: #{inspect chunks}"
 
-    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    randoms = Dictionary.Cache.lookup(pid, :random, 10)
     IO.puts "random hangman words 1: #{inspect randoms}"
 
-    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    randoms = Dictionary.Cache.lookup(pid, :random, 10)
     IO.puts "random hangman words 2: #{inspect randoms}"
 
-    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    randoms = Dictionary.Cache.lookup(pid, :random, 10)
     IO.puts "random hangman words 3: #{inspect randoms}"
 
 
@@ -63,7 +63,7 @@ defmodule Dictionary.Cache.Server.Test do
 		|> Enum.take(20)
 
 
-    Dictionary.Cache.Server.stop(pid)
+    Dictionary.Cache.stop(pid)
 	end
 
 
@@ -72,7 +72,7 @@ defmodule Dictionary.Cache.Server.Test do
     args =  [{Dictionary.big, true}]
 
 		pid = 
-      case Dictionary.Cache.Server.start_link(args) do
+      case Dictionary.Cache.start_link(args) do
         {:ok, pid} -> pid
         #{:error, {:already_started, pid}} -> pid
       end
@@ -81,10 +81,10 @@ defmodule Dictionary.Cache.Server.Test do
 
 		size = 8
 
-#		assert catch_error(Dictionary.Cache.Server.lookup(pid, :tally, 3383)) ==
+#		assert catch_error(Dictionary.Cache.lookup(pid, :tally, 3383)) ==
 #		  %RuntimeError{message: "key not in set of possible keys!"}
 
-		lookup = Dictionary.Cache.Server.lookup(pid, :tally, size)
+		lookup = Dictionary.Cache.lookup(pid, :tally, size)
 
     counter_big_8 = Counter.new(%{"a" => 31575, "b" => 9147, "c" => 14546, "d" => 14298, "e" => 33942, "f" => 5370, "g" => 10575, "h" => 11748, "i" => 28901, "j" => 1267, "k" => 6898, "l" => 21204, "m" => 12953, "n" => 25202, "o" => 23069, "p" => 9747, "q" => 714, "r" => 26380, "s" => 23083, "t" => 21248, "u" => 14382, "v" => 4257, "w" => 4804, "x" => 1150, "y" => 7307, "z" => 1906})
 
@@ -95,7 +95,7 @@ defmodule Dictionary.Cache.Server.Test do
 		
 		IO.puts "Counters match\n\n"
 	
-		chunks = %Chunks{} = Dictionary.Cache.Server.lookup(pid, :chunks, 8)
+		chunks = %Chunks{} = Dictionary.Cache.lookup(pid, :chunks, 8)
 
     big_word_count = 54500
 
@@ -103,13 +103,13 @@ defmodule Dictionary.Cache.Server.Test do
 
 		IO.puts "chunks: #{inspect chunks}"
 
-    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    randoms = Dictionary.Cache.lookup(pid, :random, 10)
     IO.puts "random hangman words 1: #{inspect randoms}"
 
-    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    randoms = Dictionary.Cache.lookup(pid, :random, 10)
     IO.puts "random hangman words 2: #{inspect randoms}"
 
-    randoms = Dictionary.Cache.Server.lookup(pid, :random, 10)
+    randoms = Dictionary.Cache.lookup(pid, :random, 10)
     IO.puts "random hangman words 3: #{inspect randoms}"
 
 
@@ -118,7 +118,7 @@ defmodule Dictionary.Cache.Server.Test do
 		|> Enum.take(20)
 
 
-    Dictionary.Cache.Server.stop(pid)
+    Dictionary.Cache.stop(pid)
 	end
 
 end

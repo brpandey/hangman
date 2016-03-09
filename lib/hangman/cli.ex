@@ -14,8 +14,6 @@ defmodule CLI do
   """
 
 
-  alias Dictionary.Cache.Server, as: Dictionary
-
   @min_secret_length 3
   @max_secret_length 28
   @max_random_words_request 10
@@ -111,7 +109,7 @@ defmodule CLI do
                   value = String.to_integer(value)
                   cond do
                     value > 0 and value <= @max_random_words_request ->
-                      Dictionary.lookup(:random, value)
+                      Dictionary.Cache.lookup(:random, value)
 
                     true ->
                       raise HangmanError, "submitted random count value is not valid"

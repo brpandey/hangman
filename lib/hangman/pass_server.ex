@@ -10,7 +10,7 @@ defmodule Pass.Server do
 
   require Logger
   
-  alias Dictionary.Cache.Server, as: Cache
+  alias Dictionary.Cache, as: Cache
   
   @name __MODULE__
 	@ets_table_name :engine_pass_table
