@@ -3,13 +3,16 @@ defmodule Dictionary.File do
   Provides abstraction for various dictionary files.
 
   The original dictionary file is transformed into 
-  intermediate files as representations of each
-  transformation layer.
+  intermediate files as disk representations of each
+  transformation layer. Unless the original file changes, transformation 
+  every time isn't necessary since the intermediate files are stored on disk.  
 
-  Layers range from unsorted to sorted, 
-  sorted to grouped, and grouped to chunked
+  Load time is only determined by the last transformed chunk file, 
+  which is optimized for `ETS` load.
 
-  Each transform handler encapsulates each layers transform procedure
+  Transformation types are unsorted to sorted, 
+  sorted to grouped, and grouped to chunked.  Each transform handler 
+  encapsulates each transform procedure
   """
 
   alias Dictionary, as: Dict

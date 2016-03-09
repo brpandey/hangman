@@ -71,11 +71,14 @@
         <section id="moduledoc" class="docstring">
           <p>Provides abstraction for various dictionary files.</p>
 <p>The original dictionary file is transformed into 
-intermediate files as representations of each
-transformation layer.</p>
-<p>Layers range from unsorted to sorted, 
-sorted to grouped, and grouped to chunked</p>
-<p>Each transform handler encapsulates each layers transform procedure</p>
+intermediate files as disk representations of each
+transformation layer. Unless the original file changes, transformation 
+every time isn’t necessary since the intermediate files are stored on disk.  </p>
+<p>Load time is only determined by the last transformed chunk file, 
+which is optimized for <code class="inline">ETS</code> load.</p>
+<p>Transformation types are unsorted to sorted, 
+sorted to grouped, and grouped to chunked.  Each transform handler 
+encapsulates each transform procedure</p>
 
         </section>
       

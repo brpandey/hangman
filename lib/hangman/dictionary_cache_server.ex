@@ -3,9 +3,9 @@ defmodule Dictionary.Cache.Server do
 
   require Logger
 
-  @module_doc """
+  @moduledoc """
   Module loads dictionary file words into chunks and stores
-  into ets.  Letter frequency tallies are computed and stored into ets
+  into `ETS`.  Letter frequency tallies are computed and stored into `ETS`
   upon startup. Words identified as 'random' are tagged and stored.
 
   Provides lookup routines to access chunks, tallys, and random words

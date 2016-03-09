@@ -33,7 +33,7 @@ defmodule Dictionary do
   def big, do:  :big
  
   @doc """
-  Returns dictionary file paths map, arranged by dictionary file types normal and big
+  Returns dictionary file paths map, arranged by dictionary file types regular and big
   """
   def paths do
   %{
