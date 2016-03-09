@@ -1,7 +1,9 @@
 defmodule Root.Supervisor do 
 	use Supervisor
 
-  @moduledoc """
+  @moduledoc false
+  
+  _ = """
 	Module is the root level supervisor.
 
   Serves as a nth line supervisor as

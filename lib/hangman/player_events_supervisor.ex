@@ -1,7 +1,9 @@
 defmodule Player.Events.Supervisor do
   use Supervisor
 
-  @moduledoc """
+  @moduledoc false
+
+  _ = """
   Module implements supervisor functionality overseeing 
   dynamically started player events servers
 

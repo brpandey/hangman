@@ -1,7 +1,9 @@
 defmodule Game.Server.Supervisor do
 	use Supervisor
   
-  @moduledoc """
+  @moduledoc false 
+
+  _ = """
   Module implements supervisor behaviour.
 
 	Module is a first line supervisor

@@ -1,7 +1,9 @@
 defmodule Player.Group.Supervisor do
 	use Supervisor
 
-  @moduledoc """
+  @moduledoc false
+
+  _ = """
   Module is a second line supervisor as it supervises
   two first-line supervisors.
 

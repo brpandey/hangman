@@ -1,7 +1,9 @@
 defmodule Hangman.Application do
   use Application
 
-  @moduledoc """
+  @moduledoc false
+
+  _ = """
   Main hangman application callback module.  
   Invokes root level supervisor
   """

@@ -1,7 +1,8 @@
 defmodule Reduction.Engine.Pool.Supervisor do
   use Supervisor
 
-  @moduledoc """
+  @moduledoc false
+  _ = """
   Module is a Supervisor that supervises a pool of 
   word reduction workers
   """

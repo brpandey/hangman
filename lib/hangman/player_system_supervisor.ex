@@ -1,7 +1,8 @@
 defmodule Player.System.Supervisor do
 	use Supervisor
 
-  @moduledoc """
+  @moduledoc false
+  _ = """
   Module supervises all components necessary for player and 
   strategic player game play including dictionary cache server,
   word pass server, reduction engine, pass writer, 
