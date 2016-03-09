@@ -59,7 +59,7 @@ defmodule Player.Game do
   is_boolean(log) and is_boolean(display) do
     
     # Grab game pid first from game pid cache
-	  game_pid = Game.Pid.Cache.Server.get_server_pid(name, secrets)
+	  game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
     
     # Get event server pid next
     {:ok, notify_pid} = 

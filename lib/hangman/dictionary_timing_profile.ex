@@ -17,7 +17,7 @@ defmodule Dictionary.Cache.Timing.Profile do
   end 
 
   @doc """
-  Profiling routine that conducts a long test
+  Profiling routine that conducts an elaborate, long test
   """
 
   @spec go_hard :: none

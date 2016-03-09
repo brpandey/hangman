@@ -36,7 +36,7 @@ defmodule Game.System.Supervisor do
 
 		children = [
 				supervisor(Game.Server.Supervisor, []),
-				worker(Game.Pid.Cache.Server, [])
+				worker(Game.Pid.Cache, [])
 		]
 
 		supervise(children, strategy: :one_for_one)	

@@ -1,23 +1,20 @@
-defmodule Pass.Writer.Pool.Supervisor do
+defmodule Pass.Writer.Pool do
   use Supervisor
 
-  @moduledoc false
-
-  _ = """
+  @moduledoc """
   Module is a Supervisor that supervises a pool
   of pass writer workers
   """
 
   @name __MODULE__
 
-  @doc """
-  Supervisor start_link wrapper function
-  Accepts pool size as arg
+  @docp """
+  Supervisor start_link wrapper function. Accepts pool size as arg
   """
   
-  @spec start_link(pos_integer) :: Supervisor.on_start
+  #@spec start_link(pos_integer) :: Supervisor.on_start
   def start_link(pool_size) do
-    Supervisor.start_link(@name, {pool_size})
+    Supervisor.start_link(@name, pool_size)
   end
 
   @doc """
@@ -25,8 +22,8 @@ defmodule Pass.Writer.Pool.Supervisor do
   specification to be supervised once supervisor started
   """
 
-  @callback init(tuple) :: {:ok, tuple}
-  def init({pool_size}) do
+  @callback init(pool_size :: pos_integer) :: {:ok, tuple}
+  def init(pool_size) do
 
     # Use list comp to generate worker specification
     # for each item in pool size

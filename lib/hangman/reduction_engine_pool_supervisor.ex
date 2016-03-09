@@ -1,22 +1,20 @@
-defmodule Reduction.Engine.Pool.Supervisor do
+defmodule Reduction.Engine.Pool do
   use Supervisor
 
-  @moduledoc false
-  _ = """
+  @moduledoc """
   Module is a Supervisor that supervises a pool of 
   word reduction workers
   """
 
   @name __MODULE__
 
-  @doc """
-  Supervisor start_link wrapper function
-  Accepts pool size as arg
+  @docp """
+  Supervisor start_link wrapper function. Accepts pool size as arg
   """
   
-  @spec start_link(pos_integer) :: Supervisor.on_start
+  #@spec start_link(pos_integer) :: Supervisor.on_start
   def start_link(pool_size) do
-    Supervisor.start_link(@name, {pool_size})
+    Supervisor.start_link(@name, pool_size)
   end
 
   @doc """
@@ -24,8 +22,8 @@ defmodule Reduction.Engine.Pool.Supervisor do
   specification to be supervised once supervisor started
   """
 
-  @callback init(tuple) :: {:ok, tuple}
-  def init({pool_size}) do
+  @callback init(pool_size :: pos_integer) :: {:ok, tuple}
+  def init(pool_size) do
     processes = for worker_id <- 1..pool_size do
       # Create worker spec for each value
       worker(

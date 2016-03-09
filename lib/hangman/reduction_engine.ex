@@ -21,7 +21,7 @@ defmodule Reduction.Engine do
 
   @spec start_link :: Supervisor.on_start
   def start_link() do
-    Engine.Pool.Supervisor.start_link(@pool_size)
+    Engine.Pool.start_link(@pool_size)
   end
 
   @doc """

@@ -17,7 +17,7 @@ defmodule Pass.Writer do
   
   @spec start_link :: Supervisor.on_start
   def start_link do
-    Pass.Writer.Pool.Supervisor.start_link(@pool_size)
+    Pass.Writer.Pool.start_link(@pool_size)
   end
   
   

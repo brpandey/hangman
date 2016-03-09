@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Dictionary.Cache.Timing.Profile – Hangman v0.9.1</title>
+    <title>Game.Pid.Cache – Hangman v0.9.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -62,14 +62,18 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.1</small>
-        Dictionary.Cache.Timing.Profile
+        Game.Pid.Cache
+        
+          <small>behaviour</small>
         
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module to time dictionary cache server</p>
+          <p>Module provides game server pid caching so
+a game server doesn’t need to be reloaded
+on every use</p>
 
         </section>
       
@@ -91,19 +95,20 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#go_hard/0">go_hard()</a>
+    <a href="#get_server_pid/2">get_server_pid(player_name, secret)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Profiling routine that conducts an elaborate, long test</p>
+    <div class="summary-synopsis"><p>Checks registry cache for game server pid, returns cached pid or
+if not found returns new game pid</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#go_simple/0">go_simple()</a>
+    <a href="#start_link/0">start_link()</a>
   </div>
   
-    <div class="summary-synopsis"><p>Profiling routine that conducts a simple test</p>
+    <div class="summary-synopsis"><p>GenServer start_link wrapper function</p>
 </div>
   
 </div>
@@ -114,6 +119,31 @@
           
 
           
+  <div class="summary-callbacks summary">
+    <h2>
+      <a href="#callbacks">Callbacks</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:handle_call/3">handle_call({}, {}, term)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>GenServer callback to retrieve game server pid</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:init/1">init(term)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>GenServer callback to initialize server process</p>
+</div>
+  
+</div>
+
+  </div>
+
 
         </section>
       
@@ -128,12 +158,12 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="go_hard/0">
+          <div class="detail" id="get_server_pid/2">
   <div class="detail-header">
-    <a href="#go_hard/0" class="detail-link" title="Link to this function">
+    <a href="#get_server_pid/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">go_hard()</span>
+    <span class="signature">get_server_pid(player_name, secret)</span>
       
   </div>
   
@@ -141,22 +171,23 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">go_hard :: none</code></pre>
+          <pre><code class="elixir">get_server_pid(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: pid</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Profiling routine that conducts an elaborate, long test</p>
+    <p>Checks registry cache for game server pid, returns cached pid or
+if not found returns new game pid</p>
 
   </section>
 </div>
-<div class="detail" id="go_simple/0">
+<div class="detail" id="start_link/0">
   <div class="detail-header">
-    <a href="#go_simple/0" class="detail-link" title="Link to this function">
+    <a href="#start_link/0" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">go_simple()</span>
+    <span class="signature">start_link()</span>
       
   </div>
   
@@ -164,13 +195,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">go_simple :: none</code></pre>
+          <pre><code class="elixir">start_link :: {:ok, pid}</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Profiling routine that conducts a simple test</p>
+    <p>GenServer start_link wrapper function</p>
 
   </section>
 </div>
@@ -180,6 +211,62 @@
 
       
 
+      
+        <section id="callbacks" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#callbacks">
+              <i class="icon-link"></i>
+            </a>
+            Callbacks
+          </h1>
+          <div class="detail" id="c:handle_call/3">
+  <div class="detail-header">
+    <a href="#c:handle_call/3" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">handle_call({}, {}, term)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">handle_call({:atom, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}, {}, term) :: {}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>GenServer callback to retrieve game server pid</p>
+
+  </section>
+</div>
+<div class="detail" id="c:init/1">
+  <div class="detail-header">
+    <a href="#c:init/1" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">init(term)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">init(term) :: {}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>GenServer callback to initialize server process</p>
+
+  </section>
+</div>
+
+        </section>
       
         <footer class="footer">
       <p>

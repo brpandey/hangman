@@ -159,7 +159,7 @@ a single hangman game or multiple hangman games</p>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Game.Pid.Cache.Server.html">Game.Pid.Cache.Server</a></div>
+  <div class="summary-signature"><a href="Game.Pid.Cache.html">Game.Pid.Cache</a></div>
   
     <div class="summary-synopsis"><p>Module provides game server pid caching so
 a game server doesn’t need to be reloaded
@@ -220,6 +220,14 @@ Write load is handled through pool.
 Distributes write request based on pass key id attribute (name)
 Pool size writer workers are started up as part of writer pool
 Pool supervisor supervises writer workers</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Pass.Writer.Pool.html">Pass.Writer.Pool</a></div>
+  
+    <div class="summary-synopsis"><p>Module is a Supervisor that supervises a pool
+of pass writer workers</p>
 </div>
   
 </div>
@@ -302,6 +310,14 @@ Each event is logged to a file named after player id (name)</p>
   <div class="summary-signature"><a href="Reduction.Engine.html">Reduction.Engine</a></div>
   
     <div class="summary-synopsis"><p>Module implements words reduction engine</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Reduction.Engine.Pool.html">Reduction.Engine.Pool</a></div>
+  
+    <div class="summary-synopsis"><p>Module is a Supervisor that supervises a pool of 
+word reduction workers</p>
 </div>
   
 </div>

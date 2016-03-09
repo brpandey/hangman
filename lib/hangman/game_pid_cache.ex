@@ -1,4 +1,4 @@
-defmodule Game.Pid.Cache.Server do 
+defmodule Game.Pid.Cache do 
 	use GenServer
   
   @moduledoc """

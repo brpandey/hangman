@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Game.Pid.Cache.Server – Hangman v0.9.1</title>
+    <title>Pass.Writer.Pool – Hangman v0.9.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -62,7 +62,7 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.1</small>
-        Game.Pid.Cache.Server
+        Pass.Writer.Pool
         
           <small>behaviour</small>
         
@@ -71,9 +71,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module provides game server pid caching so
-a game server doesn’t need to be reloaded
-on every use</p>
+          <p>Module is a Supervisor that supervises a pool
+of pass writer workers</p>
 
         </section>
       
@@ -95,21 +94,17 @@ on every use</p>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#get_server_pid/2">get_server_pid(player_name, secret)</a>
+    <a href="#init/1">init(pool_size)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Checks registry cache for game server pid, returns cached pid or
-if not found returns new game pid</p>
+    <div class="summary-synopsis"><p>Callback implementation for <code class="inline">c::supervisor.init/1</code></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#start_link/0">start_link()</a>
+    <a href="#start_link/1">start_link(pool_size)</a>
   </div>
-  
-    <div class="summary-synopsis"><p>GenServer start_link wrapper function</p>
-</div>
   
 </div>
 
@@ -125,19 +120,11 @@ if not found returns new game pid</p>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#c:handle_call/3">handle_call({}, {}, term)</a>
+    <a href="#c:init/1">init(pool_size)</a>
   </div>
   
-    <div class="summary-synopsis"><p>GenServer callback to retrieve game server pid</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:init/1">init(term)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>GenServer callback to initialize server process</p>
+    <div class="summary-synopsis"><p>For each worker in pool, creates a writer worker process
+specification to be supervised once supervisor started</p>
 </div>
   
 </div>
@@ -158,51 +145,31 @@ if not found returns new game pid</p>
             </a>
             Functions
           </h1>
-          <div class="detail" id="get_server_pid/2">
+          <div class="detail" id="init/1">
   <div class="detail-header">
-    <a href="#get_server_pid/2" class="detail-link" title="Link to this function">
+    <a href="#init/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">get_server_pid(player_name, secret)</span>
+    <span class="signature">init(pool_size)</span>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">get_server_pid(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: pid</code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>Checks registry cache for game server pid, returns cached pid or
-if not found returns new game pid</p>
+    <p>Callback implementation for <code class="inline">c::supervisor.init/1</code>.</p>
 
   </section>
 </div>
-<div class="detail" id="start_link/0">
+<div class="detail" id="start_link/1">
   <div class="detail-header">
-    <a href="#start_link/0" class="detail-link" title="Link to this function">
+    <a href="#start_link/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">start_link()</span>
+    <span class="signature">start_link(pool_size)</span>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">start_link :: {:ok, pid}</code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>GenServer start_link wrapper function</p>
-
+    
   </section>
 </div>
 
@@ -219,35 +186,12 @@ if not found returns new game pid</p>
             </a>
             Callbacks
           </h1>
-          <div class="detail" id="c:handle_call/3">
-  <div class="detail-header">
-    <a href="#c:handle_call/3" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">handle_call({}, {}, term)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">handle_call({:atom, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}, {}, term) :: {}</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>GenServer callback to retrieve game server pid</p>
-
-  </section>
-</div>
-<div class="detail" id="c:init/1">
+          <div class="detail" id="c:init/1">
   <div class="detail-header">
     <a href="#c:init/1" class="detail-link" title="Link to this callback">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">init(term)</span>
+    <span class="signature">init(pool_size)</span>
       
   </div>
   
@@ -255,13 +199,14 @@ if not found returns new game pid</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">init(term) :: {}</code></pre>
+          <pre><code class="elixir">init(pool_size :: pos_integer) :: {:ok, tuple}</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>GenServer callback to initialize server process</p>
+    <p>For each worker in pool, creates a writer worker process
+specification to be supervised once supervisor started</p>
 
   </section>
 </div>
