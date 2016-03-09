@@ -97,7 +97,7 @@ defmodule Player.Game do
 			
 			fn ppid -> 
         # Be a good functional citizen and cleanup server resources
-        Player.Events.Server.stop(notify_pid)
+        Player.Events.stop(notify_pid)
         Player.FSM.stop(ppid) 
       end
 		)
@@ -165,7 +165,7 @@ defmodule Player.Game do
                     
 			fn ppid -> 
         # Be a good functional citizen and cleanup server resources
-        Player.Events.Server.stop(notify_pid)
+        Player.Events.stop(notify_pid)
         Player.FSM.stop(ppid) 
       end
 		)

@@ -1,6 +1,6 @@
-defmodule Pass.Server.Stub do 
+defmodule Pass.Cache.Stub do 
   @moduledoc """
-  Stub module to mimic Pass Server functionality
+  Stub module to mimic Pass Cache functionality
 
   Provides a simple scaffold implementation 
   to provide simple, predictable behavior

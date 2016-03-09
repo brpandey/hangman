@@ -51,7 +51,7 @@ defmodule Player.Events.Supervisor do
     # since we are starting children dynamically
 
     children = [
-      worker(Player.Events.Server, [], restart: :transient)
+      worker(Player.Events, [], restart: :transient)
     ]
 
 		# :simple_one_for_one to indicate that 

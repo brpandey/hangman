@@ -84,8 +84,8 @@ defmodule Reduction.Engine.Worker do
   @spec do_reduce_and_store(Pass.key, Regex.t, map) :: Pass.t
   defp do_reduce_and_store(pass_key, regex_key, %MapSet{} = exclusion) do
 
-    # Request chunks data from Pass Server
-    data = %Chunks{} = Pass.Server.read_chunks(pass_key)
+    # Request chunks data from Pass Cache
+    data = %Chunks{} = Pass.Cache.get(:chunks, pass_key)
 
     length_key = Chunks.key(data)
 

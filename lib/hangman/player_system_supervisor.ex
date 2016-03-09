@@ -41,7 +41,7 @@ defmodule Player.System.Supervisor do
 
     children = [
       worker(Dictionary.Cache, [args]),
-      worker(Pass.Server, []),
+      worker(Pass.Cache, []),
       supervisor(Reduction.Engine, []),
       supervisor(Pass.Writer, []),
       supervisor(Player.Group.Supervisor, []),

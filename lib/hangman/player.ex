@@ -5,12 +5,8 @@ defmodule Player do
   Implements functionality to start a player, 
   choose letters, guess letters and words
 
-  Heavily relies upon Player.Round and Guess.Action functionality
+  Heavily relies upon Round and Action functionality
   """
-
-  alias Guess.Action, as: Action
-  alias Player.Round, as: Round
-  alias Player.Events, as: Events
 
 	defstruct name: "", 
   type: nil,
@@ -155,7 +151,7 @@ defmodule Player do
       p = Kernel.put_in(p.game_no, p.game_no + 1)
 
       # Notify the event server that we've started playing hangman
-      Events.Server.notify_start(p.event_server_pid, p.name)
+      Player.Events.notify_start(p.event_server_pid, p.name)
     end
 
     result = 

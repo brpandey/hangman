@@ -1,15 +1,14 @@
-defmodule Player.Round do
+defmodule Round do
   @moduledoc """
-  Module to implement player game round abstraction.
+  Module to implement hangman game round abstraction.
 
-  Works in conjuction with Strategy
+  Works in conjuction with `Strategy`
   to orchestrate actual round game play.
 
-  Basic round functionality includes as setup, guess, update, status
+  Basic `Round` functionality includes `Round.setup`, `Round.guess`, 
+  `Round.update`, `Round.status/1`
   """
 
-  alias Player.Round, as: Round
-  alias Player.Events, as: Events
 
   defstruct seq_no: 0,
   guess: {},
@@ -88,7 +87,7 @@ defmodule Player.Round do
     {^name, :secret_length, secret_length, status_text} =
       Game.Server.secret_length(player.game_server_pid)
 
-    Events.Server.notify_length(player.event_server_pid,
+    Player.Events.notify_length(player.event_server_pid,
       {name, player.game_no, secret_length})
 
     player = Kernel.put_in(player.round.status_code, :game_start)
@@ -117,7 +116,7 @@ defmodule Player.Round do
 		# Filter the engine hangman word set
 
 		{^pass_key, pass_info} = 
-      Pass.Server.get_pass(match_key, pass_key, reduce_key)
+      Pass.Cache.get({:pass, match_key}, pass_key, reduce_key)
 
 		# Update the round strategy with the result of the reduction pass info _from the engine
 		strategy = Strategy.update(strategy, pass_info, player.type)
@@ -173,10 +172,10 @@ defmodule Player.Round do
     {{^name, result, code, pattern, text}, final} =
 	    Game.Server.guess(player.game_server_pid, guess)
     
-	  Events.Server.notify_guess(player.event_server_pid, guess,
+	  Player.Events.notify_guess(player.event_server_pid, guess,
 	        	                   {name, game_no})
     
-	  Events.Server.notify_status(player.event_server_pid,
+	  Player.Events.notify_status(player.event_server_pid,
 						                    {name, game_no, seq_no, text})
     
 	  %Round{seq_no: seq_no,
@@ -224,7 +223,7 @@ defmodule Player.Round do
     	summary = Player.games_summary(round.final_result)
     	player = Kernel.put_in(player.games_summary, summary)
 
-    	Events.Server.notify_games_over(player.event_server_pid, player.name, summary)
+    	Player.Events.notify_games_over(player.event_server_pid, player.name, summary)
     end
 
     player

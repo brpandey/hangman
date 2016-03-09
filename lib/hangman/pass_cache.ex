@@ -1,4 +1,4 @@
-defmodule Pass.Server do
+defmodule Pass.Cache do
   use GenServer
 
 	@moduledoc """
@@ -15,6 +15,7 @@ defmodule Pass.Server do
   @name __MODULE__
 	@ets_table_name :engine_pass_table
 
+  @type cache_key :: :chunks | {:pass, :game_start} | {:pass, :game_keep_guessing}
 
   # External API
 
@@ -24,7 +25,7 @@ defmodule Pass.Server do
   
   @spec start_link :: Supervisor.on_start
   def start_link() do
-    Logger.info "Starting Hangman Pass Server"
+    Logger.info "Starting Hangman Pass Cache GenServer"
     args = {}
     options = []
     GenServer.start_link(@name, args, options)
@@ -79,8 +80,8 @@ defmodule Pass.Server do
   Request not serialized through server process, since we are doing reads
   """
 
-  @spec get_pass(atom, Pass.key, Reduction.key) :: {Pass.key, Pass.t}
-	def get_pass(:game_start, {id, game_no, round_no} = pass_key, reduce_key)
+  @spec get(cache_key, Pass.key, Reduction.key) :: {Pass.key, Pass.t}
+	def get({:pass, :game_start}, {id, game_no, round_no} = pass_key, reduce_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
 		# Asserts
@@ -112,8 +113,8 @@ defmodule Pass.Server do
   Request not serialized through server process, since we are doing reads
   """
 
-  @spec get_pass(atom, Pass.key, Reduction.key) :: {Pass.key, Pass.t}
-	def get_pass(:game_keep_guessing, {id, game_no, round_no} = pass_key, 
+  @spec get(cache_key, Pass.key, Reduction.key) :: {Pass.key, Pass.t}
+	def get({:pass, :game_keep_guessing}, {id, game_no, round_no} = pass_key, 
                reduce_key)
  	when is_binary(id) and is_number(game_no) and is_number(round_no) do
     
@@ -132,8 +133,8 @@ defmodule Pass.Server do
   Retrieves pass chunks from ets table with pass key"
   """
   
-  @spec read_chunks(Pass.key) :: Chunks.t | no_return
-	def read_chunks({id, game_no, round_no} = pass_key)
+  @spec get(cache_key, Pass.key) :: Chunks.t | no_return
+	def get(:chunks, {id, game_no, round_no} = pass_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 		
 		# Using match instead of lookup, to keep processing on the ets side

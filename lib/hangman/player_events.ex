@@ -1,4 +1,4 @@
-defmodule Player.Events.Server do
+defmodule Player.Events do
   @moduledoc """
   Module implements events manager for player abstraction
   """
@@ -11,7 +11,7 @@ defmodule Player.Events.Server do
   
   @spec start_link(Keyword.t) :: {:ok, pid}
 	def start_link(options \\ [file_output: false, display_output: true]) do
-		Logger.info "Starting Hangman Event Server, options #{inspect options}"
+		Logger.info "Starting Hangman Event GenServer, options #{inspect options}"
 
 		{:ok, pid} = reply = GenEvent.start_link()
 
