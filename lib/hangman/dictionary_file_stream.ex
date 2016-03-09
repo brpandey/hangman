@@ -1,7 +1,8 @@
 defmodule Dictionary.File.Stream do
   @moduledoc """
   Module for accessing input file stream for 
-  various dictionary file types
+  various dictionary file transformed types range
+  from unsorted (original), sorted, grouped, chunked (last)
   """
 
   alias Dictionary.File.Stream, as: FileStream
@@ -10,6 +11,7 @@ defmodule Dictionary.File.Stream do
 
   @type t :: %__MODULE__{}
 
+  @type mode :: :read
 
   # Dictionary attribute tokens
   @unsorted Dictionary.unsorted
@@ -25,7 +27,7 @@ defmodule Dictionary.File.Stream do
   Returns a new empty file stream
   """
 
-  @spec new({:atom, :atom}, String.t) :: t
+  @spec new({mode, Dictionary.transform}, String.t) :: t
   def new(type = {:read, dict_file_type}, path)
   when dict_file_type in [@sorted, @unsorted, @grouped, @chunked] do
     file = File.open!(path)
@@ -58,8 +60,14 @@ defmodule Dictionary.File.Stream do
 
   # chunked file specific input stream, wrapping underlying file
 
-  @spec file_handler(t, {:atom, :atom}) :: Enumerable.t
-  defp file_handler(%FileStream{} = state, {:read, @chunked}) do
+  @doc """
+  Handles file specific input streams, wrapping underlying file formats.
+  Returns file stream, closes file when finished.  Normally accessed
+  through gets_lazy.
+  """
+  @spec file_handler(t, {mode, Dictionary.transform}) :: Enumerable.t
+
+  def file_handler(%FileStream{} = state, {:read, @chunked}) do
 
     # Given the chunks file, read it in raw binary mode all it once
     # split it based on the delimiter
@@ -83,8 +91,7 @@ defmodule Dictionary.File.Stream do
   
   # grouped file specific input stream generator, wrapping underlying file
 
-  @spec file_handler(t, {:atom, :atom}) :: Enumerable.t
-	defp file_handler(%FileStream{} = state, {:read, @grouped}) do
+	def file_handler(%FileStream{} = state, {:read, @grouped}) do
 		Stream.resource(
 			fn -> state end,
 		
@@ -112,8 +119,7 @@ defmodule Dictionary.File.Stream do
   # sorted file specific input stream generator, wrapping underlying file
   # since we know the input is sorted, we can create a grouping output
 
-  @spec file_handler(t, {:atom, :atom}) :: Enumerable.t
-	defp file_handler(%FileStream{} = state, {:read, @sorted}) do
+	def file_handler(%FileStream{} = state, {:read, @sorted}) do
 		Stream.resource(
 			fn ->	state	end,
 		
@@ -154,8 +160,7 @@ defmodule Dictionary.File.Stream do
   # unsorted file specific input stream generator, wrapping underlying file
   # likely handles original dictionary file
 
-  @spec file_handler(t, {:atom, :atom}) :: Enumerable.t
-	defp file_handler(%FileStream{} = state, {:read, @unsorted}) do
+	def file_handler(%FileStream{} = state, {:read, @unsorted}) do
 		Stream.resource(
 			fn -> state end,
 		

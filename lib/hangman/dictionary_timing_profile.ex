@@ -1,9 +1,10 @@
 defmodule Dictionary.Cache.Timing.Profile do
   import ExProf.Macro
 
-  @moduledoc """
-  Module to time dictionary cache server
-  """
+  @moduledoc false
+
+
+  # Module to time dictionary cache server
 
   @doc """
   Profiling routine that conducts a simple test

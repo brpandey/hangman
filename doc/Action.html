@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Guess.Action – Hangman v0.9.1</title>
+    <title>Action – Hangman v0.9.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -62,14 +62,14 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.1</small>
-        Guess.Action
+        Action
         
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module encapsulates hangman round actions 
+          <p>Module encapsulates hangman round guess actions 
 and the data associated with carrying them out. </p>
 <p>Uses function builder strategy to easily be
 able to add new data retrievers, and updaters</p>
@@ -98,23 +98,10 @@ function body which is easier to read.</p>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#perform/2">perform(p, arg2)</a>
+    <a href="#perform/2">perform(player, mode)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Performs robot :guess action by retrieving strategy determined guess, 
-performing game server guess, and updating player with round results and
-strategy data</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#perform0/2">perform0(p, arg2)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Performs :robot_guess action by retrieving strategy determined guess, 
-performing game server guess, and updating player with round results and
-strategy data</p>
+    <div class="summary-synopsis"><p>Performs desired action</p>
 </div>
   
 </div>
@@ -144,7 +131,7 @@ strategy data</p>
     <a href="#perform/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">perform(p, arg2)</span>
+    <span class="signature">perform(player, mode)</span>
       
   </div>
   
@@ -152,48 +139,27 @@ strategy data</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">perform(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:directive/0">Guess.directive</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-          <pre><code class="elixir">perform(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:directive/0">Guess.directive</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-          <pre><code class="elixir">perform(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
+          <pre><code class="elixir">perform(<a href="Player.html#t:t/0">Player.t</a>, mode :: <a href="Guess.html#t:t/0">Guess.t</a> | <a href="Guess.html#t:directive/0">Guess.directive</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Performs robot :guess action by retrieving strategy determined guess, 
-performing game server guess, and updating player with round results and
-strategy data</p>
-
-  </section>
-</div>
-<div class="detail" id="perform0/2">
-  <div class="detail-header">
-    <a href="#perform0/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">perform0(p, arg2)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">perform0(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:directive/0">Guess.directive</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-          <pre><code class="elixir">perform0(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:directive/0">Guess.directive</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-          <pre><code class="elixir">perform0(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Performs :robot_guess action by retrieving strategy determined guess, 
-performing game server guess, and updating player with round results and
-strategy data</p>
+    <p>Performs desired action</p>
+<p>Supported modes</p>
+<ul>
+<li><code class="inline">{:guess_letter, letter}</code> - validates the letter is in 
+  the top strategy letter choices, if not choices top letter choice.
+  Guesses with letter
+</li>
+<li><code class="inline">:guess_last_word</code> - retrieves the last word from set
+  of possible hangman word
+</li>
+<li><code class="inline">:robot_guess</code> - retrieves strategy determined guess
+</li>
+</ul>
+<p>Proceeds to perform game server guess.  
+Updates player with round results and guess data</p>
 
   </section>
 </div>

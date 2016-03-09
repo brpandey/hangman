@@ -61,7 +61,8 @@ defmodule Dictionary.Cache do
 
   """
 
-  @spec lookup(atom, pos_integer) :: (Chunks.t | Counter.t | [String.t] | no_return)
+  @spec lookup(mode :: atom, pos_integer) :: 
+  (Chunks.t | Counter.t | [String.t] | no_return)
 
 
   def lookup(:random, count) do

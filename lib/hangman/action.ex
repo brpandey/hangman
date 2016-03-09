@@ -1,7 +1,7 @@
 defmodule Action do
   @moduledoc """
 
-  Module encapsulates hangman round actions 
+  Module encapsulates hangman round guess actions 
   and the data associated with carrying them out. 
 
   Uses function builder strategy to easily be
@@ -82,7 +82,7 @@ defmodule Action do
   
   Supported modes
 
-    * `{:guess_letter, letter} - validates the letter is in 
+    * `{:guess_letter, letter}` - validates the letter is in 
     the top strategy letter choices, if not choices top letter choice.
     Guesses with letter
     * `:guess_last_word` - retrieves the last word from set
@@ -94,7 +94,7 @@ defmodule Action do
   """
 
   @spec perform(Player.t, mode :: Guess.t | Guess.directive) :: Player.t
-  def perform(%Player{} = p, mode) do
+  def perform(%Player{} = player, mode) do
     
     # validate we are in the right mode
     action = 
@@ -105,7 +105,7 @@ defmodule Action do
           _ -> raise HangmanError, "unsupported guess action"
       end
     
-    if action, do: do_guess(p, mode)
+    if action, do: do_guess(player, mode)
   end
 
 _ = """

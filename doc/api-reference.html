@@ -79,6 +79,14 @@
       <h1 class="section-heading">Modules</h1>
       <div class="summary">
         <div class="summary-row">
+  <div class="summary-signature"><a href="Action.html">Action</a></div>
+  
+    <div class="summary-synopsis"><p>Module encapsulates hangman round guess actions 
+and the data associated with carrying them out</p>
+</div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="CLI.html">CLI</a></div>
   
     <div class="summary-synopsis"><p>Module handles command line interpreter interface
@@ -129,13 +137,6 @@ upon startup. Words identified as ‘random’ are tagged and stored</p>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Dictionary.Cache.Timing.Profile.html">Dictionary.Cache.Timing.Profile</a></div>
-  
-    <div class="summary-synopsis"><p>Module to time dictionary cache server</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Dictionary.File.html">Dictionary.File</a></div>
   
     <div class="summary-synopsis"><p>Provides abstraction for various dictionary files</p>
@@ -146,7 +147,8 @@ upon startup. Words identified as ‘random’ are tagged and stored</p>
   <div class="summary-signature"><a href="Dictionary.File.Stream.html">Dictionary.File.Stream</a></div>
   
     <div class="summary-synopsis"><p>Module for accessing input file stream for 
-various dictionary file types</p>
+various dictionary file transformed types range
+from unsorted (original), sorted, grouped, chunked (last)</p>
 </div>
   
 </div>
@@ -183,14 +185,6 @@ on every use</p>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Guess.Action.html">Guess.Action</a></div>
-  
-    <div class="summary-synopsis"><p>Module encapsulates hangman round actions 
-and the data associated with carrying them out</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Pass.html">Pass</a></div>
   
     <div class="summary-synopsis"><p>Module implements words pass types and words pass module struct</p>
@@ -198,7 +192,7 @@ and the data associated with carrying them out</p>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Pass.Server.html">Pass.Server</a></div>
+  <div class="summary-signature"><a href="Pass.Cache.html">Pass.Cache</a></div>
   
     <div class="summary-synopsis"><p>Module implements ets table owning process for hangman words 
  pass state for a given player, round number</p>
@@ -206,9 +200,9 @@ and the data associated with carrying them out</p>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Pass.Server.Stub.html">Pass.Server.Stub</a></div>
+  <div class="summary-signature"><a href="Pass.Cache.Stub.html">Pass.Cache.Stub</a></div>
   
-    <div class="summary-synopsis"><p>Stub module to mimic Pass Server functionality</p>
+    <div class="summary-synopsis"><p>Stub module to mimic Pass Cache functionality</p>
 </div>
   
 </div>
@@ -263,7 +257,7 @@ the asynchronous robot fsm player type</p>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Player.Events.Server.html">Player.Events.Server</a></div>
+  <div class="summary-signature"><a href="Player.Events.html">Player.Events</a></div>
   
     <div class="summary-synopsis"><p>Module implements events manager for player abstraction</p>
 </div>
@@ -293,13 +287,6 @@ Each event is logged to a file named after player id (name)</p>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Player.Round.html">Player.Round</a></div>
-  
-    <div class="summary-synopsis"><p>Module to implement player game round abstraction</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Reduction.html">Reduction</a></div>
   
     <div class="summary-synopsis"><p>Module implements reduction abstraction key type only</p>
@@ -325,6 +312,13 @@ word reduction workers</p>
   <div class="summary-signature"><a href="Reduction.Engine.Worker.html">Reduction.Engine.Worker</a></div>
   
     <div class="summary-synopsis"><p>Module is a GenServer that implements worker word reducer functionality</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Round.html">Round</a></div>
+  
+    <div class="summary-synopsis"><p>Module to implement hangman game round abstraction</p>
 </div>
   
 </div>

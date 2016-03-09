@@ -70,7 +70,8 @@
       
         <section id="moduledoc" class="docstring">
           <p>Module for accessing input file stream for 
-various dictionary file types</p>
+various dictionary file transformed types range
+from unsorted (original), sorted, grouped, chunked (last)</p>
 
         </section>
       
@@ -89,6 +90,12 @@ various dictionary file types</p>
       <a href="#types">Types</a>
     </h2>
     <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:mode/0">mode()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature">
     <a href="#t:t/0">t()</a>
   </div>
@@ -109,6 +116,17 @@ various dictionary file types</p>
   </div>
   
     <div class="summary-synopsis"><p>Deletes state, returns empty file stream</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#file_handler/2">file_handler(state, arg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Handles file specific input streams, wrapping underlying file formats.
+Returns file stream, closes file when finished.  Normally accessed
+through gets_lazy</p>
 </div>
   
 </div>
@@ -150,7 +168,11 @@ various dictionary file types</p>
             Types
           </h1>
           <div class="types-list">
-            <div id="t:t/0" class="type-detail">
+            <div id="t:mode/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:mode/0">mode</a> :: :read</code></pre>
+  
+</div>
+<div id="t:t/0" class="type-detail">
   <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Dictionary.File.Stream{file: term, group_id: term, group_index: term, type: term}</code></pre>
   
 </div>
@@ -190,6 +212,31 @@ various dictionary file types</p>
 
   </section>
 </div>
+<div class="detail" id="file_handler/2">
+  <div class="detail-header">
+    <a href="#file_handler/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">file_handler(state, arg)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">file_handler(<a href="#t:t/0">t</a>, {<a href="#t:mode/0">mode</a>, <a href="Dictionary.html#t:transform/0">Dictionary.transform</a>}) :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Handles file specific input streams, wrapping underlying file formats.
+Returns file stream, closes file when finished.  Normally accessed
+through gets_lazy.</p>
+
+  </section>
+</div>
 <div class="detail" id="gets_lazy/1">
   <div class="detail-header">
     <a href="#gets_lazy/1" class="detail-link" title="Link to this function">
@@ -226,7 +273,7 @@ various dictionary file types</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">new({:atom, :atom}, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">new({<a href="#t:mode/0">mode</a>, <a href="Dictionary.html#t:transform/0">Dictionary.transform</a>}, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>

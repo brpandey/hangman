@@ -3,7 +3,7 @@ defmodule Dictionary.File do
   Provides abstraction for various dictionary files.
 
   The original dictionary file is transformed into 
-  intermediate files as disk representations of each
+  intermediate files as cached representations of each
   transformation layer. Unless the original file changes, transformation 
   every time isn't necessary since the intermediate files are stored on disk.  
 
@@ -36,12 +36,13 @@ defmodule Dictionary.File do
   second invocation, group that file
   """
 
-  @spec transform(String.t, {:atom, :atom}, :atom) :: String.t
-  def transform(path, pair = {from, to}, dict_type)
-  when is_atom(from) and is_atom(to) and is_atom(dict_type) do
+  @spec transform(path :: String.t, pair :: {Dict.transform, Dict.transform}, 
+                  kind :: Dict.kind) :: String.t
+  def transform(path, pair = {from, to}, kind)
+  when is_atom(from) and is_atom(to) and is_atom(kind) do
 
     # assert size_type is valid
-    true = dict_type in [@regular, @big]
+    true = kind in [@regular, @big]
     
     # assert from, to pairs are valid
     true = pair in [{@unsorted, @sorted}, 
@@ -73,18 +74,19 @@ defmodule Dictionary.File do
         transform_handler(path, new_path, transform_type)
     end
 
-    fn_run_transform.(path, {from, to}, dict_type)
+    fn_run_transform.(path, {from, to}, kind)
   end
 
+  @doc """
+  Function builder routine to return the customized transform function
 
-  # Function builder routine to return the customized transform function
-
-  # When each returned function runs, its reads in the "untransformed" file, 
-  # applies the transform lambda, and then writes out to the new path
+  When each returned function runs, its reads in the "untransformed" file, 
+  applies the transform lambda, and then writes out to the new path
+  """
 
   @spec make_file_transform((path :: String.t, file :: pid -> String.t)) 
   :: (String.t, String.t -> String.t)
-  defp make_file_transform(fn_transform) do
+  def make_file_transform(fn_transform) do
 
     # returns a transform lambda, customized to each fn_transform
     fn read_path, write_path ->
@@ -108,10 +110,10 @@ defmodule Dictionary.File do
   end
 
 
-  # specific handler for sort transform
+  @doc "Specific handler implementations for sort, group, and chunk transform"
+  @spec transform_handler(String.t, String.t, Dict.transform) :: String.t
 
-  @spec transform_handler(String.t, String.t, :atom) :: String.t
-	defp transform_handler(path, new_path, @sorted) do
+	def transform_handler(path, new_path, @sorted) do
 
     # called from fn_transform
     fn_write_lambda = fn
@@ -140,8 +142,7 @@ defmodule Dictionary.File do
 
   # specific handler for group transform
 
-  @spec transform_handler(String.t, String.t, :atom) :: String.t
-	defp transform_handler(path, new_path, @grouped) do
+	def transform_handler(path, new_path, @grouped) do
 
     # called from fn_transform
     fn_write_lambda = fn
@@ -170,8 +171,7 @@ defmodule Dictionary.File do
 
   # specific handler for chunk transform
 
-  @spec transform_handler(String.t, String.t, :atom) :: String.t
-	defp transform_handler(path, new_path, @chunked) do
+	def transform_handler(path, new_path, @chunked) do
 
     # called from fn_transform
     fn_write_lambda = fn

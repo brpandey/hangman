@@ -6,7 +6,7 @@ defmodule Dictionary do
   """
 
   @type transform :: :unsorted | :sorted | :grouped | :chunked
-  @type kind :: :normal | :big
+  @type kind :: :regular | :big
 
   @doc "Returns unsorted dictionary file type"
   @spec unsorted :: transform

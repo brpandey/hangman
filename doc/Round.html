@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Player.Round – Hangman v0.9.1</title>
+    <title>Round – Hangman v0.9.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -62,17 +62,18 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.1</small>
-        Player.Round
+        Round
         
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module to implement player game round abstraction.</p>
-<p>Works in conjuction with Strategy
+          <p>Module to implement hangman game round abstraction.</p>
+<p>Works in conjuction with <a href="Strategy.html"><code class="inline">Strategy</code></a>
 to orchestrate actual round game play.</p>
-<p>Basic round functionality includes as setup, guess, update, status</p>
+<p>Basic <a href="Round.html#content"><code class="inline">Round</code></a> functionality includes <code class="inline">Round.setup</code>, <code class="inline">Round.guess</code>, 
+<code class="inline">Round.update</code>, <a href="Round.html#status/1"><code class="inline">Round.status/1</code></a></p>
 
         </section>
       
@@ -204,7 +205,7 @@ games summary and notifies player events server</p>
   
 </div>
 <div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Player.Round{final_result: term, guess: term, pattern: term, result_code: term, seq_no: term, status_code: term, status_text: term}</code></pre>
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Round{final_result: term, guess: term, pattern: term, result_code: term, seq_no: term, status_code: term, status_text: term}</code></pre>
   
 </div>
 
@@ -380,7 +381,7 @@ last guess to filter possible hangman words from word pass server</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Player.Round.html#t:t/0">Player.Round.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
+          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Round.html#t:t/0">Round.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
         
       </div>
     </div>
@@ -402,9 +403,9 @@ last guess to filter possible hangman words from word pass server</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Player.Round.html#t:t/0">Player.Round.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
+          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Round.html#t:t/0">Round.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
         
-          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Player.Round.html#t:t/0">Player.Round.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
+          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Round.html#t:t/0">Round.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
         
       </div>
     </div>
