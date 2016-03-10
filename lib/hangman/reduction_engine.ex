@@ -4,9 +4,11 @@ defmodule Reduction.Engine do
   Module implements words reduction engine.
 
   Reduction load is handled through pool.
-  Distributes reduce requests based on pass key id attribute (name)
-  Pool size reduction workers are started up as part of reducer pool
-  Pool supervisor supervises reduction workers
+  
+  Module distributes reduce requests based on pass key id attribute (name).
+  Reduction workers are started up as part of the reducer pool.
+
+  Pool supervises reduction workers.
   """
 
 

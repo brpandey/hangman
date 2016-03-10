@@ -70,7 +70,7 @@
       
         <section id="moduledoc" class="docstring">
           <p>Module to implement hangman game round abstraction.</p>
-<p>Works in conjuction with <a href="Strategy.html"><code class="inline">Strategy</code></a>
+<p>Works in conjuction with <a href="Strategy.html"><code class="inline">Strategy</code></a> and <a href="Game.Server.html"><code class="inline">Game.Server</code></a>
 to orchestrate actual round game play.</p>
 <p>Basic <a href="Round.html#content"><code class="inline">Round</code></a> functionality includes <code class="inline">Round.setup</code>, <code class="inline">Round.guess</code>, 
 <code class="inline">Round.update</code>, <a href="Round.html#status/1"><code class="inline">Round.status/1</code></a></p>
@@ -135,8 +135,8 @@ to orchestrate actual round game play.</p>
     <a href="#guess/2">guess(p, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues a client guess (either letter or word) against Game Server.
-Notifies player events server of guess results</p>
+    <div class="summary-synopsis"><p>Issues a client guess (either letter or word) against <a href="Game.Server.html"><code class="inline">Game.Server</code></a>.
+Notifies player events of guess results</p>
 </div>
   
 </div>
@@ -176,7 +176,7 @@ Notifies player events server of guess results</p>
   </div>
   
     <div class="summary-synopsis"><p>Updates player abstraction with round results.  If games are over, updates
-games summary and notifies player events server</p>
+games summary and notifies player events</p>
 </div>
   
 </div>
@@ -282,14 +282,12 @@ games summary and notifies player events server</p>
         
           <pre><code class="elixir">guess(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="#t:t/0">t</a></code></pre>
         
-          <pre><code class="elixir">guess(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="#t:t/0">t</a></code></pre>
-        
       </div>
     </div>
   
   <section class="docstring">
-    <p>Issues a client guess (either letter or word) against Game Server.
-Notifies player events server of guess results.</p>
+    <p>Issues a client guess (either letter or word) against <a href="Game.Server.html"><code class="inline">Game.Server</code></a>.
+Notifies player events of guess results.</p>
 <p>Returns received round data</p>
 
   </section>
@@ -302,15 +300,6 @@ Notifies player events server of guess results.</p>
     <span class="signature">setup(player)</span>
       
   </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">setup(<a href="Player.html#t:t/0">Player.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-      </div>
-    </div>
   
   <section class="docstring">
     <p>Setups game play round</p>
@@ -334,9 +323,7 @@ last guess to filter possible hangman words from word pass server</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">setup(<a href="Player.html#t:t/0">Player.t</a>, <a href="Guess.html#t:context/0">Guess.context</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-          <pre><code class="elixir">setup(<a href="Player.html#t:t/0">Player.t</a>, :atom) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
+          <pre><code class="elixir">setup(<a href="Player.html#t:t/0">Player.t</a>, none | :atom | <a href="Guess.html#t:context/0">Guess.context</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
         
       </div>
     </div>
@@ -377,15 +364,6 @@ last guess to filter possible hangman words from word pass server</p>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Round.html#t:t/0">Round.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
     
   </section>
@@ -403,17 +381,15 @@ last guess to filter possible hangman words from word pass server</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Round.html#t:t/0">Round.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
-        
-          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Round.html#t:t/0">Round.t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
+          <pre><code class="elixir">update(<a href="Player.html#t:t/0">Player.t</a>, <a href="Round.html#t:t/0">Round.t</a>, none | <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="Player.html#t:t/0">Player.t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
     <p>Updates player abstraction with round results.  If games are over, updates
-games summary and notifies player events server.</p>
-<p>Under human guessing, player round update will update the strategy abstraction
+games summary and notifies player events.</p>
+<p>Under human guessing, round update will update the strategy abstraction
 with the guess particulars.  If robot guessing, the strategy abstraction will also
 be updated.</p>
 

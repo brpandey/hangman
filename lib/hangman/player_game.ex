@@ -1,15 +1,13 @@
 defmodule Player.Game do
   @moduledoc """
-  Module handles relationship between 
-  player, game server and player event server
-
-  Supports both synchronous human and synchronous robot types
+  Module handles game playing for synchronous human and robot
+  player types. Handles relationship between 
+  `Player.FSM`, `Game.Server` and `Player.Events`
 
   Loads up player specific game components: 
-  dynamic game server, and event server given player
+  dynamic game server, and event server
 
   Manages specific player fsm behaviour (human or robot).
-
   Wraps fsm game play into an enumerable for easy running.
   """
 

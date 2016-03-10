@@ -71,8 +71,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements event logger handler for player events. 
-Each event is logged to a file named after player id (name)</p>
+          <p>Module implements event logger handler for player events.</p>
+<p>Each event is logged to a file named after player id (name).</p>
 
         </section>
       
@@ -98,8 +98,11 @@ Each event is logged to a file named after player id (name)</p>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#c:handle_event/2">handle_event(tuple, pid)</a>
+    <a href="#c:handle_event/2">handle_event(tuple, term)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>The handle_event callback handles various events</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -143,7 +146,7 @@ Each event is logged to a file named after player id (name)</p>
     <a href="#c:handle_event/2" class="detail-link" title="Link to this callback">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">handle_event(tuple, pid)</span>
+    <span class="signature">handle_event(tuple, term)</span>
       
   </div>
   
@@ -151,23 +154,34 @@ Each event is logged to a file named after player id (name)</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">handle_event(tuple, pid) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_event({<a href="Guess.html#t:t/0">Guess.t</a>, tuple}, pid) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_event({<a href="Guess.html#t:t/0">Guess.t</a>, tuple}, pid) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_event(tuple, pid) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_event(tuple, pid) :: tuple</code></pre>
-        
           <pre><code class="elixir">handle_event(tuple, term) :: tuple</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    
+    <p>The handle_event callback handles various events</p>
+<ul>
+<li><p><code class="inline">:start</code> notification event.
+Opens and writes to player logger file</p>
+</li>
+<li><p><code class="inline">:games_over</code> notification event.
+Writes to player logger file and then closes file</p>
+</li>
+<li><p><code class="inline">:secret_length</code> notification event.
+Writes to player logger file</p>
+</li>
+<li><p><code class="inline">:guessed_word</code> notification event.
+Writes to player logger file</p>
+</li>
+<li><p><code class="inline">:guessed_letter</code> notification event.
+Writes to player logger file</p>
+</li>
+<li><code class="inline">:round_status</code> notification event.
+Writes to player logger file
+</li>
+</ul>
+
   </section>
 </div>
 <div class="detail" id="c:init/1">

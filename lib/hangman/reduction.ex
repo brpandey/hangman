@@ -1,10 +1,10 @@
 defmodule Reduction do
   @moduledoc """
-  Module implements reduction abstraction key type only
+  Module implements reduction key type.
   """
 
   @typedoc """
-  Defines reduction key type format used to reduce words set
+  Defines reduction key type format used to reduce words set.
   """
   
   @type key :: ( [{:game_start, boolean}, {:secret_length, pos_integer}] ) |

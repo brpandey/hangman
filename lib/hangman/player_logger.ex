@@ -2,7 +2,8 @@ defmodule Player.Logger.Handler do
 	use GenEvent
 
   @moduledoc """
-  Module implements event logger handler for player events. 
+  Module implements event logger handler for player events.
+ 
   Each event is logged to a file named after player id (name).
   """
 
@@ -15,26 +16,27 @@ defmodule Player.Logger.Handler do
   @doc """
   The handle_event callback handles various events
 
-    * `:start` notification event
+    * `:start` notification event.
     Opens and writes to player logger file
 
-    * `:games_over` notification event
+    * `:games_over` notification event.
     Writes to player logger file and then closes file
 
-    * `:secret_length` notification event
+    * `:secret_length` notification event.
     Writes to player logger file
 
-    * `:guessed_word` notification event
+    * `:guessed_word` notification event.
     Writes to player logger file
 
-    * `:guessed_letter` notification event
+    * `:guessed_letter` notification event.
     Writes to player logger file
 
-    * `:round_status` notification event
+    * `:round_status` notification event.
     Writes to player logger file
     """
 
   @callback handle_event(tuple, term) :: tuple
+
 	def handle_event({:start, name}, _state) do
 
 		file_name = "#{name}_hangman_games.txt"
@@ -45,8 +47,6 @@ defmodule Player.Logger.Handler do
 	end
 
 
-
-  @callback handle_event(tuple, pid) :: tuple
 	def handle_event({:games_over, _name, text}, file_pid) do
 
 		msg = "\n# game over! --> #{text} \n"
@@ -59,7 +59,6 @@ defmodule Player.Logger.Handler do
 	end
 
 
-  @callback handle_event(tuple, pid) :: tuple
 	def handle_event({:secret_length, _name, game_no, length}, file_pid) do
 
 		msg = "\n# new game #{game_no}! secret length --> #{length}\n"
@@ -70,7 +69,6 @@ defmodule Player.Logger.Handler do
 	end
 
 
-  @callback handle_event({Guess.t, tuple}, pid) :: tuple
 	def handle_event({{:guess_word, word}, _info}, file_pid) do
 
 		msg = "# word --> #{word} "
@@ -81,7 +79,6 @@ defmodule Player.Logger.Handler do
 	end
 
 
-  @callback handle_event({Guess.t, tuple}, pid) :: tuple
 	def handle_event({{:guess_letter, letter}, _info}, file_pid) do
 
 		msg = "# letter --> #{letter} "
@@ -92,8 +89,6 @@ defmodule Player.Logger.Handler do
 	end
 
 
-
-  @callback handle_event(tuple, pid) :: tuple
 	def handle_event({:round_status, _name, _game_no, round_no, text}, file_pid) do
 
 		msg = "# round #{round_no} status --> #{text}\n"

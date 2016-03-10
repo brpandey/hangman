@@ -250,23 +250,23 @@ performs async writes into <a href="Pass.Cache.html"><code class="inline">Pass.C
 <div class="summary-row">
   <div class="summary-signature"><a href="Player.Game.html">Player.Game</a></div>
   
-    <div class="summary-synopsis"><p>Module handles relationship between 
-player, game server and player event server</p>
+    <div class="summary-synopsis"><p>Module handles game playing for synchronous human and robot
+player types. Handles relationship between 
+<code class="inline">Player.FSM</code>, <a href="Game.Server.html"><code class="inline">Game.Server</code></a> and <a href="Player.Events.html"><code class="inline">Player.Events</code></a></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Player.Logger.Handler.html">Player.Logger.Handler</a></div>
   
-    <div class="summary-synopsis"><p>Module implements event logger handler for player events. 
-Each event is logged to a file named after player id (name)</p>
+    <div class="summary-synopsis"><p>Module implements event logger handler for player events</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Reduction.html">Reduction</a></div>
   
-    <div class="summary-synopsis"><p>Module implements reduction abstraction key type only</p>
+    <div class="summary-synopsis"><p>Module implements reduction key type</p>
 </div>
   
 </div>
@@ -281,14 +281,15 @@ Each event is logged to a file named after player id (name)</p>
   <div class="summary-signature"><a href="Reduction.Engine.Pool.html">Reduction.Engine.Pool</a></div>
   
     <div class="summary-synopsis"><p>Module is a Supervisor that supervises a pool of 
-word reduction workers</p>
+word reduction engine workers</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Reduction.Engine.Worker.html">Reduction.Engine.Worker</a></div>
   
-    <div class="summary-synopsis"><p>Module is a GenServer that implements worker word reducer functionality</p>
+    <div class="summary-synopsis"><p>Module is a GenServer that implements worker word reducer functionality, 
+primarily <a href="#reduce_and_store/4"><code class="inline">reduce_and_store/4</code></a></p>
 </div>
   
 </div>

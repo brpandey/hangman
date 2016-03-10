@@ -2,7 +2,11 @@ defmodule Reduction.Engine.Worker do
   use GenServer
 
   @moduledoc """
-  Module is a GenServer that implements worker word reducer functionality.
+  Module is a GenServer that implements worker word reducer functionality, 
+  primarily `reduce_and_store/4`.
+
+  Retrieves pass data from `Pass.Cache`. Reduces word set based on reduce_key.
+  Stores reduced pass back into `Pass.Cache`.  Returns new pass data.
   """
 
   require Logger
@@ -23,10 +27,18 @@ defmodule Reduction.Engine.Worker do
     GenServer.start_link(@name, args, options)
   end
   
-  @doc """
-  Primary worker function, returns results of reduction pass
-  """
   
+  @doc """
+  Primary worker function which retrieves current pass chunks data,
+  filters words with regex, tallies reduced word stream, creates new
+  `Chunks` abstraction and stores it back into words pass table.
+
+  If pass size happens to be small enough, will also return
+  remaining hangman possible words left to aid in guess selection. 
+
+  Returns pass data.
+  """
+
   @spec reduce_and_store(pos_integer, Pass.key, Regex.t, map) :: Pass.t
   def reduce_and_store(worker_id, pass_key, regex_key, %MapSet{} = exc) do
     l = [worker_id, pass_key, regex_key, exc]
@@ -58,11 +70,11 @@ defmodule Reduction.Engine.Worker do
 	end
 
   
-  @doc """
+  @docp """
   GenServer callback function to handle reduce and store request
   """
 
-  @callback handle_call(:atom, Pass.key, Regex.t, map) :: tuple
+  #@callback handle_call(:atom, Pass.key, Regex.t, map) :: tuple
   def handle_call({:reduce_and_store, pass_key, regex_key, exclusion}, 
                   _from, {}) do
 
@@ -73,12 +85,12 @@ defmodule Reduction.Engine.Worker do
   @docp """
   Primary worker function which retrieves current pass chunks data,
   filters words with regex, tallies reduced word stream, creates new
-  Chunk abstraction and stores it back into words pass table
+  Chunk abstraction and stores it back into words pass table.
 
   If pass size happens to be small enough, will also return
   remaining hangman possible words left to aid in guess selection. 
 
-  Returns pass data
+  Returns pass data.
   """
 
   @spec do_reduce_and_store(Pass.key, Regex.t, map) :: Pass.t

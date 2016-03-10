@@ -2,7 +2,7 @@ defmodule Round do
   @moduledoc """
   Module to implement hangman game round abstraction.
 
-  Works in conjuction with `Strategy`
+  Works in conjuction with `Strategy` and `Game.Server`
   to orchestrate actual round game play.
 
   Basic `Round` functionality includes `Round.setup`, `Round.guess`, 
@@ -75,11 +75,12 @@ defmodule Round do
   last guess to filter possible hangman words from word pass server
   """
 
-  @spec setup(Player.t) :: Player.t
-  def setup(%Player{} = player), do: setup(player, context(player))
+  @spec setup(Player.t, none | :atom | Guess.context) :: Player.t
 
+  def setup(%Player{} = player) do
+    setup(player, context(player))
+  end
 
-  @spec setup(Player.t, :atom) :: Player.t
   def setup(%Player{} = player, :game_start) do
 
     name = player.name
@@ -100,7 +101,7 @@ defmodule Round do
     setup(player, context)
   end
 
-  @spec setup(Player.t, Guess.context) :: Player.t
+
   def setup(%Player{} = player, context) 
   when is_nil(context) == false do
 
@@ -148,8 +149,8 @@ defmodule Round do
 
 
   @doc """
-  Issues a client guess (either letter or word) against Game Server.
-  Notifies player events server of guess results.
+  Issues a client guess (either letter or word) against `Game.Server`.
+  Notifies player events of guess results.
 
   Returns received round data
   """
@@ -158,8 +159,7 @@ defmodule Round do
   def guess(%Player{} = p, guess = {:guess_letter, letter}) when is_binary(letter) do
     do_guess(p, guess)
   end
-  
-  @spec guess(Player.t, Guess.t) :: t
+
   def guess(%Player{} = p, guess = {:guess_word, word}) when is_binary(word) do
     do_guess(p, guess)
   end
@@ -187,14 +187,14 @@ defmodule Round do
 
   @doc """
   Updates player abstraction with round results.  If games are over, updates
-  games summary and notifies player events server.
+  games summary and notifies player events.
 
-  Under human guessing, player round update will update the strategy abstraction
+  Under human guessing, round update will update the strategy abstraction
   with the guess particulars.  If robot guessing, the strategy abstraction will also
   be updated.
   """
 
-  @spec update(Player.t, Round.t, Guess.t) :: Player.t
+  @spec update(Player.t, Round.t, none | Guess.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_letter, letter}) do
 
     strategy = Strategy.update(player.strategy, {:guess_letter, letter})
@@ -202,7 +202,6 @@ defmodule Round do
 	  update(player, round)
   end
 
-  @spec update(Player.t, Round.t, Guess.t) :: Player.t
   def update(%Player{} = player, %Round{} = round, {:guess_word, word}) do
 
     strategy = Strategy.update(player.strategy, {:guess_word, word})
@@ -210,8 +209,6 @@ defmodule Round do
 	  update(player, round)
   end
 
-
-  @spec update(Player.t, Round.t) :: Player.t
   def update(%Player{} = player, %Round{} = round) do
 
   	player = Kernel.put_in(player.round, round)

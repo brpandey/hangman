@@ -6,9 +6,8 @@ defmodule Pass.Writer.Pool do
   of pass writer workers.
 
   Write load is handled through `Pass.Writer.Pool`.
-  Pool distributes `Pass.Writer.write/2` request based on pass key id attribute (name).
-  Pool size writer workers are started up as part of writer pool.
-  Pool supervisor supervises writer workers.
+  Module distributes `Pass.Writer.write/2` request based on 
+  pass key id attribute (name).
   """
 
   @name __MODULE__

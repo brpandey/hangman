@@ -71,7 +71,10 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module is a GenServer that implements worker word reducer functionality.</p>
+          <p>Module is a GenServer that implements worker word reducer functionality, 
+primarily <a href="#reduce_and_store/4"><code class="inline">reduce_and_store/4</code></a>.</p>
+<p>Retrieves pass data from <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a>. Reduces word set based on reduce_key.
+Stores reduced pass back into <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a>.  Returns new pass data.</p>
 
         </section>
       
@@ -96,7 +99,9 @@
     <a href="#reduce_and_store/4">reduce_and_store(worker_id, pass_key, regex_key, exc)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Primary worker function, returns results of reduction pass</p>
+    <div class="summary-synopsis"><p>Primary worker function which retrieves current pass chunks data,
+filters words with regex, tallies reduced word stream, creates new
+<a href="Chunks.html"><code class="inline">Chunks</code></a> abstraction and stores it back into words pass table</p>
 </div>
   
 </div>
@@ -121,15 +126,6 @@
       <a href="#callbacks">Callbacks</a>
     </h2>
     <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:handle_call/4">handle_call(atom, arg1, arg2, map)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>GenServer callback function to handle reduce and store request</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature">
     <a href="#c:terminate/2">terminate(term, term)</a>
   </div>
@@ -175,7 +171,12 @@ No special cleanup</p>
     </div>
   
   <section class="docstring">
-    <p>Primary worker function, returns results of reduction pass</p>
+    <p>Primary worker function which retrieves current pass chunks data,
+filters words with regex, tallies reduced word stream, creates new
+<a href="Chunks.html"><code class="inline">Chunks</code></a> abstraction and stores it back into words pass table.</p>
+<p>If pass size happens to be small enough, will also return
+remaining hangman possible words left to aid in guess selection. </p>
+<p>Returns pass data.</p>
 
   </section>
 </div>
@@ -216,30 +217,7 @@ No special cleanup</p>
             </a>
             Callbacks
           </h1>
-          <div class="detail" id="c:handle_call/4">
-  <div class="detail-header">
-    <a href="#c:handle_call/4" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">handle_call(atom, arg1, arg2, map)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">handle_call(:atom, <a href="Pass.html#t:key/0">Pass.key</a>, <a href="http://elixir-lang.org/docs/stable/elixir/Regex.html#t:t/0">Regex.t</a>, map) :: tuple</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>GenServer callback function to handle reduce and store request</p>
-
-  </section>
-</div>
-<div class="detail" id="c:terminate/2">
+          <div class="detail" id="c:terminate/2">
   <div class="detail-header">
     <a href="#c:terminate/2" class="detail-link" title="Link to this callback">
       <i class="icon-link"></i>
