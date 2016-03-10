@@ -4,7 +4,7 @@ defmodule Pass.Cache.Stub do
   '''
   Stub module to mimic Pass Cache functionality
 
-  Provides a simple scaffold implementation 
+  Provides a scaffold implementation 
   to provide simple, predictable behavior
   '''
 
@@ -12,8 +12,8 @@ defmodule Pass.Cache.Stub do
   Stub Routine retrieves stub pass tally given game start pass key
   """
 
-  @spec get_pass(atom, Pass.key, Reduction.key) :: tuple
-	def get_pass(:game_start, 
+  @spec get(Pass.Cache.key, Pass.key, Reduction.key) :: tuple
+	def get({:pass ,:game_start}, 
 		{id, game_no, 1} = pass_key, reduce_key) 
 		when is_binary(id) and is_number(game_no) do
 
@@ -27,8 +27,8 @@ defmodule Pass.Cache.Stub do
   Stub Routine retrieves stub pass tally given pass key
   """
 
-  @spec get_pass(atom, Pass.key, Reduction.key) :: tuple
-	def get_pass(:game_keep_guessing, 
+  @spec get(Pass.Cache.key, Pass.key, Reduction.key) :: tuple
+	def get({:pass, :game_keep_guessing}, 
 		{id, game_no, round_no} = pass_key, reduce_key)
 		when is_binary(id) and is_number(game_no) and is_number(round_no) do
 

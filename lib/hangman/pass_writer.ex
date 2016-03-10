@@ -1,11 +1,15 @@
 defmodule Pass.Writer do
   
   @moduledoc """
-  Module implements words pass writer functionality.
-  Write load is handled through pool.
-  Distributes write request based on pass key id attribute (name)
-  Pool size writer workers are started up as part of writer pool
-  Pool supervisor supervises writer workers
+  Module implements words pass write functionality into the Pass.Cache `ETS` table.
+
+  Write load is handled through `Pass.Writer.Pool`.
+  Pool distributes write request based on pass key id attribute (name).
+  Pool size writer workers are started up as part of writer pool.
+  Pool supervisor supervises writer workers, which are each responsible for
+  the write operations.
+
+  Primary method is `Pass.Writer.Worker.write/3`
   """
     
   @pool_size 10

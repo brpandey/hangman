@@ -123,7 +123,7 @@ with letter frequency counters</p>
   <div class="summary-signature"><a href="Dictionary.html">Dictionary</a></div>
   
     <div class="summary-synopsis"><p>Module defines dictionary common attributes and types
-functionality.  Serves as a central point to access or update such attributes</p>
+functionality</p>
 </div>
   
 </div>
@@ -195,9 +195,9 @@ on the <code class="inline">gproc</code> module to administer registry facilitie
 <div class="summary-row">
   <div class="summary-signature"><a href="Pass.Cache.html">Pass.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Module implements an <code class="inline">ETS</code> table owning process specifically to maintain
+    <div class="summary-synopsis"><p>Module implements an <code class="inline">ETS</code> table owning process which maintains
  a words pass cache given a player, game and round number.
- Given each player round, the player’s pass data is store into the cache
+ Given each player round, the player’s word pass data is store into the cache
  for access on the subsequent round</p>
 </div>
   
@@ -205,11 +205,7 @@ on the <code class="inline">gproc</code> module to administer registry facilitie
 <div class="summary-row">
   <div class="summary-signature"><a href="Pass.Writer.html">Pass.Writer</a></div>
   
-    <div class="summary-synopsis"><p>Module implements words pass writer functionality.
-Write load is handled through pool.
-Distributes write request based on pass key id attribute (name)
-Pool size writer workers are started up as part of writer pool
-Pool supervisor supervises writer workers</p>
+    <div class="summary-synopsis"><p>Module implements words pass write functionality into the Pass.Cache <code class="inline">ETS</code> table</p>
 </div>
   
 </div>
@@ -226,14 +222,14 @@ of pass writer workers</p>
   
     <div class="summary-synopsis"><p>Module is a GenServer that implements writer worker functionality.
 Specifically, module is a write operation specific module that 
-performs async write into pass ets table</p>
+performs async writes into <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> <code class="inline">ETS</code> table</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Pattern.html">Pattern</a></div>
   
-    <div class="summary-synopsis"><p>Module handles hangman pattern update given letter</p>
+    <div class="summary-synopsis"><p>Module handles hangman pattern updates given guessed letter</p>
 </div>
   
 </div>
@@ -245,24 +241,9 @@ performs async write into pass ets table</p>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Player.Async.Echo.html">Player.Async.Echo</a></div>
-  
-    <div class="summary-synopsis"><p>Module serves as an asynchronous echo server for
-the asynchronous robot fsm player type</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Player.Events.html">Player.Events</a></div>
   
     <div class="summary-synopsis"><p>Module implements events manager for player abstraction</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Player.FSM.html">Player.FSM</a></div>
-  
-    <div class="summary-synopsis"><p>Module implements state machine model for player</p>
 </div>
   
 </div>
@@ -277,7 +258,7 @@ player, game server and player event server</p>
 <div class="summary-row">
   <div class="summary-signature"><a href="Player.Logger.Handler.html">Player.Logger.Handler</a></div>
   
-    <div class="summary-synopsis"><p>Module implements event logger handler for player events
+    <div class="summary-synopsis"><p>Module implements event logger handler for player events. 
 Each event is logged to a file named after player id (name)</p>
 </div>
   

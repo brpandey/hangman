@@ -2,16 +2,16 @@ defmodule Pass.Cache do
   use GenServer
 
 	@moduledoc """
-	Module implements an `ETS` table owning process specifically to maintain
+	Module implements an `ETS` table owning process which maintains
   a words pass cache given a player, game and round number.
-  Given each player round, the player's pass data is store into the cache
+  Given each player round, the player's word pass data is store into the cache
   for access on the subsequent round.  
 
   The expired pass data is subsequently removed from the cache
 
-  Uses type `key` for cache gets
+  Uses type `key` for cache  `Pass.Cache.get/2` `Pass.Cache.get/3` 
   
-  Performs primarily unserialized reads
+  Performs unserialized reads
 	"""
 
   require Logger
@@ -25,11 +25,11 @@ defmodule Pass.Cache do
 
   # External API
 
-  @doc """
+  @docp """
   GenServer start link wrapper function
   """
   
-  @spec start_link :: Supervisor.on_start
+  #@spec start_link :: Supervisor.on_start
   def start_link() do
     Logger.info "Starting Hangman Pass Cache GenServer"
     args = {}
@@ -82,7 +82,7 @@ defmodule Pass.Cache do
 	end
 
   @doc """
-  Get routine retrieves the pass size, pass tally, possible words, 
+  Get routine retrieves the pass size, tally, possible words, 
   and other data given these cache keys.
 
     * `{:pass, :game_start}` - this is the initial game start pass, so we 

@@ -2,10 +2,9 @@ defmodule Player do
   @moduledoc """
   Module handles player abstraction and defines player type
 
-  Implements functionality to start a player, 
-  choose letters, guess letters and words
+  Implements player functionality to choose letters, guess letters and words
 
-  Heavily relies upon Round and Action functionality
+  Heavily relies upon `Round` and `Action` functionality
   """
 
 	defstruct name: "", 
@@ -55,7 +54,7 @@ defmodule Player do
   # READ
   
   @doc """
-  Returns true or false whether we've arrived at 
+  Returns `true` or `false` whether we've arrived at 
   the last word in possible words set
   """
 
@@ -68,7 +67,7 @@ defmodule Player do
   end
 
   @doc """
-  Returns true or false whether the game has been won
+  Returns `true` or `false` whether the game has been won
   """
 
   @spec game_won?(t) :: boolean
@@ -76,21 +75,22 @@ defmodule Player do
 
 
   @doc """
-  Returns true or false whether the game has been lost
+  Returns `true` or `false` whether the game has been lost
   """
 
   @spec game_lost?(t) :: boolean
   def game_lost?(%Player{} = p), do: p.round.status_code == :game_lost
 
   @doc """
-  Returns true or false whether all games are over
+  Returns `true` or `false` whether all games are over
   """
 
   @spec games_over?(t) :: boolean
   def games_over?(%Player{} = p), do: p.games_summary != nil
 
   @doc """
-  Returns game summary as a string
+  Returns game summary as a string.  Includes number of games played, average 
+  score per game, per game score.
   """
 
   @spec games_summary(Keyword.t) :: String.t
@@ -108,17 +108,12 @@ defmodule Player do
 	end
 
   @doc """
-  Returns game round status
+  Returns game status
   """
 
   @spec status(t, :atom) :: Round.result
   def status(%Player{} = p, :game_round), do: Round.status(p)
 
-  @doc """
-  Returns games over status
-  """
-
-  @spec status(t, :atom) :: Round.result
   def status(%Player{} = p, :games_over) do
   	case games_over?(p) do
   		true -> {:games_over, p.games_summary}
@@ -130,14 +125,11 @@ defmodule Player do
 	# UPDATE
 
   @doc """
-  Routine starts a new player abstraction.
-
-  Notifies player specific event server
-
+  Routine starts a new player abstraction. Notifies player specific event server.
   Setups game round.
 
-  If player type is robot, makes first guess, and returns round status
-  If player type is human retrieves letter choices to display
+  If player type is robot, makes initial guess, then returns round status.
+  If player type is human, retrieves top letter choices to display
   """
 
   @spec start(t) :: result
@@ -166,14 +158,12 @@ defmodule Player do
 
 
   @doc """
-  HUMAN Routine for human player type retrieves letter choices
-  Setups new round, retrieves and returns letter choices
+  Routine for `:human` player type.
+  Setups new round, retrieves and returns top letter choices.
   """
 
-
-
   @spec choices(t, Guess.directive, :atom) :: {t, Guess.option}
-	def choices(%Player{} = p, :choose_letters, options \\ nil) do
+	def choices(%Player{} = p, :choose_letters = _directive, options \\ nil) do
   	
     @human = p.type
 
@@ -200,11 +190,12 @@ defmodule Player do
 
 
   @doc """
-  ROBOT Routine for robot player type guess
-  Setups new round, performs guess, returns round status
+  Routine for `:robot` player type. Setups new round, 
+  performs auto-generated guess, returns round status
   """
 
-  @spec guess(t) :: result
+  #@spec guess(p :: t, mode :: none | :atom) :: result
+
   def guess(%Player{} = p) do
     @robot = p.type
 
@@ -217,8 +208,7 @@ defmodule Player do
     rescue_wrap(p, fn_run)
 	end
 
-  @spec guess(t) :: result
-  def guess(%Player{} = p, :game_start) do
+  def guess(%Player{} = p, :game_start = _mode) do
     @robot = p.type
 
     fn_run = fn ->
@@ -231,14 +221,20 @@ defmodule Player do
 	end
 
   @doc """
-  HUMAN Routine for human player type which perform guess of last remaining word
+  Routine for `:human` player type.
 
-  Note: Somewhat of a hack for a human guess word, 
-  we simplify the human guessing of words to just the last word
+  Comes in two modes
+    * `:guess_last_word` - performs guess of last remaining word
+    Note: Somewhat of an oversimplification for a human guess word, 
+    we simplify the human guessing of words to just the last word
+
+    * `{:guess_letter, letter}` - doesn't setup round since it 
+    was already setup during the choose letters stage. Issues action 
+    to guess and validate letter and returns round status.
   """
 
-  @spec guess(t, Guess.directive) :: result
-	def guess(%Player{} = p, :guess_last_word) do
+  @spec guess(p :: t, guess :: Guess.directive | Guess.t) :: result
+	def guess(%Player{} = p, :guess_last_word = _guess) do
     @human = p.type
 
     fn_run = fn ->
@@ -257,16 +253,8 @@ defmodule Player do
     rescue_wrap(p, fn_run)
 	end
 
-  @doc """
-  HUMAN Routine for human player type which perform letter guesses
 
-  Doesn't setup round since it was setup during choose letters stage.
-  Issues action to guess letter and returns round status
-  """
-
-
-  @spec guess(t, Guess.t) :: result
-  def guess(%Player{} = p, guess = {:guess_letter, l})
+  def guess(%Player{} = p, {:guess_letter, l} = guess)
   when is_binary(l) do 
 
     @human = p.type

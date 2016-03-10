@@ -3,13 +3,13 @@ defmodule Player.Events.Supervisor do
 
   @moduledoc false
 
-  _ = """
+  '''
   Module implements supervisor functionality overseeing 
   dynamically started player events servers
 
   Player events server processes are started with 
   both log and display options off
-  """
+  '''
 
   require Logger
 

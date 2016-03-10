@@ -69,13 +69,13 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements an <code class="inline">ETS</code> table owning process specifically to maintain
+          <p>Module implements an <code class="inline">ETS</code> table owning process which maintains
  a words pass cache given a player, game and round number.
- Given each player round, the player’s pass data is store into the cache
+ Given each player round, the player’s word pass data is store into the cache
  for access on the subsequent round.  </p>
 <p> The expired pass data is subsequently removed from the cache</p>
-<p> Uses type <code class="inline">key</code> for cache gets</p>
-<p> Performs primarily unserialized reads</p>
+<p> Uses type <code class="inline">key</code> for cache  <a href="Pass.Cache.html#get/2"><code class="inline">Pass.Cache.get/2</code></a> <a href="Pass.Cache.html#get/3"><code class="inline">Pass.Cache.get/3</code></a> </p>
+<p> Performs unserialized reads</p>
 
         </section>
       
@@ -122,7 +122,7 @@
     <a href="#get/3">get(cache_key, pass_key, reduce_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Get routine retrieves the pass size, pass tally, possible words, 
+    <div class="summary-synopsis"><p>Get routine retrieves the pass size, tally, possible words, 
 and other data given these cache keys</p>
 </div>
   
@@ -131,9 +131,6 @@ and other data given these cache keys</p>
   <div class="summary-signature">
     <a href="#start_link/0">start_link()</a>
   </div>
-  
-    <div class="summary-synopsis"><p>GenServer start link wrapper function</p>
-</div>
   
 </div>
 <div class="summary-row">
@@ -237,7 +234,7 @@ and other data given these cache keys</p>
     </div>
   
   <section class="docstring">
-    <p>Get routine retrieves the pass size, pass tally, possible words, 
+    <p>Get routine retrieves the pass size, tally, possible words, 
 and other data given these cache keys.</p>
 <ul>
 <li><p><code class="inline">{:pass, :game_start}</code> - this is the initial game start pass, so we 
@@ -263,18 +260,8 @@ and other data given these cache keys.</p>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">start_link :: <a href="http://elixir-lang.org/docs/stable/elixir/Supervisor.html#t:on_start/0">Supervisor.on_start</a></code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>GenServer start link wrapper function</p>
-
+    
   </section>
 </div>
 <div class="detail" id="stop/1">

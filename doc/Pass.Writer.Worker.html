@@ -64,8 +64,6 @@
         <small class="visible-xs">Hangman v0.9.1</small>
         Pass.Writer.Worker
         
-          <small>behaviour</small>
-        
         
       </h1>
 
@@ -73,10 +71,11 @@
         <section id="moduledoc" class="docstring">
           <p>Module is a GenServer that implements writer worker functionality.
 Specifically, module is a write operation specific module that 
-performs async write into pass ets table.</p>
-<p>If write operation fails for whatever reason, doesn’t bring down
-the reads and table-owning pass ets owning process.  Hence the 
-separation.</p>
+performs async writes into <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> <code class="inline">ETS</code> table.</p>
+<p>If the <a href="Pass.Writer.Worker.html#write/3"><code class="inline">Pass.Writer.Worker.write/3</code></a> operation fails for whatever reason, 
+doesn’t bring down the reads and table-owning <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> process.  
+Hence the separation.</p>
+<p>Primary method is <a href="Pass.Writer.Worker.html#write/3"><code class="inline">Pass.Writer.Worker.write/3</code></a></p>
 
         </section>
       
@@ -101,9 +100,6 @@ separation.</p>
     <a href="#start_link/1">start_link(worker_id)</a>
   </div>
   
-    <div class="summary-synopsis"><p>GenServer start_link wrapper function</p>
-</div>
-  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
@@ -120,7 +116,7 @@ separation.</p>
   </div>
   
     <div class="summary-synopsis"><p>Write is an asynchronous call.
-Insert chunks into ets pass table</p>
+Inserts chunks into ets pass table</p>
 </div>
   
 </div>
@@ -131,50 +127,6 @@ Insert chunks into ets pass table</p>
           
 
           
-  <div class="summary-callbacks summary">
-    <h2>
-      <a href="#callbacks">Callbacks</a>
-    </h2>
-    <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:handle_call/3">handle_call(atom, tuple, {})</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Issues request to stop GenServer</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:handle_cast/4">handle_cast(atom, arg1, arg2, {})</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Writes pass data chunk, uses pass_key for ets insertion</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:init/1">init({})</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>GenServer callback to initalize server process</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:terminate/2">terminate(term, term)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Terminates the pass writer worker server
-No special cleanup</p>
-</div>
-  
-</div>
-
-  </div>
-
 
         </section>
       
@@ -198,18 +150,8 @@ No special cleanup</p>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">start_link(pos_integer) :: <a href="http://elixir-lang.org/docs/stable/elixir/GenServer.html#t:on_start/0">GenServer.on_start</a></code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>GenServer start_link wrapper function</p>
-
+    
   </section>
 </div>
 <div class="detail" id="stop/1">
@@ -255,7 +197,7 @@ No special cleanup</p>
   
   <section class="docstring">
     <p>Write is an asynchronous call.
-Insert chunks into ets pass table</p>
+Inserts chunks into ets pass table</p>
 
   </section>
 </div>
@@ -265,109 +207,6 @@ Insert chunks into ets pass table</p>
 
       
 
-      
-        <section id="callbacks" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#callbacks">
-              <i class="icon-link"></i>
-            </a>
-            Callbacks
-          </h1>
-          <div class="detail" id="c:handle_call/3">
-  <div class="detail-header">
-    <a href="#c:handle_call/3" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">handle_call(atom, tuple, {})</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">handle_call(:atom, tuple, {}) :: tuple</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Issues request to stop GenServer</p>
-
-  </section>
-</div>
-<div class="detail" id="c:handle_cast/4">
-  <div class="detail-header">
-    <a href="#c:handle_cast/4" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">handle_cast(atom, arg1, arg2, {})</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">handle_cast(:atom, <a href="Pass.html#t:key/0">Pass.key</a>, <a href="Chunks.html#t:t/0">Chunks.t</a>, {}) :: tuple</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Writes pass data chunk, uses pass_key for ets insertion</p>
-
-  </section>
-</div>
-<div class="detail" id="c:init/1">
-  <div class="detail-header">
-    <a href="#c:init/1" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">init({})</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">init({}) :: {}</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>GenServer callback to initalize server process</p>
-
-  </section>
-</div>
-<div class="detail" id="c:terminate/2">
-  <div class="detail-header">
-    <a href="#c:terminate/2" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">terminate(term, term)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">terminate(term, term) :: :ok</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Terminates the pass writer worker server
-No special cleanup</p>
-
-  </section>
-</div>
-
-        </section>
       
         <footer class="footer">
       <p>

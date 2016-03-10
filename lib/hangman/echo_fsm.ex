@@ -1,14 +1,16 @@
 defmodule Player.Async.Echo do
 	@behaviour :gen_fsm
 
-  @moduledoc """
+  @moduledoc false
+
+  '''
   Module serves as an asynchronous echo server for
   the asynchronous robot fsm player type
 
   Allows the asynchronous robot fsm player to run a game 
   asynchronously without having to be wrapped in a 
   Stream.run, runs automatically itself
-  """
+  '''
 
 	# External API
 

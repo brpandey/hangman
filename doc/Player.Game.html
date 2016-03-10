@@ -97,11 +97,41 @@ dynamic game server, and event server given player</p>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
+    <a href="#rounds_handler/2">rounds_handler(arg, atom)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Permits robot or human round playing!
+Wraps the robot or human player game playing in a stream.
+Stream resource returns an enumerable</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#run/5">run(name, type, secrets, log, display)</a>
   </div>
   
     <div class="summary-synopsis"><p>Function run connects all the player specific components together 
 and runs the player game</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#setup/4">setup(name, secrets, log, display)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Function setup loads the player specific game components.
+Setup the game server and per player event server</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_player/4">start_player(name, type, game_pid, notify_pid)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Start dynamic player child worker</p>
 </div>
   
 </div>
@@ -126,7 +156,33 @@ and runs the player game</p>
             </a>
             Functions
           </h1>
-          <div class="detail" id="run/5">
+          <div class="detail" id="rounds_handler/2">
+  <div class="detail-header">
+    <a href="#rounds_handler/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">rounds_handler(arg, atom)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">rounds_handler(tuple, <a href="Player.html#t:kind/0">Player.kind</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Permits robot or human round playing!
+Wraps the robot or human player game playing in a stream.
+Stream resource returns an enumerable.</p>
+<p>Terminates player events server and fsm upon finish</p>
+
+  </section>
+</div>
+<div class="detail" id="run/5">
   <div class="detail-header">
     <a href="#run/5" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
@@ -147,6 +203,53 @@ and runs the player game</p>
   <section class="docstring">
     <p>Function run connects all the player specific components together 
 and runs the player game</p>
+
+  </section>
+</div>
+<div class="detail" id="setup/4">
+  <div class="detail-header">
+    <a href="#setup/4" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">setup(name, secrets, log, display)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">setup(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], boolean, boolean) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Function setup loads the player specific game components.
+Setup the game server and per player event server.</p>
+
+  </section>
+</div>
+<div class="detail" id="start_player/4">
+  <div class="detail-header">
+    <a href="#start_player/4" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">start_player(name, type, game_pid, notify_pid)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">start_player(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="Player.html#t:kind/0">Player.kind</a>, pid, pid) :: <a href="http://elixir-lang.org/docs/stable/elixir/Supervisor.html#t:on_start_child/0">Supervisor.on_start_child</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Start dynamic player child worker</p>
 
   </section>
 </div>

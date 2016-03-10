@@ -2,9 +2,11 @@ defmodule Game do
   @moduledoc """
   Module defines game abstraction which can handle
   a single hangman game or multiple hangman games.
+
+  Defines Game type.
   
-  Runs each game or set of games sequentially.
-  Therefore only one game is in play at any one time.
+  Runs each game or games sequentially.  Therefore only one game
+  is in play at any one time.
   
   Primary functions are `Game.load/3`, `Game.guess/2`, `Game.status/1`.
   """

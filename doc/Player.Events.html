@@ -64,14 +64,14 @@
         <small class="visible-xs">Hangman v0.9.1</small>
         Player.Events
         
-          <small>behaviour</small>
-        
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
           <p>Module implements events manager for player abstraction</p>
+<p>Handles writing of event notification data to a player log file or
+displaying them as a feed to the user</p>
 
         </section>
       
@@ -96,16 +96,18 @@
     <a href="#notify_games_over/3">notify_games_over(pid, name, text)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends :games_over tuple event notification to event manager</p>
+    <div class="summary-synopsis"><p>Sends <code class="inline">:games_over</code> tuple event notification to event manager</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#notify_guess/3">notify_guess(pid, arg1, arg2)</a>
+    <a href="#notify_guess/3">notify_guess(pid, guess, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends :guess_word tuple event notification to event manager</p>
+    <div class="summary-synopsis"><p>Sends either a <code class="inline">{:guess_letter, letter}</code> or 
+<code class="inline">{:guess_word, word}</code> tuple  event notification to event manager, 
+depending on guess</p>
 </div>
   
 </div>
@@ -114,7 +116,7 @@
     <a href="#notify_length/2">notify_length(pid, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends :secret_length tuple event notification to event manager</p>
+    <div class="summary-synopsis"><p>Sends <code class="inline">:secret_length</code> tuple event notification to event manager</p>
 </div>
   
 </div>
@@ -123,7 +125,7 @@
     <a href="#notify_start/2">notify_start(pid, name)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends :start tuple event notification to event manager</p>
+    <div class="summary-synopsis"><p>Sends <code class="inline">:start</code> tuple event notification to event manager</p>
 </div>
   
 </div>
@@ -132,7 +134,7 @@
     <a href="#notify_status/2">notify_status(pid, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends :round_status tuple event notification to event manager</p>
+    <div class="summary-synopsis"><p>Sends <code class="inline">:round_status</code> tuple event notification to event manager</p>
 </div>
   
 </div>
@@ -167,22 +169,6 @@
           
 
           
-  <div class="summary-callbacks summary">
-    <h2>
-      <a href="#callbacks">Callbacks</a>
-    </h2>
-    <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:terminate/2">terminate(term, term)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Callback function for termination</p>
-</div>
-  
-</div>
-
-  </div>
-
 
         </section>
       
@@ -210,13 +196,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">notify_games_over(pid, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: :ok</code></pre>
+          <pre><code class="elixir">notify_games_over(pid, name :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, text :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: :ok</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Sends :games_over tuple event notification to event manager</p>
+    <p>Sends <code class="inline">:games_over</code> tuple event notification to event manager</p>
 
   </section>
 </div>
@@ -225,7 +211,7 @@
     <a href="#notify_guess/3" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">notify_guess(pid, arg1, arg2)</span>
+    <span class="signature">notify_guess(pid, guess, arg)</span>
       
   </div>
   
@@ -233,15 +219,15 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">notify_guess(pid, <a href="Guess.html#t:t/0">Guess.t</a>, tuple) :: :ok</code></pre>
-        
-          <pre><code class="elixir">notify_guess(pid, <a href="Guess.html#t:t/0">Guess.t</a>, tuple) :: :ok</code></pre>
+          <pre><code class="elixir">notify_guess(pid, guess :: <a href="Guess.html#t:t/0">Guess.t</a>, info :: tuple) :: :ok</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Sends :guess_word tuple event notification to event manager</p>
+    <p>Sends either a <code class="inline">{:guess_letter, letter}</code> or 
+<code class="inline">{:guess_word, word}</code> tuple  event notification to event manager, 
+depending on guess.</p>
 
   </section>
 </div>
@@ -258,13 +244,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">notify_length(pid, tuple) :: :ok</code></pre>
+          <pre><code class="elixir">notify_length(pid, data :: tuple) :: :ok</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Sends :secret_length tuple event notification to event manager</p>
+    <p>Sends <code class="inline">:secret_length</code> tuple event notification to event manager</p>
 
   </section>
 </div>
@@ -281,13 +267,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">notify_start(pid, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: :ok</code></pre>
+          <pre><code class="elixir">notify_start(pid, name :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: :ok</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Sends :start tuple event notification to event manager</p>
+    <p>Sends <code class="inline">:start</code> tuple event notification to event manager</p>
 
   </section>
 </div>
@@ -304,13 +290,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">notify_status(pid, tuple) :: :ok</code></pre>
+          <pre><code class="elixir">notify_status(pid, data :: tuple) :: :ok</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Sends :round_status tuple event notification to event manager</p>
+    <p>Sends <code class="inline">:round_status</code> tuple event notification to event manager</p>
 
   </section>
 </div>
@@ -379,39 +365,6 @@
 
       
 
-      
-        <section id="callbacks" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#callbacks">
-              <i class="icon-link"></i>
-            </a>
-            Callbacks
-          </h1>
-          <div class="detail" id="c:terminate/2">
-  <div class="detail-header">
-    <a href="#c:terminate/2" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">terminate(term, term)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">terminate(term, term) :: :ok</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Callback function for termination</p>
-
-  </section>
-</div>
-
-        </section>
       
         <footer class="footer">
       <p>

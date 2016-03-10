@@ -1,13 +1,12 @@
 defmodule Player.FSM do
   @behaviour :gen_fsm
 
-  @moduledoc """
+  @moduledoc false
+
+  '''
   Module implements state machine model for player
 
   Supports three sets of player type states: human, robot, robot turbo  
-
-  Each player type is mutually exclusive and has its own state
-  transitions
 
   Provides a public interface with inherent asserting through 
   specific transitions to control player behavior
@@ -15,7 +14,7 @@ defmodule Player.FSM do
   Embeds player abstraction internally as state machine state
 
   State machine is a wrapper around player abstraction
-  """
+  '''
 
   require Logger
 
@@ -179,34 +178,6 @@ defmodule Player.FSM do
   # SYNCHRONOUS State Callbacks
   #
 
-  # Since human will be calling, want to guard for events unsupported 
-  # in current states, rather than crashing
-
-  @doc """
-  'Guard' state to politiely notify user, 
-  we have unsupported event in given state
-  """
-
-  @callback idle_socrates(tuple, tuple, tuple) :: tuple
-  def idle_socrates({:guess_letter, _guess_letter}, _from, {player, pid}) do
-    { 
-      :reply, "Event unsupported in given state", :idle_socrates, 
-      {player, pid} 
-    } 
-  end
-
-  @doc """
-  'Guard' state to politiely notify user, 
-  we have unsupported event in given state
-  """
-
-  @callback idle_socrates(:atom, tuple, tuple) :: tuple
-  def idle_socrates(:guess_last_word, _from, {player, pid}) do
-    { 
-      :reply, "Event unsupported in given state", :idle_socrates, 
-      {player, pid} 
-    } 
-  end  
 
   @doc """
   Callback function for synchronous human state socrates and event :proceed
@@ -236,28 +207,6 @@ defmodule Player.FSM do
 
 
   @doc """
-  'Guard' state to politiely notify user, 
-  we have unsupported event in given state
-  """
-
-  @callback eager_socrates(:atom, tuple, tuple) :: tuple
-  def eager_socrates(:proceed, _from, {player, pid}) do
-    { :reply, "Event unsupported in given state", :eager_socrates, 
-      {player, pid} } 
-  end
-
-  @doc """
-  'Guard' state to politiely notify user, 
-  we have unsupported event in given state
-  """
-
-  @callback eager_socrates(:atom, tuple, tuple) :: tuple
-  def eager_socrates(:guess_last_word, _from, {player, pid}) do
-    { :reply, "Event unsupported in given state", :eager_socrates, 
-      {player, pid} } 
-  end
-
-  @doc """
   Callback function for synchronous human state socrates and 
   event tuple :guess_letter
   """
@@ -285,27 +234,6 @@ defmodule Player.FSM do
     { :reply, reply, next, {player, pid} }  	
   end
 
-  @doc """
-  'Guard' state to politiely notify user, 
-  we have unsupported event in given state
-  """
-
-  @callback giddy_socrates(:atom, tuple, tuple) :: tuple
-  def giddy_socrates(:proceed, _from, {player, pid}) do
-    { :reply, "Event unsupported in given state", :giddy_socrates, 
-      {player, pid} } 
-  end 
-
-  @doc """
-  'Guard' state to politiely notify user, 
-  we have unsupported event in given state
-  """
-
-  @callback giddy_socrates(tuple, tuple, tuple) :: tuple
-  def giddy_socrates({:guess_letter, _guess_letter}, _from, {player, pid}) do
-    { :reply, "Event unsupported in given state", :giddy_socrates, 
-      {player, pid} } 
-  end
 
   @doc """
   Callback function for synchronous human state socrates and 

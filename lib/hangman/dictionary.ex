@@ -2,7 +2,9 @@ defmodule Dictionary do
 
   @moduledoc """
   Module defines dictionary common attributes and types
-  functionality.  Serves as a central point to access or update such attributes
+  functionality.  
+
+  Serves as a central point to access or update such attributes
   """
 
   @type transform :: :unsorted | :sorted | :grouped | :chunked

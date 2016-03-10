@@ -1,6 +1,9 @@
 defmodule Player.Events do
   @moduledoc """
   Module implements events manager for player abstraction
+
+  Handles writing of event notification data to a player log file or
+  displaying them as a feed to the user
   """
 
   require Logger
@@ -68,41 +71,42 @@ defmodule Player.Events do
 	end
 
   @doc """
-  Sends :start tuple event notification to event manager
+  Sends `:start` tuple event notification to event manager
   """
 
-  @spec notify_start(pid, String.t) :: :ok
+  @spec notify_start(pid, name :: String.t) :: :ok
 	def notify_start(pid, name) do
 		GenEvent.notify(pid, {:start, name})
 	end
 
   @doc """
-  Sends :secret_length tuple event notification to event manager
+  Sends `:secret_length` tuple event notification to event manager
   """
 
-  @spec notify_length(pid, tuple) :: :ok
+  @spec notify_length(pid, data :: tuple) :: :ok
 	def notify_length(pid, {name, game_no, length}) do
 		GenEvent.notify(pid, {:secret_length, name, game_no, length})
 	end
 
   @doc """
-  Sends :guess_letter tuple event notification to event manager
+  Sends either a `{:guess_letter, letter}` or 
+  `{:guess_word, word}` tuple  event notification to event manager, 
+  depending on guess.
   """
 
-  @spec notify_guess(pid, Guess.t, tuple) :: :ok
-	def notify_guess(pid, {:guess_letter, letter}, {name, game_no}) when is_binary(letter) do
+  @spec notify_guess(pid, guess :: Guess.t, info :: tuple) :: :ok
+
+	def notify_guess(pid, {:guess_letter, letter} = _guess, 
+                   {name, game_no}) when is_binary(letter) do
     guess = {:guess_letter, letter}
     info = {name, game_no}
 
 		GenEvent.notify(pid, {guess, info})
 	end
 
-  @doc """
-  Sends :guess_word tuple event notification to event manager
-  """
 
-  @spec notify_guess(pid, Guess.t, tuple) :: :ok
-	def notify_guess(pid, {:guess_word, word}, {name, game_no}) when is_binary(word) do
+	def notify_guess(pid, {:guess_word, word} = _guess, 
+                   {name, game_no}) when is_binary(word) do
     guess = {:guess_word, word}
     info = {name, game_no}
 
@@ -111,19 +115,19 @@ defmodule Player.Events do
 
 
   @doc """
-  Sends :round_status tuple event notification to event manager
+  Sends `:round_status` tuple event notification to event manager
   """
 
-  @spec notify_status(pid, tuple) :: :ok
+  @spec notify_status(pid, data :: tuple) :: :ok
 	def notify_status(pid, {name, game_no, round_no, status}) do
 		GenEvent.notify(pid, {:round_status, name, game_no, round_no, status})
 	end
 
   @doc """
-  Sends :games_over tuple event notification to event manager
+  Sends `:games_over` tuple event notification to event manager
   """
 
-  @spec notify_games_over(pid, String.t, String.t) :: :ok
+  @spec notify_games_over(pid, name :: String.t, text :: String.t) :: :ok
 	def notify_games_over(pid, name, text) do
 		GenEvent.notify(pid, {:games_over, name, text})
 	end
@@ -138,11 +142,11 @@ defmodule Player.Events do
   end
 
 
-	@doc """
+	@docp """
 	Callback function for termination
 	"""
   
-  @callback terminate(term, term) :: :ok
+  #@callback terminate(term, term) :: :ok
 	def terminate(_reason, _state) do
 		:ok
 	end

@@ -4,11 +4,13 @@ defmodule Pass.Writer.Worker do
   @moduledoc """
   Module is a GenServer that implements writer worker functionality.
   Specifically, module is a write operation specific module that 
-  performs async write into pass ets table.
+  performs async writes into `Pass.Cache` `ETS` table.
 
-  If write operation fails for whatever reason, doesn't bring down
-  the reads and table-owning pass ets owning process.  Hence the 
-  separation.
+  If the `Pass.Writer.Worker.write/3` operation fails for whatever reason, 
+  doesn't bring down the reads and table-owning `Pass.Cache` process.  
+  Hence the separation.
+
+  Primary method is `Pass.Writer.Worker.write/3`
   """
   
   require Logger
@@ -16,11 +18,11 @@ defmodule Pass.Writer.Worker do
   @name __MODULE__
   @ets_table_name :engine_pass_table
 
-  @doc """
+  @docp """
   GenServer start_link wrapper function
   """
   
-  @spec start_link(pos_integer) :: GenServer.on_start
+  #@spec start_link(pos_integer) :: GenServer.on_start
   def start_link(worker_id) do
     Logger.debug "Starting Pass Writer Worker #{worker_id}"
 
@@ -40,7 +42,7 @@ defmodule Pass.Writer.Worker do
 
   @doc """
   Write is an asynchronous call.
-  Insert chunks into ets pass table
+  Inserts chunks into ets pass table
   """
 
   @spec write(pos_integer, Pass.key, Chunks.t) :: :ok
@@ -61,20 +63,20 @@ defmodule Pass.Writer.Worker do
     {:via, :gproc, {:n, :l, {:pass_writer_worker, worker_id}}}
   end
   
-  @doc """
+  @docp """
   GenServer callback to initalize server process
   """
   
-  @callback init({}) :: {}
+  #@callback init({}) :: {}
   def init({}) do
     {:ok, {}}
   end
   
-	@doc """
+	@docp """
 	Writes pass data chunk, uses pass_key for ets insertion
 	"""
   
-  @callback handle_cast(:atom, Pass.key, Chunks.t, {}) :: tuple
+  #@callback handle_cast(:atom, Pass.key, Chunks.t, {}) :: tuple
   def handle_cast({:write, {id, game_no, round_no} = _pass_key,
                    %Chunks{} = chunks}, {}) do
     
@@ -88,21 +90,21 @@ defmodule Pass.Writer.Worker do
     {:noreply, {}}
   end
   
-  @doc """
+  @docp """
   Issues request to stop GenServer
   """
   
-  @callback handle_call(:atom, tuple, {}) :: tuple
+  #@callback handle_call(:atom, tuple, {}) :: tuple
 	def handle_call(:stop, _from, {}) do
 		{ :stop, :normal, :ok, {}}
 	end 
   
-	@doc """
+	@docp """
 	Terminates the pass writer worker server
 	No special cleanup
 	"""
   
-  @callback terminate(term, term) :: :ok
+  #@callback terminate(term, term) :: :ok
 	def terminate(_reason, _state) do
 		:ok
 	end

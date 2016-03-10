@@ -5,7 +5,7 @@ defmodule Player.Game do
 
   Supports both synchronous human and synchronous robot types
 
-  Loads up player specific game components : 
+  Loads up player specific game components: 
   dynamic game server, and event server given player
 
   Manages specific player fsm behaviour (human or robot).
@@ -43,18 +43,20 @@ defmodule Player.Game do
     
   end
   
-  # Start dynamic player worker
+  @doc "Start dynamic player child worker"
   
   @spec start_player(String.t, Player.kind, pid, pid) :: Supervisor.on_start_child
-  defp start_player(name, type, game_pid, notify_pid) do
+  def start_player(name, type, game_pid, notify_pid) do
     Player.Supervisor.start_child(name, type, game_pid, notify_pid)
   end
   
-  # Function setup loads the player specific game components
-  # Setup the game server and per player event server
-
+  @doc """
+  Function setup loads the player specific game components.
+  Setup the game server and per player event server.
+  """
+  
   @spec setup(String.t, [String.t], boolean, boolean) :: tuple
-  defp setup(name, secrets, log, display) when is_binary(name) and
+  def setup(name, secrets, log, display) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) and 
   is_boolean(log) and is_boolean(display) do
     
@@ -68,13 +70,21 @@ defmodule Player.Game do
     {name, game_pid, notify_pid}
   end
 
-  # Robot round playing!
-  @spec rounds_handler(tuple, Player.kind) :: Enumerable.t
-	defp rounds_handler({name, game_pid, notify_pid}, 
-                       @robot) do
 
-    # Wrap the player fsm game play in a stream
-    # Stream resource returns an enumerable
+  @doc """
+  Permits robot or human round playing!
+  Wraps the robot or human player game playing in a stream.
+  Stream resource returns an enumerable.
+
+  Terminates player events server and fsm upon finish
+  """
+
+  @spec rounds_handler(tuple, Player.kind) :: Enumerable.t
+
+  # Robot round playing!
+
+	def rounds_handler({name, game_pid, notify_pid}, 
+                       @robot) do
 
 		Stream.resource(
 			fn -> 
@@ -104,8 +114,8 @@ defmodule Player.Game do
 	end
 
   # Human round playing!
-  @spec rounds_handler(tuple, Player.kind) :: Enumerable.t
-	defp rounds_handler({name, game_pid, notify_pid}, @human) do
+
+	def rounds_handler({name, game_pid, notify_pid}, @human) do
 
     # Wrap the player fsm game play in a stream
     # Stream resource returns an enumerable

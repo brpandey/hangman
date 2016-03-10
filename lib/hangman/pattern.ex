@@ -1,6 +1,6 @@
 defmodule Pattern do
   @moduledoc """
-  Module handles hangman pattern update given letter
+  Module handles hangman pattern updates given guessed letter
   """
 
   @doc """
