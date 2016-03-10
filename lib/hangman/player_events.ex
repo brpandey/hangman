@@ -1,6 +1,6 @@
 defmodule Player.Events do
   @moduledoc """
-  Module implements events manager for player abstraction
+  Module implements event manager for use with player.
 
   Handles writing of event notification data to a player log file or
   displaying them as a feed to the user

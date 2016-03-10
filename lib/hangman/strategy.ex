@@ -1,12 +1,12 @@
 defmodule Strategy do
   @moduledoc """
-  Handles letter guessing strategy for player
+  Handles letter guessing strategy for player.
 
-  For robot player type, retrieves best letter, considering english
-  letter frequencies and letter tally counts
+  For robot player type, retrieves best letter considering english
+  letter frequencies and letter tally counts.
 
-  For human player type, retries a set of top letter choices, to
-  be presented to human to manually choose
+  For human player type, retries a set of top letter choices to
+  be presented to human to manually choose.
   """
 
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
@@ -45,7 +45,7 @@ defmodule Strategy do
   # READ
 
   @doc """
-  If we have reached the last possible hangman word
+  If we have reached the last possible hangman word,
   return it so we can guess it
   """
 
@@ -135,15 +135,16 @@ defmodule Strategy do
     strategy
   end
 
-  @spec update(t, Guess.t) :: t
   def update(%Strategy{} = strategy, {:guess_word, last_word})
   when is_binary(last_word) do
     %Strategy{strategy | guess: {:guess_word, last_word}}
   end
 
   @doc """
-  Updates strategy with pass data
-  For robot player type, get a head start on guess prep
+  Updates strategy with pass data.
+
+  For robot player type, when we updated the pass data
+  also prepare the guess.
   """
 
   @spec update(t, Pass.t, Player.kind) :: t
@@ -153,7 +154,6 @@ defmodule Strategy do
     %Strategy{ strategy | pass: pass, prior_guess: prior}
   end
 
-  @spec update(t, Pass.t, Player.kind) :: t
   def update(%Strategy{} = strategy, %Pass{} = pass, @robot) do
     prior = strategy.guess
     
@@ -192,8 +192,8 @@ defmodule Strategy do
   end
 
   @doc """
-  Validates letter is within the top strategy letter choices,
-  if not, picks the top letter as deemed by letter frequency
+  Validates letter is within the top strategy letter choices.
+  If not, picks the top letter as deemed by heuristics.
   """
 
   @spec letter_in_most_common(t, pos_integer, String.t) :: Guess.t
@@ -211,8 +211,8 @@ defmodule Strategy do
   end
 
   @doc """
-  Retrieves strategy letter choices options text.  Denotes
-  strategy letter pick with an asterisk
+  Retrieves letter choices text.  Denotes
+  'strategic' letter pick with an asterisk.
   """
 
   @spec choose_letters(t, pos_integer) :: Guess.option
@@ -259,18 +259,16 @@ defmodule Strategy do
 
 
   @doc """
-  Method implements most common letter retrieval strategy with a twist
+  Method implements the most common letter retrieval strategy with a twist.
   Gets the first letter with the highest frequency for when the 
   current possible hangman word set space is > "small". 
-  Twist is added when we combine the english language letter relative 
+  The twist is when we combine the english language letter relative 
   frequency. For the cases where the word set is less than small, 
-  only take the letter whose frequencies are less than or equal to half 
-  the possible hagman word pass size
+  takes the letter whose frequencies are less than or equal to half 
+  the possible hagman word pass size.
   
   E.g.for size 10, the letter counts would need to be 5 
-  or lower to be chosen
-  
-  Doesn't handle tie between letters
+  or lower to be chosen. Doesn't handle tie between letters.
   """
 
   @spec retrieve_best_letter(t) :: String.t
