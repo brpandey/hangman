@@ -64,16 +64,14 @@
         <small class="visible-xs">Hangman v0.9.1</small>
         Game.Server
         
-          <small>behaviour</small>
-        
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p> Module implements hangman game using GenServer process.
- Wraps hangman game abstraction as server state</p>
-<p> Runs each game or set of games sequentially</p>
+          <p> Module implements hangman game server using GenServer.
+ Wraps hangman game abstraction as server state.  Runs 
+ each game or set of games sequentially</p>
 <p>Interacts with player client through public interface and
 maintains game state</p>
 
@@ -110,19 +108,10 @@ maintains game state</p>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#format_status/2">format_status(reason, list)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Used for debugging purposes, returns game data of server process</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="#guess/2">guess(game_pid, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues guess word call to GenServer, returns guess result</p>
+    <div class="summary-synopsis"><p>Issues guess letter or word request, returns guess result reply</p>
 </div>
   
 </div>
@@ -150,7 +139,7 @@ Used primarily by game pid cache server</p>
     <a href="#start_link/3">start_link(player_name, secret, max_wrong \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Start public interface method with secret</p>
+    <div class="summary-synopsis"><p>Start public interface method with secret(s)</p>
 </div>
   
 </div>
@@ -189,50 +178,6 @@ If not found, returns :undefined</p>
           
 
           
-  <div class="summary-callbacks summary">
-    <h2>
-      <a href="#callbacks">Callbacks</a>
-    </h2>
-    <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:handle_call/3">handle_call(atom, tuple, arg2)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Stops the server is a normal graceful way</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:handle_cast/2">handle_cast(tuple, arg1)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Loads a set of games</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:init/1">init(arg0)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>GenServer callback to initalize server process</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:terminate/2">terminate(term, term)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Terminates the hangman game server
-No special cleanup other than refreshing the state</p>
-</div>
-  
-</div>
-
-  </div>
-
 
         </section>
       
@@ -263,30 +208,7 @@ No special cleanup other than refreshing the state</p>
             </a>
             Functions
           </h1>
-          <div class="detail" id="format_status/2">
-  <div class="detail-header">
-    <a href="#format_status/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">format_status(reason, list)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">format_status(term, [...]) :: [...]</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Used for debugging purposes, returns game data of server process</p>
-
-  </section>
-</div>
-<div class="detail" id="guess/2">
+          <div class="detail" id="guess/2">
   <div class="detail-header">
     <a href="#guess/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
@@ -301,13 +223,24 @@ No special cleanup other than refreshing the state</p>
         
           <pre><code class="elixir">guess(pid, <a href="Guess.html#t:t/0">Guess.t</a>) :: tuple</code></pre>
         
-          <pre><code class="elixir">guess(pid, <a href="Guess.html#t:t/0">Guess.t</a>) :: tuple</code></pre>
-        
       </div>
     </div>
   
   <section class="docstring">
-    <p>Issues guess word call to GenServer, returns guess result</p>
+    <p>Issues guess letter or word request, returns guess result reply</p>
+<p>Internally, runs guess data against game secret. Updates hangman pattern, status, and
+other game recordkeeping structures.</p>
+<p>Guesses follow two types</p>
+<ul>
+<li><p><code class="inline">{:guess_letter, letter}</code> -     If correct, 
+  returns the :correct_letter data tuple along with game
+ otherwise, returns the :incorrect_letter data tuple along with game</p>
+</li>
+<li><code class="inline">{:guess_word, word}</code> -     If correct, returns 
+  the :correct_word data tuple along with game
+ If incorrect, returns the :incorrect_word data tuple with game
+</li>
+</ul>
 
   </section>
 </div>
@@ -377,7 +310,7 @@ Used primarily by game pid cache server</p>
     </div>
   
   <section class="docstring">
-    <p>Start public interface method with secret</p>
+    <p>Start public interface method with secret(s)</p>
 
   </section>
 </div>
@@ -457,119 +390,6 @@ If not found, returns :undefined</p>
 
       
 
-      
-        <section id="callbacks" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#callbacks">
-              <i class="icon-link"></i>
-            </a>
-            Callbacks
-          </h1>
-          <div class="detail" id="c:handle_call/3">
-  <div class="detail-header">
-    <a href="#c:handle_call/3" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">handle_call(atom, tuple, arg2)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">handle_call(:atom, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_call(:atom, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_call(:atom, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_call(<a href="Guess.html#t:t/0">Guess.t</a>, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_call(<a href="Guess.html#t:t/0">Guess.t</a>, tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Stops the server is a normal graceful way</p>
-
-  </section>
-</div>
-<div class="detail" id="c:handle_cast/2">
-  <div class="detail-header">
-    <a href="#c:handle_cast/2" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">handle_cast(tuple, arg1)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">handle_cast(tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
-        
-          <pre><code class="elixir">handle_cast(tuple, <a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Loads a set of games</p>
-
-  </section>
-</div>
-<div class="detail" id="c:init/1">
-  <div class="detail-header">
-    <a href="#c:init/1" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">init(arg0)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">init(<a href="Game.html#t:t/0">Game.t</a>) :: tuple</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>GenServer callback to initalize server process</p>
-
-  </section>
-</div>
-<div class="detail" id="c:terminate/2">
-  <div class="detail-header">
-    <a href="#c:terminate/2" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">terminate(term, term)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">terminate(term, term) :: :ok</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Terminates the hangman game server
-No special cleanup other than refreshing the state</p>
-
-  </section>
-</div>
-
-        </section>
       
         <footer class="footer">
       <p>

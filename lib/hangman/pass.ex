@@ -1,20 +1,19 @@
 defmodule Pass do
   @moduledoc """
-  Module implements words pass types and words pass module struct
+  Module defines words pass types and pass struct
   """
 
+  defstruct size: 0, tally: %{}, possible: "", last_word: ""
 
   @typedoc """
-  Defines reduction pass and pass type
+  Defines word pass type
   """
-  
-  defstruct size: 0, tally: %{}, possible: "", last_word: ""
-  
+    
   @type t :: %__MODULE__{}
 
 
   @typedoc """
-  Define reduction pass key type
+  Defines word pass key type
   """
 
   @type key  :: {id :: String.t, game_no :: pos_integer, round_no :: pos_integer}  

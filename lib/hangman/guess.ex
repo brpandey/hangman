@@ -1,6 +1,6 @@
 defmodule Guess do
   @moduledoc """
-  Module primarily implements guess types
+  Module implements guess types
   """
 
   @type t :: {:guess_letter, String.t} | {:guess_word, String.t} 

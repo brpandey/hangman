@@ -2,25 +2,31 @@ defmodule Pass.Cache do
   use GenServer
 
 	@moduledoc """
-	Module implements ets table owning process for hangman words 
-  pass state for a given player, round number.
+	Module implements an `ETS` table owning process specifically to maintain
+  a words pass cache given a player, game and round number.
+  Given each player round, the player's pass data is store into the cache
+  for access on the subsequent round.  
+
+  The expired pass data is subsequently removed from the cache
+
+  Uses type `key` for cache gets
   
   Performs primarily unserialized reads
 	"""
 
   require Logger
   
-  alias Dictionary.Cache, as: Cache
+  alias Dictionary.Cache, as: DCache
   
   @name __MODULE__
 	@ets_table_name :engine_pass_table
 
-  @type cache_key :: :chunks | {:pass, :game_start} | {:pass, :game_keep_guessing}
+  @type key :: :chunks | {:pass, :game_start} | {:pass, :game_keep_guessing}
 
   # External API
 
   @doc """
-  GenServer start_link wrapper function
+  GenServer start link wrapper function
   """
   
   @spec start_link :: Supervisor.on_start
@@ -40,30 +46,30 @@ defmodule Pass.Cache do
 		GenServer.call pid, :stop
 	end
 
-  @doc """
+  @docp """
   GenServer callback to initialize server process
   """
 
-  @callback init(term) :: {}
+  #@callback init(term) :: {}
   def init(_) do
     setup()
     {:ok, {}}
   end
 
-  @doc """
+  @docp """
   GenServer callback to retrieve game server pid
   """
   
-  @callback handle_call(:atom, {}, {}) :: {}
+  #@callback handle_call(:atom, {}, {}) :: {}
 	def handle_call(:stop, _from, {}) do
 		{ :stop, :normal, :ok, {}}
 	end 
 
-  @doc """
+  @docp """
   GenServer callback to cleanup server state
   """
 
-  @callback terminate(reason :: term, {}) :: term | no_return
+  #@callback terminate(reason :: term, {}) :: term | no_return
 	def terminate(_reason, _state) do
 		:ok
 	end
@@ -76,12 +82,26 @@ defmodule Pass.Cache do
 	end
 
   @doc """
-  Routine retrieves pass tally given game start pass key
-  Request not serialized through server process, since we are doing reads
+  Get routine retrieves the pass size, pass tally, possible words, 
+  and other data given these cache keys.
+
+    * `{:pass, :game_start}` - this is the initial game start pass, so we 
+    request the data from the `Dictionary.Cache`.  The data is stored into 
+    the pass cache via `Pass.Writer.write/2`. Returns pass data type.
+
+    * `{:pass, :game_keep_guessing}` - retrieves the pass data from the last 
+    player round and relies on `Reduction.Engine.reduce/3` to reduce the possible
+    hangman words set with reduce_key.  When the reduction is finished, we 
+    write the data back to the pass cache and return the new pass data.
+
+  These get requests are not serialized through the server process since we are doing reads
   """
 
-  @spec get(cache_key, Pass.key, Reduction.key) :: {Pass.key, Pass.t}
-	def get({:pass, :game_start}, {id, game_no, round_no} = pass_key, reduce_key)
+
+  @spec get(cache_key :: Pass.Cache.key, pass_key :: Pass.key, 
+            reduce_key :: Reduction.key) :: {Pass.key, Pass.t} | no_return
+	def get({:pass, :game_start} = _cache_key, 
+          {id, game_no, round_no} = pass_key, reduce_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
 		# Asserts
@@ -91,10 +111,10 @@ defmodule Pass.Cache do
 		# Since this is the first pass, grab the words and tally from
 		# the Dictionary Cache
 
-		# Subsequent lookups will be from the pass table
+		# Subsequent round lookups will be from the pass table
 
-		chunks = %Chunks{} = Cache.lookup(:chunks, length_key)
-		tally = %Counter{} = Cache.lookup(:tally, length_key)
+		chunks = %Chunks{} = DCache.lookup(:chunks, length_key)
+		tally = %Counter{} = DCache.lookup(:tally, length_key)
 
 		pass_size = Chunks.count(chunks)
 		pass_info = %Pass{ size: pass_size, tally: tally, last_word: ""}
@@ -107,15 +127,8 @@ defmodule Pass.Cache do
 	end
 
 
-  @doc """
-  Game keep guessing engine pass routine
-  Routine retrieves pass tally given pass key
-  Request not serialized through server process, since we are doing reads
-  """
-
-  @spec get(cache_key, Pass.key, Reduction.key) :: {Pass.key, Pass.t}
-	def get({:pass, :game_keep_guessing}, {id, game_no, round_no} = pass_key, 
-               reduce_key)
+	def get({:pass, :game_keep_guessing} = _cache_key, 
+          {id, game_no, round_no} = pass_key, reduce_key)
  	when is_binary(id) and is_number(game_no) and is_number(round_no) do
     
 		{:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
@@ -128,13 +141,17 @@ defmodule Pass.Cache do
 		{pass_key, pass_info}
 	end
 
+  @doc """
+  Get routine retrieves pass cache data
 
-	@doc """
-  Retrieves pass chunks from ets table with pass key"
+  We can obtain chunks data, for cache keys with the :chunks atom
+    * `:chunks` - retrieves chunks data for a given pass key
+
+  These get requests are not serialized through the server process since we are doing reads
   """
   
-  @spec get(cache_key, Pass.key) :: Chunks.t | no_return
-	def get(:chunks, {id, game_no, round_no} = pass_key)
+  @spec get(Pass.Cache.key, Pass.key) :: Chunks.t | no_return
+	def get(:chunks = _cache_key, {id, game_no, round_no} = pass_key)
 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
 		
 		# Using match instead of lookup, to keep processing on the ets side

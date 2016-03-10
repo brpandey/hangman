@@ -3,13 +3,13 @@ defmodule Game.System.Supervisor do
 
   @moduledoc false
 
-  _ = """
+  '''
   Module implements supervisor behaviour.
 
   Module is a second line supervisor
 	as it supervises a first-line supervisor, Game.Server.Supervisor
 	along with the Game.Pid.Cache GenServer
-  """
+  '''
   
   require Logger
 

@@ -163,46 +163,42 @@ a single hangman game or multiple hangman games</p>
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.Pid.Cache.html">Game.Pid.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Module provides game server pid caching so
-a game server doesn’t need to be reloaded
-on every use</p>
+    <div class="summary-synopsis"><p>Module implements GenServer functionality to 
+provide game server pid caching.  Ultimately relies
+on the <code class="inline">gproc</code> module to administer registry facilities</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.Server.html">Game.Server</a></div>
   
-    <div class="summary-synopsis"><p>Module implements hangman game using GenServer process.
- Wraps hangman game abstraction as server state</p>
+    <div class="summary-synopsis"><p>Module implements hangman game server using GenServer.
+ Wraps hangman game abstraction as server state.  Runs 
+ each game or set of games sequentially</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Guess.html">Guess</a></div>
   
-    <div class="summary-synopsis"><p>Module primarily implements guess types</p>
+    <div class="summary-synopsis"><p>Module implements guess types</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Pass.html">Pass</a></div>
   
-    <div class="summary-synopsis"><p>Module implements words pass types and words pass module struct</p>
+    <div class="summary-synopsis"><p>Module defines words pass types and pass struct</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Pass.Cache.html">Pass.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Module implements ets table owning process for hangman words 
- pass state for a given player, round number</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Pass.Cache.Stub.html">Pass.Cache.Stub</a></div>
-  
-    <div class="summary-synopsis"><p>Stub module to mimic Pass Cache functionality</p>
+    <div class="summary-synopsis"><p>Module implements an <code class="inline">ETS</code> table owning process specifically to maintain
+ a words pass cache given a player, game and round number.
+ Given each player round, the player’s pass data is store into the cache
+ for access on the subsequent round</p>
 </div>
   
 </div>

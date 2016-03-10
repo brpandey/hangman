@@ -2,9 +2,12 @@ defmodule Game.Pid.Cache do
 	use GenServer
   
   @moduledoc """
-  Module provides game server pid caching so
-  a game server doesn't need to be reloaded
-  on every use
+  Module implements GenServer functionality to 
+  provide game server pid caching.  Ultimately relies
+  on the `gproc` module to administer registry facilities.
+
+  Pid caching prevents a game server process
+  from having to be loaded from scratch on every use
   """
   
   require Logger
@@ -12,12 +15,12 @@ defmodule Game.Pid.Cache do
 	@name __MODULE__
   
   @doc """
-  GenServer start_link wrapper function
+  GenServer start link wrapper function
   """
   
   @spec start_link :: {:ok, pid}
 	def start_link do
-		Logger.info "Starting Hangman Game Pid Cache Server"
+		Logger.info "Starting Game Pid Cache Server"
     
 		args = nil
 		options = [name: @name]
@@ -26,11 +29,11 @@ defmodule Game.Pid.Cache do
 	end
   
   @doc """
-  Checks registry cache for game server pid, returns cached pid or
-  if not found returns new game pid
+  Checks registry cache for game server pid given unique id, returns cached pid or
+  if not found returns new game pid. Handles race conditions
   """
   
-  @spec get_server_pid(String.t, String.t) :: pid
+  @spec get_server_pid(name :: String.t, args :: String.t) :: pid
 	def get_server_pid(player_name, secret) do
 		
 		case Game.Server.whereis(player_name) do
@@ -42,18 +45,18 @@ defmodule Game.Pid.Cache do
 		end
 	end
   
-  @doc """
+  @docp """
   GenServer callback to initialize server process
   """
 
-  @callback init(term) :: {}
+  #@callback init(term) :: {}
 	def init(_), do:	{:ok, nil}
   
-  @doc """
+  @docp """
   GenServer callback to retrieve game server pid
   """
   
-  @callback handle_call({:atom, String.t, String.t}, {}, term) :: {}
+  #@callback handle_call({:atom, String.t, String.t}, {}, term) :: {}
 	def handle_call({:get_server, player_name, secret}, _from, state) do
     
 		#Check the registry again for the pid -- safeguard against race condition

@@ -70,10 +70,10 @@
       
         <section id="moduledoc" class="docstring">
           <p>Module defines game abstraction which can handle
-a single hangman game or multiple hangman games</p>
-<p>Runs each game or set of games sequentially
-Therefore only one game is in play at any one time</p>
-<p>Primary functions are load, guess, status</p>
+a single hangman game or multiple hangman games.</p>
+<p>Runs each game or set of games sequentially.
+Therefore only one game is in play at any one time.</p>
+<p>Primary functions are <a href="Game.html#load/3"><code class="inline">Game.load/3</code></a>, <a href="Game.html#guess/2"><code class="inline">Game.guess/2</code></a>, <a href="Game.html#status/1"><code class="inline">Game.status/1</code></a>.</p>
 
         </section>
       
@@ -123,7 +123,8 @@ Therefore only one game is in play at any one time</p>
     <a href="#guess/2">guess(game, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Guess the specified word and update the pattern state accordingly</p>
+    <div class="summary-synopsis"><p>Runs guess data against game secret. Updates hangman pattern, status, and
+ other game recordkeeping structures</p>
 </div>
   
 </div>
@@ -132,7 +133,7 @@ Therefore only one game is in play at any one time</p>
     <a href="#info/1">info(g)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns strategy information</p>
+    <div class="summary-synopsis"><p>Returns game information</p>
 </div>
   
 </div>
@@ -141,7 +142,7 @@ Therefore only one game is in play at any one time</p>
     <a href="#load/3">load(id_key, secret, max_wrong)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Loads a new game state given new secrets</p>
+    <div class="summary-synopsis"><p>Loads a new game state given new secret(s)</p>
 </div>
   
 </div>
@@ -218,17 +219,25 @@ Therefore only one game is in play at any one time</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="#t:result/0">result</a></code></pre>
-        
-          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="#t:result/0">result</a></code></pre>
+          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, guess :: <a href="Guess.html#t:t/0">Guess.t</a>) :: <a href="#t:result/0">result</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Guess the specified word and update the pattern state accordingly</p>
-<p>If correct, returns the :correct_word data tuple along with game</p>
-<p>If incorrect, returns the :incorrect_word data tuple with game</p>
+    <p> Runs guess data against game secret. Updates hangman pattern, status, and
+ other game recordkeeping structures.</p>
+<p> Guesses follow two types</p>
+<ul>
+<li><p><code class="inline">{:guess_letter, letter}</code> -    If correct, 
+   returns the :correct_letter data tuple along with game
+  otherwise, returns the :incorrect_letter data tuple along with game</p>
+</li>
+<li><code class="inline">{:guess_word, word}</code> -    If correct, returns 
+   the :correct_word data tuple along with game
+  If incorrect, returns the :incorrect_word data tuple with game
+</li>
+</ul>
 
   </section>
 </div>
@@ -251,7 +260,7 @@ Therefore only one game is in play at any one time</p>
     </div>
   
   <section class="docstring">
-    <p>Returns strategy information</p>
+    <p>Returns game information</p>
 
   </section>
 </div>
@@ -268,15 +277,13 @@ Therefore only one game is in play at any one time</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">load(<a href="#t:id/0">id</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], pos_integer) :: <a href="#t:t/0">t</a></code></pre>
-        
-          <pre><code class="elixir">load(<a href="#t:id/0">id</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, pos_integer) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">load(<a href="#t:id/0">id</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], pos_integer) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Loads a new game state given new secrets</p>
+    <p>Loads a new game state given new secret(s)</p>
 
   </section>
 </div>

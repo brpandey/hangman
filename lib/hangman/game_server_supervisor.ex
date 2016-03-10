@@ -3,12 +3,11 @@ defmodule Game.Server.Supervisor do
   
   @moduledoc false 
 
-  _ = """
-  Module implements supervisor behaviour.
+  # Module implements supervisor behaviour.
 
-	Module is a first line supervisor
-	which will dynamically start its Game.Server children
-  """
+	# Module is a first line supervisor
+	# which will dynamically start its Game.Server children
+
   
   require Logger
   

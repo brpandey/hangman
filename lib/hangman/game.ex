@@ -1,12 +1,12 @@
 defmodule Game do
   @moduledoc """
   Module defines game abstraction which can handle
-  a single hangman game or multiple hangman games
+  a single hangman game or multiple hangman games.
   
-  Runs each game or set of games sequentially
-  Therefore only one game is in play at any one time
+  Runs each game or set of games sequentially.
+  Therefore only one game is in play at any one time.
   
-  Primary functions are load, guess, status
+  Primary functions are `Game.load/3`, `Game.guess/2`, `Game.status/1`.
   """
   
   
@@ -38,10 +38,10 @@ defmodule Game do
   
   
   @doc """
-  Loads a new game state given new secrets
+  Loads a new game state given new secret(s)
   """
   
-  @spec load(id, String.t, pos_integer) :: t
+  @spec load(id, String.t | [String.t], pos_integer) :: t
 	def load(id_key, secret, max_wrong)
   when is_binary(id_key) and is_binary(secret) do
 		pattern = String.duplicate(@mystery_letter, String.length(secret))
@@ -50,7 +50,6 @@ defmodule Game do
 			    pattern: pattern, max_wrong: max_wrong}
 	end
   
-  @spec load(id, [String.t], pos_integer) :: t
   def load(id_key, secrets, max_wrong) when is_list(secrets) do
 		#initialize the list of secrets to be uppercase 
 		#initialize the list of patterns to fit the secrets length
@@ -66,13 +65,22 @@ defmodule Game do
   
   
   @doc """
-	Guess the specified letter and update the pattern state accordingly
-  
-	If a correct guess, returns the :correct_letter data tuple along with game
-	otherwise, returns the :incorrect_letter data tuple along with game
+  Runs guess data against game secret. Updates hangman pattern, status, and
+  other game recordkeeping structures.
+
+  Guesses follow two types
+
+    * `{:guess_letter, letter}` - 	If correct, 
+    returns the :correct_letter data tuple along with game
+	  otherwise, returns the :incorrect_letter data tuple along with game
+
+    * `{:guess_word, word}` - 	If correct, returns 
+    the :correct_word data tuple along with game
+	  If incorrect, returns the :incorrect_word data tuple with game
+	  
 	"""
-  
-  @spec guess(t, Guess.t) :: result
+
+  @spec guess(t, guess :: Guess.t) :: result
   def guess(%Game{} = game, {:guess_letter, letter}) do
     
     # assert we can guess :)
@@ -118,15 +126,7 @@ defmodule Game do
     {game, data}
   end
   
-	@doc """
-	Guess the specified word and update the pattern state accordingly
   
-	If correct, returns the :correct_word data tuple along with game
-  
-	If incorrect, returns the :incorrect_word data tuple with game
-	"""
-  
-  @spec guess(t, Guess.t) :: result
   def guess(%Game{} = game, {:guess_word, word}) do
 		{ _, :game_keep_guessing, _ } = status(game) # Assert
     
@@ -322,7 +322,7 @@ defmodule Game do
 
 
   @doc """
-  Returns strategy information
+  Returns game information
   """
 
   @spec info(t) :: Keyword.t

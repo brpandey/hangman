@@ -1,10 +1,12 @@
 defmodule Pass.Cache.Stub do 
-  @moduledoc """
+  @moduledoc false
+
+  '''
   Stub module to mimic Pass Cache functionality
 
   Provides a simple scaffold implementation 
   to provide simple, predictable behavior
-  """
+  '''
 
   @doc """
   Stub Routine retrieves stub pass tally given game start pass key
