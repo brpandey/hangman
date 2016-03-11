@@ -1,4 +1,4 @@
-defmodule Hangman do
+defmodule Hangman.Application do
   use Application
 
   @moduledoc  """

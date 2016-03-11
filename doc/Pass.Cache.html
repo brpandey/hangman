@@ -71,7 +71,7 @@
         <section id="moduledoc" class="docstring">
           <p> Given a player, a game and round number, <a href="Pass.Cache.html#content"><code class="inline">Pass.Cache</code></a> maintains a words pass <code class="inline">cache</code>.</p>
 <p> Internally the module implements a <code class="inline">GenServer</code> which uses <code class="inline">ETS</code>.</p>
-<p> After each player has made their <a href="Hangman.html"><code class="inline">Hangman</code></a> round guess, the resultant reduced
+<p> After each player has made their <code class="inline">Hangman</code> round guess, the resultant reduced
  words <code class="inline">pass</code> data is stored into the <a href="Pass.Cache.html#content"><code class="inline">Pass.Cache</code></a> for access on the 
  subsequent round.  The expired <code class="inline">pass</code> data from stale rounds is subsequently 
  removed from the <code class="inline">cache</code>.</p>
@@ -244,7 +244,7 @@ and other data given these cache <code class="inline">keys</code>.</p>
 </li>
 <li><code class="inline">{:pass, :game_keep_guessing}</code> - retrieves the pass data from the last 
   player round and relies on <a href="Reduction.Engine.html#reduce/3"><code class="inline">Reduction.Engine.reduce/3</code></a> to reduce the possible
-  <a href="Hangman.html"><code class="inline">Hangman</code></a> words set with <code class="inline">reduce_key</code>.  When the reduction is finished, we 
+  <code class="inline">Hangman</code> words set with <code class="inline">reduce_key</code>.  When the reduction is finished, we 
   write the data back to the <a href="Pass.Cache.html#content"><code class="inline">Pass.Cache</code></a> and return the new <code class="inline">pass</code> data.
 </li>
 </ul>
