@@ -2,7 +2,7 @@ defmodule Hangman do
   use Application
 
   @moduledoc  """
-  Main hangman application.  
+  Main `Hangman` application.  
   
   `Usage:
   --name (player id) --type ("human" or "robot") --random (num random secrets, max 10)
@@ -19,8 +19,8 @@ defmodule Hangman do
   require Logger
 
 
-  @docp """
-  Main application callback start method
+  @doc """
+  Main `application` callback start method. Calls `Root.Supervisor`
   """
 
   @callback start(term, Keyword.t) :: Supervisor.on_start
