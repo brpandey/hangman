@@ -3,7 +3,7 @@ defmodule Player.Supervisor do
 
   @moduledoc false
 
-  _ = """
+  '''
   Module implements supervisor functionality, overseeing
   dynamically started player fsms.
 
@@ -14,7 +14,7 @@ defmodule Player.Supervisor do
 
 	Hangman.Player.Supervisor is a first line supervisor
 	which will dynamically start its children
-  """
+  '''
   
   require Logger
 

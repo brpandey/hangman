@@ -69,10 +69,9 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module defines game abstraction which can handle
-a single hangman game or multiple hangman games.</p>
-<p>Defines Game type.</p>
-<p>Runs each game or games sequentially.  Therefore only one game
+          <p>Module defines <code class="inline">Hangman</code> <a href="Game.html#content"><code class="inline">Game</code></a> abstraction which can handle
+a single <code class="inline">Hangman</code> game or multiple <code class="inline">Hangman</code> games.</p>
+<p>Runs each <code class="inline">game</code> or <code class="inline">games</code> sequentially.  Therefore only one <code class="inline">game</code>
 is in play at any one time.</p>
 <p>Primary functions are <a href="Game.html#load/3"><code class="inline">Game.load/3</code></a>, <a href="Game.html#guess/2"><code class="inline">Game.guess/2</code></a>, <a href="Game.html#status/1"><code class="inline">Game.status/1</code></a>.</p>
 
@@ -106,7 +105,7 @@ is in play at any one time.</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t:t/0">t()</a>
+    <a href="#t/0">t()</a>
   </div>
   
 </div>
@@ -124,8 +123,8 @@ is in play at any one time.</p>
     <a href="#guess/2">guess(game, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Runs guess data against game secret. Updates hangman pattern, status, and
- other game recordkeeping structures</p>
+    <div class="summary-synopsis"><p>Runs <code class="inline">guess</code> against <a href="Game.html#content"><code class="inline">Game</code></a> <code class="inline">secret</code>. Updates <code class="inline">Hangman</code> pattern, status, and
+ other <code class="inline">game</code> recordkeeping structures</p>
 </div>
   
 </div>
@@ -134,7 +133,7 @@ is in play at any one time.</p>
     <a href="#info/1">info(g)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns game information</p>
+    <div class="summary-synopsis"><p>Returns <a href="Game.html#content"><code class="inline">Game</code></a> information</p>
 </div>
   
 </div>
@@ -143,7 +142,7 @@ is in play at any one time.</p>
     <a href="#load/3">load(id_key, secret, max_wrong)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Loads a new game state given new secret(s)</p>
+    <div class="summary-synopsis"><p>Loads a new <a href="Game.html#content"><code class="inline">Game</code></a> state given new <code class="inline">secret(s)</code></p>
 </div>
   
 </div>
@@ -158,7 +157,7 @@ is in play at any one time.</p>
     <a href="#status/1">status(game)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns current game status text</p>
+    <div class="summary-synopsis"><p>Returns current <a href="Game.html#content"><code class="inline">Game</code></a> status text</p>
 </div>
   
 </div>
@@ -190,8 +189,8 @@ is in play at any one time.</p>
   <pre><code class="elixir"><a href="#t:result/0">result</a> :: {<a href="#t:t/0">t</a>, tuple}</code></pre>
   
 </div>
-<div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Game{correct_letters: term, current: term, id: term, incorrect_letters: term, incorrect_words: term, max_wrong: term, pattern: term, patterns: term, score: term, scores: term, secret: term, secrets: term}</code></pre>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
   
 </div>
 
@@ -226,17 +225,17 @@ is in play at any one time.</p>
     </div>
   
   <section class="docstring">
-    <p> Runs guess data against game secret. Updates hangman pattern, status, and
- other game recordkeeping structures.</p>
+    <p> Runs <code class="inline">guess</code> against <a href="Game.html#content"><code class="inline">Game</code></a> <code class="inline">secret</code>. Updates <code class="inline">Hangman</code> pattern, status, and
+ other <code class="inline">game</code> recordkeeping structures.</p>
 <p> Guesses follow two types</p>
 <ul>
 <li><p><code class="inline">{:guess_letter, letter}</code> -    If correct, 
-   returns the :correct_letter data tuple along with game
-  otherwise, returns the :incorrect_letter data tuple along with game</p>
+   returns the :correct_letter data tuple along with <code class="inline">game</code> data
+  otherwise, returns the :incorrect_letter data tuple along with <code class="inline">game</code> data</p>
 </li>
 <li><code class="inline">{:guess_word, word}</code> -    If correct, returns 
-   the :correct_word data tuple along with game
-  If incorrect, returns the :incorrect_word data tuple with game
+   the :correct_word data tuple along with <code class="inline">game</code>
+  If incorrect, returns the :incorrect_word data tuple with <code class="inline">game</code> data
 </li>
 </ul>
 
@@ -261,7 +260,7 @@ is in play at any one time.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns game information</p>
+    <p>Returns <a href="Game.html#content"><code class="inline">Game</code></a> information</p>
 
   </section>
 </div>
@@ -284,7 +283,7 @@ is in play at any one time.</p>
     </div>
   
   <section class="docstring">
-    <p>Loads a new game state given new secret(s)</p>
+    <p>Loads a new <a href="Game.html#content"><code class="inline">Game</code></a> state given new <code class="inline">secret(s)</code></p>
 
   </section>
 </div>
@@ -329,7 +328,7 @@ is in play at any one time.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns current game status text</p>
+    <p>Returns current <a href="Game.html#content"><code class="inline">Game</code></a> status text</p>
 
   </section>
 </div>

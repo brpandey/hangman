@@ -4,12 +4,12 @@ defmodule Game.Server do
   require Logger
 	
 	@moduledoc """
-  Module implements hangman game server using GenServer.
-  Wraps hangman game abstraction as server state.  Runs 
-  each game or set of games sequentially
+  Module implements `Hangman` `Game` server using `GenServer`.
+  Wraps `Game` abstraction as server state.  Runs 
+  each `game` or set of `games` sequentially
 
-	Interacts with player client through public interface and
-	maintains game state
+	Interacts with client `player` through public interface and
+	maintains `game` state
 	"""
   
   @type id :: String.t
@@ -24,7 +24,7 @@ defmodule Game.Server do
   
   
 	@doc """
-	Start public interface method with secret(s)
+	Start public interface method with `secret(s)`
 	"""
   
   @spec start_link(String.t, (String.t | [String.t]), 
@@ -38,8 +38,8 @@ defmodule Game.Server do
 	end
   
   @doc """
-  Routine returns game server pid from process registry using gproc
-  If not found, returns :undefined
+  Routine returns game server `pid` from process registry using `gproc`
+  If not found, returns `:undefined`
   """
   
   @spec whereis(id) :: pid | :atom
@@ -54,8 +54,8 @@ defmodule Game.Server do
 	end
   
   @doc """
-  Loads new game state into server process. 
-  Used primarily by game pid cache server
+  Loads new `game` into server process. 
+  Used primarily by `Game.Pid.Cache`
   """
   
   @spec load(pid, id, (String.t | [String.t]), pos_integer) :: :ok
@@ -70,20 +70,20 @@ defmodule Game.Server do
 	end
   
   @doc """
-  Issues guess letter or word request, returns guess result reply
+  Issues guess `letter` or `word` request, returns guess `result`
 
-  Internally, runs guess data against game secret. Updates hangman pattern, status, and
+  Internally, runs `guess` against game `secret`. Updates `Hangman` pattern, status, and
   other game recordkeeping structures.
 
   Guesses follow two types
 
     * `{:guess_letter, letter}` - 	If correct, 
-    returns the :correct_letter data tuple along with game
-	  otherwise, returns the :incorrect_letter data tuple along with game
+    returns the `:correct_letter` data tuple along with game info
+	  otherwise, returns the `:incorrect_letter` data tuple along with game info
 
     * `{:guess_word, word}` - 	If correct, returns 
-    the :correct_word data tuple along with game
-	  If incorrect, returns the :incorrect_word data tuple with game
+    the `:correct_word` data tuple along with game info
+	  If incorrect, returns the :incorrect_word data tuple with game info
 	  
   """
   
@@ -99,7 +99,7 @@ defmodule Game.Server do
 	end
   
   @doc """
-  Retrieves game server status data
+  Retrieves `Game` status data
   """
   
   @spec status(pid) :: tuple
@@ -108,7 +108,7 @@ defmodule Game.Server do
 	end
   
   @doc """
-  Retrieves game secret length number
+  Retrieves `Game` secret length
   """
   
   @spec secret_length(pid) :: tuple
@@ -123,7 +123,7 @@ defmodule Game.Server do
   '''
   
   @doc """
-  Issues request to stop GenServer
+  Issues request to stop `GenServer`
   """
   
   @spec stop(pid) :: tuple
@@ -144,7 +144,7 @@ defmodule Game.Server do
 	end
   
 	@docp """
-	Loads a new game
+	Loads a new `Game`
 	"""
   
 #  @callback handle_cast(tuple, Game.t) :: tuple
@@ -256,7 +256,7 @@ defmodule Game.Server do
   '''
   
 	@docp """
-	Terminates the hangman game server
+	Terminates the `game` server
 	No special cleanup other than refreshing the state
 	"""
   

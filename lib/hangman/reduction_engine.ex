@@ -1,14 +1,16 @@
 defmodule Reduction.Engine do
 
   @moduledoc """
-  Module implements words reduction engine.
-
-  Reduction load is handled through pool.
+  Module implements words reduction engine.  
   
-  Module distributes reduce requests based on pass key id attribute (name).
-  Reduction workers are started up as part of the reducer pool.
+  Reduces possible `Hangman` words set based on the provided reduce `key`.  Reduction 
+  `load` is handled through `Reduction.Engine.Pool`.
+  
+  The `Reduction.Engine` distributes `reduce/3` requests based on 
+  the pass key id attribute to `workers`. Engine workers are started up 
+  as part of the reducer pool.
 
-  Pool supervises reduction workers.
+  The pool supervises the reduction `workers`.
   """
 
 
@@ -17,8 +19,8 @@ defmodule Reduction.Engine do
   @pool_size 10
 
   @doc """
-  Supervisor start_link wrapper function
-  Starts pool supervisor
+  Supervisor start link wrapper function
+  Starts pool `Supervisor`
   """
 
   @spec start_link :: Supervisor.on_start
@@ -27,8 +29,9 @@ defmodule Reduction.Engine do
   end
 
   @doc """
-  Calls synchronous worker process function reduce and store
-  Based on key id, selects reduction worker to hand off request to
+  Distributes reduce request to appropriate `worker`.
+  Calls synchronous `worker` process function `Reduction.Engine.Worker.reduce_and_store/4`.
+  Hands off request based on key id.
   """
   
   @spec reduce(Pass.key, Regex.t, map) :: Pass.t

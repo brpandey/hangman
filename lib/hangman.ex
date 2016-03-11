@@ -3,10 +3,10 @@ defmodule Hangman.Application do
 
   @moduledoc false
 
-  _ = """
+  '''
   Main hangman application callback module.  
   Invokes root level supervisor
-  """
+  '''
 
   require Logger
 

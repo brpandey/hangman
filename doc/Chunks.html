@@ -69,17 +69,17 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module to handle word list chunks for a given length key.  
- Internally maintains standardized containers for word lists and 
- keeps track of total word and chunks counts.</p>
-<p> Splits big words list into smaller more manageable list chunks</p>
+          <p>Module to handle word list <a href="Chunks.html#content"><code class="inline">Chunks</code></a> for a given length key.  
+ Internally maintains standardized <code class="inline">containers</code> for word lists and 
+ keeps track of total word counts and number of <code class="inline">containers</code>.</p>
+<p> Splits big words list into smaller more manageable list <a href="Chunks.html#content"><code class="inline">Chunks</code></a>.</p>
 <p> The need for chunking arises when we may have arbitrary long word
  lists/streams, so we chunk the word list to a standard size of 500 words.  </p>
 <p> A single <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction can contain a single chunked word list or 
  multiple chunked word lists.</p>
 <p> <a href="Chunks.html#content"><code class="inline">Chunks</code></a> provide more manageability especially when we store into the database because
  the abstraction automatically binaries data leaving a smaller footprint.</p>
-<p> Primary functions are new, count, and add</p>
+<p> Primary functions are <a href="#new/2"><code class="inline">new/2</code></a>, <a href="#count/1"><code class="inline">count/1</code></a>, <a href="#add/2"><code class="inline">add/2</code></a>, and <a href="#get_words_lazy/1"><code class="inline">get_words_lazy/1</code></a>.</p>
 
         </section>
       
@@ -105,7 +105,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t:t/0">t()</a>
+    <a href="#t/0">t()</a>
   </div>
   
 </div>
@@ -123,8 +123,14 @@
     <a href="#add/2">add(chunks, value)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Takes an existing chunk and adds the passed in binary chunk tuple</p>
+    <div class="summary-synopsis"><p>Takes an existing <a href="Chunks.html#content"><code class="inline">Chunks</code></a> and adds the passed in binary <code class="inline">chunk</code> <code class="inline">tuple</code></p>
 </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#container_size/0">container_size()</a>
+  </div>
   
 </div>
 <div class="summary-row">
@@ -132,7 +138,7 @@
     <a href="#count/1">count(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns total word count across all chunk containers</p>
+    <div class="summary-synopsis"><p>Returns total word count across all <code class="inline">chunk</code> containers</p>
 </div>
   
 </div>
@@ -141,7 +147,7 @@
     <a href="#get_words_lazy/1">get_words_lazy(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns words in lazy enumerable fashion</p>
+    <div class="summary-synopsis"><p>Returns words in <code class="inline">lazy</code> <code class="inline">enumerable</code> fashion</p>
 </div>
   
 </div>
@@ -150,7 +156,7 @@
     <a href="#info/1">info(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns chunks information</p>
+    <div class="summary-synopsis"><p>Returns <a href="Chunks.html#content"><code class="inline">Chunks</code></a> information</p>
 </div>
   
 </div>
@@ -159,7 +165,7 @@
     <a href="#key/1">key(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns Chunks word length key</p>
+    <div class="summary-synopsis"><p>Returns <a href="Chunks.html#content"><code class="inline">Chunks</code></a> word length key</p>
 </div>
   
 </div>
@@ -168,7 +174,7 @@
     <a href="#new/1">new(length_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new empty chunks abstraction</p>
+    <div class="summary-synopsis"><p>Returns new empty <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction</p>
 </div>
   
 </div>
@@ -177,8 +183,8 @@
     <a href="#new/2">new(length_key, words)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new chunks abstraction.  Does this by splitting and encapsulating 
-words lists from enumerable into standardized chunk containers.  
+    <div class="summary-synopsis"><p>Returns new <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction.  Does this by splitting and encapsulating 
+words lists from enumerable into standardized <code class="inline">chunk</code> containers.  
 Word lists are binaried for compactness</p>
 </div>
   
@@ -188,7 +194,7 @@ Word lists are binaried for compactness</p>
     <a href="#size/1">size(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Return total number of chunk containers</p>
+    <div class="summary-synopsis"><p>Return total number of <code class="inline">chunk</code> containers</p>
 </div>
   
 </div>
@@ -216,8 +222,8 @@ Word lists are binaried for compactness</p>
   <pre><code class="elixir"><a href="#t:binary_chunk/0">binary_chunk</a> :: {binary, integer}</code></pre>
   
 </div>
-<div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Chunks{chunk_count: term, key: term, raw_stream: term, word_count: term}</code></pre>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
   
 </div>
 
@@ -252,11 +258,33 @@ Word lists are binaried for compactness</p>
     </div>
   
   <section class="docstring">
-    <p>Takes an existing chunk and adds the passed in binary chunk tuple.</p>
+    <p>Takes an existing <a href="Chunks.html#content"><code class="inline">Chunks</code></a> and adds the passed in binary <code class="inline">chunk</code> <code class="inline">tuple</code>.</p>
 <p>Heavily used in reduce methods to add a {binary, word_count} to the
-Chunks accumulator value.</p>
-<p>The tuple head is a binaried word list and the tail is the word count</p>
+<a href="Chunks.html#content"><code class="inline">Chunks</code></a> accumulator value.</p>
+<p>The <code class="inline">tuple</code> head is a binaried word list and the tail is the word count</p>
 
+  </section>
+</div>
+<div class="detail" id="container_size/0">
+  <div class="detail-header">
+    <a href="#container_size/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">container_size()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">container_size :: pos_integer</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
   </section>
 </div>
 <div class="detail" id="count/1">
@@ -278,7 +306,7 @@ Chunks accumulator value.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns total word count across all chunk containers</p>
+    <p>Returns total word count across all <code class="inline">chunk</code> containers</p>
 
   </section>
 </div>
@@ -301,7 +329,7 @@ Chunks accumulator value.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns words in lazy enumerable fashion.</p>
+    <p>Returns words in <code class="inline">lazy</code> <code class="inline">enumerable</code> fashion.</p>
 
   </section>
 </div>
@@ -324,7 +352,7 @@ Chunks accumulator value.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns chunks information</p>
+    <p>Returns <a href="Chunks.html#content"><code class="inline">Chunks</code></a> information</p>
 
   </section>
 </div>
@@ -347,7 +375,7 @@ Chunks accumulator value.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns Chunks word length key</p>
+    <p>Returns <a href="Chunks.html#content"><code class="inline">Chunks</code></a> word length key</p>
 
   </section>
 </div>
@@ -370,7 +398,7 @@ Chunks accumulator value.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns new empty chunks abstraction</p>
+    <p>Returns new empty <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction</p>
 
   </section>
 </div>
@@ -393,8 +421,8 @@ Chunks accumulator value.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns new chunks abstraction.  Does this by splitting and encapsulating 
-words lists from enumerable into standardized chunk containers.  
+    <p>Returns new <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction.  Does this by splitting and encapsulating 
+words lists from enumerable into standardized <code class="inline">chunk</code> containers.  
 Word lists are binaried for compactness.</p>
 
   </section>
@@ -418,7 +446,7 @@ Word lists are binaried for compactness.</p>
     </div>
   
   <section class="docstring">
-    <p>Return total number of chunk containers</p>
+    <p>Return total number of <code class="inline">chunk</code> containers</p>
 
   </section>
 </div>

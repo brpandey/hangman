@@ -1,13 +1,13 @@
 defmodule Guess do
   @moduledoc """
-  Module implements guess types
+  Module implements `Guess` types
   """
 
   @type t :: {:guess_letter, String.t} | {:guess_word, String.t} 
 
 
   @typedoc """
-  Directive doesn't actually contain the guess, just direction
+  Directive doesn't actually contain the `guess`, just the `guess` directive
   """
   
   @type directive :: :guess_last_word | :robot_guess | :choose_letters
@@ -15,7 +15,7 @@ defmodule Guess do
   @type option :: {:game_choose_letter, String.t} | {:game_last_word, String.t}
 
   @typedoc """
-  Used by round abstraction to understand previous guess results
+  Used by `Round` to understand prior `guess` result
   """
 
   @type context ::  ({:game_start, secret_length :: pos_integer}) |

@@ -69,9 +69,9 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module is a GenServer that implements writer worker functionality.
-Specifically, module is a write operation specific module that 
-performs async writes into <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> <code class="inline">ETS</code> table.</p>
+          <p>Module is a <code class="inline">GenServer</code> that implements writer worker functionality.
+Specifically, module is a <code class="inline">write-operation</code> specific module that 
+performs <code class="inline">async</code> writes into <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> <code class="inline">ETS</code> table.</p>
 <p>If the <a href="Pass.Writer.Worker.html#write/3"><code class="inline">Pass.Writer.Worker.write/3</code></a> operation fails for whatever reason, 
 doesn’t bring down the reads and table-owning <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> process.  
 Hence the separation.</p>
@@ -106,7 +106,7 @@ Hence the separation.</p>
     <a href="#stop/1">stop(pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues request to stop GenServer worker</p>
+    <div class="summary-synopsis"><p>Issues request to stop GenServer <code class="inline">worker</code></p>
 </div>
   
 </div>
@@ -115,8 +115,8 @@ Hence the separation.</p>
     <a href="#write/3">write(worker_id, pass_key, chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Write is an asynchronous call.
-Inserts chunks into ets pass table</p>
+    <div class="summary-synopsis"><p>Write is an <code class="inline">asynchronous</code> call.
+Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> pass table</p>
 </div>
   
 </div>
@@ -173,7 +173,7 @@ Inserts chunks into ets pass table</p>
     </div>
   
   <section class="docstring">
-    <p>Issues request to stop GenServer worker</p>
+    <p>Issues request to stop GenServer <code class="inline">worker</code></p>
 
   </section>
 </div>
@@ -196,8 +196,8 @@ Inserts chunks into ets pass table</p>
     </div>
   
   <section class="docstring">
-    <p>Write is an asynchronous call.
-Inserts chunks into ets pass table</p>
+    <p>Write is an <code class="inline">asynchronous</code> call.
+Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> pass table</p>
 
   </section>
 </div>

@@ -1,9 +1,9 @@
 defmodule Player.Events do
   @moduledoc """
-  Module implements event manager for use with player.
+  Module implements `GenEvent` manager for use with `player`.
 
-  Handles writing of event notification data to a player log file or
-  displaying them as a feed to the user
+  Handles writing of `event` notification data to a `player` log file or
+  displaying them as a `feed` to the user
   """
 
   require Logger
@@ -71,7 +71,7 @@ defmodule Player.Events do
 	end
 
   @doc """
-  Sends `:start` tuple event notification to event manager
+  Sends `:start` tuple `event` notification to `Player.Events`
   """
 
   @spec notify_start(pid, name :: String.t) :: :ok
@@ -80,7 +80,7 @@ defmodule Player.Events do
 	end
 
   @doc """
-  Sends `:secret_length` tuple event notification to event manager
+  Sends `:secret_length` tuple `event` notification to `Player.Events`
   """
 
   @spec notify_length(pid, data :: tuple) :: :ok
@@ -90,7 +90,7 @@ defmodule Player.Events do
 
   @doc """
   Sends either a `{:guess_letter, letter}` or 
-  `{:guess_word, word}` tuple  event notification to event manager, 
+  `{:guess_word, word}` tuple  `event` notification to `Player.Events`, 
   depending on guess.
   """
 
@@ -115,7 +115,7 @@ defmodule Player.Events do
 
 
   @doc """
-  Sends `:round_status` tuple event notification to event manager
+  Sends `:round_status` tuple `event` notification to `Player.Events`
   """
 
   @spec notify_status(pid, data :: tuple) :: :ok
@@ -124,7 +124,7 @@ defmodule Player.Events do
 	end
 
   @doc """
-  Sends `:games_over` tuple event notification to event manager
+  Sends `:games_over` tuple `event` notification to `Player.Events`
   """
 
   @spec notify_games_over(pid, name :: String.t, text :: String.t) :: :ok
@@ -133,7 +133,7 @@ defmodule Player.Events do
 	end
 
   @doc """
-  Issues request to stop GenEvent manager
+  Issues request to stop `GenEvent` manager
   """
   
   @spec stop(pid) :: :ok

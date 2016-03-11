@@ -69,15 +69,15 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Provides abstraction for various dictionary files.</p>
-<p>The original dictionary file is transformed into 
+          <p>Provides abstraction for various <a href="Dictionary.html"><code class="inline">Dictionary</code></a> files.</p>
+<p>The original <a href="Dictionary.html"><code class="inline">Dictionary</code></a> file is transformed into 
 intermediate files as cached representations of each
 transformation layer. Unless the original file changes, transformation 
 every time isn’t necessary since the intermediate files are stored on disk.  </p>
 <p>Load time is only determined by the last transformed chunk file, 
 which is optimized for <code class="inline">ETS</code> load.</p>
-<p>Transformation types are unsorted to sorted, 
-sorted to grouped, and grouped to chunked.  Each transform handler 
+<p>Transformation types are <code class="inline">unsorted</code> to <code class="inline">sorted</code>, 
+<code class="inline">sorted</code> to <code class="inline">grouped</code>, and <code class="inline">grouped</code> to <code class="inline">chunked</code>.  Each transform handler 
 encapsulates each transform procedure</p>
 
         </section>
@@ -103,7 +103,7 @@ encapsulates each transform procedure</p>
     <a href="#make_file_transform/1">make_file_transform(fn_transform)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Function builder routine to return the customized transform function</p>
+    <div class="summary-synopsis"><p>Function builder routine to return the customized <code class="inline">transform</code> function</p>
 </div>
   
 </div>
@@ -112,9 +112,9 @@ encapsulates each transform procedure</p>
     <a href="#transform/3">transform(path, arg, kind)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Takes input file, applies a transform type and returns new file path
-For example, can be used to first sort a file, then upon
-second invocation, group that file</p>
+    <div class="summary-synopsis"><p>Takes input file, applies a <code class="inline">transform</code> and returns new file path.
+For example, can be used to first <code class="inline">sort</code> a file, then upon
+second invocation, <code class="inline">group</code> that file</p>
 </div>
   
 </div>
@@ -123,7 +123,7 @@ second invocation, group that file</p>
     <a href="#transform_handler/3">transform_handler(path, new_path, atom)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Specific handler implementations for sort, group, and chunk transform</p>
+    <div class="summary-synopsis"><p>Specific handler implementations for <code class="inline">sort</code>, <code class="inline">group</code>, and <code class="inline">chunk</code> transform</p>
 </div>
   
 </div>
@@ -167,9 +167,9 @@ second invocation, group that file</p>
     </div>
   
   <section class="docstring">
-    <p>Function builder routine to return the customized transform function</p>
-<p>When each returned function runs, its reads in the “untransformed” file, 
-applies the transform lambda, and then writes out to the new path</p>
+    <p>Function builder routine to return the customized <code class="inline">transform</code> function.</p>
+<p>When each returned function runs, its reads in the file, 
+applies the <code class="inline">transform</code> lambda, and then writes out to the new path</p>
 
   </section>
 </div>
@@ -192,9 +192,9 @@ applies the transform lambda, and then writes out to the new path</p>
     </div>
   
   <section class="docstring">
-    <p>Takes input file, applies a transform type and returns new file path
-For example, can be used to first sort a file, then upon
-second invocation, group that file</p>
+    <p>Takes input file, applies a <code class="inline">transform</code> and returns new file path.
+For example, can be used to first <code class="inline">sort</code> a file, then upon
+second invocation, <code class="inline">group</code> that file.</p>
 
   </section>
 </div>
@@ -217,7 +217,7 @@ second invocation, group that file</p>
     </div>
   
   <section class="docstring">
-    <p>Specific handler implementations for sort, group, and chunk transform</p>
+    <p>Specific handler implementations for <code class="inline">sort</code>, <code class="inline">group</code>, and <code class="inline">chunk</code> transform</p>
 
   </section>
 </div>

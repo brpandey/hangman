@@ -1,50 +1,68 @@
 defmodule Action do
-  @moduledoc """
 
-  Module encapsulates hangman round guess actions 
+  @moduledoc """
+  Module encapsulates `Round` guess actions 
   and the data associated with carrying them out. 
 
   Uses function builder strategy to easily be
-  able to add new data retrievers, and updaters
+  able to add new data retrievers, and updaters.
 
-  Two sets of implementation are given. One has a
-  function builder approach the other has a more boilerplate looking
-  function body which is easier to read.
+  Data retrievers are `Strategy` methods.
+  Updaters are `Round` methods.
 
-  Written this way for purely erudition purposes
+  Relies on `Strategy` and `Round` to return updated `Player`.
   """
 
 
   @human Player.human
   @robot Player.robot
 
-  # CODE w/ function builders
 
   # Data retrievers
+
+  @docp """
+  Data retriever to retrieve letter guess
+  """
 
   @spec retrieve_letter_guess(Player.t, String.t) :: Guess.t
   defp retrieve_letter_guess(%Player{} = p, l) do
     Strategy.letter_in_most_common(p.strategy, l)
   end
 
-  @spec retrieve_last_guess(Player.t) :: Guess.t
-  defp retrieve_last_guess(%Player{} = p) do
+  @docp """
+  Data retriever to retrieve last word guess
+  """
+
+  @spec retrieve_last_guess(Player.t, String.t) :: Guess.t
+  defp retrieve_last_guess(%Player{} = p, _l) do
     Strategy.last_word(p.strategy) 
   end
 
-  @spec retrieve_strategic_guess(Player.t) :: Guess.t
-  defp retrieve_strategic_guess(%Player{} = p) do
+  @docp """
+  Data retriever to strategic letter guess
+  """
+
+  @spec retrieve_strategic_guess(Player.t, String.t) :: Guess.t
+  defp retrieve_strategic_guess(%Player{} = p, _l) do
     Strategy.make_guess(p.strategy)
   end
 
 
 
   # Updaters
+
+  @docp """
+  Updater to update `Player` with round and guess data
+  """
+
   @spec updater_round_and_guess(Player.t, Player.kind, Round.t, Guess.t) :: Player.t
   defp updater_round_and_guess(p, @human, round, guess) do
     Round.update(p, round, guess)
   end
 
+  @docp """
+  Updater to update `Player` with guess data only
+  """
 
   @spec updater_round(Player.t, Player.kind, Round.t, Guess.t) :: Player.t
   defp updater_round(p, @robot, round, _guess) do
@@ -52,19 +70,15 @@ defmodule Action do
   end
 
 
-  # Action function maker templates
+  # Guess Action function maker
   @spec make_guess_action(
   (Player.t -> Guess.t) | (Player.t, String.t -> Guess.t), # data retrievers
   (Player.t, Player.kind, Round.t, Guess.t -> Player.t) # updater
-  ) :: Player.t
+  ) :: (Player.t, String.t -> Player.t) # returned function
   defp make_guess_action(fn_data_retriever, fn_updater) do
 
-    # return two headed-function
+    # return function
     fn
-      %Player{} = player, "" ->
-        data = fn_data_retriever.(player)
-        feedback = Round.guess(player, data)
-        fn_updater.(player, player.type, feedback, data)
       %Player{} = player, letter when is_binary(letter) ->
         data = fn_data_retriever.(player, letter)
         feedback = Round.guess(player, data)
@@ -138,13 +152,13 @@ _ = """
   end
 
   defp do_guess(%Player{} = p, :guess_last_word) do
-    guess = make_guess_action(&retrieve_last_guess/1, 
+    guess = make_guess_action(&retrieve_last_guess/2, 
                               &updater_round_and_guess/4)
     guess.(p, "")
   end
 
   defp do_guess(%Player{} = p, :robot_guess) do
-    guess = make_guess_action(&retrieve_strategic_guess/1, &updater_round/4)
+    guess = make_guess_action(&retrieve_strategic_guess/2, &updater_round/4)
     guess.(p, "")
   end
 end

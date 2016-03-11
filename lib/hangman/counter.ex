@@ -2,13 +2,13 @@ defmodule Counter do
   @moduledoc """
 
   Module implements a set of functions for working 
-  with letter frequency counters.
+  with letter frequency tallies.
 
-  Conventional hangman strategy deals exclusively with 
-  letter frequency data
+  Conventional `Hangman` strategy deals exclusively with 
+  letter frequency data.
 
-  Counters are key value stores where keys are letter strings 
-  and values are positive integers
+  `Counter` is a key value store where a `key` 
+  is a letter string and a `value` is a positive integer.
   """
 
   @doc false
@@ -19,36 +19,33 @@ defmodule Counter do
   @type key :: String.t
   @type value :: pos_integer
 
-  @chunk_words_size 500
+
+  @chunk_words_size Chunks.container_size
 
 	# Letter Frequency Counter for words
 	
 	# CREATE
 
-	# Returns new empty Counters
-  
-  @spec new :: t
+	@doc "Returns new, empty `Counter`"
+  @spec new(none | []) :: t
 	def new, do: %Counter{}
-
-  @spec new([]) :: t
 	def new([]), do: %Counter{}
 
-	# Returns new Counter that reflects contents of string
+  @doc """
+	Returns new `Counter` that reflects contents of either `String.t, [tuple], map`
+  """
 
-  @spec new(String.t) :: t
+  @spec new(String.t | [tuple] | map) :: t
 	def new(word) when is_binary(word) do 
 		add_letters(new(), word) 
 	end
 	
-	# Returns new Counter	that reflects contents of tuple list
-  @spec new([tuple]) :: t
+  # note: not a keyword list because we are not using atoms for keys, String.t instead
 	def new(tuple_list) when is_list(tuple_list) and is_tuple(hd(tuple_list)) do
 		map = Enum.into tuple_list, Map.new
 		%Counter{ map: map }
 	end
 
-	# Returns new Counter	that reflects contents of Map
-  @spec new(map) :: t
 	def new(%{} = map) do
 		map = Enum.into map, Map.new
 		%Counter{ map: map }
@@ -56,25 +53,25 @@ defmodule Counter do
 
 	# READ
 
-	# Returns true if counters equal
+	@doc "Returns true if `Counters` equal"
   @spec equal?(t, t) :: boolean
 	def equal?(%Counter{} = c1, %Counter{} = c2) do
     Map.equal?(c1, c2)
 	end
 
-	# Returns a key-value tuple list of {letter, count} tuples
+	@doc "Returns a `key-value` list of {`letter`, `count`} `tuples`"
   @spec items(t) :: [tuple]
 	def items(%Counter{map: map} = _counter) do
 		Enum.into map, []
 	end
 
-	# Quick check to see if Counter is empty
+  @doc "Returns `true` or `false` whether `Counter` is empty"
   @spec empty?(t) :: boolean
 	def empty?(%Counter{map: map} = _counter) do
 		Enum.empty?(map)
 	end
 
-	# Returns list of the most common n codepoints and codepoint values
+	@doc "Returns `list` of the most common `n` codepoint `keys` and codepoint `values`"
   @spec most_common(t, pos_integer) :: [tuple]
 	def most_common(%Counter{map: map} = _counter, n) 
 		when is_number(n) and n > 0 do
@@ -89,7 +86,7 @@ defmodule Counter do
 			|> Enum.take(n)
 	end
 
-	# Returns list of the most common n codepoint keys
+	@doc "Returns `list` of the most common `n` codepoint `keys`"
   @spec most_common_key(t, pos_integer) :: list
 	def most_common_key(%Counter{} = counter, n) 
 		when is_number(n) and n > 0 do
@@ -100,8 +97,10 @@ defmodule Counter do
 
 	# UPDATE
 
-	# Increment value for a given key by the given value - default is 1, 
-	# if not there add key and value
+	@doc """
+  Increment `value` for a given `key` by the given `value`. 
+  Default increment `value` 1.
+  """
   @spec inc_by(t, key) :: t
   @spec inc_by(t, key, value) :: t
 	def inc_by(%Counter{map: map} = counter, key, value \\ 1)
@@ -109,19 +108,20 @@ defmodule Counter do
 		%Counter{ counter | map: Map.update(map, key, value, &(&1 + value)) }
 	end
 
-	# Returns an updated Counter
+	@doc """
+  Adds letters to `Counter` without checking for duplicate letters.  
+  Returns an updated `Counter`.
+  """
+
+  @spec add_letters(t, [] | String.t | Enumerable.t) :: t
 
 	# Handle case where list is empty
-  @spec add_letters(t, []) :: t
 	def add_letters(%Counter{} = counter, []), do: counter
 
-
-  @spec add_letters(t, String.t) :: t
   def add_letters(%Counter{} = counter, word) when is_binary(word) do
     add_letters(counter, String.codepoints(word))
   end
 
-  @spec add_letters(t, Enumerable.t) :: t
 	def add_letters(%Counter{map: map} = counter, codepoints) do
 
 		false = Enum.empty?(codepoints)
@@ -141,7 +141,14 @@ defmodule Counter do
 		%Counter{ counter | map: map_updated }
 	end
 
-  @spec add_unique_letters(t, String.t) :: t
+
+	@doc """
+  Adds letters to `Counter`. Ensure letters are unique. 
+  Returns an updated `Counter`
+  """
+
+  @spec add_unique_letters(t, String.t | [String.t]) :: t
+
 	def add_unique_letters(%Counter{} = counter, word) 
 	when is_binary(word) do
 		
@@ -153,7 +160,13 @@ defmodule Counter do
 		add_letters(counter, String.codepoints(word) |> Enum.uniq)
 	end
 
-  @spec add_words(t, [String.t]) :: t
+  @doc """
+  Adds words `list` to `Counter`. Converts words to char `list` and 
+  then letter counts `list`. List is then submitted to `map` for bulk 
+  value update. Faster than many tiny `map` updates
+  """
+  
+  @spec add_words(t, words :: Enumerable.t) :: t
   def add_words(%Counter{} = counter, words)
   when is_list(words) do
 
@@ -163,9 +176,11 @@ defmodule Counter do
         # using char lists is faster 
         seq = word |> String.to_char_list |> Enum.uniq
         
+        # original implementation using codepoint list
         # seq = word |> String.codepoints |> Enum.uniq
         # add_letters(acc, seq)
 
+        # Very efficient ordering with seq first and acc second
         List.flatten(seq, acc)
     end
 
@@ -174,6 +189,7 @@ defmodule Counter do
     # 1) Reduce the words into a codepoint sequence list
 
     # 2) Convert sequence list into letter counts list - faster then bulk map puts!
+
     # e.g.  the seq is ["a", "b", "d", "h", "d", "b", "b", "h", "a"] 
     # sort  the seq is now ["a", "a", "b", "b", "b", "d", "d", "h", "h"]
     # chunk the seq is now [["a", "a"], ["b", "b", "b"], ["d", "d"], ["h", "h"]]
@@ -181,7 +197,6 @@ defmodule Counter do
     #       [{"d", 1}, {"d", 2}], [{"h", 1}, {"h", 2}]]
 
     # final seq is: [{"a", 2}, {"b", 3}, {"d", 2}, {"h", 2}] 
-
 
     grouped_letter_counts = words
     |> Enum.reduce([], fn_reduce_words_into_list)
@@ -191,6 +206,8 @@ defmodule Counter do
     |> Enum.map(&List.last/1) # O(n)
 
     # allow for batch updating of codepoints vs updating the counter map for every codepoint
+    # using char lists is faster, but have to convert back to String.t
+
     counter = Enum.reduce(grouped_letter_counts, counter, fn {codepoint_value, value}, acc -> 
       key = :binary.list_to_bin([codepoint_value])
       inc_by(acc, key, value)
@@ -200,7 +217,12 @@ defmodule Counter do
 
   end
 
-  @spec add_words(t, Enumerable.t, map) :: t
+  @doc """
+  Routines adds word `stream` to `Counter`.  Splits word `stream` into 
+  manageable `lists`, relies on `add_words/2` to reduce into `Counter`.
+  """
+
+  @spec add_words(t, stream :: Enumerable.t, exclusion :: map) :: t
   def add_words(%Counter{} = counter, words_stream, 
                     %MapSet{} = exclusion_set) do
 
@@ -223,11 +245,11 @@ defmodule Counter do
 
 	# DELETE
 
-	# Returns an updated Counter, after deleting specified keys in letters
-  @spec delete(t, []) :: t
+	@doc "Returns an updated `Counter` after deleting specified `keys` in letters"
+  @spec delete(t, none | [] | [String.t]) :: t
+
   def delete(%Counter{} = counter, []), do: counter
 
-  @spec delete(t, [String.t]) :: t
 	def delete(%Counter{map: map} = counter, letters) 
 		when is_list(letters) and is_binary(hd(letters)) do
 
@@ -235,7 +257,6 @@ defmodule Counter do
 		%Counter{ counter | map: map_updated}
 	end
 
-  @spec delete(t) :: t
 	def delete(%Counter{} = _counter) do
 		%Counter{}
 	end

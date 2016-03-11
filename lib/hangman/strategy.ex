@@ -1,18 +1,18 @@
 defmodule Strategy do
   @moduledoc """
-  Handles letter guessing strategy for player.
+  Handles letter guessing strategy for `Player`.
 
-  For robot player type, retrieves best letter considering english
+  For `robot` player type, retrieves best letter considering `English`
   letter frequencies and letter tally counts.
 
-  For human player type, retries a set of top letter choices to
-  be presented to human to manually choose.
+  For `human` player type, retries a set of top letter choices to
+  be presented to `human` to manually choose.
   """
 
 	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
 
-  @type t :: %__MODULE__{}
+  @opaque t :: %__MODULE__{}
 
   @type result :: {t, Guess.t}
 
@@ -36,7 +36,7 @@ defmodule Strategy do
 
   # CREATE
   @doc """
-  Returns a new strategy
+  Returns a new `Strategy`
   """
 
   @spec new :: t
@@ -74,7 +74,7 @@ defmodule Strategy do
   # UPDATE
 
   @docp """
-  Prepares best letter guess as deemed by strategy heuristics
+  Prepares best letter guess as deemed by heuristics
   """
 
   @spec prepare_guess(t) :: t
@@ -111,7 +111,7 @@ defmodule Strategy do
   end
 
   @doc """
-  Returns best letter guess as deemed by strategy heuristics
+  Returns best letter guess as deemed by heuristics
   """
 
   @spec make_guess(t) :: Guess.t
@@ -141,13 +141,15 @@ defmodule Strategy do
   end
 
   @doc """
-  Updates strategy with pass data.
+  Updates `strategy` with `pass` data.
 
-  For robot player type, when we updated the pass data
-  also prepare the guess.
+  For `robot` player type, when we updated the pass data
+  also `prepare` the guess.
   """
 
   @spec update(t, Pass.t, Player.kind) :: t
+
+
   def update(%Strategy{} = strategy, %Pass{} = pass, @human) do
     prior = strategy.guess
     
@@ -168,7 +170,7 @@ defmodule Strategy do
 
   # Helpers
   @doc """
-  Returns most common n letters along with their counts
+  Returns most common `n` letters along with their `counts`
   """
 
   @spec most_common_letter_and_counts(t, pos_integer) :: Keyword.t
@@ -180,7 +182,7 @@ defmodule Strategy do
   end
 
   @doc """
-  Returns most common n letters
+  Returns most common `n` letters
   """
 
   @spec most_common_letter(t, pos_integer) :: list
@@ -192,8 +194,8 @@ defmodule Strategy do
   end
 
   @doc """
-  Validates letter is within the top strategy letter choices.
-  If not, picks the top letter as deemed by heuristics.
+  Validates `letter` is within the top strategy letter choices.
+  If not, picks the top `letter` as deemed by heuristics.
   """
 
   @spec letter_in_most_common(t, pos_integer, String.t) :: Guess.t
@@ -212,7 +214,7 @@ defmodule Strategy do
 
   @doc """
   Retrieves letter choices text.  Denotes
-  'strategic' letter pick with an asterisk.
+  'strategic' letter pick with an `asterisk`.
   """
 
   @spec choose_letters(t, pos_integer) :: Guess.option
@@ -259,15 +261,15 @@ defmodule Strategy do
 
 
   @doc """
-  Method implements the most common letter retrieval strategy with a twist.
+  Method implements the most `common` letter retrieval strategy with a twist.
   Gets the first letter with the highest frequency for when the 
-  current possible hangman word set space is > "small". 
-  The twist is when we combine the english language letter relative 
-  frequency. For the cases where the word set is less than small, 
+  current possible `Hangman` word set space is > "small". 
+  The twist is when we combine the `English` language letter relative 
+  frequency. For the cases where the word set is less than `small`, 
   takes the letter whose frequencies are less than or equal to half 
-  the possible hagman word pass size.
+  the possible `Hangman` word pass `size`.
   
-  E.g.for size 10, the letter counts would need to be 5 
+  E.g.for size 10, the letter `counts` would need to be 5 
   or lower to be chosen. Doesn't handle tie between letters.
   """
 
@@ -317,7 +319,7 @@ defmodule Strategy do
   end
 
   @doc """
-  Returns strategy information
+  Returns `Strategy` information
   """
 
   @spec info(t) :: Keyword.t

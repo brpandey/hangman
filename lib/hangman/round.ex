@@ -1,21 +1,17 @@
 defmodule Round do
   @moduledoc """
-  Module to implement hangman game round abstraction.
+  Module to implement `Hangman` game `round` abstraction.
 
   Works in conjuction with `Strategy` and `Game.Server`
-  to orchestrate actual round game play.
+  to orchestrate actual `round` game play.
 
-  Basic `Round` functionality includes `Round.setup`, `Round.guess`, 
-  `Round.update`, `Round.status/1`
+  Basic `Round` functionality includes `setup/2`, `guess/2`, 
+  `update/3`, `status/1`
   """
 
 
-  defstruct seq_no: 0,
-  guess: {},
-  result_code: nil, 
-  status_code: nil, 
-  status_text: "",
-  pattern: "", 
+  defstruct seq_no: 0, guess: {}, result_code: nil, 
+  status_code: nil, status_text: "", pattern: "", 
   final_result: ""
 
   @type result :: {status_code :: :atom, status_txt :: String.t}
@@ -25,7 +21,7 @@ defmodule Round do
 	# READ
 
   @doc """
-  Returns round context based on results of last guess
+  Returns round `context` based on results of `last guess`
   """
 
   @spec context(Player.t) :: Guess.context | no_return
@@ -53,7 +49,7 @@ defmodule Round do
   end
 
   @doc """
-  Returns round status tuple
+  Returns `round` status tuple
   """
 
   @spec status(Player.t) :: result
@@ -66,13 +62,13 @@ defmodule Round do
   # Setup the game play round
 
   @doc """
-  Setups game play round
+  Setups game play `round`
 
   For game start stage, retrieves secret length from game server
-  uses secret length to filter possible hangman words from pass server
+  uses secret length to filter possible `Hangman` words from `Pass.Cache` server
 
   On subsequent rounds, generates a reduce key based on the result of the
-  last guess to filter possible hangman words from word pass server
+  last guess to filter possible `Hangman` words from `Pass.Cache` server
   """
 
   @spec setup(Player.t, none | :atom | Guess.context) :: Player.t
@@ -110,7 +106,9 @@ defmodule Round do
   	pass_key = {name, game_no, seq_no}
 
   	# Generate the word filter options for the words reduction engine
-		reduce_key = Strategy.Options.reduce_key(strategy, context)
+    exclusion = strategy.guessed_letters
+
+		reduce_key = Reduction.Options.reduce_key(context, exclusion)
 
 		match_key = Kernel.elem(context, 0)
 
@@ -129,7 +127,7 @@ defmodule Round do
 
 
   @doc """
-  Interjects round specific parameters into choices text
+  Interjects `round` specific parameters into `choices text`.
   """
 
   @spec augment_choices(Player.t, Guess.option) :: Guess.option
@@ -149,10 +147,10 @@ defmodule Round do
 
 
   @doc """
-  Issues a client guess (either letter or word) against `Game.Server`.
-  Notifies player events of guess results.
+  Issues a client `guess` (either `letter` or `word`) against `Game.Server`.
+  Notifies player `events` of guess `results`.
 
-  Returns received round data
+  Returns received `round` data
   """
 
   @spec guess(Player.t, Guess.t) :: t
@@ -186,12 +184,12 @@ defmodule Round do
 
 
   @doc """
-  Updates player abstraction with round results.  If games are over, updates
-  games summary and notifies player events.
+  Updates `Player` abstraction with `Round` results.  If games are over, updates
+  games summary and notifies `Player.Events`.
 
-  Under human guessing, round update will update the strategy abstraction
-  with the guess particulars.  If robot guessing, the strategy abstraction will also
-  be updated.
+  Under human guessing, round `update` will `update` the strategy
+  with the `guess` particulars.  If robot guessing, the strategy will also
+  be `updated`.
   """
 
   @spec update(Player.t, Round.t, none | Guess.t) :: Player.t

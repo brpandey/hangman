@@ -1,11 +1,9 @@
 defmodule Game do
   @moduledoc """
-  Module defines game abstraction which can handle
-  a single hangman game or multiple hangman games.
+  Module defines `Hangman` `Game` abstraction which can handle
+  a single `Hangman` game or multiple `Hangman` games.
 
-  Defines Game type.
-  
-  Runs each game or games sequentially.  Therefore only one game
+  Runs each `game` or `games` sequentially.  Therefore only one `game`
   is in play at any one time.
   
   Primary functions are `Game.load/3`, `Game.guess/2`, `Game.status/1`.
@@ -19,7 +17,7 @@ defmodule Game do
 	max_wrong: 0, correct_letters: MapSet.new, 
 	incorrect_letters: MapSet.new, incorrect_words: MapSet.new
   
-  @type t :: %__MODULE__{}
+  @opaque t :: %__MODULE__{}
   
   @type id :: String.t
   
@@ -40,7 +38,7 @@ defmodule Game do
   
   
   @doc """
-  Loads a new game state given new secret(s)
+  Loads a new `Game` state given new `secret(s)`
   """
   
   @spec load(id, String.t | [String.t], pos_integer) :: t
@@ -67,18 +65,18 @@ defmodule Game do
   
   
   @doc """
-  Runs guess data against game secret. Updates hangman pattern, status, and
-  other game recordkeeping structures.
+  Runs `guess` against `Game` `secret`. Updates `Hangman` pattern, status, and
+  other `game` recordkeeping structures.
 
   Guesses follow two types
 
     * `{:guess_letter, letter}` - 	If correct, 
-    returns the :correct_letter data tuple along with game
-	  otherwise, returns the :incorrect_letter data tuple along with game
+    returns the :correct_letter data tuple along with `game` data
+	  otherwise, returns the :incorrect_letter data tuple along with `game` data
 
     * `{:guess_word, word}` - 	If correct, returns 
-    the :correct_word data tuple along with game
-	  If incorrect, returns the :incorrect_word data tuple with game
+    the :correct_word data tuple along with `game`
+	  If incorrect, returns the :incorrect_word data tuple with `game` data
 	  
 	"""
 
@@ -180,7 +178,7 @@ defmodule Game do
   
   
   @doc """
-  Returns current game status text
+  Returns current `Game` status text
   """
   
   @spec status(t) :: tuple
@@ -324,7 +322,7 @@ defmodule Game do
 
 
   @doc """
-  Returns game information
+  Returns `Game` information
   """
 
   @spec info(t) :: Keyword.t

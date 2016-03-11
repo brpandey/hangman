@@ -69,9 +69,9 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module handles player abstraction and defines player type</p>
-<p>Implements player functionality to choose letters, guess letters and words</p>
-<p>Heavily relies upon <a href="Round.html"><code class="inline">Round</code></a> and <a href="Action.html"><code class="inline">Action</code></a> functionality</p>
+          <p>Module handles <a href="Player.html#content"><code class="inline">Player</code></a> abstraction and defines <a href="Player.html#content"><code class="inline">Player</code></a> type.
+Implements <code class="inline">player</code> functionality to choose letters, guess letters and words.
+Heavily relies upon <a href="Round.html"><code class="inline">Round</code></a> and <a href="Action.html"><code class="inline">Action</code></a>.</p>
 
         </section>
       
@@ -103,7 +103,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t:t/0">t()</a>
+    <a href="#t/0">t()</a>
   </div>
   
 </div>
@@ -122,7 +122,7 @@
   </div>
   
     <div class="summary-synopsis"><p>Routine for <code class="inline">:human</code> player type.
-Setups new round, retrieves and returns top letter choices</p>
+Setups new <code class="inline">round</code>, retrieves and returns top letter choices</p>
 </div>
   
 </div>
@@ -131,7 +131,7 @@ Setups new round, retrieves and returns top letter choices</p>
     <a href="#delete/1">delete(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Method returns empty player state</p>
+    <div class="summary-synopsis"><p>Method returns empty <a href="Player.html#content"><code class="inline">Player</code></a></p>
 </div>
   
 </div>
@@ -140,7 +140,7 @@ Setups new round, retrieves and returns top letter choices</p>
     <a href="#game_lost?/1">game_lost?(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the game has been lost</p>
+    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the <code class="inline">game</code> has been lost</p>
 </div>
   
 </div>
@@ -149,7 +149,7 @@ Setups new round, retrieves and returns top letter choices</p>
     <a href="#game_won?/1">game_won?(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the game has been won</p>
+    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the <code class="inline">game</code> has been won</p>
 </div>
   
 </div>
@@ -167,8 +167,8 @@ Setups new round, retrieves and returns top letter choices</p>
     <a href="#games_summary/1">games_summary(args)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns game summary as a string.  Includes number of games played, average 
-score per game, per game score</p>
+    <div class="summary-synopsis"><p>Returns <code class="inline">game</code> summary as a string.  Includes <code class="inline">number</code> of games played, <code class="inline">average</code> 
+score per game, per game <code class="inline">score</code></p>
 </div>
   
 </div>
@@ -177,8 +177,8 @@ score per game, per game score</p>
     <a href="#guess/1">guess(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routine for <code class="inline">:robot</code> player type. Setups new round, 
-performs auto-generated guess, returns round status</p>
+    <div class="summary-synopsis"><p>Routine for <code class="inline">:robot</code> player type. Setups new <code class="inline">round</code>, 
+performs <code class="inline">auto-generated</code> guess, returns round <code class="inline">status</code></p>
 </div>
   
 </div>
@@ -218,7 +218,7 @@ the last word in possible words set</p>
     <a href="#new/4">new(name, type, game_pid, event_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new player, validates player type</p>
+    <div class="summary-synopsis"><p>Returns new <a href="Player.html#content"><code class="inline">Player</code></a>, validates <code class="inline">player</code> type</p>
 </div>
   
 </div>
@@ -233,7 +233,7 @@ the last word in possible words set</p>
     <a href="#start/1">start(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routine starts a new player abstraction. Notifies player specific event server.
+    <div class="summary-synopsis"><p>Routine starts a new <a href="Player.html#content"><code class="inline">Player</code></a>. Notifies player specific event server.
 Setups game round</p>
 </div>
   
@@ -243,7 +243,7 @@ Setups game round</p>
     <a href="#status/2">status(p, atom)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns game status</p>
+    <div class="summary-synopsis"><p>Returns <code class="inline">game</code> status</p>
 </div>
   
 </div>
@@ -275,8 +275,8 @@ Setups game round</p>
   <pre><code class="elixir"><a href="#t:result/0">result</a> :: {<a href="#t:t/0">t</a>, <a href="Round.html#t:result/0">Round.result</a>}</code></pre>
   
 </div>
-<div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Player{event_server_pid: term, game_no: term, game_server_pid: term, games_summary: term, mystery_letter: term, name: term, round: term, round_no: term, strategy: term, type: term}</code></pre>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
   
 </div>
 
@@ -312,7 +312,7 @@ Setups game round</p>
   
   <section class="docstring">
     <p>Routine for <code class="inline">:human</code> player type.
-Setups new round, retrieves and returns top letter choices.</p>
+Setups new <code class="inline">round</code>, retrieves and returns top letter choices.</p>
 
   </section>
 </div>
@@ -335,7 +335,7 @@ Setups new round, retrieves and returns top letter choices.</p>
     </div>
   
   <section class="docstring">
-    <p>Method returns empty player state</p>
+    <p>Method returns empty <a href="Player.html#content"><code class="inline">Player</code></a></p>
 
   </section>
 </div>
@@ -358,7 +358,7 @@ Setups new round, retrieves and returns top letter choices.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the game has been lost</p>
+    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the <code class="inline">game</code> has been lost</p>
 
   </section>
 </div>
@@ -381,7 +381,7 @@ Setups new round, retrieves and returns top letter choices.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the game has been won</p>
+    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the <code class="inline">game</code> has been won</p>
 
   </section>
 </div>
@@ -427,8 +427,8 @@ Setups new round, retrieves and returns top letter choices.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns game summary as a string.  Includes number of games played, average 
-score per game, per game score.</p>
+    <p>Returns <code class="inline">game</code> summary as a string.  Includes <code class="inline">number</code> of games played, <code class="inline">average</code> 
+score per game, per game <code class="inline">score</code>.</p>
 
   </section>
 </div>
@@ -442,8 +442,8 @@ score per game, per game score.</p>
   </div>
   
   <section class="docstring">
-    <p>Routine for <code class="inline">:robot</code> player type. Setups new round, 
-performs auto-generated guess, returns round status</p>
+    <p>Routine for <code class="inline">:robot</code> player type. Setups new <code class="inline">round</code>, 
+performs <code class="inline">auto-generated</code> guess, returns round <code class="inline">status</code></p>
 
   </section>
 </div>
@@ -470,12 +470,12 @@ performs auto-generated guess, returns round status</p>
 <p>Comes in two modes</p>
 <ul>
 <li><p><code class="inline">:guess_last_word</code> - performs guess of last remaining word
-  Note: Somewhat of an oversimplification for a human guess word, 
-  we simplify the human guessing of words to just the last word</p>
+  Note: Somewhat of an oversimplification for a <code class="inline">human</code> guess word, 
+  we simplify the <code class="inline">human</code> guessing of words to just the <code class="inline">last</code> word</p>
 </li>
 <li><code class="inline">{:guess_letter, letter}</code> - doesn’t setup round since it 
-  was already setup during the choose letters stage. Issues action 
-  to guess and validate letter and returns round status.
+  was already setup during the <code class="inline">choose letters</code> stage. Issues action 
+  to <code class="inline">guess</code> and <code class="inline">validate</code> letter and returns round <code class="inline">status</code>.
 </li>
 </ul>
 
@@ -559,7 +559,7 @@ the last word in possible words set</p>
     </div>
   
   <section class="docstring">
-    <p>Returns new player, validates player type</p>
+    <p>Returns new <a href="Player.html#content"><code class="inline">Player</code></a>, validates <code class="inline">player</code> type</p>
 
   </section>
 </div>
@@ -595,10 +595,10 @@ the last word in possible words set</p>
     </div>
   
   <section class="docstring">
-    <p>Routine starts a new player abstraction. Notifies player specific event server.
+    <p>Routine starts a new <a href="Player.html#content"><code class="inline">Player</code></a>. Notifies player specific event server.
 Setups game round.</p>
-<p>If player type is robot, makes initial guess, then returns round status.
-If player type is human, retrieves top letter choices to display</p>
+<p>If type is <code class="inline">robot</code>, makes initial guess, then returns round status.
+If type is <code class="inline">human</code>, retrieves top letter choices to display</p>
 
   </section>
 </div>
@@ -621,7 +621,7 @@ If player type is human, retrieves top letter choices to display</p>
     </div>
   
   <section class="docstring">
-    <p>Returns game status</p>
+    <p>Returns <code class="inline">game</code> status</p>
 
   </section>
 </div>

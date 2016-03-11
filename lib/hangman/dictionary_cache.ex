@@ -4,11 +4,13 @@ defmodule Dictionary.Cache do
   require Logger
 
   @moduledoc """
-  Module loads dictionary file words into chunks and stores
-  into `ETS`.  Letter frequency tallies are computed and stored into `ETS`
-  upon startup. Words identified as 'random' are tagged and stored.
+  Module loads `Dictionary.File` words into `chunks` and stores
+  into `ETS`.  Letter frequency `tallies` are computed and stored into `ETS`
+  upon startup. Words identified as `random` are tagged and stored.
 
-  Provides lookup routines to access chunks, tallys, and random words
+  Implements `GenServer`.
+
+  Provides lookup routines to access `chunks`, `tallys`, and `random` words
   """
 
   alias Dictionary, as: Dict
@@ -188,9 +190,9 @@ defmodule Dictionary.Cache do
 	# Setup cache ets
 
   @doc """
-  Loads normalized dictionary file into `ETS`. Calculates and 
-  loads chunked dictionary word lists. Computes and stores letter 
-  tallies  by word length size.  Tags and stores random words.
+  Loads normalized `Dictionary.File` into `ETS`. Calculates and 
+  loads `chunked` word lists. Computes and stores letter 
+  `tallies` by word length `key`.  Tags and stores `random` words.
   """
 
   @spec setup(Keyword.t) :: :ok | no_return

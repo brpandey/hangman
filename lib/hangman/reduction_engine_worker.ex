@@ -2,11 +2,11 @@ defmodule Reduction.Engine.Worker do
   use GenServer
 
   @moduledoc """
-  Module is a GenServer that implements worker word reducer functionality, 
-  primarily `reduce_and_store/4`.
+  Module is a worker `GenServer` that implements `Hangman` words reduction, 
+  primarily through `reduce_and_store/4`.
 
-  Retrieves pass data from `Pass.Cache`. Reduces word set based on reduce_key.
-  Stores reduced pass back into `Pass.Cache`.  Returns new pass data.
+  Retrieves `pass` data from `Pass.Cache`. Reduces word set based on `reduce_key`.
+  Stores reduced set back into `Pass.Cache`.  Returns new `Pass`.
   """
 
   require Logger
@@ -29,14 +29,14 @@ defmodule Reduction.Engine.Worker do
   
   
   @doc """
-  Primary worker function which retrieves current pass chunks data,
-  filters words with regex, tallies reduced word stream, creates new
+  Primary `worker` function which retrieves current `pass chunks` data,
+  filters words with `regex`, tallies reduced word stream, creates new
   `Chunks` abstraction and stores it back into words pass table.
 
   If pass size happens to be small enough, will also return
-  remaining hangman possible words left to aid in guess selection. 
+  remaining `Hangman` possible words left to aid in `guess` selection. 
 
-  Returns pass data.
+  Returns `pass`. Method is serialized.
   """
 
   @spec reduce_and_store(pos_integer, Pass.key, Regex.t, map) :: Pass.t
@@ -106,7 +106,8 @@ defmodule Reduction.Engine.Worker do
 		# do for all values in stream
 
     filtered_stream = data 
-    |> Chunks.get_words_lazy |> Stream.filter(&regex_match?(&1, regex_key))
+    |> Chunks.get_words_lazy 
+    |> Stream.filter(&regex_match?(&1, regex_key))
     
 		# Populate counter object, now that we've created new filtered chunks
     tally = Counter.new |> Counter.add_words(filtered_stream, exclusion)

@@ -1,10 +1,8 @@
 defmodule Player do
   @moduledoc """
-  Module handles player abstraction and defines player type
-
-  Implements player functionality to choose letters, guess letters and words
-
-  Heavily relies upon `Round` and `Action` functionality
+  Module handles `Player` abstraction and defines `Player` type.
+  Implements `player` functionality to choose letters, guess letters and words.
+  Heavily relies upon `Round` and `Action`.
   """
 
 	defstruct name: "", 
@@ -17,16 +15,14 @@ defmodule Player do
   game_server_pid: nil, 
   event_server_pid: nil,    
   mystery_letter: Game.mystery_letter
-  
-  @type t :: %__MODULE__{}
 
+
+  @opaque t :: %__MODULE__{}
   @type result :: {t, Round.result}
+  @type kind :: :human | :robot
 
   @human :human
   @robot :robot
-  
-
-  @type kind :: :human | :robot
 
   def human, do: @human
   def robot, do: @robot
@@ -35,7 +31,7 @@ defmodule Player do
   # CREATE
 
   @doc """
-  Returns new player, validates player type
+  Returns new `Player`, validates `player` type
   """
 
   @spec new(String.t, :atom, pid, pid) :: t
@@ -67,7 +63,7 @@ defmodule Player do
   end
 
   @doc """
-  Returns `true` or `false` whether the game has been won
+  Returns `true` or `false` whether the `game` has been won
   """
 
   @spec game_won?(t) :: boolean
@@ -75,7 +71,7 @@ defmodule Player do
 
 
   @doc """
-  Returns `true` or `false` whether the game has been lost
+  Returns `true` or `false` whether the `game` has been lost
   """
 
   @spec game_lost?(t) :: boolean
@@ -89,8 +85,8 @@ defmodule Player do
   def games_over?(%Player{} = p), do: p.games_summary != nil
 
   @doc """
-  Returns game summary as a string.  Includes number of games played, average 
-  score per game, per game score.
+  Returns `game` summary as a string.  Includes `number` of games played, `average` 
+  score per game, per game `score`.
   """
 
   @spec games_summary(Keyword.t) :: String.t
@@ -108,7 +104,7 @@ defmodule Player do
 	end
 
   @doc """
-  Returns game status
+  Returns `game` status
   """
 
   @spec status(t, :atom) :: Round.result
@@ -125,11 +121,11 @@ defmodule Player do
 	# UPDATE
 
   @doc """
-  Routine starts a new player abstraction. Notifies player specific event server.
+  Routine starts a new `Player`. Notifies player specific event server.
   Setups game round.
 
-  If player type is robot, makes initial guess, then returns round status.
-  If player type is human, retrieves top letter choices to display
+  If type is `robot`, makes initial guess, then returns round status.
+  If type is `human`, retrieves top letter choices to display
   """
 
   @spec start(t) :: result
@@ -159,7 +155,7 @@ defmodule Player do
 
   @doc """
   Routine for `:human` player type.
-  Setups new round, retrieves and returns top letter choices.
+  Setups new `round`, retrieves and returns top letter choices.
   """
 
   @spec choices(t, Guess.directive, :atom) :: {t, Guess.option}
@@ -190,8 +186,8 @@ defmodule Player do
 
 
   @doc """
-  Routine for `:robot` player type. Setups new round, 
-  performs auto-generated guess, returns round status
+  Routine for `:robot` player type. Setups new `round`, 
+  performs `auto-generated` guess, returns round `status`
   """
 
   #@spec guess(p :: t, mode :: none | :atom) :: result
@@ -225,12 +221,12 @@ defmodule Player do
 
   Comes in two modes
     * `:guess_last_word` - performs guess of last remaining word
-    Note: Somewhat of an oversimplification for a human guess word, 
-    we simplify the human guessing of words to just the last word
+    Note: Somewhat of an oversimplification for a `human` guess word, 
+    we simplify the `human` guessing of words to just the `last` word
 
     * `{:guess_letter, letter}` - doesn't setup round since it 
-    was already setup during the choose letters stage. Issues action 
-    to guess and validate letter and returns round status.
+    was already setup during the `choose letters` stage. Issues action 
+    to `guess` and `validate` letter and returns round `status`.
   """
 
   @spec guess(p :: t, guess :: Guess.directive | Guess.t) :: result
@@ -286,7 +282,7 @@ defmodule Player do
   # DELETE
 
   @doc """
-  Method returns empty player state
+  Method returns empty `Player`
   """
 
   @spec delete(t) :: t

@@ -2,16 +2,16 @@ defmodule Pass.Cache do
   use GenServer
 
 	@moduledoc """
-	Module implements an `ETS` table owning process which maintains
-  a words pass cache given a player, game and round number.
-  Given each player round, the player's word pass data is store into the cache
-  for access on the subsequent round.  
+  Given a player, a game and round number, `Pass.Cache` maintains a words pass `cache`.
 
-  The expired pass data is subsequently removed from the cache
+  Internally the module implements a `GenServer` which uses `ETS`.
 
-  Uses type `key` for cache  `Pass.Cache.get/2` `Pass.Cache.get/3` 
-  
-  Performs unserialized reads
+  After each player has made their `Hangman` round guess, the resultant reduced
+  words `pass` data is stored into the `Pass.Cache` for access on the 
+  subsequent round.  The expired `pass` data from stale rounds is subsequently 
+  removed from the `cache`.
+
+  `Pass.Cache` performs `unserialized` reads and uses type `key` for cache  `get/2` and `get/3`. 
 	"""
 
   require Logger
@@ -57,7 +57,7 @@ defmodule Pass.Cache do
   end
 
   @docp """
-  GenServer callback to retrieve game server pid
+  GenServer callback to stop server
   """
   
   #@callback handle_call(:atom, {}, {}) :: {}
@@ -82,19 +82,20 @@ defmodule Pass.Cache do
 	end
 
   @doc """
-  Get routine retrieves the pass size, tally, possible words, 
-  and other data given these cache keys.
+  Get routine retrieves the `pass` size, tally, possible words, 
+  and other data given these cache `keys`.
 
-    * `{:pass, :game_start}` - this is the initial game start pass, so we 
+    * `{:pass, :game_start}` - this is the initial game start `pass`, so we 
     request the data from the `Dictionary.Cache`.  The data is stored into 
-    the pass cache via `Pass.Writer.write/2`. Returns pass data type.
+    the `Pass.Cache` via `Pass.Writer.write/2`. Returns `pass` data type.
 
     * `{:pass, :game_keep_guessing}` - retrieves the pass data from the last 
     player round and relies on `Reduction.Engine.reduce/3` to reduce the possible
-    hangman words set with reduce_key.  When the reduction is finished, we 
-    write the data back to the pass cache and return the new pass data.
+    `Hangman` words set with `reduce_key`.  When the reduction is finished, we 
+    write the data back to the `Pass.Cache` and return the new `pass` data.
 
-  These get requests are not serialized through the server process since we are doing reads
+  These get requests are not `serialized` through the server
+  process since we are doing `reads`
   """
 
 
@@ -142,12 +143,13 @@ defmodule Pass.Cache do
 	end
 
   @doc """
-  Get routine retrieves pass cache data
+  Get routine retrieves `pass` chunks cache data
 
-  We can obtain chunks data, for cache keys with the :chunks atom
+  We can obtain `chunks` data, for cache `keys` with the `:chunks` atom
     * `:chunks` - retrieves chunks data for a given pass key
 
-  These get requests are not serialized through the server process since we are doing reads
+  These get requests are not `serialized` through the 
+  server process since we are doing `reads`
   """
   
   @spec get(Pass.Cache.key, Pass.key) :: Chunks.t | no_return

@@ -69,11 +69,11 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module to implement hangman game round abstraction.</p>
+          <p>Module to implement <code class="inline">Hangman</code> game <code class="inline">round</code> abstraction.</p>
 <p>Works in conjuction with <a href="Strategy.html"><code class="inline">Strategy</code></a> and <a href="Game.Server.html"><code class="inline">Game.Server</code></a>
-to orchestrate actual round game play.</p>
-<p>Basic <a href="Round.html#content"><code class="inline">Round</code></a> functionality includes <code class="inline">Round.setup</code>, <code class="inline">Round.guess</code>, 
-<code class="inline">Round.update</code>, <a href="Round.html#status/1"><code class="inline">Round.status/1</code></a></p>
+to orchestrate actual <code class="inline">round</code> game play.</p>
+<p>Basic <a href="Round.html#content"><code class="inline">Round</code></a> functionality includes <a href="#setup/2"><code class="inline">setup/2</code></a>, <a href="#guess/2"><code class="inline">guess/2</code></a>, 
+<a href="#update/3"><code class="inline">update/3</code></a>, <a href="#status/1"><code class="inline">status/1</code></a></p>
 
         </section>
       
@@ -117,7 +117,7 @@ to orchestrate actual round game play.</p>
     <a href="#augment_choices/2">augment_choices(player, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Interjects round specific parameters into choices text</p>
+    <div class="summary-synopsis"><p>Interjects <code class="inline">round</code> specific parameters into <code class="inline">choices text</code></p>
 </div>
   
 </div>
@@ -126,7 +126,7 @@ to orchestrate actual round game play.</p>
     <a href="#context/1">context(player)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns round context based on results of last guess</p>
+    <div class="summary-synopsis"><p>Returns round <code class="inline">context</code> based on results of <code class="inline">last guess</code></p>
 </div>
   
 </div>
@@ -135,8 +135,8 @@ to orchestrate actual round game play.</p>
     <a href="#guess/2">guess(p, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues a client guess (either letter or word) against <a href="Game.Server.html"><code class="inline">Game.Server</code></a>.
-Notifies player events of guess results</p>
+    <div class="summary-synopsis"><p>Issues a client <code class="inline">guess</code> (either <code class="inline">letter</code> or <code class="inline">word</code>) against <a href="Game.Server.html"><code class="inline">Game.Server</code></a>.
+Notifies player <code class="inline">events</code> of guess <code class="inline">results</code></p>
 </div>
   
 </div>
@@ -145,7 +145,7 @@ Notifies player events of guess results</p>
     <a href="#setup/1">setup(player)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Setups game play round</p>
+    <div class="summary-synopsis"><p>Setups game play <code class="inline">round</code></p>
 </div>
   
 </div>
@@ -160,7 +160,7 @@ Notifies player events of guess results</p>
     <a href="#status/1">status(player)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns round status tuple</p>
+    <div class="summary-synopsis"><p>Returns <code class="inline">round</code> status tuple</p>
 </div>
   
 </div>
@@ -175,8 +175,8 @@ Notifies player events of guess results</p>
     <a href="#update/3">update(player, round, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Updates player abstraction with round results.  If games are over, updates
-games summary and notifies player events</p>
+    <div class="summary-synopsis"><p>Updates <a href="Player.html"><code class="inline">Player</code></a> abstraction with <a href="Round.html#content"><code class="inline">Round</code></a> results.  If games are over, updates
+games summary and notifies <a href="Player.Events.html"><code class="inline">Player.Events</code></a></p>
 </div>
   
 </div>
@@ -240,7 +240,7 @@ games summary and notifies player events</p>
     </div>
   
   <section class="docstring">
-    <p>Interjects round specific parameters into choices text</p>
+    <p>Interjects <code class="inline">round</code> specific parameters into <code class="inline">choices text</code>.</p>
 
   </section>
 </div>
@@ -263,7 +263,7 @@ games summary and notifies player events</p>
     </div>
   
   <section class="docstring">
-    <p>Returns round context based on results of last guess</p>
+    <p>Returns round <code class="inline">context</code> based on results of <code class="inline">last guess</code></p>
 
   </section>
 </div>
@@ -286,9 +286,9 @@ games summary and notifies player events</p>
     </div>
   
   <section class="docstring">
-    <p>Issues a client guess (either letter or word) against <a href="Game.Server.html"><code class="inline">Game.Server</code></a>.
-Notifies player events of guess results.</p>
-<p>Returns received round data</p>
+    <p>Issues a client <code class="inline">guess</code> (either <code class="inline">letter</code> or <code class="inline">word</code>) against <a href="Game.Server.html"><code class="inline">Game.Server</code></a>.
+Notifies player <code class="inline">events</code> of guess <code class="inline">results</code>.</p>
+<p>Returns received <code class="inline">round</code> data</p>
 
   </section>
 </div>
@@ -302,11 +302,11 @@ Notifies player events of guess results.</p>
   </div>
   
   <section class="docstring">
-    <p>Setups game play round</p>
+    <p>Setups game play <code class="inline">round</code></p>
 <p>For game start stage, retrieves secret length from game server
-uses secret length to filter possible hangman words from pass server</p>
+uses secret length to filter possible <code class="inline">Hangman</code> words from <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> server</p>
 <p>On subsequent rounds, generates a reduce key based on the result of the
-last guess to filter possible hangman words from word pass server</p>
+last guess to filter possible <code class="inline">Hangman</code> words from <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> server</p>
 
   </section>
 </div>
@@ -351,7 +351,7 @@ last guess to filter possible hangman words from word pass server</p>
     </div>
   
   <section class="docstring">
-    <p>Returns round status tuple</p>
+    <p>Returns <code class="inline">round</code> status tuple</p>
 
   </section>
 </div>
@@ -387,11 +387,11 @@ last guess to filter possible hangman words from word pass server</p>
     </div>
   
   <section class="docstring">
-    <p>Updates player abstraction with round results.  If games are over, updates
-games summary and notifies player events.</p>
-<p>Under human guessing, round update will update the strategy abstraction
-with the guess particulars.  If robot guessing, the strategy abstraction will also
-be updated.</p>
+    <p>Updates <a href="Player.html"><code class="inline">Player</code></a> abstraction with <a href="Round.html#content"><code class="inline">Round</code></a> results.  If games are over, updates
+games summary and notifies <a href="Player.Events.html"><code class="inline">Player.Events</code></a>.</p>
+<p>Under human guessing, round <code class="inline">update</code> will <code class="inline">update</code> the strategy
+with the <code class="inline">guess</code> particulars.  If robot guessing, the strategy will also
+be <code class="inline">updated</code>.</p>
 
   </section>
 </div>

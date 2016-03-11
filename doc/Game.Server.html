@@ -69,11 +69,11 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p> Module implements hangman game server using GenServer.
- Wraps hangman game abstraction as server state.  Runs 
- each game or set of games sequentially</p>
-<p>Interacts with player client through public interface and
-maintains game state</p>
+          <p> Module implements <code class="inline">Hangman</code> <a href="Game.html"><code class="inline">Game</code></a> server using <code class="inline">GenServer</code>.
+ Wraps <a href="Game.html"><code class="inline">Game</code></a> abstraction as server state.  Runs 
+ each <code class="inline">game</code> or set of <code class="inline">games</code> sequentially</p>
+<p>Interacts with client <code class="inline">player</code> through public interface and
+maintains <code class="inline">game</code> state</p>
 
         </section>
       
@@ -111,7 +111,7 @@ maintains game state</p>
     <a href="#guess/2">guess(game_pid, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues guess letter or word request, returns guess result reply</p>
+    <div class="summary-synopsis"><p>Issues guess <code class="inline">letter</code> or <code class="inline">word</code> request, returns guess <code class="inline">result</code></p>
 </div>
   
 </div>
@@ -120,8 +120,8 @@ maintains game state</p>
     <a href="#load/4">load(game_pid, id_key, secret, max_wrong \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Loads new game state into server process. 
-Used primarily by game pid cache server</p>
+    <div class="summary-synopsis"><p>Loads new <code class="inline">game</code> into server process. 
+Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Cache</code></a></p>
 </div>
   
 </div>
@@ -130,7 +130,7 @@ Used primarily by game pid cache server</p>
     <a href="#secret_length/1">secret_length(game_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Retrieves game secret length number</p>
+    <div class="summary-synopsis"><p>Retrieves <a href="Game.html"><code class="inline">Game</code></a> secret length</p>
 </div>
   
 </div>
@@ -139,7 +139,7 @@ Used primarily by game pid cache server</p>
     <a href="#start_link/3">start_link(player_name, secret, max_wrong \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Start public interface method with secret(s)</p>
+    <div class="summary-synopsis"><p>Start public interface method with <code class="inline">secret(s)</code></p>
 </div>
   
 </div>
@@ -148,7 +148,7 @@ Used primarily by game pid cache server</p>
     <a href="#status/1">status(game_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Retrieves game server status data</p>
+    <div class="summary-synopsis"><p>Retrieves <a href="Game.html"><code class="inline">Game</code></a> status data</p>
 </div>
   
 </div>
@@ -157,7 +157,7 @@ Used primarily by game pid cache server</p>
     <a href="#stop/1">stop(game_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues request to stop GenServer</p>
+    <div class="summary-synopsis"><p>Issues request to stop <code class="inline">GenServer</code></p>
 </div>
   
 </div>
@@ -166,8 +166,8 @@ Used primarily by game pid cache server</p>
     <a href="#whereis/1">whereis(id_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routine returns game server pid from process registry using gproc
-If not found, returns :undefined</p>
+    <div class="summary-synopsis"><p>Routine returns game server <code class="inline">pid</code> from process registry using <code class="inline">gproc</code>
+If not found, returns <code class="inline">:undefined</code></p>
 </div>
   
 </div>
@@ -227,18 +227,18 @@ If not found, returns :undefined</p>
     </div>
   
   <section class="docstring">
-    <p>Issues guess letter or word request, returns guess result reply</p>
-<p>Internally, runs guess data against game secret. Updates hangman pattern, status, and
+    <p>Issues guess <code class="inline">letter</code> or <code class="inline">word</code> request, returns guess <code class="inline">result</code></p>
+<p>Internally, runs <code class="inline">guess</code> against game <code class="inline">secret</code>. Updates <code class="inline">Hangman</code> pattern, status, and
 other game recordkeeping structures.</p>
 <p>Guesses follow two types</p>
 <ul>
 <li><p><code class="inline">{:guess_letter, letter}</code> -     If correct, 
-  returns the :correct_letter data tuple along with game
- otherwise, returns the :incorrect_letter data tuple along with game</p>
+  returns the <code class="inline">:correct_letter</code> data tuple along with game info
+ otherwise, returns the <code class="inline">:incorrect_letter</code> data tuple along with game info</p>
 </li>
 <li><code class="inline">{:guess_word, word}</code> -     If correct, returns 
-  the :correct_word data tuple along with game
- If incorrect, returns the :incorrect_word data tuple with game
+  the <code class="inline">:correct_word</code> data tuple along with game info
+ If incorrect, returns the :incorrect_word data tuple with game info
 </li>
 </ul>
 
@@ -263,8 +263,8 @@ other game recordkeeping structures.</p>
     </div>
   
   <section class="docstring">
-    <p>Loads new game state into server process. 
-Used primarily by game pid cache server</p>
+    <p>Loads new <code class="inline">game</code> into server process. 
+Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Cache</code></a></p>
 
   </section>
 </div>
@@ -287,7 +287,7 @@ Used primarily by game pid cache server</p>
     </div>
   
   <section class="docstring">
-    <p>Retrieves game secret length number</p>
+    <p>Retrieves <a href="Game.html"><code class="inline">Game</code></a> secret length</p>
 
   </section>
 </div>
@@ -310,7 +310,7 @@ Used primarily by game pid cache server</p>
     </div>
   
   <section class="docstring">
-    <p>Start public interface method with secret(s)</p>
+    <p>Start public interface method with <code class="inline">secret(s)</code></p>
 
   </section>
 </div>
@@ -333,7 +333,7 @@ Used primarily by game pid cache server</p>
     </div>
   
   <section class="docstring">
-    <p>Retrieves game server status data</p>
+    <p>Retrieves <a href="Game.html"><code class="inline">Game</code></a> status data</p>
 
   </section>
 </div>
@@ -356,7 +356,7 @@ Used primarily by game pid cache server</p>
     </div>
   
   <section class="docstring">
-    <p>Issues request to stop GenServer</p>
+    <p>Issues request to stop <code class="inline">GenServer</code></p>
 
   </section>
 </div>
@@ -379,8 +379,8 @@ Used primarily by game pid cache server</p>
     </div>
   
   <section class="docstring">
-    <p>Routine returns game server pid from process registry using gproc
-If not found, returns :undefined</p>
+    <p>Routine returns game server <code class="inline">pid</code> from process registry using <code class="inline">gproc</code>
+If not found, returns <code class="inline">:undefined</code></p>
 
   </section>
 </div>

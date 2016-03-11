@@ -70,8 +70,8 @@
       
         <section id="moduledoc" class="docstring">
           <p>Module for accessing input file stream for 
-various dictionary file transformed types range
-from unsorted (original), sorted, grouped, chunked (last)</p>
+various <a href="Dictionary.File.html"><code class="inline">Dictionary.File</code></a> transformed types ranging
+from <code class="inline">unsorted</code>, <code class="inline">sorted</code>, <code class="inline">grouped</code>, <code class="inline">chunked</code></p>
 
         </section>
       
@@ -97,7 +97,7 @@ from unsorted (original), sorted, grouped, chunked (last)</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t:t/0">t()</a>
+    <a href="#t/0">t()</a>
   </div>
   
 </div>
@@ -112,30 +112,30 @@ from unsorted (original), sorted, grouped, chunked (last)</p>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#delete/1">delete(state)</a>
+    <a href="#delete/1">delete(fstream)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Deletes state, returns empty file stream</p>
+    <div class="summary-synopsis"><p>Deletes <code class="inline">fstream</code>, returns empty file <code class="inline">stream</code></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#file_handler/2">file_handler(state, arg)</a>
+    <a href="#file_handler/2">file_handler(fstream, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Handles file specific input streams, wrapping underlying file formats.
-Returns file stream, closes file when finished.  Normally accessed
-through gets_lazy</p>
+    <div class="summary-synopsis"><p>Handles file specific input <code class="inline">streams</code>, wrapping underlying file formats.
+Returns file <code class="inline">stream</code>, closes file when finished.  Normally accessed
+through <a href="#gets_lazy/1"><code class="inline">gets_lazy/1</code></a></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#gets_lazy/1">gets_lazy(state)</a>
+    <a href="#gets_lazy/1">gets_lazy(fstream)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns input file stream</p>
+    <div class="summary-synopsis"><p>Returns input file <code class="inline">stream</code></p>
 </div>
   
 </div>
@@ -144,7 +144,7 @@ through gets_lazy</p>
     <a href="#new/2">new(arg, path)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns a new empty file stream</p>
+    <div class="summary-synopsis"><p>Returns a new empty file <code class="inline">stream</code></p>
 </div>
   
 </div>
@@ -172,8 +172,8 @@ through gets_lazy</p>
   <pre><code class="elixir"><a href="#t:mode/0">mode</a> :: :read</code></pre>
   
 </div>
-<div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Dictionary.File.Stream{file: term, group_id: term, group_index: term, type: term}</code></pre>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
   
 </div>
 
@@ -194,7 +194,7 @@ through gets_lazy</p>
     <a href="#delete/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">delete(state)</span>
+    <span class="signature">delete(fstream)</span>
       
   </div>
   
@@ -208,7 +208,7 @@ through gets_lazy</p>
     </div>
   
   <section class="docstring">
-    <p>Deletes state, returns empty file stream</p>
+    <p>Deletes <code class="inline">fstream</code>, returns empty file <code class="inline">stream</code></p>
 
   </section>
 </div>
@@ -217,7 +217,7 @@ through gets_lazy</p>
     <a href="#file_handler/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">file_handler(state, arg)</span>
+    <span class="signature">file_handler(fstream, arg)</span>
       
   </div>
   
@@ -231,9 +231,9 @@ through gets_lazy</p>
     </div>
   
   <section class="docstring">
-    <p>Handles file specific input streams, wrapping underlying file formats.
-Returns file stream, closes file when finished.  Normally accessed
-through gets_lazy.</p>
+    <p>Handles file specific input <code class="inline">streams</code>, wrapping underlying file formats.
+Returns file <code class="inline">stream</code>, closes file when finished.  Normally accessed
+through <a href="#gets_lazy/1"><code class="inline">gets_lazy/1</code></a>.</p>
 
   </section>
 </div>
@@ -242,7 +242,7 @@ through gets_lazy.</p>
     <a href="#gets_lazy/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">gets_lazy(state)</span>
+    <span class="signature">gets_lazy(fstream)</span>
       
   </div>
   
@@ -256,7 +256,7 @@ through gets_lazy.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns input file stream</p>
+    <p>Returns input file <code class="inline">stream</code></p>
 
   </section>
 </div>
@@ -279,7 +279,7 @@ through gets_lazy.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns a new empty file stream</p>
+    <p>Returns a new empty file <code class="inline">stream</code></p>
 
   </section>
 </div>

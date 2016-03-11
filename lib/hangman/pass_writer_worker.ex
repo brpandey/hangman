@@ -2,9 +2,9 @@ defmodule Pass.Writer.Worker do
   use GenServer
 
   @moduledoc """
-  Module is a GenServer that implements writer worker functionality.
-  Specifically, module is a write operation specific module that 
-  performs async writes into `Pass.Cache` `ETS` table.
+  Module is a `GenServer` that implements writer worker functionality.
+  Specifically, module is a `write-operation` specific module that 
+  performs `async` writes into `Pass.Cache` `ETS` table.
 
   If the `Pass.Writer.Worker.write/3` operation fails for whatever reason, 
   doesn't bring down the reads and table-owning `Pass.Cache` process.  
@@ -32,7 +32,7 @@ defmodule Pass.Writer.Worker do
   end
 
   @doc """
-  Issues request to stop GenServer worker
+  Issues request to stop GenServer `worker`
   """
   
   @spec stop(pid) :: {}
@@ -41,8 +41,8 @@ defmodule Pass.Writer.Worker do
 	end
 
   @doc """
-  Write is an asynchronous call.
-  Inserts chunks into ets pass table
+  Write is an `asynchronous` call.
+  Inserts `chunks` into `ETS` pass table
   """
 
   @spec write(pos_integer, Pass.key, Chunks.t) :: :ok
@@ -100,7 +100,7 @@ defmodule Pass.Writer.Worker do
 	end 
   
 	@docp """
-	Terminates the pass writer worker server
+	Terminates the pass writer worker `server`
 	No special cleanup
 	"""
   

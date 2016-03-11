@@ -69,11 +69,13 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements words reduction engine.</p>
-<p>Reduction load is handled through pool.</p>
-<p>Module distributes reduce requests based on pass key id attribute (name).
-Reduction workers are started up as part of the reducer pool.</p>
-<p>Pool supervises reduction workers.</p>
+          <p>Module implements words reduction engine.  </p>
+<p>Reduces possible <code class="inline">Hangman</code> words set based on the provided reduce <code class="inline">key</code>.  Reduction 
+<code class="inline">load</code> is handled through <a href="Reduction.Engine.Pool.html"><code class="inline">Reduction.Engine.Pool</code></a>.</p>
+<p>The <a href="Reduction.Engine.html#content"><code class="inline">Reduction.Engine</code></a> distributes <a href="#reduce/3"><code class="inline">reduce/3</code></a> requests based on 
+the pass key id attribute to <code class="inline">workers</code>. Engine workers are started up 
+as part of the reducer pool.</p>
+<p>The pool supervises the reduction <code class="inline">workers</code>.</p>
 
         </section>
       
@@ -98,8 +100,9 @@ Reduction workers are started up as part of the reducer pool.</p>
     <a href="#reduce/3">reduce(pass_key, regex_key, exclusion_set)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Calls synchronous worker process function reduce and store
-Based on key id, selects reduction worker to hand off request to</p>
+    <div class="summary-synopsis"><p>Distributes reduce request to appropriate <code class="inline">worker</code>.
+Calls synchronous <code class="inline">worker</code> process function <a href="Reduction.Engine.Worker.html#reduce_and_store/4"><code class="inline">Reduction.Engine.Worker.reduce_and_store/4</code></a>.
+Hands off request based on key id</p>
 </div>
   
 </div>
@@ -108,8 +111,8 @@ Based on key id, selects reduction worker to hand off request to</p>
     <a href="#start_link/0">start_link()</a>
   </div>
   
-    <div class="summary-synopsis"><p>Supervisor start_link wrapper function
-Starts pool supervisor</p>
+    <div class="summary-synopsis"><p>Supervisor start link wrapper function
+Starts pool <code class="inline">Supervisor</code></p>
 </div>
   
 </div>
@@ -153,8 +156,9 @@ Starts pool supervisor</p>
     </div>
   
   <section class="docstring">
-    <p>Calls synchronous worker process function reduce and store
-Based on key id, selects reduction worker to hand off request to</p>
+    <p>Distributes reduce request to appropriate <code class="inline">worker</code>.
+Calls synchronous <code class="inline">worker</code> process function <a href="Reduction.Engine.Worker.html#reduce_and_store/4"><code class="inline">Reduction.Engine.Worker.reduce_and_store/4</code></a>.
+Hands off request based on key id.</p>
 
   </section>
 </div>
@@ -177,8 +181,8 @@ Based on key id, selects reduction worker to hand off request to</p>
     </div>
   
   <section class="docstring">
-    <p>Supervisor start_link wrapper function
-Starts pool supervisor</p>
+    <p>Supervisor start link wrapper function
+Starts pool <code class="inline">Supervisor</code></p>
 
   </section>
 </div>

@@ -2,12 +2,12 @@ defmodule Pass.Writer.Pool do
   use Supervisor
 
   @moduledoc """
-  Module is a Supervisor that supervises a pool
+  Module is a `Supervisor` that supervises a `pool`
   of pass writer workers.
 
-  Write load is handled through `Pass.Writer.Pool`.
-  Module distributes `Pass.Writer.write/2` request based on 
-  pass key id attribute (name).
+  Write `load` is handled through `Pass.Writer.Pool`.
+  Module `distributes` write - `Pass.Writer.write/2` requests based on 
+  `pass` key `id` attribute.
   """
 
   @name __MODULE__
@@ -22,8 +22,8 @@ defmodule Pass.Writer.Pool do
   end
 
   @doc """
-  For each worker in pool, creates a writer worker process
-  specification to be supervised once supervisor started
+  For each `worker` in `pool`, creates a writer worker process
+  `specification` to be supervised once `Supervisor` started
   """
 
   @callback init(pool_size :: pos_integer) :: {:ok, tuple}

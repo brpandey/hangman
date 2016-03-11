@@ -11,6 +11,15 @@ defmodule CLI do
   Robot games are auto-guessed based on simple strategy heuristics.
 
   Game archival can be captured through logging, e.g. --log option
+
+  Usage:
+  --name (player id) --type ("human" or "robot") --random (num random secrets, max 10)
+  [--secret (hangman word(s)) --baseline] [--log --display]
+
+  aliases: 
+  -n (player id) -t ("human" or "robot") -r (num random secrets, max 10)
+  [-s (hangman word(s)) -bl] [-l -d]
+
   """
 
 
@@ -67,12 +76,12 @@ defmodule CLI do
       :error -> parsed
 
 			{:ok, true} ->
-				IO.puts "--name <player id> --type <\"human\" or \"robot\">" <> 
-          " --random <num random secrets, max 10>" <>
-          " --secret <hangman word(s)> --baseline --log --display\n"
+				IO.puts "--name (player id) --type (\"human\" or \"robot\")" <> 
+          " --random (num random secrets, max 10)" <>
+          " [--secret (hangman word(s)) --baseline] [--log --display]\n"
         
-				IO.puts "or aliases: -n <player id> -t <\"human\" or \"robot\"> " <> 
-          "-r <num random secrets, max 10> -s <hangman word(s)> -bl -l -d"
+				IO.puts "or aliases: -n (player id) -t (\"human\" or \"robot\") " <> 
+          "-r (num random secrets, max 10) [-s (hangman word(s)) -bl] [-l -d]"
 		    System.halt(0)
 		end
 

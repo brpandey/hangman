@@ -71,8 +71,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements event logger handler for player events.</p>
-<p>Each event is logged to a file named after player id (name).</p>
+          <p>Module implements event logger handler for <a href="Player.Events.html"><code class="inline">Player.Events</code></a>.</p>
+<p>Each <code class="inline">event</code> is logged to a file named after the player <code class="inline">id</code>.</p>
 
         </section>
       
@@ -101,7 +101,8 @@
     <a href="#c:handle_event/2">handle_event(tuple, term)</a>
   </div>
   
-    <div class="summary-synopsis"><p>The handle_event callback handles various events</p>
+    <div class="summary-synopsis"><p>The handle_event callback handles various events
+which ultimately write to <code class="inline">player</code> logger file</p>
 </div>
   
 </div>
@@ -116,7 +117,7 @@
     <a href="#c:terminate/2">terminate(term, pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Terminate callback. Closes player log file</p>
+    <div class="summary-synopsis"><p>Terminate callback. Closes player <code class="inline">logger</code> file</p>
 </div>
   
 </div>
@@ -160,25 +161,26 @@
     </div>
   
   <section class="docstring">
-    <p>The handle_event callback handles various events</p>
+    <p>The handle_event callback handles various events
+which ultimately write to <code class="inline">player</code> logger file</p>
 <ul>
 <li><p><code class="inline">:start</code> notification event.
-Opens and writes to player logger file</p>
+Opens and writes to file</p>
 </li>
 <li><p><code class="inline">:games_over</code> notification event.
-Writes to player logger file and then closes file</p>
+Writes to file and then closes file</p>
 </li>
 <li><p><code class="inline">:secret_length</code> notification event.
-Writes to player logger file</p>
+Writes to file</p>
 </li>
 <li><p><code class="inline">:guessed_word</code> notification event.
-Writes to player logger file</p>
+Writes to file</p>
 </li>
 <li><p><code class="inline">:guessed_letter</code> notification event.
-Writes to player logger file</p>
+Writes to file</p>
 </li>
 <li><code class="inline">:round_status</code> notification event.
-Writes to player logger file
+Writes to file
 </li>
 </ul>
 
@@ -225,7 +227,7 @@ Writes to player logger file
     </div>
   
   <section class="docstring">
-    <p>Terminate callback. Closes player log file</p>
+    <p>Terminate callback. Closes player <code class="inline">logger</code> file</p>
 
   </section>
 </div>

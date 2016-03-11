@@ -2,7 +2,8 @@ defmodule Player.System.Supervisor do
 	use Supervisor
 
   @moduledoc false
-  _ = """
+
+  '''
   Module supervises all components necessary for player and 
   strategic player game play including dictionary cache server,
   word pass server, reduction engine, pass writer, 
@@ -10,7 +11,7 @@ defmodule Player.System.Supervisor do
 
   Module is a third line supervisor as it supervises two 
   first-line supervisors and 1 second-line supervisor.
-  """
+  '''
 
   require Logger
 

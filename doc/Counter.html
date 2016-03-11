@@ -70,11 +70,11 @@
       
         <section id="moduledoc" class="docstring">
           <p>Module implements a set of functions for working 
-with letter frequency counters.</p>
-<p>Conventional hangman strategy deals exclusively with 
-letter frequency data</p>
-<p>Counters are key value stores where keys are letter strings 
-and values are positive integers</p>
+with letter frequency tallies.</p>
+<p>Conventional <code class="inline">Hangman</code> strategy deals exclusively with 
+letter frequency data.</p>
+<p><a href="Counter.html#content"><code class="inline">Counter</code></a> is a key value store where a <code class="inline">key</code> 
+is a letter string and a <code class="inline">value</code> is a positive integer.</p>
 
         </section>
       
@@ -124,11 +124,19 @@ and values are positive integers</p>
     <a href="#add_letters/2">add_letters(counter, word)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Adds letters to <a href="Counter.html#content"><code class="inline">Counter</code></a> without checking for duplicate letters.  
+Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#add_unique_letters/2">add_unique_letters(counter, word)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Adds letters to <a href="Counter.html#content"><code class="inline">Counter</code></a>. Ensure letters are unique. 
+Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -136,11 +144,20 @@ and values are positive integers</p>
     <a href="#add_words/2">add_words(counter, words)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Adds words <code class="inline">list</code> to <a href="Counter.html#content"><code class="inline">Counter</code></a>. Converts words to char <code class="inline">list</code> and 
+then letter counts <code class="inline">list</code>. List is then submitted to <code class="inline">map</code> for bulk 
+value update. Faster than many tiny <code class="inline">map</code> updates</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#add_words/3">add_words(counter, words_stream, exclusion_set)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Routines adds word <code class="inline">stream</code> to <a href="Counter.html#content"><code class="inline">Counter</code></a>.  Splits word <code class="inline">stream</code> into 
+manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><code class="inline">add_words/2</code></a> to reduce into <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -154,11 +171,17 @@ and values are positive integers</p>
     <a href="#delete/2">delete(counter, letters)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a> after deleting specified <code class="inline">keys</code> in letters</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#empty?/1">empty?(counter)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether <a href="Counter.html#content"><code class="inline">Counter</code></a> is empty</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -166,11 +189,18 @@ and values are positive integers</p>
     <a href="#equal?/2">equal?(c1, c2)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Returns true if <code class="inline">Counters</code> equal</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#inc_by/3">inc_by(counter, key, value \\ 1)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Increment <code class="inline">value</code> for a given <code class="inline">key</code> by the given <code class="inline">value</code>. 
+Default increment <code class="inline">value</code> 1</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -178,11 +208,17 @@ and values are positive integers</p>
     <a href="#items/1">items(counter)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Returns a <code class="inline">key-value</code> list of {<code class="inline">letter</code>, <code class="inline">count</code>} <code class="inline">tuples</code></p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#most_common/2">most_common(counter, n)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Returns <code class="inline">list</code> of the most common <code class="inline">n</code> codepoint <code class="inline">keys</code> and codepoint <code class="inline">values</code></p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -190,17 +226,26 @@ and values are positive integers</p>
     <a href="#most_common_key/2">most_common_key(counter, n)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Returns <code class="inline">list</code> of the most common <code class="inline">n</code> codepoint <code class="inline">keys</code></p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#new/0">new()</a>
   </div>
   
+    <div class="summary-synopsis"><p>Returns new, empty <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#new/1">new(word)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Returns new <a href="Counter.html#content"><code class="inline">Counter</code></a> that reflects contents of either <code class="inline">String.t, [tuple], map</code></p>
+</div>
   
 </div>
 
@@ -261,17 +306,15 @@ and values are positive integers</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">add_letters(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a>) :: <a href="#t:t/0">t</a></code></pre>
-        
-          <pre><code class="elixir">add_letters(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: <a href="#t:t/0">t</a></code></pre>
-        
-          <pre><code class="elixir">add_letters(<a href="#t:t/0">t</a>, []) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">add_letters(<a href="#t:t/0">t</a>, [] | <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a>) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    
+    <p>Adds letters to <a href="Counter.html#content"><code class="inline">Counter</code></a> without checking for duplicate letters.  
+Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a>.</p>
+
   </section>
 </div>
 <div class="detail" id="add_unique_letters/2">
@@ -287,13 +330,15 @@ and values are positive integers</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">add_unique_letters(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">add_unique_letters(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    
+    <p>Adds letters to <a href="Counter.html#content"><code class="inline">Counter</code></a>. Ensure letters are unique. 
+Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+
   </section>
 </div>
 <div class="detail" id="add_words/2">
@@ -309,13 +354,16 @@ and values are positive integers</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">add_words(<a href="#t:t/0">t</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">add_words(<a href="#t:t/0">t</a>, words :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a>) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    
+    <p>Adds words <code class="inline">list</code> to <a href="Counter.html#content"><code class="inline">Counter</code></a>. Converts words to char <code class="inline">list</code> and 
+then letter counts <code class="inline">list</code>. List is then submitted to <code class="inline">map</code> for bulk 
+value update. Faster than many tiny <code class="inline">map</code> updates</p>
+
   </section>
 </div>
 <div class="detail" id="add_words/3">
@@ -331,13 +379,15 @@ and values are positive integers</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">add_words(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a>, map) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">add_words(<a href="#t:t/0">t</a>, stream :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a>, exclusion :: map) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    
+    <p>Routines adds word <code class="inline">stream</code> to <a href="Counter.html#content"><code class="inline">Counter</code></a>.  Splits word <code class="inline">stream</code> into 
+manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><code class="inline">add_words/2</code></a> to reduce into <a href="Counter.html#content"><code class="inline">Counter</code></a>.</p>
+
   </section>
 </div>
 <div class="detail" id="delete/1">
@@ -348,15 +398,6 @@ and values are positive integers</p>
     <span class="signature">delete(counter)</span>
       
   </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">delete(<a href="#t:t/0">t</a>) :: <a href="#t:t/0">t</a></code></pre>
-        
-      </div>
-    </div>
   
   <section class="docstring">
     
@@ -375,15 +416,14 @@ and values are positive integers</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">delete(<a href="#t:t/0">t</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) :: <a href="#t:t/0">t</a></code></pre>
-        
-          <pre><code class="elixir">delete(<a href="#t:t/0">t</a>, []) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">delete(<a href="#t:t/0">t</a>, none | [] | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    
+    <p>Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a> after deleting specified <code class="inline">keys</code> in letters</p>
+
   </section>
 </div>
 <div class="detail" id="empty?/1">
@@ -405,7 +445,8 @@ and values are positive integers</p>
     </div>
   
   <section class="docstring">
-    
+    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether <a href="Counter.html#content"><code class="inline">Counter</code></a> is empty</p>
+
   </section>
 </div>
 <div class="detail" id="equal?/2">
@@ -427,7 +468,8 @@ and values are positive integers</p>
     </div>
   
   <section class="docstring">
-    
+    <p>Returns true if <code class="inline">Counters</code> equal</p>
+
   </section>
 </div>
 <div class="detail" id="inc_by/3">
@@ -449,7 +491,9 @@ and values are positive integers</p>
     </div>
   
   <section class="docstring">
-    
+    <p>Increment <code class="inline">value</code> for a given <code class="inline">key</code> by the given <code class="inline">value</code>. 
+Default increment <code class="inline">value</code> 1.</p>
+
   </section>
 </div>
 <div class="detail" id="items/1">
@@ -471,7 +515,8 @@ and values are positive integers</p>
     </div>
   
   <section class="docstring">
-    
+    <p>Returns a <code class="inline">key-value</code> list of {<code class="inline">letter</code>, <code class="inline">count</code>} <code class="inline">tuples</code></p>
+
   </section>
 </div>
 <div class="detail" id="most_common/2">
@@ -493,7 +538,8 @@ and values are positive integers</p>
     </div>
   
   <section class="docstring">
-    
+    <p>Returns <code class="inline">list</code> of the most common <code class="inline">n</code> codepoint <code class="inline">keys</code> and codepoint <code class="inline">values</code></p>
+
   </section>
 </div>
 <div class="detail" id="most_common_key/2">
@@ -515,7 +561,8 @@ and values are positive integers</p>
     </div>
   
   <section class="docstring">
-    
+    <p>Returns <code class="inline">list</code> of the most common <code class="inline">n</code> codepoint <code class="inline">keys</code></p>
+
   </section>
 </div>
 <div class="detail" id="new/0">
@@ -527,17 +574,9 @@ and values are positive integers</p>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">new :: <a href="#t:t/0">t</a></code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    
+    <p>Returns new, empty <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+
   </section>
 </div>
 <div class="detail" id="new/1">
@@ -553,19 +592,16 @@ and values are positive integers</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">new(map) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">new(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [tuple] | map) :: <a href="#t:t/0">t</a></code></pre>
         
-          <pre><code class="elixir">new([tuple]) :: <a href="#t:t/0">t</a></code></pre>
-        
-          <pre><code class="elixir">new(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: <a href="#t:t/0">t</a></code></pre>
-        
-          <pre><code class="elixir">new([]) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">new(none | []) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    
+    <p>Returns new <a href="Counter.html#content"><code class="inline">Counter</code></a> that reflects contents of either <code class="inline">String.t, [tuple], map</code></p>
+
   </section>
 </div>
 

@@ -2,11 +2,11 @@ defmodule Chunks do
 	defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
 
 	@moduledoc """
-	Module to handle word list chunks for a given length key.  
-  Internally maintains standardized containers for word lists and 
-  keeps track of total word and chunks counts.
+	Module to handle word list `Chunks` for a given length key.  
+  Internally maintains standardized `containers` for word lists and 
+  keeps track of total word counts and number of `containers`.
   
-  Splits big words list into smaller more manageable list chunks
+  Splits big words list into smaller more manageable list `Chunks`.
 
   The need for chunking arises when we may have arbitrary long word
   lists/streams, so we chunk the word list to a standard size of 500 words.  
@@ -17,17 +17,20 @@ defmodule Chunks do
   `Chunks` provide more manageability especially when we store into the database because
   the abstraction automatically binaries data leaving a smaller footprint.
 
-  Primary functions are new, count, and add
+  Primary functions are `new/2`, `count/1`, `add/2`, and `get_words_lazy/1`.
 	"""
   
-  @type t :: %__MODULE__{}
+  @opaque t :: %__MODULE__{}
   @type binary_chunk ::  {binary, integer}
 
 
   @chunk_words_size 500
 
+  @spec container_size :: pos_integer
+  def container_size, do: @chunk_words_size
+
   @doc """
-  Returns new empty chunks abstraction
+  Returns new empty `Chunks` abstraction
   """
 
   @spec new(pos_integer) :: t
@@ -36,8 +39,8 @@ defmodule Chunks do
 	end
 
   @doc """
-  Returns new chunks abstraction.  Does this by splitting and encapsulating 
-  words lists from enumerable into standardized chunk containers.  
+  Returns new `Chunks` abstraction.  Does this by splitting and encapsulating 
+  words lists from enumerable into standardized `chunk` containers.  
   Word lists are binaried for compactness.
   """
 
@@ -100,7 +103,7 @@ defmodule Chunks do
     chunks
   end
 
-	@doc "Returns total word count across all chunk containers"
+	@doc "Returns total word count across all `chunk` containers"
 
   @spec count(t) :: integer
 	def count(%Chunks{raw_stream: raw_stream} = chunks) do
@@ -111,7 +114,7 @@ defmodule Chunks do
 		chunks.word_count
 	end
 
-	@doc "Return total number of chunk containers"
+	@doc "Return total number of `chunk` containers"
 
   @spec size(t) :: integer
 	def size(%Chunks{raw_stream: raw_stream} = chunks) do
@@ -121,19 +124,19 @@ defmodule Chunks do
 	end
 
   @doc """
-  Returns Chunks word length key
+  Returns `Chunks` word length key
   """
 
   @spec key(t) :: pos_integer
   def key(%Chunks{key: key} = _chunks), do: key
 
 	@doc """
-  Takes an existing chunk and adds the passed in binary chunk tuple.
+  Takes an existing `Chunks` and adds the passed in binary `chunk` `tuple`.
 
   Heavily used in reduce methods to add a {binary, word_count} to the
-  Chunks accumulator value.
+  `Chunks` accumulator value.
 
-  The tuple head is a binaried word list and the tail is the word count
+  The `tuple` head is a binaried word list and the tail is the word count
   """
 
   @spec add(t, binary_chunk) :: t
@@ -155,7 +158,7 @@ defmodule Chunks do
 	end
 
   @doc """
-  Returns words in lazy enumerable fashion.
+  Returns words in `lazy` `enumerable` fashion.
   """
 
   @spec get_words_lazy(t) :: Enumerable.t
@@ -164,7 +167,7 @@ defmodule Chunks do
   end
 
   @docp """
-  'Unpacks' binary into list of words of type String
+  'Unpacks' binary into list of word strings.
   """
 
   @spec unpack(binary) :: [String.t]
@@ -173,7 +176,7 @@ defmodule Chunks do
   end
 
   @doc """
-  Returns chunks information
+  Returns `Chunks` information
   """
 
   @spec info(t) :: Keyword.t

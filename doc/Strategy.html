@@ -69,11 +69,11 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Handles letter guessing strategy for player.</p>
-<p>For robot player type, retrieves best letter considering english
+          <p>Handles letter guessing strategy for <a href="Player.html"><code class="inline">Player</code></a>.</p>
+<p>For <code class="inline">robot</code> player type, retrieves best letter considering <code class="inline">English</code>
 letter frequencies and letter tally counts.</p>
-<p>For human player type, retries a set of top letter choices to
-be presented to human to manually choose.</p>
+<p>For <code class="inline">human</code> player type, retries a set of top letter choices to
+be presented to <code class="inline">human</code> to manually choose.</p>
 
         </section>
       
@@ -99,7 +99,7 @@ be presented to human to manually choose.</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t:t/0">t()</a>
+    <a href="#t/0">t()</a>
   </div>
   
 </div>
@@ -118,7 +118,7 @@ be presented to human to manually choose.</p>
   </div>
   
     <div class="summary-synopsis"><p>Retrieves letter choices text.  Denotes
-‘strategic’ letter pick with an asterisk</p>
+‘strategic’ letter pick with an <code class="inline">asterisk</code></p>
 </div>
   
 </div>
@@ -136,7 +136,7 @@ be presented to human to manually choose.</p>
     <a href="#info/1">info(s)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns strategy information</p>
+    <div class="summary-synopsis"><p>Returns <a href="Strategy.html#content"><code class="inline">Strategy</code></a> information</p>
 </div>
   
 </div>
@@ -155,8 +155,8 @@ return it so we can guess it</p>
     <a href="#letter_in_most_common/3">letter_in_most_common(strategy, letter, n \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Validates letter is within the top strategy letter choices.
-If not, picks the top letter as deemed by heuristics</p>
+    <div class="summary-synopsis"><p>Validates <code class="inline">letter</code> is within the top strategy letter choices.
+If not, picks the top <code class="inline">letter</code> as deemed by heuristics</p>
 </div>
   
 </div>
@@ -165,7 +165,7 @@ If not, picks the top letter as deemed by heuristics</p>
     <a href="#make_guess/1">make_guess(strategy)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns best letter guess as deemed by strategy heuristics</p>
+    <div class="summary-synopsis"><p>Returns best letter guess as deemed by heuristics</p>
 </div>
   
 </div>
@@ -174,7 +174,7 @@ If not, picks the top letter as deemed by heuristics</p>
     <a href="#most_common_letter/2">most_common_letter(strategy, n)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns most common n letters</p>
+    <div class="summary-synopsis"><p>Returns most common <code class="inline">n</code> letters</p>
 </div>
   
 </div>
@@ -183,7 +183,7 @@ If not, picks the top letter as deemed by heuristics</p>
     <a href="#most_common_letter_and_counts/2">most_common_letter_and_counts(strategy, n)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns most common n letters along with their counts</p>
+    <div class="summary-synopsis"><p>Returns most common <code class="inline">n</code> letters along with their <code class="inline">counts</code></p>
 </div>
   
 </div>
@@ -192,7 +192,7 @@ If not, picks the top letter as deemed by heuristics</p>
     <a href="#new/0">new()</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns a new strategy</p>
+    <div class="summary-synopsis"><p>Returns a new <a href="Strategy.html#content"><code class="inline">Strategy</code></a></p>
 </div>
   
 </div>
@@ -201,13 +201,13 @@ If not, picks the top letter as deemed by heuristics</p>
     <a href="#retrieve_best_letter/1">retrieve_best_letter(strategy)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Method implements the most common letter retrieval strategy with a twist.
+    <div class="summary-synopsis"><p>Method implements the most <code class="inline">common</code> letter retrieval strategy with a twist.
 Gets the first letter with the highest frequency for when the 
-current possible hangman word set space is &gt; “small”. 
-The twist is when we combine the english language letter relative 
-frequency. For the cases where the word set is less than small, 
+current possible <code class="inline">Hangman</code> word set space is &gt; “small”. 
+The twist is when we combine the <code class="inline">English</code> language letter relative 
+frequency. For the cases where the word set is less than <code class="inline">small</code>, 
 takes the letter whose frequencies are less than or equal to half 
-the possible hagman word pass size</p>
+the possible <code class="inline">Hangman</code> word pass <code class="inline">size</code></p>
 </div>
   
 </div>
@@ -225,7 +225,7 @@ the possible hagman word pass size</p>
     <a href="#update/3">update(strategy, pass, atom)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Updates strategy with pass data</p>
+    <div class="summary-synopsis"><p>Updates <code class="inline">strategy</code> with <code class="inline">pass</code> data</p>
 </div>
   
 </div>
@@ -253,8 +253,8 @@ the possible hagman word pass size</p>
   <pre><code class="elixir"><a href="#t:result/0">result</a> :: {<a href="#t:t/0">t</a>, <a href="Guess.html#t:t/0">Guess.t</a>}</code></pre>
   
 </div>
-<div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Strategy{guess: term, guessed_letters: term, pass: term, prior_guess: term}</code></pre>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
   
 </div>
 
@@ -290,7 +290,7 @@ the possible hagman word pass size</p>
   
   <section class="docstring">
     <p>Retrieves letter choices text.  Denotes
-‘strategic’ letter pick with an asterisk.</p>
+‘strategic’ letter pick with an <code class="inline">asterisk</code>.</p>
 
   </section>
 </div>
@@ -336,7 +336,7 @@ the possible hagman word pass size</p>
     </div>
   
   <section class="docstring">
-    <p>Returns strategy information</p>
+    <p>Returns <a href="Strategy.html#content"><code class="inline">Strategy</code></a> information</p>
 
   </section>
 </div>
@@ -383,8 +383,8 @@ return it so we can guess it</p>
     </div>
   
   <section class="docstring">
-    <p>Validates letter is within the top strategy letter choices.
-If not, picks the top letter as deemed by heuristics.</p>
+    <p>Validates <code class="inline">letter</code> is within the top strategy letter choices.
+If not, picks the top <code class="inline">letter</code> as deemed by heuristics.</p>
 
   </section>
 </div>
@@ -407,7 +407,7 @@ If not, picks the top letter as deemed by heuristics.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns best letter guess as deemed by strategy heuristics</p>
+    <p>Returns best letter guess as deemed by heuristics</p>
 
   </section>
 </div>
@@ -430,7 +430,7 @@ If not, picks the top letter as deemed by heuristics.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns most common n letters</p>
+    <p>Returns most common <code class="inline">n</code> letters</p>
 
   </section>
 </div>
@@ -453,7 +453,7 @@ If not, picks the top letter as deemed by heuristics.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns most common n letters along with their counts</p>
+    <p>Returns most common <code class="inline">n</code> letters along with their <code class="inline">counts</code></p>
 
   </section>
 </div>
@@ -476,7 +476,7 @@ If not, picks the top letter as deemed by heuristics.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns a new strategy</p>
+    <p>Returns a new <a href="Strategy.html#content"><code class="inline">Strategy</code></a></p>
 
   </section>
 </div>
@@ -499,14 +499,14 @@ If not, picks the top letter as deemed by heuristics.</p>
     </div>
   
   <section class="docstring">
-    <p>Method implements the most common letter retrieval strategy with a twist.
+    <p>Method implements the most <code class="inline">common</code> letter retrieval strategy with a twist.
 Gets the first letter with the highest frequency for when the 
-current possible hangman word set space is &gt; “small”. 
-The twist is when we combine the english language letter relative 
-frequency. For the cases where the word set is less than small, 
+current possible <code class="inline">Hangman</code> word set space is &gt; “small”. 
+The twist is when we combine the <code class="inline">English</code> language letter relative 
+frequency. For the cases where the word set is less than <code class="inline">small</code>, 
 takes the letter whose frequencies are less than or equal to half 
-the possible hagman word pass size.</p>
-<p>E.g.for size 10, the letter counts would need to be 5 
+the possible <code class="inline">Hangman</code> word pass <code class="inline">size</code>.</p>
+<p>E.g.for size 10, the letter <code class="inline">counts</code> would need to be 5 
 or lower to be chosen. Doesn’t handle tie between letters.</p>
 
   </section>
@@ -553,9 +553,9 @@ or lower to be chosen. Doesn’t handle tie between letters.</p>
     </div>
   
   <section class="docstring">
-    <p>Updates strategy with pass data.</p>
-<p>For robot player type, when we updated the pass data
-also prepare the guess.</p>
+    <p>Updates <code class="inline">strategy</code> with <code class="inline">pass</code> data.</p>
+<p>For <code class="inline">robot</code> player type, when we updated the pass data
+also <code class="inline">prepare</code> the guess.</p>
 
   </section>
 </div>

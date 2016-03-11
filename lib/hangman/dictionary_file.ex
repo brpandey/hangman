@@ -1,8 +1,8 @@
 defmodule Dictionary.File do
   @moduledoc """
-  Provides abstraction for various dictionary files.
+  Provides abstraction for various `Dictionary` files.
 
-  The original dictionary file is transformed into 
+  The original `Dictionary` file is transformed into 
   intermediate files as cached representations of each
   transformation layer. Unless the original file changes, transformation 
   every time isn't necessary since the intermediate files are stored on disk.  
@@ -10,8 +10,8 @@ defmodule Dictionary.File do
   Load time is only determined by the last transformed chunk file, 
   which is optimized for `ETS` load.
 
-  Transformation types are unsorted to sorted, 
-  sorted to grouped, and grouped to chunked.  Each transform handler 
+  Transformation types are `unsorted` to `sorted`, 
+  `sorted` to `grouped`, and `grouped` to `chunked`.  Each transform handler 
   encapsulates each transform procedure
   """
 
@@ -31,9 +31,9 @@ defmodule Dictionary.File do
 
 
   @doc """
-  Takes input file, applies a transform type and returns new file path
-  For example, can be used to first sort a file, then upon
-  second invocation, group that file
+  Takes input file, applies a `transform` and returns new file path.
+  For example, can be used to first `sort` a file, then upon
+  second invocation, `group` that file.
   """
 
   @spec transform(path :: String.t, pair :: {Dict.transform, Dict.transform}, 
@@ -78,10 +78,10 @@ defmodule Dictionary.File do
   end
 
   @doc """
-  Function builder routine to return the customized transform function
+  Function builder routine to return the customized `transform` function.
 
-  When each returned function runs, its reads in the "untransformed" file, 
-  applies the transform lambda, and then writes out to the new path
+  When each returned function runs, its reads in the file, 
+  applies the `transform` lambda, and then writes out to the new path
   """
 
   @spec make_file_transform((path :: String.t, file :: pid -> String.t)) 
@@ -110,7 +110,7 @@ defmodule Dictionary.File do
   end
 
 
-  @doc "Specific handler implementations for sort, group, and chunk transform"
+  @doc "Specific handler implementations for `sort`, `group`, and `chunk` transform"
   @spec transform_handler(String.t, String.t, Dict.transform) :: String.t
 
 	def transform_handler(path, new_path, @sorted) do

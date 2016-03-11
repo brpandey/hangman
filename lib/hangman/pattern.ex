@@ -1,10 +1,10 @@
 defmodule Pattern do
   @moduledoc """
-  Module handles hangman pattern updates given guessed letter
+  Module handles `Hangman` pattern updates given guessed `letter`.
   """
 
   @doc """
-  Recursive function, returns pattern string after update
+  Recursive function, returns `pattern` string after update
   """
 
 	@spec update(String.t, String.t, String.t) :: String.t | no_return

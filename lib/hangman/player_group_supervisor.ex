@@ -3,13 +3,13 @@ defmodule Player.Group.Supervisor do
 
   @moduledoc false
 
-  _ = """
+  '''
   Module is a second line supervisor as it supervises
   two first-line supervisors.
 
   Module supervises those player supervisors which dynamically
   start workers, namely player supervisor and player events supervisor
-  """
+  '''
 
   require Logger
 

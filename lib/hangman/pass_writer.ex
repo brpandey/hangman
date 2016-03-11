@@ -1,15 +1,16 @@
 defmodule Pass.Writer do
   
   @moduledoc """
-  Module implements words pass write functionality into the Pass.Cache `ETS` table.
+  Module implements words `pass` write functionality into the `Pass.Cache` `ETS` table.
 
-  Write load is handled through `Pass.Writer.Pool`.
-  Pool distributes write request based on pass key id attribute (name).
-  Pool size writer workers are started up as part of writer pool.
+  Write `load` is handled through `Pass.Writer.Pool`.
+
+  `Distributes` `write/2` request based on `pass` key id attribute to `workers`.
+
   Pool supervisor supervises writer workers, which are each responsible for
   the write operations.
 
-  Primary method is `Pass.Writer.Worker.write/3`
+  Primary `writer` worker method is `Pass.Writer.Worker.write/3`
   """
     
   @pool_size 10
@@ -26,8 +27,8 @@ defmodule Pass.Writer do
   
   
   @doc """
-  Write is an asynchronous call, no need to wait around for response
-  Based on key id, selects writer worker to hand off request to
+  Write is an `asynchronous` call, no need to wait around for response
+  Based on key `id`, selects writer `worker` to hand off request to.
   """
   
   @spec write(Pass.key, Chunks.t) :: :ok

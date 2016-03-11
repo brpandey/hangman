@@ -2,9 +2,9 @@ defmodule Player.Logger.Handler do
 	use GenEvent
 
   @moduledoc """
-  Module implements event logger handler for player events.
+  Module implements event logger handler for `Player.Events`.
  
-  Each event is logged to a file named after player id (name).
+  Each `event` is logged to a file named after the player `id`.
   """
 
   require Logger
@@ -15,24 +15,25 @@ defmodule Player.Logger.Handler do
 
   @doc """
   The handle_event callback handles various events
+  which ultimately write to `player` logger file
 
     * `:start` notification event.
-    Opens and writes to player logger file
+    Opens and writes to file
 
     * `:games_over` notification event.
-    Writes to player logger file and then closes file
+    Writes to file and then closes file
 
     * `:secret_length` notification event.
-    Writes to player logger file
+    Writes to file
 
     * `:guessed_word` notification event.
-    Writes to player logger file
+    Writes to file
 
     * `:guessed_letter` notification event.
-    Writes to player logger file
+    Writes to file
 
     * `:round_status` notification event.
-    Writes to player logger file
+    Writes to file
     """
 
   @callback handle_event(tuple, term) :: tuple
@@ -104,7 +105,7 @@ defmodule Player.Logger.Handler do
 
   
 	@doc """
-	Terminate callback. Closes player log file
+	Terminate callback. Closes player `logger` file
 	"""
   
   @callback terminate(term, pid) :: :ok | tuple

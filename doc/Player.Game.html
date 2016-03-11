@@ -69,12 +69,12 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module handles game playing for synchronous human and robot
+          <p>Module handles game playing for synchronous <code class="inline">human</code> and <code class="inline">robot</code>
 player types. Handles relationship between 
 <code class="inline">Player.FSM</code>, <a href="Game.Server.html"><code class="inline">Game.Server</code></a> and <a href="Player.Events.html"><code class="inline">Player.Events</code></a></p>
-<p>Loads up player specific game components: 
-dynamic game server, and event server</p>
-<p>Manages specific player fsm behaviour (human or robot).
+<p>Loads up the <code class="inline">player</code> specific <code class="inline">game</code> components: 
+a dynamic <code class="inline">game</code> server, and a dynamic <code class="inline">event</code> server</p>
+<p>Manages specific <code class="inline">player</code> fsm behaviour (<code class="inline">human</code> or <code class="inline">robot</code>).
 Wraps fsm game play into an enumerable for easy running.</p>
 
         </section>
@@ -100,8 +100,8 @@ Wraps fsm game play into an enumerable for easy running.</p>
     <a href="#rounds_handler/2">rounds_handler(arg, atom)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Permits robot or human round playing!
-Wraps the robot or human player game playing in a stream.
+    <div class="summary-synopsis"><p>Permits <code class="inline">robot</code> or <code class="inline">human</code> round playing!
+Wraps the <code class="inline">robot</code> or <code class="inline">human</code> player game playing in a stream.
 Stream resource returns an enumerable</p>
 </div>
   
@@ -111,8 +111,8 @@ Stream resource returns an enumerable</p>
     <a href="#run/5">run(name, type, secrets, log, display)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Function run connects all the player specific components together 
-and runs the player game</p>
+    <div class="summary-synopsis"><p>Function run connects all the <code class="inline">player</code> specific components together 
+and runs the player <code class="inline">game</code></p>
 </div>
   
 </div>
@@ -121,8 +121,8 @@ and runs the player game</p>
     <a href="#setup/4">setup(name, secrets, log, display)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Function setup loads the player specific game components.
-Setup the game server and per player event server</p>
+    <div class="summary-synopsis"><p>Function setup loads the <code class="inline">player</code> specific <code class="inline">game</code> components.
+Setups the <code class="inline">game</code> server and per player <code class="inline">event</code> server</p>
 </div>
   
 </div>
@@ -131,7 +131,7 @@ Setup the game server and per player event server</p>
     <a href="#start_player/4">start_player(name, type, game_pid, notify_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Start dynamic player child worker</p>
+    <div class="summary-synopsis"><p>Start dynamic <code class="inline">player</code> child <code class="inline">worker</code></p>
 </div>
   
 </div>
@@ -175,10 +175,10 @@ Setup the game server and per player event server</p>
     </div>
   
   <section class="docstring">
-    <p>Permits robot or human round playing!
-Wraps the robot or human player game playing in a stream.
+    <p>Permits <code class="inline">robot</code> or <code class="inline">human</code> round playing!
+Wraps the <code class="inline">robot</code> or <code class="inline">human</code> player game playing in a stream.
 Stream resource returns an enumerable.</p>
-<p>Terminates player events server and fsm upon finish</p>
+<p>Terminates player <code class="inline">events</code> server and <code class="inline">fsm</code> upon finish</p>
 
   </section>
 </div>
@@ -201,8 +201,8 @@ Stream resource returns an enumerable.</p>
     </div>
   
   <section class="docstring">
-    <p>Function run connects all the player specific components together 
-and runs the player game</p>
+    <p>Function run connects all the <code class="inline">player</code> specific components together 
+and runs the player <code class="inline">game</code></p>
 
   </section>
 </div>
@@ -225,8 +225,8 @@ and runs the player game</p>
     </div>
   
   <section class="docstring">
-    <p>Function setup loads the player specific game components.
-Setup the game server and per player event server.</p>
+    <p>Function setup loads the <code class="inline">player</code> specific <code class="inline">game</code> components.
+Setups the <code class="inline">game</code> server and per player <code class="inline">event</code> server.</p>
 
   </section>
 </div>
@@ -249,7 +249,7 @@ Setup the game server and per player event server.</p>
     </div>
   
   <section class="docstring">
-    <p>Start dynamic player child worker</p>
+    <p>Start dynamic <code class="inline">player</code> child <code class="inline">worker</code></p>
 
   </section>
 </div>

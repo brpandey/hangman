@@ -1,13 +1,13 @@
 defmodule Player.Game do
   @moduledoc """
-  Module handles game playing for synchronous human and robot
+  Module handles game playing for synchronous `human` and `robot`
   player types. Handles relationship between 
   `Player.FSM`, `Game.Server` and `Player.Events`
 
-  Loads up player specific game components: 
-  dynamic game server, and event server
+  Loads up the `player` specific `game` components: 
+  a dynamic `game` server, and a dynamic `event` server
 
-  Manages specific player fsm behaviour (human or robot).
+  Manages specific `player` fsm behaviour (`human` or `robot`).
   Wraps fsm game play into an enumerable for easy running.
   """
 
@@ -16,8 +16,8 @@ defmodule Player.Game do
   @robot Player.robot
 
   @doc """
-  Function run connects all the player specific components together 
-  and runs the player game
+  Function run connects all the `player` specific components together 
+  and runs the player `game`
   """
 
   @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
@@ -41,7 +41,7 @@ defmodule Player.Game do
     
   end
   
-  @doc "Start dynamic player child worker"
+  @doc "Start dynamic `player` child `worker`"
   
   @spec start_player(String.t, Player.kind, pid, pid) :: Supervisor.on_start_child
   def start_player(name, type, game_pid, notify_pid) do
@@ -49,8 +49,8 @@ defmodule Player.Game do
   end
   
   @doc """
-  Function setup loads the player specific game components.
-  Setup the game server and per player event server.
+  Function setup loads the `player` specific `game` components.
+  Setups the `game` server and per player `event` server.
   """
   
   @spec setup(String.t, [String.t], boolean, boolean) :: tuple
@@ -70,11 +70,11 @@ defmodule Player.Game do
 
 
   @doc """
-  Permits robot or human round playing!
-  Wraps the robot or human player game playing in a stream.
+  Permits `robot` or `human` round playing!
+  Wraps the `robot` or `human` player game playing in a stream.
   Stream resource returns an enumerable.
 
-  Terminates player events server and fsm upon finish
+  Terminates player `events` server and `fsm` upon finish
   """
 
   @spec rounds_handler(tuple, Player.kind) :: Enumerable.t

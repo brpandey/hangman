@@ -2,11 +2,11 @@ defmodule Game.Pid.Cache do
 	use GenServer
   
   @moduledoc """
-  Module implements GenServer functionality to 
-  provide game server pid caching.  Ultimately relies
-  on the `gproc` module to administer registry facilities.
+  Module implements `GenServer` functionality to 
+  provide `Game.Server` pid caching.  Ultimately relies
+  on the `gproc` module to administer `registry` facilities.
 
-  Pid caching prevents a game server process
+  Pid `caching` prevents a `Game.Server` process
   from having to be loaded from scratch on every use
   """
   
@@ -29,8 +29,8 @@ defmodule Game.Pid.Cache do
 	end
   
   @doc """
-  Checks registry cache for game server pid given unique id, returns cached pid or
-  if not found returns new game pid. Handles race conditions
+  Checks registry cache for `Game.Server` pid given unique id, returns cached `pid` or
+  if not found returns new game `pid`. Handles race conditions
   """
   
   @spec get_server_pid(name :: String.t, args :: String.t) :: pid

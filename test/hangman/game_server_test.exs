@@ -36,7 +36,7 @@ defmodule Game.Server.Test do
     secrets = Keyword.fetch!(test_case_options, :secrets)
 
     # Retrieve game server pid given test specific params
-    game_pid = Game.Pid.Cache.Server.get_server_pid(name, secrets)
+    game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
 
     # Update case context params map, for current test
     map = Map.put(map, :current_game_pid, game_pid)

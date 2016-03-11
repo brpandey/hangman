@@ -2,7 +2,7 @@ defmodule Pass.Cache.Stub do
   @moduledoc false
 
   '''
-  Stub module to mimic Pass Cache functionality
+  Stub module to mimic `Pass.Cache` functionality
 
   Provides a scaffold implementation 
   to provide simple, predictable behavior

@@ -3,14 +3,14 @@ defmodule Root.Supervisor do
 
   @moduledoc false
   
-  _ = """
+  '''
 	Module is the root level supervisor.
 
   Serves as a nth line supervisor as
 	it supervises Hangman.Game.System.Supervisor and 
 	Hangman.Player.System.Supervisor, both of which
 	are multi-depth supervisors
-  """
+  '''
 
   require Logger
 

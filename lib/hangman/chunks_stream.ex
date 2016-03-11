@@ -1,9 +1,9 @@
 defmodule Chunks.Stream do
   @moduledoc """
   Module implements transform routine to take
-  a grouped words stream and return a chunked words stream
+  a `grouped` words `stream` and return a `chunked` words `stream`
 
-  Similiar functionality to dictionary file transform handlers
+  Similiar functionality to `Dictionary.File` transform handlers
   but more closely associated with `Chunks`.
   """
 
@@ -14,13 +14,13 @@ defmodule Chunks.Stream do
 	@chunk_words_size 2_000
 
   @doc """
-  Transforms grouped word stream of the form 
+  Transforms `grouped` word `stream` of the form 
   {length_key, word, group_index}
 
-  to chunked word stream of the form
+  to `chunked` word `stream` of the form
   {[word1, word2, ..., wordN], word_count}
 
-  Returns stream enumerable
+  Returns `stream` `Enumerable.t`
   """
 
   @spec transform(Enumerable.t, :atom, :atom) :: Enumerable.t

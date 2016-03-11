@@ -4,11 +4,11 @@ defmodule Game.System.Supervisor do
   @moduledoc false
 
   '''
-  Module implements supervisor behaviour.
+  Module implements `Supervisor` behaviour.
 
   Module is a second line supervisor
 	as it supervises a first-line supervisor, Game.Server.Supervisor
-	along with the Game.Pid.Cache GenServer
+	along with the Game.Pid.Cache
   '''
   
   require Logger
