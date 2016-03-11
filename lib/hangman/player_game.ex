@@ -20,8 +20,8 @@ defmodule Player.Game do
   and runs the player `game`
   """
 
-  @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def run(name, type, secrets, log, display) when is_binary(name)
+  @spec run0(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
+  def run0(name, type, secrets, log, display) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
 
@@ -40,6 +40,24 @@ defmodule Player.Game do
 		|> Stream.run
     
   end
+
+  # for Web playing
+  @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
+  def run(name, type, secrets, log, _display) when is_binary(name)
+  and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
+  and is_boolean(log) do
+    
+    l = List.new
+
+    name 
+    |> setup(secrets, log, false)
+		|> rounds_handler(type)
+		|> Stream.into(l)
+		|> Stream.run
+    
+    IO.puts "web run list is: #{inspect l}"
+  end
+
   
   @doc "Start dynamic `player` child `worker`"
   

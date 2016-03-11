@@ -26,6 +26,7 @@ config :logger, :console,
   format: "\n$time $metadata[$level] $levelpad$message\n",
   metadata: [:module]
 
+config :ex_doc, :markdown_processor, ExDoc.Markdown.Pandoc
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
