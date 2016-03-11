@@ -65,14 +65,16 @@
         Chunks.Stream
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks_stream.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements transform routine to take
-a <code class="inline">grouped</code> words <code class="inline">stream</code> and return a <code class="inline">chunked</code> words <code class="inline">stream</code></p>
-<p>Similiar functionality to <a href="Dictionary.File.html"><code class="inline">Dictionary.File</code></a> transform handlers
-but more closely associated with <a href="Chunks.html"><code class="inline">Chunks</code></a>.</p>
+          <p>Module implements transform routine to take a <code>grouped</code> words <code>stream</code> and return a <code>chunked</code> words <code>stream</code></p>
+<p>Similiar functionality to <a href="Dictionary.File.html"><code>Dictionary.File</code></a> transform handlers but more closely associated with <a href="Chunks.html"><code>Chunks</code></a>.</p>
 
         </section>
       
@@ -97,8 +99,7 @@ but more closely associated with <a href="Chunks.html"><code class="inline">Chun
     <a href="#transform/3">transform(stream, atom1, atom2)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Transforms <code class="inline">grouped</code> word <code class="inline">stream</code> of the form 
-{length_key, word, group_index}</p>
+    <div class="summary-synopsis"><p>Transforms <code>grouped</code> word <code>stream</code> of the form {length_key, word, group_index}</p>
 </div>
   
 </div>
@@ -130,6 +131,10 @@ but more closely associated with <a href="Chunks.html"><code class="inline">Chun
     </a>
     <span class="signature">transform(stream, atom1, atom2)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks_stream.ex#cl-27" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -142,11 +147,9 @@ but more closely associated with <a href="Chunks.html"><code class="inline">Chun
     </div>
   
   <section class="docstring">
-    <p>Transforms <code class="inline">grouped</code> word <code class="inline">stream</code> of the form 
-{length_key, word, group_index}</p>
-<p>to <code class="inline">chunked</code> word <code class="inline">stream</code> of the form
-{[word1, word2, ..., wordN], word_count}</p>
-<p>Returns <code class="inline">stream</code> <code class="inline">Enumerable.t</code></p>
+    <p>Transforms <code>grouped</code> word <code>stream</code> of the form {length_key, word, group_index}</p>
+<p>to <code>chunked</code> word <code>stream</code> of the form {[word1, word2, ..., wordN], word_count}</p>
+<p>Returns <code>stream</code> <code>Enumerable.t</code></p>
 
   </section>
 </div>

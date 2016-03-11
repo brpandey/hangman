@@ -65,17 +65,18 @@
         Pass.Cache
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p> Given a player, a game and round number, <a href="Pass.Cache.html#content"><code class="inline">Pass.Cache</code></a> maintains a words pass <code class="inline">cache</code>.</p>
-<p> Internally the module implements a <code class="inline">GenServer</code> which uses <code class="inline">ETS</code>.</p>
-<p> After each player has made their <code class="inline">Hangman</code> round guess, the resultant reduced
- words <code class="inline">pass</code> data is stored into the <a href="Pass.Cache.html#content"><code class="inline">Pass.Cache</code></a> for access on the 
- subsequent round.  The expired <code class="inline">pass</code> data from stale rounds is subsequently 
- removed from the <code class="inline">cache</code>.</p>
-<p> <a href="Pass.Cache.html#content"><code class="inline">Pass.Cache</code></a> performs <code class="inline">unserialized</code> reads and uses type <code class="inline">key</code> for cache  <a href="#get/2"><code class="inline">get/2</code></a> and <a href="#get/3"><code class="inline">get/3</code></a>. </p>
+          <p>Given a player, a game and round number, <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> maintains a words pass <code>cache</code>.</p>
+<p>Internally the module implements a <code>GenServer</code> which uses <code>ETS</code>.</p>
+<p>After each player has made their <code>Hangman</code> round guess, the resultant reduced words <code>pass</code> data is stored into the <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> for access on the subsequent round. The expired <code>pass</code> data from stale rounds is subsequently removed from the <code>cache</code>.</p>
+<p><a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> performs <code>unserialized</code> reads and uses type <code>key</code> for cache <a href="#get/2"><code>get/2</code></a> and <a href="#get/3"><code>get/3</code></a>.</p>
 
         </section>
       
@@ -113,7 +114,7 @@
     <a href="#get/2">get(cache_key, pass_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Get routine retrieves <code class="inline">pass</code> chunks cache data</p>
+    <div class="summary-synopsis"><p>Get routine retrieves <code>pass</code> chunks cache data</p>
 </div>
   
 </div>
@@ -122,8 +123,7 @@
     <a href="#get/3">get(cache_key, pass_key, reduce_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Get routine retrieves the <code class="inline">pass</code> size, tally, possible words, 
-and other data given these cache <code class="inline">keys</code></p>
+    <div class="summary-synopsis"><p>Get routine retrieves the <code>pass</code> size, tally, possible words, and other data given these cache <code>keys</code></p>
 </div>
   
 </div>
@@ -189,6 +189,10 @@ and other data given these cache <code class="inline">keys</code></p>
     </a>
     <span class="signature">get(cache_key, pass_key)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-156" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -203,14 +207,9 @@ and other data given these cache <code class="inline">keys</code></p>
     </div>
   
   <section class="docstring">
-    <p>Get routine retrieves <code class="inline">pass</code> chunks cache data</p>
-<p>We can obtain <code class="inline">chunks</code> data, for cache <code class="inline">keys</code> with the <code class="inline">:chunks</code> atom</p>
-<ul>
-<li><code class="inline">:chunks</code> - retrieves chunks data for a given pass key
-</li>
-</ul>
-<p>These get requests are not <code class="inline">serialized</code> through the 
-server process since we are doing <code class="inline">reads</code></p>
+    <p>Get routine retrieves <code>pass</code> chunks cache data</p>
+<p>We can obtain <code>chunks</code> data, for cache <code>keys</code> with the <code>:chunks</code> atom * <code>:chunks</code> - retrieves chunks data for a given pass key</p>
+<p>These get requests are not <code>serialized</code> through the server process since we are doing <code>reads</code></p>
 
   </section>
 </div>
@@ -221,6 +220,10 @@ server process since we are doing <code class="inline">reads</code></p>
     </a>
     <span class="signature">get(cache_key, pass_key, reduce_key)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-104" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -235,21 +238,12 @@ server process since we are doing <code class="inline">reads</code></p>
     </div>
   
   <section class="docstring">
-    <p>Get routine retrieves the <code class="inline">pass</code> size, tally, possible words, 
-and other data given these cache <code class="inline">keys</code>.</p>
+    <p>Get routine retrieves the <code>pass</code> size, tally, possible words, and other data given these cache <code>keys</code>.</p>
 <ul>
-<li><p><code class="inline">{:pass, :game_start}</code> - this is the initial game start <code class="inline">pass</code>, so we 
-  request the data from the <a href="Dictionary.Cache.html"><code class="inline">Dictionary.Cache</code></a>.  The data is stored into 
-  the <a href="Pass.Cache.html#content"><code class="inline">Pass.Cache</code></a> via <a href="Pass.Writer.html#write/2"><code class="inline">Pass.Writer.write/2</code></a>. Returns <code class="inline">pass</code> data type.</p>
-</li>
-<li><code class="inline">{:pass, :game_keep_guessing}</code> - retrieves the pass data from the last 
-  player round and relies on <a href="Reduction.Engine.html#reduce/3"><code class="inline">Reduction.Engine.reduce/3</code></a> to reduce the possible
-  <code class="inline">Hangman</code> words set with <code class="inline">reduce_key</code>.  When the reduction is finished, we 
-  write the data back to the <a href="Pass.Cache.html#content"><code class="inline">Pass.Cache</code></a> and return the new <code class="inline">pass</code> data.
-</li>
+<li><p><code>{:pass, :game_start}</code> - this is the initial game start <code>pass</code>, so we request the data from the <a href="Dictionary.Cache.html"><code>Dictionary.Cache</code></a>. The data is stored into the <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> via <a href="Pass.Writer.html#write/2"><code>Pass.Writer.write/2</code></a>. Returns <code>pass</code> data type.</p></li>
+<li><p><code>{:pass, :game_keep_guessing}</code> - retrieves the pass data from the last player round and relies on <a href="Reduction.Engine.html#reduce/3"><code>Reduction.Engine.reduce/3</code></a> to reduce the possible <code>Hangman</code> words set with <code>reduce_key</code>. When the reduction is finished, we write the data back to the <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> and return the new <code>pass</code> data.</p></li>
 </ul>
-<p>These get requests are not <code class="inline">serialized</code> through the server
-process since we are doing <code class="inline">reads</code></p>
+<p>These get requests are not <code>serialized</code> through the server process since we are doing <code>reads</code></p>
 
   </section>
 </div>
@@ -260,6 +254,10 @@ process since we are doing <code class="inline">reads</code></p>
     </a>
     <span class="signature">start_link()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-33" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
@@ -273,6 +271,10 @@ process since we are doing <code class="inline">reads</code></p>
     </a>
     <span class="signature">stop(pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-45" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">

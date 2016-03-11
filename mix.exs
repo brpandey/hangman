@@ -2,19 +2,27 @@ defmodule Hangman.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :play_hangman,
-     name: "Hangman",
-     version: "0.9.1",
-     elixir: "~> 1.2.0",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     escript: [main_module: CLI],
-     deps: deps]
+    [
+      app: :play_hangman,
+      name: "Hangman",
+      version: "0.9.1",
+      elixir: "~> 1.2.0",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      escript: [main_module: CLI],
+      deps: deps,
+      docs: [
+        source_url: "https://bitbucket.org/brpandey/elixir-hangman/",
+        formatter: "html"
+        ]
+    ]
   end
 
   # Configuration for the OTP application
   #
   # Type "mix help compile.app" for more information
+
+  # Runtime dependencies
   def application do
     dict_type = Dictionary.regular
     # dict_type = Dictionary.big
@@ -35,12 +43,16 @@ defmodule Hangman.Mixfile do
   #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
   #
   # Type "mix help deps" for more examples and options
+
+  # Compile time dependencies
   defp deps do
     [
-      {:gproc, "0.3.1"},
+      {:gproc, "0.5.0"}, # for pid registry
       {:exprof, "~> 0.2.0"}, # to facilitate profiling
-      {:ex_doc, "~> 0.11"},
-      {:earmark, ">= 0.0.0"}
+      {:ex_doc, "~> 0.11"}, # for mix docs
+      {:cowboy, "1.0.4"}, # for hangman web
+      {:plug, "1.1.0"},  # for hangman web
+      {:httpoison, "~> 0.8.0", only: :test} # for hangman web
     ] 
   end
 end

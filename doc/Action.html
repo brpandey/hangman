@@ -65,17 +65,18 @@
         Action
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module encapsulates <a href="Round.html"><code class="inline">Round</code></a> guess actions 
-and the data associated with carrying them out. </p>
-<p>Uses function builder strategy to easily be
-able to add new data retrievers, and updaters.</p>
-<p>Data retrievers are <a href="Strategy.html"><code class="inline">Strategy</code></a> methods.
-Updaters are <a href="Round.html"><code class="inline">Round</code></a> methods.</p>
-<p>Relies on <a href="Strategy.html"><code class="inline">Strategy</code></a> and <a href="Round.html"><code class="inline">Round</code></a> to return updated <a href="Player.html"><code class="inline">Player</code></a>.</p>
+          <p>Module encapsulates <a href="Round.html"><code>Round</code></a> guess actions and the data associated with carrying them out.</p>
+<p>Uses function builder strategy to easily be able to add new data retrievers, and updaters.</p>
+<p>Data retrievers are <a href="Strategy.html"><code>Strategy</code></a> methods. Updaters are <a href="Round.html"><code>Round</code></a> methods.</p>
+<p>Relies on <a href="Strategy.html"><code>Strategy</code></a> and <a href="Round.html"><code>Round</code></a> to return updated <a href="Player.html"><code>Player</code></a>.</p>
 
         </section>
       
@@ -132,6 +133,10 @@ Updaters are <a href="Round.html"><code class="inline">Round</code></a> methods.
     </a>
     <span class="signature">perform(player, mode)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action.ex#cl-111" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -147,18 +152,11 @@ Updaters are <a href="Round.html"><code class="inline">Round</code></a> methods.
     <p>Performs desired action</p>
 <p>Supported modes</p>
 <ul>
-<li><code class="inline">{:guess_letter, letter}</code> - validates the letter is in 
-  the top strategy letter choices, if not choices top letter choice.
-  Guesses with letter
-</li>
-<li><code class="inline">:guess_last_word</code> - retrieves the last word from set
-  of possible hangman word
-</li>
-<li><code class="inline">:robot_guess</code> - retrieves strategy determined guess
-</li>
+<li><code>{:guess_letter, letter}</code> - validates the letter is in the top strategy letter choices, if not choices top letter choice. Guesses with letter</li>
+<li><code>:guess_last_word</code> - retrieves the last word from set of possible hangman word</li>
+<li><code>:robot_guess</code> - retrieves strategy determined guess</li>
 </ul>
-<p>Proceeds to perform game server guess.  
-Updates player with round results and guess data</p>
+<p>Proceeds to perform game server guess.<br />Updates player with round results and guess data</p>
 
   </section>
 </div>

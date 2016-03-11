@@ -65,21 +65,20 @@
         Chunks
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module to handle word list <a href="Chunks.html#content"><code class="inline">Chunks</code></a> for a given length key.  
- Internally maintains standardized <code class="inline">containers</code> for word lists and 
- keeps track of total word counts and number of <code class="inline">containers</code>.</p>
-<p> Splits big words list into smaller more manageable list <a href="Chunks.html#content"><code class="inline">Chunks</code></a>.</p>
-<p> The need for chunking arises when we may have arbitrary long word
- lists/streams, so we chunk the word list to a standard size of 500 words.  </p>
-<p> A single <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction can contain a single chunked word list or 
- multiple chunked word lists.</p>
-<p> <a href="Chunks.html#content"><code class="inline">Chunks</code></a> provide more manageability especially when we store into the database because
- the abstraction automatically binaries data leaving a smaller footprint.</p>
-<p> Primary functions are <a href="#new/2"><code class="inline">new/2</code></a>, <a href="#count/1"><code class="inline">count/1</code></a>, <a href="#add/2"><code class="inline">add/2</code></a>, and <a href="#get_words_lazy/1"><code class="inline">get_words_lazy/1</code></a>.</p>
+          <p>Module to handle word list <a href="Chunks.html#content"><code>Chunks</code></a> for a given length key.<br /> Internally maintains standardized <code>containers</code> for word lists and keeps track of total word counts and number of <code>containers</code>.</p>
+<p>Splits big words list into smaller more manageable list <a href="Chunks.html#content"><code>Chunks</code></a>.</p>
+<p>The need for chunking arises when we may have arbitrary long word lists/streams, so we chunk the word list to a standard size of 500 words.</p>
+<p>A single <a href="Chunks.html#content"><code>Chunks</code></a> abstraction can contain a single chunked word list or multiple chunked word lists.</p>
+<p><a href="Chunks.html#content"><code>Chunks</code></a> provide more manageability especially when we store into the database because the abstraction automatically binaries data leaving a smaller footprint.</p>
+<p>Primary functions are <a href="#new/2"><code>new/2</code></a>, <a href="#count/1"><code>count/1</code></a>, <a href="#add/2"><code>add/2</code></a>, and <a href="#get_words_lazy/1"><code>get_words_lazy/1</code></a>.</p>
 
         </section>
       
@@ -123,7 +122,7 @@
     <a href="#add/2">add(chunks, value)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Takes an existing <a href="Chunks.html#content"><code class="inline">Chunks</code></a> and adds the passed in binary <code class="inline">chunk</code> <code class="inline">tuple</code></p>
+    <div class="summary-synopsis"><p>Takes an existing <a href="Chunks.html#content"><code>Chunks</code></a> and adds the passed in binary <code>chunk</code> <code>tuple</code></p>
 </div>
   
 </div>
@@ -138,7 +137,7 @@
     <a href="#count/1">count(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns total word count across all <code class="inline">chunk</code> containers</p>
+    <div class="summary-synopsis"><p>Returns total word count across all <code>chunk</code> containers</p>
 </div>
   
 </div>
@@ -147,7 +146,7 @@
     <a href="#get_words_lazy/1">get_words_lazy(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns words in <code class="inline">lazy</code> <code class="inline">enumerable</code> fashion</p>
+    <div class="summary-synopsis"><p>Returns words in <code>lazy</code> <code>enumerable</code> fashion</p>
 </div>
   
 </div>
@@ -156,7 +155,7 @@
     <a href="#info/1">info(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <a href="Chunks.html#content"><code class="inline">Chunks</code></a> information</p>
+    <div class="summary-synopsis"><p>Returns <a href="Chunks.html#content"><code>Chunks</code></a> information</p>
 </div>
   
 </div>
@@ -165,7 +164,7 @@
     <a href="#key/1">key(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <a href="Chunks.html#content"><code class="inline">Chunks</code></a> word length key</p>
+    <div class="summary-synopsis"><p>Returns <a href="Chunks.html#content"><code>Chunks</code></a> word length key</p>
 </div>
   
 </div>
@@ -174,7 +173,7 @@
     <a href="#new/1">new(length_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new empty <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction</p>
+    <div class="summary-synopsis"><p>Returns new empty <a href="Chunks.html#content"><code>Chunks</code></a> abstraction</p>
 </div>
   
 </div>
@@ -183,9 +182,7 @@
     <a href="#new/2">new(length_key, words)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction.  Does this by splitting and encapsulating 
-words lists from enumerable into standardized <code class="inline">chunk</code> containers.  
-Word lists are binaried for compactness</p>
+    <div class="summary-synopsis"><p>Returns new <a href="Chunks.html#content"><code>Chunks</code></a> abstraction. Does this by splitting and encapsulating words lists from enumerable into standardized <code>chunk</code> containers.<br />Word lists are binaried for compactness</p>
 </div>
   
 </div>
@@ -194,7 +191,7 @@ Word lists are binaried for compactness</p>
     <a href="#size/1">size(chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Return total number of <code class="inline">chunk</code> containers</p>
+    <div class="summary-synopsis"><p>Return total number of <code>chunk</code> containers</p>
 </div>
   
 </div>
@@ -246,6 +243,10 @@ Word lists are binaried for compactness</p>
     </a>
     <span class="signature">add(chunks, value)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-143" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -258,10 +259,9 @@ Word lists are binaried for compactness</p>
     </div>
   
   <section class="docstring">
-    <p>Takes an existing <a href="Chunks.html#content"><code class="inline">Chunks</code></a> and adds the passed in binary <code class="inline">chunk</code> <code class="inline">tuple</code>.</p>
-<p>Heavily used in reduce methods to add a {binary, word_count} to the
-<a href="Chunks.html#content"><code class="inline">Chunks</code></a> accumulator value.</p>
-<p>The <code class="inline">tuple</code> head is a binaried word list and the tail is the word count</p>
+    <p>Takes an existing <a href="Chunks.html#content"><code>Chunks</code></a> and adds the passed in binary <code>chunk</code> <code>tuple</code>.</p>
+<p>Heavily used in reduce methods to add a {binary, word_count} to the <a href="Chunks.html#content"><code>Chunks</code></a> accumulator value.</p>
+<p>The <code>tuple</code> head is a binaried word list and the tail is the word count</p>
 
   </section>
 </div>
@@ -272,6 +272,10 @@ Word lists are binaried for compactness</p>
     </a>
     <span class="signature">container_size()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-30" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -294,6 +298,10 @@ Word lists are binaried for compactness</p>
     </a>
     <span class="signature">count(chunks)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-109" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -306,7 +314,7 @@ Word lists are binaried for compactness</p>
     </div>
   
   <section class="docstring">
-    <p>Returns total word count across all <code class="inline">chunk</code> containers</p>
+    <p>Returns total word count across all <code>chunk</code> containers</p>
 
   </section>
 </div>
@@ -317,6 +325,10 @@ Word lists are binaried for compactness</p>
     </a>
     <span class="signature">get_words_lazy(chunks)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-165" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -329,7 +341,7 @@ Word lists are binaried for compactness</p>
     </div>
   
   <section class="docstring">
-    <p>Returns words in <code class="inline">lazy</code> <code class="inline">enumerable</code> fashion.</p>
+    <p>Returns words in <code>lazy</code> <code>enumerable</code> fashion.</p>
 
   </section>
 </div>
@@ -340,6 +352,10 @@ Word lists are binaried for compactness</p>
     </a>
     <span class="signature">info(chunks)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-183" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -352,7 +368,7 @@ Word lists are binaried for compactness</p>
     </div>
   
   <section class="docstring">
-    <p>Returns <a href="Chunks.html#content"><code class="inline">Chunks</code></a> information</p>
+    <p>Returns <a href="Chunks.html#content"><code>Chunks</code></a> information</p>
 
   </section>
 </div>
@@ -363,6 +379,10 @@ Word lists are binaried for compactness</p>
     </a>
     <span class="signature">key(chunks)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-131" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -375,7 +395,7 @@ Word lists are binaried for compactness</p>
     </div>
   
   <section class="docstring">
-    <p>Returns <a href="Chunks.html#content"><code class="inline">Chunks</code></a> word length key</p>
+    <p>Returns <a href="Chunks.html#content"><code>Chunks</code></a> word length key</p>
 
   </section>
 </div>
@@ -386,6 +406,10 @@ Word lists are binaried for compactness</p>
     </a>
     <span class="signature">new(length_key)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-37" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -398,7 +422,7 @@ Word lists are binaried for compactness</p>
     </div>
   
   <section class="docstring">
-    <p>Returns new empty <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction</p>
+    <p>Returns new empty <a href="Chunks.html#content"><code>Chunks</code></a> abstraction</p>
 
   </section>
 </div>
@@ -409,6 +433,10 @@ Word lists are binaried for compactness</p>
     </a>
     <span class="signature">new(length_key, words)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-48" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -421,9 +449,7 @@ Word lists are binaried for compactness</p>
     </div>
   
   <section class="docstring">
-    <p>Returns new <a href="Chunks.html#content"><code class="inline">Chunks</code></a> abstraction.  Does this by splitting and encapsulating 
-words lists from enumerable into standardized <code class="inline">chunk</code> containers.  
-Word lists are binaried for compactness.</p>
+    <p>Returns new <a href="Chunks.html#content"><code>Chunks</code></a> abstraction. Does this by splitting and encapsulating words lists from enumerable into standardized <code>chunk</code> containers.<br />Word lists are binaried for compactness.</p>
 
   </section>
 </div>
@@ -434,6 +460,10 @@ Word lists are binaried for compactness.</p>
     </a>
     <span class="signature">size(chunks)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-120" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -446,7 +476,7 @@ Word lists are binaried for compactness.</p>
     </div>
   
   <section class="docstring">
-    <p>Return total number of <code class="inline">chunk</code> containers</p>
+    <p>Return total number of <code>chunk</code> containers</p>
 
   </section>
 </div>

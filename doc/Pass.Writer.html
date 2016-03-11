@@ -65,16 +65,19 @@
         Pass.Writer
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements words <code class="inline">pass</code> write functionality into the <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> <code class="inline">ETS</code> table.</p>
-<p>Write <code class="inline">load</code> is handled through <a href="Pass.Writer.Pool.html"><code class="inline">Pass.Writer.Pool</code></a>.</p>
-<p><code class="inline">Distributes</code> <a href="#write/2"><code class="inline">write/2</code></a> request based on <code class="inline">pass</code> key id attribute to <code class="inline">workers</code>.</p>
-<p>Pool supervisor supervises writer workers, which are each responsible for
-the write operations.</p>
-<p>Primary <code class="inline">writer</code> worker method is <a href="Pass.Writer.Worker.html#write/3"><code class="inline">Pass.Writer.Worker.write/3</code></a></p>
+          <p>Module implements words <code>pass</code> write functionality into the <a href="Pass.Cache.html"><code>Pass.Cache</code></a> <code>ETS</code> table.</p>
+<p>Write <code>load</code> is handled through <a href="Pass.Writer.Pool.html"><code>Pass.Writer.Pool</code></a>.</p>
+<p><code>Distributes</code> <a href="#write/2"><code>write/2</code></a> request based on <code>pass</code> key id attribute to <code>workers</code>.</p>
+<p>Pool supervisor supervises writer workers, which are each responsible for the write operations.</p>
+<p>Primary <code>writer</code> worker method is <a href="Pass.Writer.Worker.html#write/3"><code>Pass.Writer.Worker.write/3</code></a></p>
 
         </section>
       
@@ -99,8 +102,7 @@ the write operations.</p>
     <a href="#start_link/0">start_link()</a>
   </div>
   
-    <div class="summary-synopsis"><p>Supervisor start_link wrapper function
-Starts pool supervisor</p>
+    <div class="summary-synopsis"><p>Supervisor start_link wrapper function Starts pool supervisor</p>
 </div>
   
 </div>
@@ -109,8 +111,7 @@ Starts pool supervisor</p>
     <a href="#write/2">write(pass_key, chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Write is an <code class="inline">asynchronous</code> call, no need to wait around for response
-Based on key <code class="inline">id</code>, selects writer <code class="inline">worker</code> to hand off request to</p>
+    <div class="summary-synopsis"><p>Write is an <code>asynchronous</code> call, no need to wait around for response Based on key <code>id</code>, selects writer <code>worker</code> to hand off request to</p>
 </div>
   
 </div>
@@ -142,6 +143,10 @@ Based on key <code class="inline">id</code>, selects writer <code class="inline"
     </a>
     <span class="signature">start_link()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-24" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -154,8 +159,7 @@ Based on key <code class="inline">id</code>, selects writer <code class="inline"
     </div>
   
   <section class="docstring">
-    <p>Supervisor start_link wrapper function
-Starts pool supervisor</p>
+    <p>Supervisor start_link wrapper function Starts pool supervisor</p>
 
   </section>
 </div>
@@ -166,6 +170,10 @@ Starts pool supervisor</p>
     </a>
     <span class="signature">write(pass_key, chunks)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-35" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -178,8 +186,7 @@ Starts pool supervisor</p>
     </div>
   
   <section class="docstring">
-    <p>Write is an <code class="inline">asynchronous</code> call, no need to wait around for response
-Based on key <code class="inline">id</code>, selects writer <code class="inline">worker</code> to hand off request to.</p>
+    <p>Write is an <code>asynchronous</code> call, no need to wait around for response Based on key <code>id</code>, selects writer <code>worker</code> to hand off request to.</p>
 
   </section>
 </div>

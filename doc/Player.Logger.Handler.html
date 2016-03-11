@@ -67,12 +67,16 @@
           <small>behaviour</small>
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_logger.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements event logger handler for <a href="Player.Events.html"><code class="inline">Player.Events</code></a>.</p>
-<p>Each <code class="inline">event</code> is logged to a file named after the player <code class="inline">id</code>.</p>
+          <p>Module implements event logger handler for <a href="Player.Events.html"><code>Player.Events</code></a>.</p>
+<p>Each <code>event</code> is logged to a file named after the player <code>id</code>.</p>
 
         </section>
       
@@ -101,8 +105,7 @@
     <a href="#c:handle_event/2">handle_event(tuple, term)</a>
   </div>
   
-    <div class="summary-synopsis"><p>The handle_event callback handles various events
-which ultimately write to <code class="inline">player</code> logger file</p>
+    <div class="summary-synopsis"><p>The handle_event callback handles various events which ultimately write to <code>player</code> logger file</p>
 </div>
   
 </div>
@@ -117,7 +120,7 @@ which ultimately write to <code class="inline">player</code> logger file</p>
     <a href="#c:terminate/2">terminate(term, pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Terminate callback. Closes player <code class="inline">logger</code> file</p>
+    <div class="summary-synopsis"><p>Terminate callback. Closes player <code>logger</code> file</p>
 </div>
   
 </div>
@@ -149,6 +152,10 @@ which ultimately write to <code class="inline">player</code> logger file</p>
     </a>
     <span class="signature">handle_event(tuple, term)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_logger.ex#cl-39" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -161,27 +168,14 @@ which ultimately write to <code class="inline">player</code> logger file</p>
     </div>
   
   <section class="docstring">
-    <p>The handle_event callback handles various events
-which ultimately write to <code class="inline">player</code> logger file</p>
+    <p>The handle_event callback handles various events which ultimately write to <code>player</code> logger file</p>
 <ul>
-<li><p><code class="inline">:start</code> notification event.
-Opens and writes to file</p>
-</li>
-<li><p><code class="inline">:games_over</code> notification event.
-Writes to file and then closes file</p>
-</li>
-<li><p><code class="inline">:secret_length</code> notification event.
-Writes to file</p>
-</li>
-<li><p><code class="inline">:guessed_word</code> notification event.
-Writes to file</p>
-</li>
-<li><p><code class="inline">:guessed_letter</code> notification event.
-Writes to file</p>
-</li>
-<li><code class="inline">:round_status</code> notification event.
-Writes to file
-</li>
+<li><p><code>:start</code> notification event. Opens and writes to file</p></li>
+<li><p><code>:games_over</code> notification event. Writes to file and then closes file</p></li>
+<li><p><code>:secret_length</code> notification event. Writes to file</p></li>
+<li><p><code>:guessed_word</code> notification event. Writes to file</p></li>
+<li><p><code>:guessed_letter</code> notification event. Writes to file</p></li>
+<li><p><code>:round_status</code> notification event. Writes to file</p></li>
 </ul>
 
   </section>
@@ -193,6 +187,10 @@ Writes to file
     </a>
     <span class="signature">init(term)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_logger.ex#cl-13" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -215,6 +213,10 @@ Writes to file
     </a>
     <span class="signature">terminate(term, pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_logger.ex#cl-111" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -227,7 +229,7 @@ Writes to file
     </div>
   
   <section class="docstring">
-    <p>Terminate callback. Closes player <code class="inline">logger</code> file</p>
+    <p>Terminate callback. Closes player <code>logger</code> file</p>
 
   </section>
 </div>

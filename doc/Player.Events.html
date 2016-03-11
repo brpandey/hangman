@@ -65,13 +65,16 @@
         Player.Events
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements <code class="inline">GenEvent</code> manager for use with <code class="inline">player</code>.</p>
-<p>Handles writing of <code class="inline">event</code> notification data to a <code class="inline">player</code> log file or
-displaying them as a <code class="inline">feed</code> to the user</p>
+          <p>Module implements <code>GenEvent</code> manager for use with <code>player</code>.</p>
+<p>Handles writing of <code>event</code> notification data to a <code>player</code> log file or displaying them as a <code>feed</code> to the user</p>
 
         </section>
       
@@ -96,7 +99,7 @@ displaying them as a <code class="inline">feed</code> to the user</p>
     <a href="#notify_games_over/3">notify_games_over(pid, name, text)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends <code class="inline">:games_over</code> tuple <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a></p>
+    <div class="summary-synopsis"><p>Sends <code>:games_over</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a></p>
 </div>
   
 </div>
@@ -105,9 +108,7 @@ displaying them as a <code class="inline">feed</code> to the user</p>
     <a href="#notify_guess/3">notify_guess(pid, guess, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends either a <code class="inline">{:guess_letter, letter}</code> or 
-<code class="inline">{:guess_word, word}</code> tuple  <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a>, 
-depending on guess</p>
+    <div class="summary-synopsis"><p>Sends either a <code>{:guess_letter, letter}</code> or <code>{:guess_word, word}</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a>, depending on guess</p>
 </div>
   
 </div>
@@ -116,7 +117,7 @@ depending on guess</p>
     <a href="#notify_length/2">notify_length(pid, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends <code class="inline">:secret_length</code> tuple <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a></p>
+    <div class="summary-synopsis"><p>Sends <code>:secret_length</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a></p>
 </div>
   
 </div>
@@ -125,7 +126,7 @@ depending on guess</p>
     <a href="#notify_start/2">notify_start(pid, name)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends <code class="inline">:start</code> tuple <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a></p>
+    <div class="summary-synopsis"><p>Sends <code>:start</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a></p>
 </div>
   
 </div>
@@ -134,7 +135,7 @@ depending on guess</p>
     <a href="#notify_status/2">notify_status(pid, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sends <code class="inline">:round_status</code> tuple <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a></p>
+    <div class="summary-synopsis"><p>Sends <code>:round_status</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a></p>
 </div>
   
 </div>
@@ -152,7 +153,7 @@ depending on guess</p>
     <a href="#stop/1">stop(pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues request to stop <code class="inline">GenEvent</code> manager</p>
+    <div class="summary-synopsis"><p>Issues request to stop <code>GenEvent</code> manager</p>
 </div>
   
 </div>
@@ -190,6 +191,10 @@ depending on guess</p>
     </a>
     <span class="signature">notify_games_over(pid, name, text)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-131" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -202,7 +207,7 @@ depending on guess</p>
     </div>
   
   <section class="docstring">
-    <p>Sends <code class="inline">:games_over</code> tuple <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a></p>
+    <p>Sends <code>:games_over</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a></p>
 
   </section>
 </div>
@@ -213,6 +218,10 @@ depending on guess</p>
     </a>
     <span class="signature">notify_guess(pid, guess, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-99" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -225,9 +234,7 @@ depending on guess</p>
     </div>
   
   <section class="docstring">
-    <p>Sends either a <code class="inline">{:guess_letter, letter}</code> or 
-<code class="inline">{:guess_word, word}</code> tuple  <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a>, 
-depending on guess.</p>
+    <p>Sends either a <code>{:guess_letter, letter}</code> or <code>{:guess_word, word}</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a>, depending on guess.</p>
 
   </section>
 </div>
@@ -238,6 +245,10 @@ depending on guess.</p>
     </a>
     <span class="signature">notify_length(pid, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-87" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -250,7 +261,7 @@ depending on guess.</p>
     </div>
   
   <section class="docstring">
-    <p>Sends <code class="inline">:secret_length</code> tuple <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a></p>
+    <p>Sends <code>:secret_length</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a></p>
 
   </section>
 </div>
@@ -261,6 +272,10 @@ depending on guess.</p>
     </a>
     <span class="signature">notify_start(pid, name)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-78" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -273,7 +288,7 @@ depending on guess.</p>
     </div>
   
   <section class="docstring">
-    <p>Sends <code class="inline">:start</code> tuple <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a></p>
+    <p>Sends <code>:start</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a></p>
 
   </section>
 </div>
@@ -284,6 +299,10 @@ depending on guess.</p>
     </a>
     <span class="signature">notify_status(pid, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-122" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -296,7 +315,7 @@ depending on guess.</p>
     </div>
   
   <section class="docstring">
-    <p>Sends <code class="inline">:round_status</code> tuple <code class="inline">event</code> notification to <a href="Player.Events.html#content"><code class="inline">Player.Events</code></a></p>
+    <p>Sends <code>:round_status</code> tuple <code>event</code> notification to <a href="Player.Events.html#content"><code>Player.Events</code></a></p>
 
   </section>
 </div>
@@ -307,6 +326,10 @@ depending on guess.</p>
     </a>
     <span class="signature">start_link(options \\ [file_output: false, display_output: true])</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-16" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -330,6 +353,10 @@ depending on guess.</p>
     </a>
     <span class="signature">stop(pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-140" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -342,7 +369,7 @@ depending on guess.</p>
     </div>
   
   <section class="docstring">
-    <p>Issues request to stop <code class="inline">GenEvent</code> manager</p>
+    <p>Issues request to stop <code>GenEvent</code> manager</p>
 
   </section>
 </div>
@@ -353,6 +380,10 @@ depending on guess.</p>
     </a>
     <span class="signature">terminate(reason, state)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_events.ex#cl-150" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">

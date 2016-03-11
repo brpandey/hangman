@@ -65,15 +65,16 @@
         Game.Server
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p> Module implements <code class="inline">Hangman</code> <a href="Game.html"><code class="inline">Game</code></a> server using <code class="inline">GenServer</code>.
- Wraps <a href="Game.html"><code class="inline">Game</code></a> abstraction as server state.  Runs 
- each <code class="inline">game</code> or set of <code class="inline">games</code> sequentially</p>
-<p>Interacts with client <code class="inline">player</code> through public interface and
-maintains <code class="inline">game</code> state</p>
+          <p>Module implements <code>Hangman</code> <a href="Game.html"><code>Game</code></a> server using <code>GenServer</code>. Wraps <a href="Game.html"><code>Game</code></a> abstraction as server state. Runs each <code>game</code> or set of <code>games</code> sequentially</p>
+<p>Interacts with client <code>player</code> through public interface and maintains <code>game</code> state</p>
 
         </section>
       
@@ -111,7 +112,7 @@ maintains <code class="inline">game</code> state</p>
     <a href="#guess/2">guess(game_pid, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues guess <code class="inline">letter</code> or <code class="inline">word</code> request, returns guess <code class="inline">result</code></p>
+    <div class="summary-synopsis"><p>Issues guess <code>letter</code> or <code>word</code> request, returns guess <code>result</code></p>
 </div>
   
 </div>
@@ -120,8 +121,7 @@ maintains <code class="inline">game</code> state</p>
     <a href="#load/4">load(game_pid, id_key, secret, max_wrong \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Loads new <code class="inline">game</code> into server process. 
-Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Cache</code></a></p>
+    <div class="summary-synopsis"><p>Loads new <code>game</code> into server process. Used primarily by <a href="Game.Pid.Cache.html"><code>Game.Pid.Cache</code></a></p>
 </div>
   
 </div>
@@ -130,7 +130,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     <a href="#secret_length/1">secret_length(game_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Retrieves <a href="Game.html"><code class="inline">Game</code></a> secret length</p>
+    <div class="summary-synopsis"><p>Retrieves <a href="Game.html"><code>Game</code></a> secret length</p>
 </div>
   
 </div>
@@ -139,7 +139,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     <a href="#start_link/3">start_link(player_name, secret, max_wrong \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Start public interface method with <code class="inline">secret(s)</code></p>
+    <div class="summary-synopsis"><p>Start public interface method with <code>secret(s)</code></p>
 </div>
   
 </div>
@@ -148,7 +148,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     <a href="#status/1">status(game_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Retrieves <a href="Game.html"><code class="inline">Game</code></a> status data</p>
+    <div class="summary-synopsis"><p>Retrieves <a href="Game.html"><code>Game</code></a> status data</p>
 </div>
   
 </div>
@@ -157,7 +157,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     <a href="#stop/1">stop(game_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues request to stop <code class="inline">GenServer</code></p>
+    <div class="summary-synopsis"><p>Issues request to stop <code>GenServer</code></p>
 </div>
   
 </div>
@@ -166,8 +166,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     <a href="#whereis/1">whereis(id_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routine returns game server <code class="inline">pid</code> from process registry using <code class="inline">gproc</code>
-If not found, returns <code class="inline">:undefined</code></p>
+    <div class="summary-synopsis"><p>Routine returns game server <code>pid</code> from process registry using <code>gproc</code> If not found, returns <code>:undefined</code></p>
 </div>
   
 </div>
@@ -215,6 +214,10 @@ If not found, returns <code class="inline">:undefined</code></p>
     </a>
     <span class="signature">guess(game_pid, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-91" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -227,19 +230,12 @@ If not found, returns <code class="inline">:undefined</code></p>
     </div>
   
   <section class="docstring">
-    <p>Issues guess <code class="inline">letter</code> or <code class="inline">word</code> request, returns guess <code class="inline">result</code></p>
-<p>Internally, runs <code class="inline">guess</code> against game <code class="inline">secret</code>. Updates <code class="inline">Hangman</code> pattern, status, and
-other game recordkeeping structures.</p>
+    <p>Issues guess <code>letter</code> or <code>word</code> request, returns guess <code>result</code></p>
+<p>Internally, runs <code>guess</code> against game <code>secret</code>. Updates <code>Hangman</code> pattern, status, and other game recordkeeping structures.</p>
 <p>Guesses follow two types</p>
 <ul>
-<li><p><code class="inline">{:guess_letter, letter}</code> -     If correct, 
-  returns the <code class="inline">:correct_letter</code> data tuple along with game info
- otherwise, returns the <code class="inline">:incorrect_letter</code> data tuple along with game info</p>
-</li>
-<li><code class="inline">{:guess_word, word}</code> -     If correct, returns 
-  the <code class="inline">:correct_word</code> data tuple along with game info
- If incorrect, returns the :incorrect_word data tuple with game info
-</li>
+<li><p><code>{:guess_letter, letter}</code> - If correct, returns the <code>:correct_letter</code> data tuple along with game info otherwise, returns the <code>:incorrect_letter</code> data tuple along with game info</p></li>
+<li><p><code>{:guess_word, word}</code> - If correct, returns the <code>:correct_word</code> data tuple along with game info If incorrect, returns the :incorrect_word data tuple with game info</p></li>
 </ul>
 
   </section>
@@ -251,6 +247,10 @@ other game recordkeeping structures.</p>
     </a>
     <span class="signature">load(game_pid, id_key, secret, max_wrong \\ 5)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-62" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -263,8 +263,7 @@ other game recordkeeping structures.</p>
     </div>
   
   <section class="docstring">
-    <p>Loads new <code class="inline">game</code> into server process. 
-Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Cache</code></a></p>
+    <p>Loads new <code>game</code> into server process. Used primarily by <a href="Game.Pid.Cache.html"><code>Game.Pid.Cache</code></a></p>
 
   </section>
 </div>
@@ -275,6 +274,10 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </a>
     <span class="signature">secret_length(game_pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-115" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -287,7 +290,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </div>
   
   <section class="docstring">
-    <p>Retrieves <a href="Game.html"><code class="inline">Game</code></a> secret length</p>
+    <p>Retrieves <a href="Game.html"><code>Game</code></a> secret length</p>
 
   </section>
 </div>
@@ -298,6 +301,10 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </a>
     <span class="signature">start_link(player_name, secret, max_wrong \\ 5)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-32" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -310,7 +317,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </div>
   
   <section class="docstring">
-    <p>Start public interface method with <code class="inline">secret(s)</code></p>
+    <p>Start public interface method with <code>secret(s)</code></p>
 
   </section>
 </div>
@@ -321,6 +328,10 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </a>
     <span class="signature">status(game_pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-106" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -333,7 +344,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </div>
   
   <section class="docstring">
-    <p>Retrieves <a href="Game.html"><code class="inline">Game</code></a> status data</p>
+    <p>Retrieves <a href="Game.html"><code>Game</code></a> status data</p>
 
   </section>
 </div>
@@ -344,6 +355,10 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </a>
     <span class="signature">stop(game_pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-130" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -356,7 +371,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </div>
   
   <section class="docstring">
-    <p>Issues request to stop <code class="inline">GenServer</code></p>
+    <p>Issues request to stop <code>GenServer</code></p>
 
   </section>
 </div>
@@ -367,6 +382,10 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </a>
     <span class="signature">whereis(id_key)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-46" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -379,8 +398,7 @@ Used primarily by <a href="Game.Pid.Cache.html"><code class="inline">Game.Pid.Ca
     </div>
   
   <section class="docstring">
-    <p>Routine returns game server <code class="inline">pid</code> from process registry using <code class="inline">gproc</code>
-If not found, returns <code class="inline">:undefined</code></p>
+    <p>Routine returns game server <code>pid</code> from process registry using <code>gproc</code> If not found, returns <code>:undefined</code></p>
 
   </section>
 </div>

@@ -65,16 +65,17 @@
         Counter
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements a set of functions for working 
-with letter frequency tallies.</p>
-<p>Conventional <code class="inline">Hangman</code> strategy deals exclusively with 
-letter frequency data.</p>
-<p><a href="Counter.html#content"><code class="inline">Counter</code></a> is a key value store where a <code class="inline">key</code> 
-is a letter string and a <code class="inline">value</code> is a positive integer.</p>
+          <p>Module implements a set of functions for working with letter frequency tallies.</p>
+<p>Conventional <code>Hangman</code> strategy deals exclusively with letter frequency data.</p>
+<p><a href="Counter.html#content"><code>Counter</code></a> is a key value store where a <code>key</code> is a letter string and a <code>value</code> is a positive integer.</p>
 
         </section>
       
@@ -124,8 +125,7 @@ is a letter string and a <code class="inline">value</code> is a positive integer
     <a href="#add_letters/2">add_letters(counter, word)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Adds letters to <a href="Counter.html#content"><code class="inline">Counter</code></a> without checking for duplicate letters.  
-Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+    <div class="summary-synopsis"><p>Adds letters to <a href="Counter.html#content"><code>Counter</code></a> without checking for duplicate letters.<br />Returns an updated <a href="Counter.html#content"><code>Counter</code></a></p>
 </div>
   
 </div>
@@ -134,8 +134,7 @@ Returns an updated <a href="Counter.html#content"><code class="inline">Counter</
     <a href="#add_unique_letters/2">add_unique_letters(counter, word)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Adds letters to <a href="Counter.html#content"><code class="inline">Counter</code></a>. Ensure letters are unique. 
-Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+    <div class="summary-synopsis"><p>Adds letters to <a href="Counter.html#content"><code>Counter</code></a>. Ensure letters are unique. Returns an updated <a href="Counter.html#content"><code>Counter</code></a></p>
 </div>
   
 </div>
@@ -144,9 +143,7 @@ Returns an updated <a href="Counter.html#content"><code class="inline">Counter</
     <a href="#add_words/2">add_words(counter, words)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Adds words <code class="inline">list</code> to <a href="Counter.html#content"><code class="inline">Counter</code></a>. Converts words to char <code class="inline">list</code> and 
-then letter counts <code class="inline">list</code>. List is then submitted to <code class="inline">map</code> for bulk 
-value update. Faster than many tiny <code class="inline">map</code> updates</p>
+    <div class="summary-synopsis"><p>Adds words <code>list</code> to <a href="Counter.html#content"><code>Counter</code></a>. Converts words to char <code>list</code> and then letter counts <code>list</code>. List is then submitted to <code>map</code> for bulk value update. Faster than many tiny <code>map</code> updates</p>
 </div>
   
 </div>
@@ -155,8 +152,7 @@ value update. Faster than many tiny <code class="inline">map</code> updates</p>
     <a href="#add_words/3">add_words(counter, words_stream, exclusion_set)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routines adds word <code class="inline">stream</code> to <a href="Counter.html#content"><code class="inline">Counter</code></a>.  Splits word <code class="inline">stream</code> into 
-manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><code class="inline">add_words/2</code></a> to reduce into <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+    <div class="summary-synopsis"><p>Routines adds word <code>stream</code> to <a href="Counter.html#content"><code>Counter</code></a>. Splits word <code>stream</code> into manageable <code>lists</code>, relies on <a href="#add_words/2"><code>add_words/2</code></a> to reduce into <a href="Counter.html#content"><code>Counter</code></a></p>
 </div>
   
 </div>
@@ -171,7 +167,7 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     <a href="#delete/2">delete(counter, letters)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a> after deleting specified <code class="inline">keys</code> in letters</p>
+    <div class="summary-synopsis"><p>Returns an updated <a href="Counter.html#content"><code>Counter</code></a> after deleting specified <code>keys</code> in letters</p>
 </div>
   
 </div>
@@ -180,7 +176,7 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     <a href="#empty?/1">empty?(counter)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether <a href="Counter.html#content"><code class="inline">Counter</code></a> is empty</p>
+    <div class="summary-synopsis"><p>Returns <code>true</code> or <code>false</code> whether <a href="Counter.html#content"><code>Counter</code></a> is empty</p>
 </div>
   
 </div>
@@ -189,7 +185,7 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     <a href="#equal?/2">equal?(c1, c2)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns true if <code class="inline">Counters</code> equal</p>
+    <div class="summary-synopsis"><p>Returns true if <code>Counters</code> equal</p>
 </div>
   
 </div>
@@ -198,8 +194,7 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     <a href="#inc_by/3">inc_by(counter, key, value \\ 1)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Increment <code class="inline">value</code> for a given <code class="inline">key</code> by the given <code class="inline">value</code>. 
-Default increment <code class="inline">value</code> 1</p>
+    <div class="summary-synopsis"><p>Increment <code>value</code> for a given <code>key</code> by the given <code>value</code>. Default increment <code>value</code> 1</p>
 </div>
   
 </div>
@@ -208,7 +203,7 @@ Default increment <code class="inline">value</code> 1</p>
     <a href="#items/1">items(counter)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns a <code class="inline">key-value</code> list of {<code class="inline">letter</code>, <code class="inline">count</code>} <code class="inline">tuples</code></p>
+    <div class="summary-synopsis"><p>Returns a <code>key-value</code> list of {<code>letter</code>, <code>count</code>} <code>tuples</code></p>
 </div>
   
 </div>
@@ -217,7 +212,7 @@ Default increment <code class="inline">value</code> 1</p>
     <a href="#most_common/2">most_common(counter, n)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">list</code> of the most common <code class="inline">n</code> codepoint <code class="inline">keys</code> and codepoint <code class="inline">values</code></p>
+    <div class="summary-synopsis"><p>Returns <code>list</code> of the most common <code>n</code> codepoint <code>keys</code> and codepoint <code>values</code></p>
 </div>
   
 </div>
@@ -226,7 +221,7 @@ Default increment <code class="inline">value</code> 1</p>
     <a href="#most_common_key/2">most_common_key(counter, n)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">list</code> of the most common <code class="inline">n</code> codepoint <code class="inline">keys</code></p>
+    <div class="summary-synopsis"><p>Returns <code>list</code> of the most common <code>n</code> codepoint <code>keys</code></p>
 </div>
   
 </div>
@@ -235,7 +230,7 @@ Default increment <code class="inline">value</code> 1</p>
     <a href="#new/0">new()</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new, empty <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+    <div class="summary-synopsis"><p>Returns new, empty <a href="Counter.html#content"><code>Counter</code></a></p>
 </div>
   
 </div>
@@ -244,7 +239,7 @@ Default increment <code class="inline">value</code> 1</p>
     <a href="#new/1">new(word)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new <a href="Counter.html#content"><code class="inline">Counter</code></a> that reflects contents of either <code class="inline">String.t, [tuple], map</code></p>
+    <div class="summary-synopsis"><p>Returns new <a href="Counter.html#content"><code>Counter</code></a> that reflects contents of either <code>String.t, [tuple], map</code></p>
 </div>
   
 </div>
@@ -300,6 +295,10 @@ Default increment <code class="inline">value</code> 1</p>
     </a>
     <span class="signature">add_letters(counter, word)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-119" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -312,8 +311,7 @@ Default increment <code class="inline">value</code> 1</p>
     </div>
   
   <section class="docstring">
-    <p>Adds letters to <a href="Counter.html#content"><code class="inline">Counter</code></a> without checking for duplicate letters.  
-Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a>.</p>
+    <p>Adds letters to <a href="Counter.html#content"><code>Counter</code></a> without checking for duplicate letters.<br />Returns an updated <a href="Counter.html#content"><code>Counter</code></a>.</p>
 
   </section>
 </div>
@@ -324,6 +322,10 @@ Returns an updated <a href="Counter.html#content"><code class="inline">Counter</
     </a>
     <span class="signature">add_unique_letters(counter, word)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-152" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -336,8 +338,7 @@ Returns an updated <a href="Counter.html#content"><code class="inline">Counter</
     </div>
   
   <section class="docstring">
-    <p>Adds letters to <a href="Counter.html#content"><code class="inline">Counter</code></a>. Ensure letters are unique. 
-Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+    <p>Adds letters to <a href="Counter.html#content"><code>Counter</code></a>. Ensure letters are unique. Returns an updated <a href="Counter.html#content"><code>Counter</code></a></p>
 
   </section>
 </div>
@@ -348,6 +349,10 @@ Returns an updated <a href="Counter.html#content"><code class="inline">Counter</
     </a>
     <span class="signature">add_words(counter, words)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-170" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -360,9 +365,7 @@ Returns an updated <a href="Counter.html#content"><code class="inline">Counter</
     </div>
   
   <section class="docstring">
-    <p>Adds words <code class="inline">list</code> to <a href="Counter.html#content"><code class="inline">Counter</code></a>. Converts words to char <code class="inline">list</code> and 
-then letter counts <code class="inline">list</code>. List is then submitted to <code class="inline">map</code> for bulk 
-value update. Faster than many tiny <code class="inline">map</code> updates</p>
+    <p>Adds words <code>list</code> to <a href="Counter.html#content"><code>Counter</code></a>. Converts words to char <code>list</code> and then letter counts <code>list</code>. List is then submitted to <code>map</code> for bulk value update. Faster than many tiny <code>map</code> updates</p>
 
   </section>
 </div>
@@ -373,6 +376,10 @@ value update. Faster than many tiny <code class="inline">map</code> updates</p>
     </a>
     <span class="signature">add_words(counter, words_stream, exclusion_set)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-226" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -385,8 +392,7 @@ value update. Faster than many tiny <code class="inline">map</code> updates</p>
     </div>
   
   <section class="docstring">
-    <p>Routines adds word <code class="inline">stream</code> to <a href="Counter.html#content"><code class="inline">Counter</code></a>.  Splits word <code class="inline">stream</code> into 
-manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><code class="inline">add_words/2</code></a> to reduce into <a href="Counter.html#content"><code class="inline">Counter</code></a>.</p>
+    <p>Routines adds word <code>stream</code> to <a href="Counter.html#content"><code>Counter</code></a>. Splits word <code>stream</code> into manageable <code>lists</code>, relies on <a href="#add_words/2"><code>add_words/2</code></a> to reduce into <a href="Counter.html#content"><code>Counter</code></a>.</p>
 
   </section>
 </div>
@@ -397,6 +403,10 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </a>
     <span class="signature">delete(counter)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-260" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
@@ -410,6 +420,10 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </a>
     <span class="signature">delete(counter, letters)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-251" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -422,7 +436,7 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </div>
   
   <section class="docstring">
-    <p>Returns an updated <a href="Counter.html#content"><code class="inline">Counter</code></a> after deleting specified <code class="inline">keys</code> in letters</p>
+    <p>Returns an updated <a href="Counter.html#content"><code>Counter</code></a> after deleting specified <code>keys</code> in letters</p>
 
   </section>
 </div>
@@ -433,6 +447,10 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </a>
     <span class="signature">empty?(counter)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-70" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -445,7 +463,7 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether <a href="Counter.html#content"><code class="inline">Counter</code></a> is empty</p>
+    <p>Returns <code>true</code> or <code>false</code> whether <a href="Counter.html#content"><code>Counter</code></a> is empty</p>
 
   </section>
 </div>
@@ -456,6 +474,10 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </a>
     <span class="signature">equal?(c1, c2)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-58" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -468,7 +490,7 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </div>
   
   <section class="docstring">
-    <p>Returns true if <code class="inline">Counters</code> equal</p>
+    <p>Returns true if <code>Counters</code> equal</p>
 
   </section>
 </div>
@@ -479,6 +501,10 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </a>
     <span class="signature">inc_by(counter, key, value \\ 1)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-106" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -491,8 +517,7 @@ manageable <code class="inline">lists</code>, relies on <a href="#add_words/2"><
     </div>
   
   <section class="docstring">
-    <p>Increment <code class="inline">value</code> for a given <code class="inline">key</code> by the given <code class="inline">value</code>. 
-Default increment <code class="inline">value</code> 1.</p>
+    <p>Increment <code>value</code> for a given <code>key</code> by the given <code>value</code>. Default increment <code>value</code> 1.</p>
 
   </section>
 </div>
@@ -503,6 +528,10 @@ Default increment <code class="inline">value</code> 1.</p>
     </a>
     <span class="signature">items(counter)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-64" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -515,7 +544,7 @@ Default increment <code class="inline">value</code> 1.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns a <code class="inline">key-value</code> list of {<code class="inline">letter</code>, <code class="inline">count</code>} <code class="inline">tuples</code></p>
+    <p>Returns a <code>key-value</code> list of {<code>letter</code>, <code>count</code>} <code>tuples</code></p>
 
   </section>
 </div>
@@ -526,6 +555,10 @@ Default increment <code class="inline">value</code> 1.</p>
     </a>
     <span class="signature">most_common(counter, n)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-76" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -538,7 +571,7 @@ Default increment <code class="inline">value</code> 1.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">list</code> of the most common <code class="inline">n</code> codepoint <code class="inline">keys</code> and codepoint <code class="inline">values</code></p>
+    <p>Returns <code>list</code> of the most common <code>n</code> codepoint <code>keys</code> and codepoint <code>values</code></p>
 
   </section>
 </div>
@@ -549,6 +582,10 @@ Default increment <code class="inline">value</code> 1.</p>
     </a>
     <span class="signature">most_common_key(counter, n)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-91" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -561,7 +598,7 @@ Default increment <code class="inline">value</code> 1.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">list</code> of the most common <code class="inline">n</code> codepoint <code class="inline">keys</code></p>
+    <p>Returns <code>list</code> of the most common <code>n</code> codepoint <code>keys</code></p>
 
   </section>
 </div>
@@ -572,10 +609,14 @@ Default increment <code class="inline">value</code> 1.</p>
     </a>
     <span class="signature">new()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-31" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
-    <p>Returns new, empty <a href="Counter.html#content"><code class="inline">Counter</code></a></p>
+    <p>Returns new, empty <a href="Counter.html#content"><code>Counter</code></a></p>
 
   </section>
 </div>
@@ -586,6 +627,10 @@ Default increment <code class="inline">value</code> 1.</p>
     </a>
     <span class="signature">new(word)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-32" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -600,7 +645,7 @@ Default increment <code class="inline">value</code> 1.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns new <a href="Counter.html#content"><code class="inline">Counter</code></a> that reflects contents of either <code class="inline">String.t, [tuple], map</code></p>
+    <p>Returns new <a href="Counter.html#content"><code>Counter</code></a> that reflects contents of either <code>String.t, [tuple], map</code></p>
 
   </section>
 </div>

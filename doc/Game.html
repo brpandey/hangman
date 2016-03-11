@@ -65,15 +65,17 @@
         Game
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module defines <code class="inline">Hangman</code> <a href="Game.html#content"><code class="inline">Game</code></a> abstraction which can handle
-a single <code class="inline">Hangman</code> game or multiple <code class="inline">Hangman</code> games.</p>
-<p>Runs each <code class="inline">game</code> or <code class="inline">games</code> sequentially.  Therefore only one <code class="inline">game</code>
-is in play at any one time.</p>
-<p>Primary functions are <a href="Game.html#load/3"><code class="inline">Game.load/3</code></a>, <a href="Game.html#guess/2"><code class="inline">Game.guess/2</code></a>, <a href="Game.html#status/1"><code class="inline">Game.status/1</code></a>.</p>
+          <p>Module defines <code>Hangman</code> <a href="Game.html#content"><code>Game</code></a> abstraction which can handle a single <code>Hangman</code> game or multiple <code>Hangman</code> games.</p>
+<p>Runs each <code>game</code> or <code>games</code> sequentially. Therefore only one <code>game</code> is in play at any one time.</p>
+<p>Primary functions are <a href="Game.html#load/3"><code>Game.load/3</code></a>, <a href="Game.html#guess/2"><code>Game.guess/2</code></a>, <a href="Game.html#status/1"><code>Game.status/1</code></a>.</p>
 
         </section>
       
@@ -123,8 +125,7 @@ is in play at any one time.</p>
     <a href="#guess/2">guess(game, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Runs <code class="inline">guess</code> against <a href="Game.html#content"><code class="inline">Game</code></a> <code class="inline">secret</code>. Updates <code class="inline">Hangman</code> pattern, status, and
- other <code class="inline">game</code> recordkeeping structures</p>
+    <div class="summary-synopsis"><p>Runs <code>guess</code> against <a href="Game.html#content"><code>Game</code></a> <code>secret</code>. Updates <code>Hangman</code> pattern, status, and other <code>game</code> recordkeeping structures</p>
 </div>
   
 </div>
@@ -133,7 +134,7 @@ is in play at any one time.</p>
     <a href="#info/1">info(g)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <a href="Game.html#content"><code class="inline">Game</code></a> information</p>
+    <div class="summary-synopsis"><p>Returns <a href="Game.html#content"><code>Game</code></a> information</p>
 </div>
   
 </div>
@@ -142,7 +143,7 @@ is in play at any one time.</p>
     <a href="#load/3">load(id_key, secret, max_wrong)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Loads a new <a href="Game.html#content"><code class="inline">Game</code></a> state given new <code class="inline">secret(s)</code></p>
+    <div class="summary-synopsis"><p>Loads a new <a href="Game.html#content"><code>Game</code></a> state given new <code>secret(s)</code></p>
 </div>
   
 </div>
@@ -157,7 +158,7 @@ is in play at any one time.</p>
     <a href="#status/1">status(game)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns current <a href="Game.html#content"><code class="inline">Game</code></a> status text</p>
+    <div class="summary-synopsis"><p>Returns current <a href="Game.html#content"><code>Game</code></a> status text</p>
 </div>
   
 </div>
@@ -213,6 +214,10 @@ is in play at any one time.</p>
     </a>
     <span class="signature">guess(game, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-84" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -225,18 +230,11 @@ is in play at any one time.</p>
     </div>
   
   <section class="docstring">
-    <p> Runs <code class="inline">guess</code> against <a href="Game.html#content"><code class="inline">Game</code></a> <code class="inline">secret</code>. Updates <code class="inline">Hangman</code> pattern, status, and
- other <code class="inline">game</code> recordkeeping structures.</p>
-<p> Guesses follow two types</p>
+    <p>Runs <code>guess</code> against <a href="Game.html#content"><code>Game</code></a> <code>secret</code>. Updates <code>Hangman</code> pattern, status, and other <code>game</code> recordkeeping structures.</p>
+<p>Guesses follow two types</p>
 <ul>
-<li><p><code class="inline">{:guess_letter, letter}</code> -    If correct, 
-   returns the :correct_letter data tuple along with <code class="inline">game</code> data
-  otherwise, returns the :incorrect_letter data tuple along with <code class="inline">game</code> data</p>
-</li>
-<li><code class="inline">{:guess_word, word}</code> -    If correct, returns 
-   the :correct_word data tuple along with <code class="inline">game</code>
-  If incorrect, returns the :incorrect_word data tuple with <code class="inline">game</code> data
-</li>
+<li><p><code>{:guess_letter, letter}</code> - If correct, returns the :correct_letter data tuple along with <code>game</code> data otherwise, returns the :incorrect_letter data tuple along with <code>game</code> data</p></li>
+<li><p><code>{:guess_word, word}</code> - If correct, returns the :correct_word data tuple along with <code>game</code> If incorrect, returns the :incorrect_word data tuple with <code>game</code> data</p></li>
 </ul>
 
   </section>
@@ -248,6 +246,10 @@ is in play at any one time.</p>
     </a>
     <span class="signature">info(g)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-329" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -260,7 +262,7 @@ is in play at any one time.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns <a href="Game.html#content"><code class="inline">Game</code></a> information</p>
+    <p>Returns <a href="Game.html#content"><code>Game</code></a> information</p>
 
   </section>
 </div>
@@ -271,6 +273,10 @@ is in play at any one time.</p>
     </a>
     <span class="signature">load(id_key, secret, max_wrong)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-45" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -283,7 +289,7 @@ is in play at any one time.</p>
     </div>
   
   <section class="docstring">
-    <p>Loads a new <a href="Game.html#content"><code class="inline">Game</code></a> state given new <code class="inline">secret(s)</code></p>
+    <p>Loads a new <a href="Game.html#content"><code>Game</code></a> state given new <code>secret(s)</code></p>
 
   </section>
 </div>
@@ -294,6 +300,10 @@ is in play at any one time.</p>
     </a>
     <span class="signature">mystery_letter()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-37" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -316,6 +326,10 @@ is in play at any one time.</p>
     </a>
     <span class="signature">status(game)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-185" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -328,7 +342,7 @@ is in play at any one time.</p>
     </div>
   
   <section class="docstring">
-    <p>Returns current <a href="Game.html#content"><code class="inline">Game</code></a> status text</p>
+    <p>Returns current <a href="Game.html#content"><code>Game</code></a> status text</p>
 
   </section>
 </div>

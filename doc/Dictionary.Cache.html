@@ -65,15 +65,17 @@
         Dictionary.Cache
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module loads <a href="Dictionary.File.html"><code class="inline">Dictionary.File</code></a> words into <code class="inline">chunks</code> and stores
-into <code class="inline">ETS</code>.  Letter frequency <code class="inline">tallies</code> are computed and stored into <code class="inline">ETS</code>
-upon startup. Words identified as <code class="inline">random</code> are tagged and stored.</p>
-<p>Implements <code class="inline">GenServer</code>.</p>
-<p>Provides lookup routines to access <code class="inline">chunks</code>, <code class="inline">tallys</code>, and <code class="inline">random</code> words</p>
+          <p>Module loads <a href="Dictionary.File.html"><code>Dictionary.File</code></a> words into <code>chunks</code> and stores into <code>ETS</code>. Letter frequency <code>tallies</code> are computed and stored into <code>ETS</code> upon startup. Words identified as <code>random</code> are tagged and stored.</p>
+<p>Implements <code>GenServer</code>.</p>
+<p>Provides lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words</p>
 
         </section>
       
@@ -107,9 +109,7 @@ upon startup. Words identified as <code class="inline">random</code> are tagged 
     <a href="#setup/1">setup(args)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Loads normalized <a href="Dictionary.File.html"><code class="inline">Dictionary.File</code></a> into <code class="inline">ETS</code>. Calculates and 
-loads <code class="inline">chunked</code> word lists. Computes and stores letter 
-<code class="inline">tallies</code> by word length <code class="inline">key</code>.  Tags and stores <code class="inline">random</code> words</p>
+    <div class="summary-synopsis"><p>Loads normalized <a href="Dictionary.File.html"><code>Dictionary.File</code></a> into <code>ETS</code>. Calculates and loads <code>chunked</code> word lists. Computes and stores letter <code>tallies</code> by word length <code>key</code>. Tags and stores <code>random</code> words</p>
 </div>
   
 </div>
@@ -165,6 +165,10 @@ loads <code class="inline">chunked</code> word lists. Computes and stores letter
     </a>
     <span class="signature">lookup(atom, count)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-70" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -182,15 +186,7 @@ loads <code class="inline">chunked</code> word lists. Computes and stores letter
   
   <section class="docstring">
     <p>Cache lookup routines</p>
-<p>The allowed modes:</p>
-<ul>
-<li><code class="inline">:random</code> - extracts count number of random hangman words. 
-</li>
-<li><code class="inline">:tally</code> - retrieve letter tally associated with word length key
-</li>
-<li><code class="inline">:chunk</code> -  retrieve the word data chunk associated with the word length key
-</li>
-</ul>
+<p>The allowed modes: * <code>:random</code> - extracts count number of random hangman words. * <code>:tally</code> - retrieve letter tally associated with word length key * <code>:chunk</code> - retrieve the word data chunk associated with the word length key</p>
 
   </section>
 </div>
@@ -201,6 +197,10 @@ loads <code class="inline">chunked</code> word lists. Computes and stores letter
     </a>
     <span class="signature">setup(args)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-199" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -213,9 +213,7 @@ loads <code class="inline">chunked</code> word lists. Computes and stores letter
     </div>
   
   <section class="docstring">
-    <p>Loads normalized <a href="Dictionary.File.html"><code class="inline">Dictionary.File</code></a> into <code class="inline">ETS</code>. Calculates and 
-loads <code class="inline">chunked</code> word lists. Computes and stores letter 
-<code class="inline">tallies</code> by word length <code class="inline">key</code>.  Tags and stores <code class="inline">random</code> words.</p>
+    <p>Loads normalized <a href="Dictionary.File.html"><code>Dictionary.File</code></a> into <code>ETS</code>. Calculates and loads <code>chunked</code> word lists. Computes and stores letter <code>tallies</code> by word length <code>key</code>. Tags and stores <code>random</code> words.</p>
 
   </section>
 </div>
@@ -226,6 +224,10 @@ loads <code class="inline">chunked</code> word lists. Computes and stores letter
     </a>
     <span class="signature">start_link(args \\ [regular: true])</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-50" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -249,6 +251,10 @@ loads <code class="inline">chunked</code> word lists. Computes and stores letter
     </a>
     <span class="signature">stop()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-120" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
@@ -262,6 +268,10 @@ loads <code class="inline">chunked</code> word lists. Computes and stores letter
     </a>
     <span class="signature">stop(pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-116" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">

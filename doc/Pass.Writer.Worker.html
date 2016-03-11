@@ -65,17 +65,16 @@
         Pass.Writer.Worker
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module is a <code class="inline">GenServer</code> that implements writer worker functionality.
-Specifically, module is a <code class="inline">write-operation</code> specific module that 
-performs <code class="inline">async</code> writes into <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> <code class="inline">ETS</code> table.</p>
-<p>If the <a href="Pass.Writer.Worker.html#write/3"><code class="inline">Pass.Writer.Worker.write/3</code></a> operation fails for whatever reason, 
-doesn’t bring down the reads and table-owning <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> process.  
-Hence the separation.</p>
-<p>Primary method is <a href="Pass.Writer.Worker.html#write/3"><code class="inline">Pass.Writer.Worker.write/3</code></a></p>
+          <p>Module is a <code>GenServer</code> that implements writer worker functionality. Specifically, Pass.Writer.Worker is a <code>write-operation</code> specific module that performs <code>async</code> writes into <a href="Pass.Cache.html"><code>Pass.Cache</code></a> <code>ETS</code> table.</p>
+<p>If the <a href="Pass.Writer.Worker.html#write/3"><code>Pass.Writer.Worker.write/3</code></a> operation fails for whatever reason, it doesn't bring down the table-owning <a href="Pass.Cache.html"><code>Pass.Cache</code></a> process and interrupt cache reads. Hence the separation. The primary module method is <a href="Pass.Writer.Worker.html#write/3"><code>Pass.Writer.Worker.write/3</code></a></p>
 
         </section>
       
@@ -106,7 +105,7 @@ Hence the separation.</p>
     <a href="#stop/1">stop(pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues request to stop GenServer <code class="inline">worker</code></p>
+    <div class="summary-synopsis"><p>Issues request to stop GenServer <code>worker</code></p>
 </div>
   
 </div>
@@ -115,8 +114,7 @@ Hence the separation.</p>
     <a href="#write/3">write(worker_id, pass_key, chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Write is an <code class="inline">asynchronous</code> call.
-Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> pass table</p>
+    <div class="summary-synopsis"><p>Write is an <code>asynchronous</code> call. Inserts <code>chunks</code> into <code>ETS</code> pass table</p>
 </div>
   
 </div>
@@ -148,6 +146,10 @@ Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> 
     </a>
     <span class="signature">start_link(worker_id)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-25" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
@@ -161,6 +163,10 @@ Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> 
     </a>
     <span class="signature">stop(pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-38" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -173,7 +179,7 @@ Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> 
     </div>
   
   <section class="docstring">
-    <p>Issues request to stop GenServer <code class="inline">worker</code></p>
+    <p>Issues request to stop GenServer <code>worker</code></p>
 
   </section>
 </div>
@@ -184,6 +190,10 @@ Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> 
     </a>
     <span class="signature">write(worker_id, pass_key, chunks)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-48" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -196,8 +206,7 @@ Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> 
     </div>
   
   <section class="docstring">
-    <p>Write is an <code class="inline">asynchronous</code> call.
-Inserts <code class="inline">chunks</code> into <code class="inline">ETS</code> pass table</p>
+    <p>Write is an <code>asynchronous</code> call. Inserts <code>chunks</code> into <code>ETS</code> pass table</p>
 
   </section>
 </div>

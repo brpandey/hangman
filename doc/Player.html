@@ -65,13 +65,15 @@
         Player
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module handles <a href="Player.html#content"><code class="inline">Player</code></a> abstraction and defines <a href="Player.html#content"><code class="inline">Player</code></a> type.
-Implements <code class="inline">player</code> functionality to choose letters, guess letters and words.
-Heavily relies upon <a href="Round.html"><code class="inline">Round</code></a> and <a href="Action.html"><code class="inline">Action</code></a>.</p>
+          <p>Module handles <a href="Player.html#content"><code>Player</code></a> abstraction and defines <a href="Player.html#content"><code>Player</code></a> type. Implements <code>player</code> functionality to choose letters, guess letters and words. Heavily relies upon <a href="Round.html"><code>Round</code></a> and <a href="Action.html"><code>Action</code></a>.</p>
 
         </section>
       
@@ -121,8 +123,7 @@ Heavily relies upon <a href="Round.html"><code class="inline">Round</code></a> a
     <a href="#choices/3">choices(p, directive, options \\ nil)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routine for <code class="inline">:human</code> player type.
-Setups new <code class="inline">round</code>, retrieves and returns top letter choices</p>
+    <div class="summary-synopsis"><p>Routine for <code>:human</code> player type. Setups new <code>round</code>, retrieves and returns top letter choices</p>
 </div>
   
 </div>
@@ -131,7 +132,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     <a href="#delete/1">delete(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Method returns empty <a href="Player.html#content"><code class="inline">Player</code></a></p>
+    <div class="summary-synopsis"><p>Method returns empty <a href="Player.html#content"><code>Player</code></a></p>
 </div>
   
 </div>
@@ -140,7 +141,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     <a href="#game_lost?/1">game_lost?(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the <code class="inline">game</code> has been lost</p>
+    <div class="summary-synopsis"><p>Returns <code>true</code> or <code>false</code> whether the <code>game</code> has been lost</p>
 </div>
   
 </div>
@@ -149,7 +150,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     <a href="#game_won?/1">game_won?(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the <code class="inline">game</code> has been won</p>
+    <div class="summary-synopsis"><p>Returns <code>true</code> or <code>false</code> whether the <code>game</code> has been won</p>
 </div>
   
 </div>
@@ -158,7 +159,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     <a href="#games_over?/1">games_over?(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether all games are over</p>
+    <div class="summary-synopsis"><p>Returns <code>true</code> or <code>false</code> whether all games are over</p>
 </div>
   
 </div>
@@ -167,8 +168,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     <a href="#games_summary/1">games_summary(args)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">game</code> summary as a string.  Includes <code class="inline">number</code> of games played, <code class="inline">average</code> 
-score per game, per game <code class="inline">score</code></p>
+    <div class="summary-synopsis"><p>Returns <code>game</code> summary as a string. Includes <code>number</code> of games played, <code>average</code> score per game, per game <code>score</code></p>
 </div>
   
 </div>
@@ -177,8 +177,7 @@ score per game, per game <code class="inline">score</code></p>
     <a href="#guess/1">guess(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routine for <code class="inline">:robot</code> player type. Setups new <code class="inline">round</code>, 
-performs <code class="inline">auto-generated</code> guess, returns round <code class="inline">status</code></p>
+    <div class="summary-synopsis"><p>Routine for <code>:robot</code> player type. Setups new <code>round</code>, performs <code>auto-generated</code> guess, returns round <code>status</code></p>
 </div>
   
 </div>
@@ -187,7 +186,7 @@ performs <code class="inline">auto-generated</code> guess, returns round <code c
     <a href="#guess/2">guess(p, guess)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routine for <code class="inline">:human</code> player type</p>
+    <div class="summary-synopsis"><p>Routine for <code>:human</code> player type</p>
 </div>
   
 </div>
@@ -208,8 +207,7 @@ performs <code class="inline">auto-generated</code> guess, returns round <code c
     <a href="#last_word?/1">last_word?(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether we’ve arrived at 
-the last word in possible words set</p>
+    <div class="summary-synopsis"><p>Returns <code>true</code> or <code>false</code> whether we've arrived at the last word in possible words set</p>
 </div>
   
 </div>
@@ -218,7 +216,7 @@ the last word in possible words set</p>
     <a href="#new/4">new(name, type, game_pid, event_pid)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new <a href="Player.html#content"><code class="inline">Player</code></a>, validates <code class="inline">player</code> type</p>
+    <div class="summary-synopsis"><p>Returns new <a href="Player.html#content"><code>Player</code></a>, validates <code>player</code> type</p>
 </div>
   
 </div>
@@ -233,8 +231,7 @@ the last word in possible words set</p>
     <a href="#start/1">start(p)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Routine starts a new <a href="Player.html#content"><code class="inline">Player</code></a>. Notifies player specific event server.
-Setups game round</p>
+    <div class="summary-synopsis"><p>Routine starts a new <a href="Player.html#content"><code>Player</code></a>. Notifies player specific event server. Setups game round</p>
 </div>
   
 </div>
@@ -243,7 +240,7 @@ Setups game round</p>
     <a href="#status/2">status(p, atom)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">game</code> status</p>
+    <div class="summary-synopsis"><p>Returns <code>game</code> status</p>
 </div>
   
 </div>
@@ -299,6 +296,10 @@ Setups game round</p>
     </a>
     <span class="signature">choices(p, directive, options \\ nil)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-162" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -311,8 +312,7 @@ Setups game round</p>
     </div>
   
   <section class="docstring">
-    <p>Routine for <code class="inline">:human</code> player type.
-Setups new <code class="inline">round</code>, retrieves and returns top letter choices.</p>
+    <p>Routine for <code>:human</code> player type. Setups new <code>round</code>, retrieves and returns top letter choices.</p>
 
   </section>
 </div>
@@ -323,6 +323,10 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </a>
     <span class="signature">delete(p)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-289" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -335,7 +339,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </div>
   
   <section class="docstring">
-    <p>Method returns empty <a href="Player.html#content"><code class="inline">Player</code></a></p>
+    <p>Method returns empty <a href="Player.html#content"><code>Player</code></a></p>
 
   </section>
 </div>
@@ -346,6 +350,10 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </a>
     <span class="signature">game_lost?(p)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-78" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -358,7 +366,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the <code class="inline">game</code> has been lost</p>
+    <p>Returns <code>true</code> or <code>false</code> whether the <code>game</code> has been lost</p>
 
   </section>
 </div>
@@ -369,6 +377,10 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </a>
     <span class="signature">game_won?(p)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-70" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -381,7 +393,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether the <code class="inline">game</code> has been won</p>
+    <p>Returns <code>true</code> or <code>false</code> whether the <code>game</code> has been won</p>
 
   </section>
 </div>
@@ -392,6 +404,10 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </a>
     <span class="signature">games_over?(p)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-85" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -404,7 +420,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether all games are over</p>
+    <p>Returns <code>true</code> or <code>false</code> whether all games are over</p>
 
   </section>
 </div>
@@ -415,6 +431,10 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </a>
     <span class="signature">games_summary(args)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-93" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -427,8 +447,7 @@ Setups new <code class="inline">round</code>, retrieves and returns top letter c
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">game</code> summary as a string.  Includes <code class="inline">number</code> of games played, <code class="inline">average</code> 
-score per game, per game <code class="inline">score</code>.</p>
+    <p>Returns <code>game</code> summary as a string. Includes <code>number</code> of games played, <code>average</code> score per game, per game <code>score</code>.</p>
 
   </section>
 </div>
@@ -439,11 +458,14 @@ score per game, per game <code class="inline">score</code>.</p>
     </a>
     <span class="signature">guess(p)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-195" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
-    <p>Routine for <code class="inline">:robot</code> player type. Setups new <code class="inline">round</code>, 
-performs <code class="inline">auto-generated</code> guess, returns round <code class="inline">status</code></p>
+    <p>Routine for <code>:robot</code> player type. Setups new <code>round</code>, performs <code>auto-generated</code> guess, returns round <code>status</code></p>
 
   </section>
 </div>
@@ -454,6 +476,10 @@ performs <code class="inline">auto-generated</code> guess, returns round <code c
     </a>
     <span class="signature">guess(p, guess)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-207" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -466,17 +492,10 @@ performs <code class="inline">auto-generated</code> guess, returns round <code c
     </div>
   
   <section class="docstring">
-    <p>Routine for <code class="inline">:human</code> player type.</p>
-<p>Comes in two modes</p>
+    <p>Routine for <code>:human</code> player type.</p>
+<p>Comes in two modes * <code>:guess_last_word</code> - performs guess of last remaining word Note: Somewhat of an oversimplification for a <code>human</code> guess word, we simplify the <code>human</code> guessing of words to just the <code>last</code> word</p>
 <ul>
-<li><p><code class="inline">:guess_last_word</code> - performs guess of last remaining word
-  Note: Somewhat of an oversimplification for a <code class="inline">human</code> guess word, 
-  we simplify the <code class="inline">human</code> guessing of words to just the <code class="inline">last</code> word</p>
-</li>
-<li><code class="inline">{:guess_letter, letter}</code> - doesn’t setup round since it 
-  was already setup during the <code class="inline">choose letters</code> stage. Issues action 
-  to <code class="inline">guess</code> and <code class="inline">validate</code> letter and returns round <code class="inline">status</code>.
-</li>
+<li><code>{:guess_letter, letter}</code> - doesn't setup round since it was already setup during the <code>choose letters</code> stage. Issues action to <code>guess</code> and <code>validate</code> letter and returns round <code>status</code>.</li>
 </ul>
 
   </section>
@@ -488,6 +507,10 @@ performs <code class="inline">auto-generated</code> guess, returns round <code c
     </a>
     <span class="signature">human()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-27" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
@@ -501,6 +524,10 @@ performs <code class="inline">auto-generated</code> guess, returns round <code c
     </a>
     <span class="signature">info(p)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-295" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -523,6 +550,10 @@ performs <code class="inline">auto-generated</code> guess, returns round <code c
     </a>
     <span class="signature">last_word?(p)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-58" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -535,8 +566,7 @@ performs <code class="inline">auto-generated</code> guess, returns round <code c
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">true</code> or <code class="inline">false</code> whether we’ve arrived at 
-the last word in possible words set</p>
+    <p>Returns <code>true</code> or <code>false</code> whether we've arrived at the last word in possible words set</p>
 
   </section>
 </div>
@@ -547,6 +577,10 @@ the last word in possible words set</p>
     </a>
     <span class="signature">new(name, type, game_pid, event_pid)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-38" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -559,7 +593,7 @@ the last word in possible words set</p>
     </div>
   
   <section class="docstring">
-    <p>Returns new <a href="Player.html#content"><code class="inline">Player</code></a>, validates <code class="inline">player</code> type</p>
+    <p>Returns new <a href="Player.html#content"><code>Player</code></a>, validates <code>player</code> type</p>
 
   </section>
 </div>
@@ -570,6 +604,10 @@ the last word in possible words set</p>
     </a>
     <span class="signature">robot()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-28" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
@@ -583,6 +621,10 @@ the last word in possible words set</p>
     </a>
     <span class="signature">start(p)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-132" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -595,10 +637,8 @@ the last word in possible words set</p>
     </div>
   
   <section class="docstring">
-    <p>Routine starts a new <a href="Player.html#content"><code class="inline">Player</code></a>. Notifies player specific event server.
-Setups game round.</p>
-<p>If type is <code class="inline">robot</code>, makes initial guess, then returns round status.
-If type is <code class="inline">human</code>, retrieves top letter choices to display</p>
+    <p>Routine starts a new <a href="Player.html#content"><code>Player</code></a>. Notifies player specific event server. Setups game round.</p>
+<p>If type is <code>robot</code>, makes initial guess, then returns round status. If type is <code>human</code>, retrieves top letter choices to display</p>
 
   </section>
 </div>
@@ -609,6 +649,10 @@ If type is <code class="inline">human</code>, retrieves top letter choices to di
     </a>
     <span class="signature">status(p, atom)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-111" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -621,7 +665,7 @@ If type is <code class="inline">human</code>, retrieves top letter choices to di
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">game</code> status</p>
+    <p>Returns <code>game</code> status</p>
 
   </section>
 </div>

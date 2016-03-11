@@ -65,15 +65,17 @@
         Strategy
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Handles letter guessing strategy for <a href="Player.html"><code class="inline">Player</code></a>.</p>
-<p>For <code class="inline">robot</code> player type, retrieves best letter considering <code class="inline">English</code>
-letter frequencies and letter tally counts.</p>
-<p>For <code class="inline">human</code> player type, retries a set of top letter choices to
-be presented to <code class="inline">human</code> to manually choose.</p>
+          <p>Handles letter guessing strategy for <a href="Player.html"><code>Player</code></a>.</p>
+<p>For <code>robot</code> player type, retrieves best letter considering <code>English</code> letter frequencies and letter tally counts.</p>
+<p>For <code>human</code> player type, retries a set of top letter choices to be presented to <code>human</code> to manually choose.</p>
 
         </section>
       
@@ -117,8 +119,7 @@ be presented to <code class="inline">human</code> to manually choose.</p>
     <a href="#choose_letters/2">choose_letters(strategy, n \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Retrieves letter choices text.  Denotes
-‘strategic’ letter pick with an <code class="inline">asterisk</code></p>
+    <div class="summary-synopsis"><p>Retrieves letter choices text. Denotes 'strategic' letter pick with an <code>asterisk</code></p>
 </div>
   
 </div>
@@ -136,7 +137,7 @@ be presented to <code class="inline">human</code> to manually choose.</p>
     <a href="#info/1">info(s)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <a href="Strategy.html#content"><code class="inline">Strategy</code></a> information</p>
+    <div class="summary-synopsis"><p>Returns <a href="Strategy.html#content"><code>Strategy</code></a> information</p>
 </div>
   
 </div>
@@ -145,8 +146,7 @@ be presented to <code class="inline">human</code> to manually choose.</p>
     <a href="#last_word/1">last_word(strategy)</a>
   </div>
   
-    <div class="summary-synopsis"><p>If we have reached the last possible hangman word,
-return it so we can guess it</p>
+    <div class="summary-synopsis"><p>If we have reached the last possible hangman word, return it so we can guess it</p>
 </div>
   
 </div>
@@ -155,8 +155,7 @@ return it so we can guess it</p>
     <a href="#letter_in_most_common/3">letter_in_most_common(strategy, letter, n \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Validates <code class="inline">letter</code> is within the top strategy letter choices.
-If not, picks the top <code class="inline">letter</code> as deemed by heuristics</p>
+    <div class="summary-synopsis"><p>Validates <code>letter</code> is within the top strategy letter choices. If not, picks the top <code>letter</code> as deemed by heuristics</p>
 </div>
   
 </div>
@@ -174,7 +173,7 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     <a href="#most_common_letter/2">most_common_letter(strategy, n)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns most common <code class="inline">n</code> letters</p>
+    <div class="summary-synopsis"><p>Returns most common <code>n</code> letters</p>
 </div>
   
 </div>
@@ -183,7 +182,7 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     <a href="#most_common_letter_and_counts/2">most_common_letter_and_counts(strategy, n)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns most common <code class="inline">n</code> letters along with their <code class="inline">counts</code></p>
+    <div class="summary-synopsis"><p>Returns most common <code>n</code> letters along with their <code>counts</code></p>
 </div>
   
 </div>
@@ -192,7 +191,7 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     <a href="#new/0">new()</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns a new <a href="Strategy.html#content"><code class="inline">Strategy</code></a></p>
+    <div class="summary-synopsis"><p>Returns a new <a href="Strategy.html#content"><code>Strategy</code></a></p>
 </div>
   
 </div>
@@ -201,13 +200,7 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     <a href="#retrieve_best_letter/1">retrieve_best_letter(strategy)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Method implements the most <code class="inline">common</code> letter retrieval strategy with a twist.
-Gets the first letter with the highest frequency for when the 
-current possible <code class="inline">Hangman</code> word set space is &gt; “small”. 
-The twist is when we combine the <code class="inline">English</code> language letter relative 
-frequency. For the cases where the word set is less than <code class="inline">small</code>, 
-takes the letter whose frequencies are less than or equal to half 
-the possible <code class="inline">Hangman</code> word pass <code class="inline">size</code></p>
+    <div class="summary-synopsis"><p>Method implements the most <code>common</code> letter retrieval strategy with a twist. Gets the first letter with the highest frequency for when the current possible <code>Hangman</code> word set space is &gt; &quot;small&quot;. The twist is when we combine the <code>English</code> language letter relative frequency. For the cases where the word set is less than <code>small</code>, takes the letter whose frequencies are less than or equal to half the possible <code>Hangman</code> word pass <code>size</code></p>
 </div>
   
 </div>
@@ -225,7 +218,7 @@ the possible <code class="inline">Hangman</code> word pass <code class="inline">
     <a href="#update/3">update(strategy, pass, atom)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Updates <code class="inline">strategy</code> with <code class="inline">pass</code> data</p>
+    <div class="summary-synopsis"><p>Updates <code>strategy</code> with <code>pass</code> data</p>
 </div>
   
 </div>
@@ -277,6 +270,10 @@ the possible <code class="inline">Hangman</code> word pass <code class="inline">
     </a>
     <span class="signature">choose_letters(strategy, n \\ 5)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-221" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -289,8 +286,7 @@ the possible <code class="inline">Hangman</code> word pass <code class="inline">
     </div>
   
   <section class="docstring">
-    <p>Retrieves letter choices text.  Denotes
-‘strategic’ letter pick with an <code class="inline">asterisk</code>.</p>
+    <p>Retrieves letter choices text. Denotes 'strategic' letter pick with an <code>asterisk</code>.</p>
 
   </section>
 </div>
@@ -301,6 +297,10 @@ the possible <code class="inline">Hangman</code> word pass <code class="inline">
     </a>
     <span class="signature">get_guessed(strategy)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-66" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -324,6 +324,10 @@ the possible <code class="inline">Hangman</code> word pass <code class="inline">
     </a>
     <span class="signature">info(s)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-326" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -336,7 +340,7 @@ the possible <code class="inline">Hangman</code> word pass <code class="inline">
     </div>
   
   <section class="docstring">
-    <p>Returns <a href="Strategy.html#content"><code class="inline">Strategy</code></a> information</p>
+    <p>Returns <a href="Strategy.html#content"><code>Strategy</code></a> information</p>
 
   </section>
 </div>
@@ -347,6 +351,10 @@ the possible <code class="inline">Hangman</code> word pass <code class="inline">
     </a>
     <span class="signature">last_word(strategy)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-53" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -359,8 +367,7 @@ the possible <code class="inline">Hangman</code> word pass <code class="inline">
     </div>
   
   <section class="docstring">
-    <p>If we have reached the last possible hangman word,
-return it so we can guess it</p>
+    <p>If we have reached the last possible hangman word, return it so we can guess it</p>
 
   </section>
 </div>
@@ -371,6 +378,10 @@ return it so we can guess it</p>
     </a>
     <span class="signature">letter_in_most_common(strategy, letter, n \\ 5)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-202" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -383,8 +394,7 @@ return it so we can guess it</p>
     </div>
   
   <section class="docstring">
-    <p>Validates <code class="inline">letter</code> is within the top strategy letter choices.
-If not, picks the top <code class="inline">letter</code> as deemed by heuristics.</p>
+    <p>Validates <code>letter</code> is within the top strategy letter choices. If not, picks the top <code>letter</code> as deemed by heuristics.</p>
 
   </section>
 </div>
@@ -395,6 +405,10 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </a>
     <span class="signature">make_guess(strategy)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-118" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -418,6 +432,10 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </a>
     <span class="signature">most_common_letter(strategy, n)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-189" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -430,7 +448,7 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </div>
   
   <section class="docstring">
-    <p>Returns most common <code class="inline">n</code> letters</p>
+    <p>Returns most common <code>n</code> letters</p>
 
   </section>
 </div>
@@ -441,6 +459,10 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </a>
     <span class="signature">most_common_letter_and_counts(strategy, n)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-177" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -453,7 +475,7 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </div>
   
   <section class="docstring">
-    <p>Returns most common <code class="inline">n</code> letters along with their <code class="inline">counts</code></p>
+    <p>Returns most common <code>n</code> letters along with their <code>counts</code></p>
 
   </section>
 </div>
@@ -464,6 +486,10 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </a>
     <span class="signature">new()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-43" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -476,7 +502,7 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </div>
   
   <section class="docstring">
-    <p>Returns a new <a href="Strategy.html#content"><code class="inline">Strategy</code></a></p>
+    <p>Returns a new <a href="Strategy.html#content"><code>Strategy</code></a></p>
 
   </section>
 </div>
@@ -487,6 +513,10 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </a>
     <span class="signature">retrieve_best_letter(strategy)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-277" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -499,15 +529,8 @@ If not, picks the top <code class="inline">letter</code> as deemed by heuristics
     </div>
   
   <section class="docstring">
-    <p>Method implements the most <code class="inline">common</code> letter retrieval strategy with a twist.
-Gets the first letter with the highest frequency for when the 
-current possible <code class="inline">Hangman</code> word set space is &gt; “small”. 
-The twist is when we combine the <code class="inline">English</code> language letter relative 
-frequency. For the cases where the word set is less than <code class="inline">small</code>, 
-takes the letter whose frequencies are less than or equal to half 
-the possible <code class="inline">Hangman</code> word pass <code class="inline">size</code>.</p>
-<p>E.g.for size 10, the letter <code class="inline">counts</code> would need to be 5 
-or lower to be chosen. Doesn’t handle tie between letters.</p>
+    <p>Method implements the most <code>common</code> letter retrieval strategy with a twist. Gets the first letter with the highest frequency for when the current possible <code>Hangman</code> word set space is &gt; &quot;small&quot;. The twist is when we combine the <code>English</code> language letter relative frequency. For the cases where the word set is less than <code>small</code>, takes the letter whose frequencies are less than or equal to half the possible <code>Hangman</code> word pass <code>size</code>.</p>
+<p>E.g.for size 10, the letter <code>counts</code> would need to be 5 or lower to be chosen. Doesn't handle tie between letters.</p>
 
   </section>
 </div>
@@ -518,6 +541,10 @@ or lower to be chosen. Doesn’t handle tie between letters.</p>
     </a>
     <span class="signature">update(strategy, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-127" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -541,6 +568,10 @@ or lower to be chosen. Doesn’t handle tie between letters.</p>
     </a>
     <span class="signature">update(strategy, pass, atom)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-153" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -553,9 +584,8 @@ or lower to be chosen. Doesn’t handle tie between letters.</p>
     </div>
   
   <section class="docstring">
-    <p>Updates <code class="inline">strategy</code> with <code class="inline">pass</code> data.</p>
-<p>For <code class="inline">robot</code> player type, when we updated the pass data
-also <code class="inline">prepare</code> the guess.</p>
+    <p>Updates <code>strategy</code> with <code>pass</code> data.</p>
+<p>For <code>robot</code> player type, when we updated the pass data also <code>prepare</code> the guess.</p>
 
   </section>
 </div>

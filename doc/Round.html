@@ -65,15 +65,17 @@
         Round
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module to implement <code class="inline">Hangman</code> game <code class="inline">round</code> abstraction.</p>
-<p>Works in conjuction with <a href="Strategy.html"><code class="inline">Strategy</code></a> and <a href="Game.Server.html"><code class="inline">Game.Server</code></a>
-to orchestrate actual <code class="inline">round</code> game play.</p>
-<p>Basic <a href="Round.html#content"><code class="inline">Round</code></a> functionality includes <a href="#setup/2"><code class="inline">setup/2</code></a>, <a href="#guess/2"><code class="inline">guess/2</code></a>, 
-<a href="#update/3"><code class="inline">update/3</code></a>, <a href="#status/1"><code class="inline">status/1</code></a></p>
+          <p>Module to implement <code>Hangman</code> game <code>round</code> abstraction.</p>
+<p>Works in conjuction with <a href="Strategy.html"><code>Strategy</code></a> and <a href="Game.Server.html"><code>Game.Server</code></a> to orchestrate actual <code>round</code> game play.</p>
+<p>Basic <a href="Round.html#content"><code>Round</code></a> functionality includes <a href="#setup/2"><code>setup/2</code></a>, <a href="#guess/2"><code>guess/2</code></a>, <a href="#update/3"><code>update/3</code></a>, <a href="#status/1"><code>status/1</code></a></p>
 
         </section>
       
@@ -117,7 +119,7 @@ to orchestrate actual <code class="inline">round</code> game play.</p>
     <a href="#augment_choices/2">augment_choices(player, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Interjects <code class="inline">round</code> specific parameters into <code class="inline">choices text</code></p>
+    <div class="summary-synopsis"><p>Interjects <code>round</code> specific parameters into <code>choices text</code></p>
 </div>
   
 </div>
@@ -126,7 +128,7 @@ to orchestrate actual <code class="inline">round</code> game play.</p>
     <a href="#context/1">context(player)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns round <code class="inline">context</code> based on results of <code class="inline">last guess</code></p>
+    <div class="summary-synopsis"><p>Returns round <code>context</code> based on results of <code>last guess</code></p>
 </div>
   
 </div>
@@ -135,8 +137,7 @@ to orchestrate actual <code class="inline">round</code> game play.</p>
     <a href="#guess/2">guess(p, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Issues a client <code class="inline">guess</code> (either <code class="inline">letter</code> or <code class="inline">word</code>) against <a href="Game.Server.html"><code class="inline">Game.Server</code></a>.
-Notifies player <code class="inline">events</code> of guess <code class="inline">results</code></p>
+    <div class="summary-synopsis"><p>Issues a client <code>guess</code> (either <code>letter</code> or <code>word</code>) against <a href="Game.Server.html"><code>Game.Server</code></a>. Notifies player <code>events</code> of guess <code>results</code></p>
 </div>
   
 </div>
@@ -145,7 +146,7 @@ Notifies player <code class="inline">events</code> of guess <code class="inline"
     <a href="#setup/1">setup(player)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Setups game play <code class="inline">round</code></p>
+    <div class="summary-synopsis"><p>Setups game play <code>round</code></p>
 </div>
   
 </div>
@@ -160,7 +161,7 @@ Notifies player <code class="inline">events</code> of guess <code class="inline"
     <a href="#status/1">status(player)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code class="inline">round</code> status tuple</p>
+    <div class="summary-synopsis"><p>Returns <code>round</code> status tuple</p>
 </div>
   
 </div>
@@ -175,8 +176,7 @@ Notifies player <code class="inline">events</code> of guess <code class="inline"
     <a href="#update/3">update(player, round, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Updates <a href="Player.html"><code class="inline">Player</code></a> abstraction with <a href="Round.html#content"><code class="inline">Round</code></a> results.  If games are over, updates
-games summary and notifies <a href="Player.Events.html"><code class="inline">Player.Events</code></a></p>
+    <div class="summary-synopsis"><p>Updates <a href="Player.html"><code>Player</code></a> abstraction with <a href="Round.html#content"><code>Round</code></a> results. If games are over, updates games summary and notifies <a href="Player.Events.html"><code>Player.Events</code></a></p>
 </div>
   
 </div>
@@ -228,6 +228,10 @@ games summary and notifies <a href="Player.Events.html"><code class="inline">Pla
     </a>
     <span class="signature">augment_choices(player, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-134" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -240,7 +244,7 @@ games summary and notifies <a href="Player.Events.html"><code class="inline">Pla
     </div>
   
   <section class="docstring">
-    <p>Interjects <code class="inline">round</code> specific parameters into <code class="inline">choices text</code>.</p>
+    <p>Interjects <code>round</code> specific parameters into <code>choices text</code>.</p>
 
   </section>
 </div>
@@ -251,6 +255,10 @@ games summary and notifies <a href="Player.Events.html"><code class="inline">Pla
     </a>
     <span class="signature">context(player)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-28" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -263,7 +271,7 @@ games summary and notifies <a href="Player.Events.html"><code class="inline">Pla
     </div>
   
   <section class="docstring">
-    <p>Returns round <code class="inline">context</code> based on results of <code class="inline">last guess</code></p>
+    <p>Returns round <code>context</code> based on results of <code>last guess</code></p>
 
   </section>
 </div>
@@ -274,6 +282,10 @@ games summary and notifies <a href="Player.Events.html"><code class="inline">Pla
     </a>
     <span class="signature">guess(p, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-157" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -286,9 +298,8 @@ games summary and notifies <a href="Player.Events.html"><code class="inline">Pla
     </div>
   
   <section class="docstring">
-    <p>Issues a client <code class="inline">guess</code> (either <code class="inline">letter</code> or <code class="inline">word</code>) against <a href="Game.Server.html"><code class="inline">Game.Server</code></a>.
-Notifies player <code class="inline">events</code> of guess <code class="inline">results</code>.</p>
-<p>Returns received <code class="inline">round</code> data</p>
+    <p>Issues a client <code>guess</code> (either <code>letter</code> or <code>word</code>) against <a href="Game.Server.html"><code>Game.Server</code></a>. Notifies player <code>events</code> of guess <code>results</code>.</p>
+<p>Returns received <code>round</code> data</p>
 
   </section>
 </div>
@@ -299,14 +310,16 @@ Notifies player <code class="inline">events</code> of guess <code class="inline"
     </a>
     <span class="signature">setup(player)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-76" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
-    <p>Setups game play <code class="inline">round</code></p>
-<p>For game start stage, retrieves secret length from game server
-uses secret length to filter possible <code class="inline">Hangman</code> words from <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> server</p>
-<p>On subsequent rounds, generates a reduce key based on the result of the
-last guess to filter possible <code class="inline">Hangman</code> words from <a href="Pass.Cache.html"><code class="inline">Pass.Cache</code></a> server</p>
+    <p>Setups game play <code>round</code></p>
+<p>For game start stage, retrieves secret length from game server uses secret length to filter possible <code>Hangman</code> words from <a href="Pass.Cache.html"><code>Pass.Cache</code></a> server</p>
+<p>On subsequent rounds, generates a reduce key based on the result of the last guess to filter possible <code>Hangman</code> words from <a href="Pass.Cache.html"><code>Pass.Cache</code></a> server</p>
 
   </section>
 </div>
@@ -317,6 +330,10 @@ last guess to filter possible <code class="inline">Hangman</code> words from <a 
     </a>
     <span class="signature">setup(player, context)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-80" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -339,6 +356,10 @@ last guess to filter possible <code class="inline">Hangman</code> words from <a 
     </a>
     <span class="signature">status(player)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-56" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -351,7 +372,7 @@ last guess to filter possible <code class="inline">Hangman</code> words from <a 
     </div>
   
   <section class="docstring">
-    <p>Returns <code class="inline">round</code> status tuple</p>
+    <p>Returns <code>round</code> status tuple</p>
 
   </section>
 </div>
@@ -362,6 +383,10 @@ last guess to filter possible <code class="inline">Hangman</code> words from <a 
     </a>
     <span class="signature">update(player, round)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-210" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
   <section class="docstring">
@@ -375,6 +400,10 @@ last guess to filter possible <code class="inline">Hangman</code> words from <a 
     </a>
     <span class="signature">update(player, round, arg)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-196" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -387,11 +416,8 @@ last guess to filter possible <code class="inline">Hangman</code> words from <a 
     </div>
   
   <section class="docstring">
-    <p>Updates <a href="Player.html"><code class="inline">Player</code></a> abstraction with <a href="Round.html#content"><code class="inline">Round</code></a> results.  If games are over, updates
-games summary and notifies <a href="Player.Events.html"><code class="inline">Player.Events</code></a>.</p>
-<p>Under human guessing, round <code class="inline">update</code> will <code class="inline">update</code> the strategy
-with the <code class="inline">guess</code> particulars.  If robot guessing, the strategy will also
-be <code class="inline">updated</code>.</p>
+    <p>Updates <a href="Player.html"><code>Player</code></a> abstraction with <a href="Round.html#content"><code>Round</code></a> results. If games are over, updates games summary and notifies <a href="Player.Events.html"><code>Player.Events</code></a>.</p>
+<p>Under human guessing, round <code>update</code> will <code>update</code> the strategy with the <code>guess</code> particulars. If robot guessing, the strategy will also be <code>updated</code>.</p>
 
   </section>
 </div>

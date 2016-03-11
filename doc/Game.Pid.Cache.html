@@ -65,15 +65,16 @@
         Game.Pid.Cache
         
         
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements <code class="inline">GenServer</code> functionality to 
-provide <a href="Game.Server.html"><code class="inline">Game.Server</code></a> pid caching.  Ultimately relies
-on the <code class="inline">gproc</code> module to administer <code class="inline">registry</code> facilities.</p>
-<p>Pid <code class="inline">caching</code> prevents a <a href="Game.Server.html"><code class="inline">Game.Server</code></a> process
-from having to be loaded from scratch on every use</p>
+          <p>Module implements <code>GenServer</code> functionality to provide <a href="Game.Server.html"><code>Game.Server</code></a> pid caching. Ultimately relies on the <code>gproc</code> module to administer <code>registry</code> facilities.</p>
+<p>Pid <code>caching</code> prevents a <a href="Game.Server.html"><code>Game.Server</code></a> process from having to be loaded from scratch on every use</p>
 
         </section>
       
@@ -98,8 +99,7 @@ from having to be loaded from scratch on every use</p>
     <a href="#get_server_pid/2">get_server_pid(player_name, secret)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Checks registry cache for <a href="Game.Server.html"><code class="inline">Game.Server</code></a> pid given unique id, returns cached <code class="inline">pid</code> or
-if not found returns new game <code class="inline">pid</code>. Handles race conditions</p>
+    <div class="summary-synopsis"><p>Checks registry cache for <a href="Game.Server.html"><code>Game.Server</code></a> pid given unique id, returns cached <code>pid</code> or if not found returns new game <code>pid</code>. Handles race conditions</p>
 </div>
   
 </div>
@@ -140,6 +140,10 @@ if not found returns new game <code class="inline">pid</code>. Handles race cond
     </a>
     <span class="signature">get_server_pid(player_name, secret)</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-37" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
@@ -152,8 +156,7 @@ if not found returns new game <code class="inline">pid</code>. Handles race cond
     </div>
   
   <section class="docstring">
-    <p>Checks registry cache for <a href="Game.Server.html"><code class="inline">Game.Server</code></a> pid given unique id, returns cached <code class="inline">pid</code> or
-if not found returns new game <code class="inline">pid</code>. Handles race conditions</p>
+    <p>Checks registry cache for <a href="Game.Server.html"><code>Game.Server</code></a> pid given unique id, returns cached <code>pid</code> or if not found returns new game <code>pid</code>. Handles race conditions</p>
 
   </section>
 </div>
@@ -164,6 +167,10 @@ if not found returns new game <code class="inline">pid</code>. Handles race cond
     </a>
     <span class="signature">start_link()</span>
       
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-22" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
   </div>
   
     <div class="specs">
