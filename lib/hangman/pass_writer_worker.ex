@@ -3,14 +3,13 @@ defmodule Pass.Writer.Worker do
 
   @moduledoc """
   Module is a `GenServer` that implements writer worker functionality.
-  Specifically, module is a `write-operation` specific module that 
+  Specifically, Pass.Writer.Worker is a `write-operation` specific module that 
   performs `async` writes into `Pass.Cache` `ETS` table.
 
   If the `Pass.Writer.Worker.write/3` operation fails for whatever reason, 
-  doesn't bring down the reads and table-owning `Pass.Cache` process.  
-  Hence the separation.
-
-  Primary method is `Pass.Writer.Worker.write/3`
+  it doesn't bring down the table-owning `Pass.Cache` process and interrupt
+  cache reads.  Hence the separation. The primary module method is 
+  `Pass.Writer.Worker.write/3`
   """
   
   require Logger
