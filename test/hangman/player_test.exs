@@ -11,11 +11,11 @@ defmodule Player.Test do
     map = %{
       :current_player_pid => nil,
       :cases => %{
-        :robot => [name: "wall_e", type: :robot, 
+        :robot => [name: "wall_e_test", type: :robot, 
                    secrets: ["cumulate"]],
-        :turbo_robot => [name: "turbo_wall_e", type: :robot, 
+        :turbo_robot => [name: "turbo_wall_e_test", type: :robot, 
                          secrets: ["cumulate"]],
-        :human => [name: "socrates", type: :human, 
+        :human => [name: "socrates_test", type: :human, 
                    secrets: ["cumulate", "avocado"]]
       }
     }
@@ -186,11 +186,11 @@ defmodule Player.Test do
 
 		IO.puts "\nGame 1: #{reply}"
 
-    assert "Possible hangman words left, 2 words: [\"cumulate\", \"cupulate\"]\n\nPlayer socrates, Round 8, C---LATE; score=7; status=KEEP_GUESSING.\n3 weighted letter choices :  u:2 m*:1 p:1 (* robot choice)" = reply
+    assert "Possible hangman words left, 2 words: [\"cumulate\", \"cupulate\"]\n\nPlayer socrates_test, Round 8, C---LATE; score=7; status=KEEP_GUESSING.\n3 weighted letter choices :  u:2 m*:1 p:1 (* robot choice)" = reply
 
 		{_code, reply} = Player.FSM.socrates_guess(ppid, "m")
 
-    assert "Player socrates, Round 9, C-M-LATE; score=8; status=KEEP_GUESSING.\nLast word left: cumulate" = reply
+    assert "Player socrates_test, Round 9, C-M-LATE; score=8; status=KEEP_GUESSING.\nLast word left: cumulate" = reply
 
 		{_code, reply} = Player.FSM.socrates_win(ppid)
 

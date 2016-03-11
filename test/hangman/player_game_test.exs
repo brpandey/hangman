@@ -12,11 +12,11 @@ defmodule Player.Game.Test do
 
 		secrets = ["asparagus", "voluptuous"]
 
-    Player.Game.run("c3po", :robot, secrets, false, true)
+    Player.Game.run("c3po_test", :robot, secrets, false, true)
 
 		secrets = ["mitochondria", "eject"]
 
-    Player.Game.run("jedi", :human, secrets, true, false)
+    Player.Game.run("jedi_test", :human, secrets, true, false)
 
 	end
 end

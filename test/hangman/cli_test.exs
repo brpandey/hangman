@@ -10,7 +10,7 @@ defmodule CLI.Test do
 
   test "cli baseline option" do
 
-    command = "-n gustav -t robot -bl"
+    command = "-n gustav_test -t robot -bl"
     argv = String.split(command)
     CLI.main(argv)
     
@@ -19,7 +19,7 @@ defmodule CLI.Test do
 
   test "robot single word with display option only" do
 
-    command = "-n herbert -t robot -s exotic -d"
+    command = "-n herbert_test -t robot -s exotic -d"
     argv = String.split(command)
     CLI.main(argv)
     
@@ -27,7 +27,7 @@ defmodule CLI.Test do
 
   test "robot single word with display option only and random option" do
 
-    command = "-n kirtan -t robot -s exotic -d -r 2"
+    command = "-n kirtan_test -t robot -s exotic -d -r 2"
     argv = String.split(command)
     CLI.main(argv)
     
@@ -36,7 +36,7 @@ defmodule CLI.Test do
   
   test "robot single word with log option only" do
 
-    command = "-n anastasia -t robot -s sleek -l"
+    command = "-n anastasia_test -t robot -s sleek -l"
     argv = String.split(command)
     CLI.main(argv)
     
@@ -48,7 +48,7 @@ defmodule CLI.Test do
 #    command = "-n humphrey -t human -s \"fantastic embryo\" -d -l"
 #    argv = String.split(command)
 
-    argv = ["-n", "humphrey", "-t", "human", "-s", "fantastic embryo", "-d", "-l"]
+    argv = ["-n", "humphrey_test", "-t", "human", "-s", "fantastic embryo", "-d", "-l"]
 
     IO.puts "argv is #{inspect argv}"
 
@@ -59,7 +59,7 @@ defmodule CLI.Test do
   @tag timeout: 180_000 # 180 seconds
   test "random words human" do
     
-    command = "-n lulu -t human -r 4"
+    command = "-n lulu_test -t human -r 4"
     argv = String.split(command)
     CLI.main(argv)
 
@@ -68,14 +68,14 @@ defmodule CLI.Test do
 
   test "random words robot" do
     
-    command = "-n lulu -t robot -r 4"
+    command = "-n lulu_test -t robot -r 4"
     argv = String.split(command)
     CLI.main(argv)
 
   end
 
   test "no secrets" do
-    command = "-n lulu -t robot"
+    command = "-n lulu_test -t robot"
     argv = String.split(command)
 
     assert catch_error(CLI.main(argv)) ==
@@ -85,7 +85,7 @@ defmodule CLI.Test do
 
   test "word not in dictionary, pass size zero" do
 
-    command = "-n barthalemu -t robot -s azerbaijian"
+    command = "-n barthalemu_test -t robot -s azerbaijian"
     argv = String.split(command)
     CLI.main(argv)
 
@@ -93,7 +93,7 @@ defmodule CLI.Test do
 
   test "robot, word not in dictionary - exhausted all words" do
 
-    command = "-n harrison -t robot -s azerbaijan"
+    command = "-n harrison_test -t robot -s azerbaijan"
     argv = String.split(command)
     CLI.main(argv)
    
@@ -102,7 +102,7 @@ defmodule CLI.Test do
 
   test "human, word not in dictionary - exhausted all words" do
 
-    command = "-n oscar -t human -s azerbaijan"
+    command = "-n oscar_test -t human -s azerbaijan"
     argv = String.split(command)
     CLI.main(argv)
    
