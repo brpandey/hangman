@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Strategy.Options – Hangman v0.9.1</title>
+    <title>Reduction.Options – Hangman v0.9.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -62,16 +62,15 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.1</small>
-        Strategy.Options
+        Reduction.Options
         
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module generates reduction key for use when reducing possible words set</p>
-<p>Used primarily by player round abstraction before guessing,
-when setting up a round</p>
+          <p>Module generates <a href="Reduction.html"><code class="inline">Reduction</code></a> key for use when reducing 
+possible <code class="inline">Hangman</code> words set. Used primarily during <a href="Round.html"><code class="inline">Round</code></a> setup.</p>
 
         </section>
       
@@ -93,10 +92,10 @@ when setting up a round</p>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#reduce_key/2">reduce_key(strategy, context)</a>
+    <a href="#reduce_key/2">reduce_key(context, letters)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Generates reduction key given round context</p>
+    <div class="summary-synopsis"><p>Generates <code class="inline">Reduction.key</code> given round context</p>
 </div>
   
 </div>
@@ -105,7 +104,7 @@ when setting up a round</p>
     <a href="#regex_match_key/2">regex_match_key(arg, guessed_letters)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Generates regex key to match against possible hangman words</p>
+    <div class="summary-synopsis"><p>Generates <code class="inline">regex</code> key to match and filter against possible <code class="inline">Hangman</code> words</p>
 </div>
   
 </div>
@@ -135,7 +134,7 @@ when setting up a round</p>
     <a href="#reduce_key/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">reduce_key(strategy, context)</span>
+    <span class="signature">reduce_key(context, letters)</span>
       
   </div>
   
@@ -143,17 +142,13 @@ when setting up a round</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">reduce_key(<a href="Strategy.html#t:t/0">Strategy.t</a>, <a href="Guess.html#t:context/0">Guess.context</a>) :: <a href="Reduction.html#t:key/0">Reduction.key</a></code></pre>
-        
-          <pre><code class="elixir">reduce_key(<a href="Strategy.html#t:t/0">Strategy.t</a>, <a href="Guess.html#t:context/0">Guess.context</a>) :: <a href="Reduction.html#t:key/0">Reduction.key</a></code></pre>
-        
-          <pre><code class="elixir">reduce_key(<a href="Strategy.html#t:t/0">Strategy.t</a>, <a href="Guess.html#t:context/0">Guess.context</a>) :: <a href="Reduction.html#t:key/0">Reduction.key</a></code></pre>
+          <pre><code class="elixir">reduce_key(<a href="Guess.html#t:context/0">Guess.context</a>, exclusion :: <a href="http://elixir-lang.org/docs/stable/elixir/MapSet.html#t:t/0">MapSet.t</a>) :: <a href="Reduction.html#t:key/0">Reduction.key</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Generates reduction key given round context</p>
+    <p>Generates <code class="inline">Reduction.key</code> given round context</p>
 
   </section>
 </div>
@@ -170,19 +165,20 @@ when setting up a round</p>
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">regex_match_key(<a href="Guess.html#t:context/0">Guess.context</a>, map) :: <a href="http://elixir-lang.org/docs/stable/elixir/Regex.html#t:t/0">Regex.t</a></code></pre>
-        
-          <pre><code class="elixir">regex_match_key(<a href="Guess.html#t:context/0">Guess.context</a>, map) :: <a href="http://elixir-lang.org/docs/stable/elixir/Regex.html#t:t/0">Regex.t</a></code></pre>
+          <pre><code class="elixir">regex_match_key(<a href="Guess.html#t:context/0">Guess.context</a>, exclusion :: <a href="http://elixir-lang.org/docs/stable/elixir/MapSet.html#t:t/0">MapSet.t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Regex.html#t:t/0">Regex.t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Generates regex key to match against possible hangman words</p>
-<p>For incorrect letter last guesses, uses the fact the we know
-the incorrect letter can not be found anywhere in the
-possible hangman words.</p>
-<p>We create a regex to reflect this information</p>
+    <p>Generates <code class="inline">regex</code> key to match and filter against possible <code class="inline">Hangman</code> words</p>
+<p>For <code class="inline">correct</code> letter last guesses, uses the new updated pattern along with 
+the fact the we know the correct letter along with the previously 
+guessed letters can not be in the <code class="inline">unknown letter positions</code>.</p>
+<p>For <code class="inline">incorrect</code> letter last guesses, uses the fact the we know
+the incorrect letter <code class="inline">can not be found anywhere</code> in the
+possible <code class="inline">Hangman</code> words.</p>
+<p>We create a <code class="inline">regex</code> key to reflect this information.</p>
 
   </section>
 </div>
