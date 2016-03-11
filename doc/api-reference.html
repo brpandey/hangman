@@ -155,8 +155,8 @@ from <code class="inline">unsorted</code>, <code class="inline">sorted</code>, <
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.html">Game</a></div>
   
-    <div class="summary-synopsis"><p>Module defines <code class="inline">Hangman</code> <a href="Game.html#content"><code class="inline">Game</code></a> abstraction which can handle
-a single <code class="inline">Hangman</code> game or multiple <code class="inline">Hangman</code> games</p>
+    <div class="summary-synopsis"><p>Module defines <a href="Hangman.html"><code class="inline">Hangman</code></a> <a href="Game.html#content"><code class="inline">Game</code></a> abstraction which can handle
+a single <a href="Hangman.html"><code class="inline">Hangman</code></a> game or multiple <a href="Hangman.html"><code class="inline">Hangman</code></a> games</p>
 </div>
   
 </div>
@@ -172,7 +172,7 @@ on the <code class="inline">gproc</code> module to administer <code class="inlin
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.Server.html">Game.Server</a></div>
   
-    <div class="summary-synopsis"><p>Module implements <code class="inline">Hangman</code> <a href="Game.html"><code class="inline">Game</code></a> server using <code class="inline">GenServer</code>.
+    <div class="summary-synopsis"><p>Module implements <a href="Hangman.html"><code class="inline">Hangman</code></a> <a href="Game.html"><code class="inline">Game</code></a> server using <code class="inline">GenServer</code>.
  Wraps <a href="Game.html"><code class="inline">Game</code></a> abstraction as server state.  Runs 
  each <code class="inline">game</code> or set of <code class="inline">games</code> sequentially</p>
 </div>
@@ -182,6 +182,13 @@ on the <code class="inline">gproc</code> module to administer <code class="inlin
   <div class="summary-signature"><a href="Guess.html">Guess</a></div>
   
     <div class="summary-synopsis"><p>Module implements <a href="Guess.html#content"><code class="inline">Guess</code></a> types</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.html">Hangman</a></div>
+  
+    <div class="summary-synopsis"><p>Main hangman application</p>
 </div>
   
 </div>
@@ -226,7 +233,7 @@ performs <code class="inline">async</code> writes into <a href="Pass.Cache.html"
 <div class="summary-row">
   <div class="summary-signature"><a href="Pattern.html">Pattern</a></div>
   
-    <div class="summary-synopsis"><p>Module handles <code class="inline">Hangman</code> pattern updates given guessed <code class="inline">letter</code></p>
+    <div class="summary-synopsis"><p>Module handles <a href="Hangman.html"><code class="inline">Hangman</code></a> pattern updates given guessed <code class="inline">letter</code></p>
 </div>
   
 </div>
@@ -287,7 +294,7 @@ word <a href="Reduction.Engine.html"><code class="inline">Reduction.Engine</code
 <div class="summary-row">
   <div class="summary-signature"><a href="Reduction.Engine.Worker.html">Reduction.Engine.Worker</a></div>
   
-    <div class="summary-synopsis"><p>Module is a worker <code class="inline">GenServer</code> that implements <code class="inline">Hangman</code> words reduction, 
+    <div class="summary-synopsis"><p>Module is a worker <code class="inline">GenServer</code> that implements <a href="Hangman.html"><code class="inline">Hangman</code></a> words reduction, 
 primarily through <a href="#reduce_and_store/4"><code class="inline">reduce_and_store/4</code></a></p>
 </div>
   
@@ -296,14 +303,14 @@ primarily through <a href="#reduce_and_store/4"><code class="inline">reduce_and_
   <div class="summary-signature"><a href="Reduction.Options.html">Reduction.Options</a></div>
   
     <div class="summary-synopsis"><p>Module generates <a href="Reduction.html"><code class="inline">Reduction</code></a> key for use when reducing 
-possible <code class="inline">Hangman</code> words set. Used primarily during <a href="Round.html"><code class="inline">Round</code></a> setup</p>
+possible <a href="Hangman.html"><code class="inline">Hangman</code></a> words set. Used primarily during <a href="Round.html"><code class="inline">Round</code></a> setup</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Round.html">Round</a></div>
   
-    <div class="summary-synopsis"><p>Module to implement <code class="inline">Hangman</code> game <code class="inline">round</code> abstraction</p>
+    <div class="summary-synopsis"><p>Module to implement <a href="Hangman.html"><code class="inline">Hangman</code></a> game <code class="inline">round</code> abstraction</p>
 </div>
   
 </div>

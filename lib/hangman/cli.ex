@@ -12,13 +12,15 @@ defmodule CLI do
 
   Game archival can be captured through logging, e.g. --log option
 
-  Usage:
+  `Usage:
   --name (player id) --type ("human" or "robot") --random (num random secrets, max 10)
-  [--secret (hangman word(s)) --baseline] [--log --display]
+  [--secret (hangman word(s)) --baseline] [--log --display]`
 
-  aliases: 
+  or
+
+  `Aliase Usage: 
   -n (player id) -t ("human" or "robot") -r (num random secrets, max 10)
-  [-s (hangman word(s)) -bl] [-l -d]
+  [-s (hangman word(s)) -bl] [-l -d]`
 
   """
 
