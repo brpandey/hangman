@@ -68,7 +68,7 @@ defmodule Player.FSM do
 
   @spec socrates_guess(pid, String.t) :: term
   def socrates_guess(fsm_pid, letter) when is_binary(letter) do
-  	:gen_fsm.sync_send_event(fsm_pid, {:guess_letter, letter})
+    :gen_fsm.sync_send_event(fsm_pid, {:guess_letter, letter})
   end
 
   @doc """
@@ -231,7 +231,7 @@ defmodule Player.FSM do
       if Player.last_word?(player), do: next = :giddy_socrates
     end
 
-    { :reply, reply, next, {player, pid} }  	
+    { :reply, reply, next, {player, pid} }    
   end
 
 
@@ -280,7 +280,7 @@ defmodule Player.FSM do
 
     case game_start_or_over_check(player) do
       {:game_start} -> 
-      	{player, reply} = Player.start(player)
+        {player, reply} = Player.start(player)
 
         { :reply, reply, :intrigued_wall_e, {player, pid} }
       

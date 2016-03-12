@@ -1,7 +1,7 @@
 defmodule Pass.Cache do
   use GenServer
 
-	@moduledoc """
+  @moduledoc """
   Given a player, a game and round number, `Pass.Cache` maintains a words pass `cache`.
 
   Internally the module implements a `GenServer` which uses `ETS`.
@@ -12,14 +12,14 @@ defmodule Pass.Cache do
   removed from the `cache`.
 
   `Pass.Cache` performs `unserialized` reads and uses type `key` for cache  `get/2` and `get/3`. 
-	"""
+  """
 
   require Logger
   
   alias Dictionary.Cache, as: DCache
   
   @name __MODULE__
-	@ets_table_name :engine_pass_table
+  @ets_table_name :engine_pass_table
 
   @type key :: :chunks | {:pass, :game_start} | {:pass, :game_keep_guessing}
 
@@ -42,9 +42,9 @@ defmodule Pass.Cache do
   """
 
   @spec stop(pid) :: {}
-	def stop(pid) do
-		GenServer.call pid, :stop
-	end
+  def stop(pid) do
+    GenServer.call pid, :stop
+  end
 
   @docp """
   GenServer callback to initialize server process
@@ -61,25 +61,25 @@ defmodule Pass.Cache do
   """
   
   #@callback handle_call(:atom, {}, {}) :: {}
-	def handle_call(:stop, _from, {}) do
-		{ :stop, :normal, :ok, {}}
-	end 
+  def handle_call(:stop, _from, {}) do
+    { :stop, :normal, :ok, {}}
+  end 
 
   @docp """
   GenServer callback to cleanup server state
   """
 
   #@callback terminate(reason :: term, {}) :: term | no_return
-	def terminate(_reason, _state) do
-		:ok
-	end
+  def terminate(_reason, _state) do
+    :ok
+  end
 
   # Loads ets table type set
   
   @spec setup :: :atom
-	defp setup() do
-		:ets.new(@ets_table_name, [:set, :named_table, :public])
-	end
+  defp setup() do
+    :ets.new(@ets_table_name, [:set, :named_table, :public])
+  end
 
   @doc """
   Get routine retrieves the `pass` size, tally, possible words, 
@@ -101,46 +101,46 @@ defmodule Pass.Cache do
 
   @spec get(cache_key :: Pass.Cache.key, pass_key :: Pass.key, 
             reduce_key :: Reduction.key) :: {Pass.key, Pass.t} | no_return
-	def get({:pass, :game_start} = _cache_key, 
+  def get({:pass, :game_start} = _cache_key, 
           {id, game_no, round_no} = pass_key, reduce_key)
-	when is_binary(id) and is_number(game_no) and is_number(round_no) do
+  when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
-		# Asserts
-		{:ok, true} =	Keyword.fetch(reduce_key, :game_start)
-		{:ok, length_key}  = Keyword.fetch(reduce_key, :secret_length)
-		
-		# Since this is the first pass, grab the words and tally from
-		# the Dictionary Cache
+    # Asserts
+    {:ok, true} = Keyword.fetch(reduce_key, :game_start)
+    {:ok, length_key}  = Keyword.fetch(reduce_key, :secret_length)
+    
+    # Since this is the first pass, grab the words and tally from
+    # the Dictionary Cache
 
-		# Subsequent round lookups will be from the pass table
+    # Subsequent round lookups will be from the pass table
 
-		chunks = %Chunks{} = DCache.lookup(:chunks, length_key)
-		tally = %Counter{} = DCache.lookup(:tally, length_key)
+    chunks = %Chunks{} = DCache.lookup(:chunks, length_key)
+    tally = %Counter{} = DCache.lookup(:tally, length_key)
 
-		pass_size = Chunks.count(chunks)
-		pass_info = %Pass{ size: pass_size, tally: tally, last_word: ""}
+    pass_size = Chunks.count(chunks)
+    pass_info = %Pass{ size: pass_size, tally: tally, last_word: ""}
 
-		# Store pass info into ets table for round 2 (next pass)
+    # Store pass info into ets table for round 2 (next pass)
     # Allow writer engine to execute (and distribute) as necessary
     Pass.Writer.write(pass_key, chunks)
-	
-		{pass_key, pass_info}
-	end
+  
+    {pass_key, pass_info}
+  end
 
 
-	def get({:pass, :game_keep_guessing} = _cache_key, 
+  def get({:pass, :game_keep_guessing} = _cache_key, 
           {id, game_no, round_no} = pass_key, reduce_key)
- 	when is_binary(id) and is_number(game_no) and is_number(round_no) do
+  when is_binary(id) and is_number(game_no) and is_number(round_no) do
     
-		{:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
-		{:ok, regex_key} = Keyword.fetch(reduce_key, :regex_match_key)
+    {:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
+    {:ok, regex_key} = Keyword.fetch(reduce_key, :regex_match_key)
   
     # Send pass and reduce information off to Engine server
     # to execute (and distribute) as appropriate
     pass_info = Reduction.Engine.reduce(pass_key, regex_key, exclusion_set)
 
-		{pass_key, pass_info}
-	end
+    {pass_key, pass_info}
+  end
 
   @doc """
   Get routine retrieves `pass` chunks cache data
@@ -153,25 +153,25 @@ defmodule Pass.Cache do
   """
   
   @spec get(Pass.Cache.key, Pass.key) :: Chunks.t | no_return
-	def get(:chunks = _cache_key, {id, game_no, round_no} = pass_key)
-	when is_binary(id) and is_number(game_no) and is_number(round_no) do
-		
-		# Using match instead of lookup, to keep processing on the ets side
-		case :ets.match_object(@ets_table_name, {pass_key, :_}) do
-			[] -> 
+  def get(:chunks = _cache_key, {id, game_no, round_no} = pass_key)
+  when is_binary(id) and is_number(game_no) and is_number(round_no) do
+    
+    # Using match instead of lookup, to keep processing on the ets side
+    case :ets.match_object(@ets_table_name, {pass_key, :_}) do
+      [] -> 
         raise HangmanError, 
         "counter not found for key: #{inspect pass_key}"
 
-			[{_key, chunks}] ->
-				%Chunks{} = chunks # quick assert
+      [{_key, chunks}] ->
+        %Chunks{} = chunks # quick assert
 
-				# delete this current pass in the table, 
+        # delete this current pass in the table, 
         # since we only keep 1 pass for each user
-				:ets.match_delete(@ets_table_name, {pass_key, :_})
+        :ets.match_delete(@ets_table_name, {pass_key, :_})
     
-				# return chunks :)
-				chunks
-		end
+        # return chunks :)
+        chunks
+    end
 
-	end
+  end
 end

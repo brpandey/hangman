@@ -1,5 +1,5 @@
 defmodule Player.Group.Supervisor do
-	use Supervisor
+  use Supervisor
 
   @moduledoc false
 
@@ -15,21 +15,21 @@ defmodule Player.Group.Supervisor do
 
   import Supervisor.Spec
 
-	@name __MODULE__
+  @name __MODULE__
 
   @doc """
   Supervisor start and link wrapper function
   """
 
   @spec start_link :: Supervisor.on_start
-	def start_link do
+  def start_link do
     args = {}
 
-		Logger.info "Starting Hangman Player Group Supervisor," <> 
+    Logger.info "Starting Hangman Player Group Supervisor," <> 
       " args: #{inspect args}"
 
     Supervisor.start_link(@name, args)
-	end
+  end
 
   @doc """
   Specifies worker supervisor specifications.  
@@ -37,14 +37,14 @@ defmodule Player.Group.Supervisor do
   """
   
   @callback init(term) :: {:ok, tuple}
-	def init(_) do
+  def init(_) do
 
     children = [
       supervisor(Player.Supervisor, []),
       supervisor(Player.Events.Supervisor, [])
     ]
 
-		supervise(children, strategy: :rest_for_one)
-	end
+    supervise(children, strategy: :rest_for_one)
+  end
 
 end

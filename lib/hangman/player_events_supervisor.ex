@@ -54,10 +54,10 @@ defmodule Player.Events.Supervisor do
       worker(Player.Events, [], restart: :transient)
     ]
 
-		# :simple_one_for_one to indicate that 
-		# we're starting children dynamically
+    # :simple_one_for_one to indicate that 
+    # we're starting children dynamically
 
-		supervise( children, strategy: :simple_one_for_one )
+    supervise( children, strategy: :simple_one_for_one )
   end
   
 end

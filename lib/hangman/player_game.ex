@@ -36,9 +36,9 @@ defmodule Player.Game do
     
     name 
     |> setup(secrets, log, display)
-		|> rounds_handler(type)
-		|> Stream.each(&fn_display.(&1, display))
-		|> Stream.run
+    |> rounds_handler(type)
+    |> Stream.each(&fn_display.(&1, display))
+    |> Stream.run
     
   end
 
@@ -50,7 +50,7 @@ defmodule Player.Game do
     
     name 
     |> setup(secrets, log, false)
-		|> rounds_handler(type)
+    |> rounds_handler(type)
     |> Enum.to_list
 
   end
@@ -88,7 +88,7 @@ defmodule Player.Game do
   is_boolean(log) and is_boolean(display) do
     
     # Grab game pid first from game pid cache
-	  game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
+    game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
     
     # Get event server pid next
     {:ok, notify_pid} = 
@@ -110,51 +110,51 @@ defmodule Player.Game do
 
   # Robot round playing!
 
-	def rounds_handler({name, game_pid, notify_pid}, 
+  def rounds_handler({name, game_pid, notify_pid}, 
                        @robot) do
 
-		Stream.resource(
-			fn -> 
+    Stream.resource(
+      fn -> 
         # Dynamically start hangman player
         {:ok, ppid} = start_player(name, @robot, game_pid, notify_pid)
         ppid
-				end,
+        end,
 
-			fn ppid ->
-				case Player.FSM.wall_e_guess(ppid) do
-					{:game_reset, reply} -> 
+      fn ppid ->
+        case Player.FSM.wall_e_guess(ppid) do
+          {:game_reset, reply} -> 
             IO.puts "\n#{reply}"
             {:halt, ppid}
           
-					# All other game states :game_keep_guessing ... :games_over
-					{_, reply} -> {[reply], ppid}							
-				end
+          # All other game states :game_keep_guessing ... :games_over
+          {_, reply} -> {[reply], ppid}             
+        end
         
-			end,
-			
-			fn ppid -> 
+      end,
+      
+      fn ppid -> 
         # Be a good functional citizen and cleanup server resources
         Player.Events.stop(notify_pid)
         Player.FSM.stop(ppid) 
       end
-		)
-	end
+    )
+  end
 
   # Human round playing!
 
-	def rounds_handler({name, game_pid, notify_pid}, @human) do
+  def rounds_handler({name, game_pid, notify_pid}, @human) do
 
     # Wrap the player fsm game play in a stream
     # Stream resource returns an enumerable
 
-		Stream.resource(
-			fn -> 
+    Stream.resource(
+      fn -> 
         # Dynamically start hangman player
         {:ok, ppid} = start_player(name, @human, game_pid, notify_pid)
         {ppid, []}
-				end,
+        end,
 
-			fn {ppid, code} ->
+      fn {ppid, code} ->
 
         case code do
           [] -> 
@@ -166,8 +166,8 @@ defmodule Player.Game do
             letter = String.strip(choice)
             {code, reply} = Player.FSM.socrates_guess(ppid, letter)
 
-				    case {code, reply} do
-					    {:game_reset, reply} -> 
+            case {code, reply} do
+              {:game_reset, reply} -> 
                 IO.puts "\n#{reply}"
                 {:halt, ppid}
               _ -> {[reply], {ppid, code}}
@@ -176,8 +176,8 @@ defmodule Player.Game do
           :game_last_word ->
             {code, reply} = Player.FSM.socrates_win(ppid)
 
-				    case {code, reply} do
-					    {:game_reset, reply} -> 
+            case {code, reply} do
+              {:game_reset, reply} -> 
                 IO.puts "\n#{reply}"
                 {:halt, ppid}
               _ -> {[reply], {ppid, code}}
@@ -196,16 +196,16 @@ defmodule Player.Game do
 
             #:games_over
 
-				end
-			end,
-			
+        end
+      end,
+      
                     
-			fn ppid -> 
+      fn ppid -> 
         # Be a good functional citizen and cleanup server resources
         Player.Events.stop(notify_pid)
         Player.FSM.stop(ppid) 
       end
-		)
-	end
+    )
+  end
 
 end

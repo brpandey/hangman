@@ -58,16 +58,16 @@ defmodule Reduction.Engine.Worker do
   end
 
 
-	@doc """
-	Terminate callback
-	No special cleanup
-	"""
+  @doc """
+  Terminate callback
+  No special cleanup
+  """
   
   @callback terminate(term, term) :: :ok
-	def terminate(_reason, _state) do
-		Logger.info "Terminating Reduction Engine Worker Server"
-		:ok
-	end
+  def terminate(_reason, _state) do
+    Logger.info "Terminating Reduction Engine Worker Server"
+    :ok
+  end
 
   
   @docp """
@@ -101,21 +101,21 @@ defmodule Reduction.Engine.Worker do
 
     length_key = Chunks.key(data)
 
-		# convert chunks into word stream, 
-		# filter out words that don't regex match
-		# do for all values in stream
+    # convert chunks into word stream, 
+    # filter out words that don't regex match
+    # do for all values in stream
 
     filtered_stream = data 
     |> Chunks.get_words_lazy 
     |> Stream.filter(&regex_match?(&1, regex_key))
     
-		# Populate counter object, now that we've created new filtered chunks
+    # Populate counter object, now that we've created new filtered chunks
     tally = Counter.new |> Counter.add_words(filtered_stream, exclusion)
     
-		# Create new Chunks abstraction with filtered word stream
-		new_data = Chunks.new(length_key, filtered_stream)
+    # Create new Chunks abstraction with filtered word stream
+    new_data = Chunks.new(length_key, filtered_stream)
 
-		pass_size = Chunks.count(new_data)
+    pass_size = Chunks.count(new_data)
 
     possible_txt = ""
     last_word = ""
@@ -123,14 +123,14 @@ defmodule Reduction.Engine.Worker do
     # let's collect possible hangman words if pass size is small enough
     # and return them for guessing aid
 
-		# if down to 1 word, return the last word
-		cond do
+    # if down to 1 word, return the last word
+    cond do
       pass_size == 0 -> ""
       # Note: lets strategy handle error higher up, don't crash process
       # raise "Word not in dictionary, pass size can't be zero"
 
-			pass_size == 1 -> 
-				last_word = Chunks.get_words_lazy(new_data)
+      pass_size == 1 -> 
+        last_word = Chunks.get_words_lazy(new_data)
         |> Enum.take(1) |> List.first
 
       pass_size > 1 and pass_size < @possible_words_left ->
@@ -141,24 +141,24 @@ defmodule Reduction.Engine.Worker do
 
         last_word = ""
 
-			pass_size > 1 -> last_word = ""
+      pass_size > 1 -> last_word = ""
 
-			true -> raise HangmanError, "Invalid pass_size value #{pass_size}"
-		end
+      true -> raise HangmanError, "Invalid pass_size value #{pass_size}"
+    end
 
     # serialize writes through Hangman Pass Writer
     Pass.Writer.write(pass_key, new_data)
 
-		%Pass{size: pass_size, tally: tally, 
+    %Pass{size: pass_size, tally: tally, 
            possible: possible_txt, last_word: last_word}    
   end
   
 
   # Helper function to perform actual regex match
   @spec regex_match?(String.t, Regex.t) :: boolean
-	defp regex_match?(word, compiled_regex)
+  defp regex_match?(word, compiled_regex)
   when is_binary(word) and is_nil(compiled_regex) == false do
     Regex.match?(compiled_regex, word)
-	end
+  end
 
 end

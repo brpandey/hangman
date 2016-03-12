@@ -1,5 +1,5 @@
 defmodule Player.System.Supervisor do
-	use Supervisor
+  use Supervisor
 
   @moduledoc false
 
@@ -17,19 +17,19 @@ defmodule Player.System.Supervisor do
 
   import Supervisor.Spec
 
-	@name __MODULE__
+  @name __MODULE__
 
   @doc """
   Supervisor start and link wrapper function
   """
 
   @spec start_link(Keyword.t) :: Supervisor.on_start
-	def start_link(args) do
-		Logger.info "Starting Hangman Player System Supervisor," <> 
+  def start_link(args) do
+    Logger.info "Starting Hangman Player System Supervisor," <> 
       " args: #{inspect args}"
 
     Supervisor.start_link(@name, args)
-	end
+  end
 
   @doc """
   Specifies worker children specifications.  
@@ -38,7 +38,7 @@ defmodule Player.System.Supervisor do
   """
   
   @callback init(Keyword.t) :: {:ok, tuple}
-	def init(args) do
+  def init(args) do
 
     children = [
       worker(Dictionary.Cache, [args]),
@@ -48,7 +48,7 @@ defmodule Player.System.Supervisor do
       supervisor(Player.Group.Supervisor, []),
     ]
 
-		supervise(children, strategy: :rest_for_one)
-	end
+    supervise(children, strategy: :rest_for_one)
+  end
 
 end

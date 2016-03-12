@@ -5,7 +5,7 @@ defmodule Player do
   Heavily relies upon `Round` and `Action`.
   """
 
-	defstruct name: "", 
+  defstruct name: "", 
   type: nil,
   round_no: 0,  
   round: %Round{},
@@ -39,12 +39,12 @@ defmodule Player do
   when is_binary(name) and is_atom(type)
   and is_pid(game_pid) and is_pid(event_pid) do
     
-  	unless type in [@human, @robot] do 
+    unless type in [@human, @robot] do 
       raise HangmanError, "invalid and unknown player type" 
     end
     
-  	%Player{ name: name, type: type, 
-  		       game_server_pid: game_pid, event_server_pid: event_pid }
+    %Player{ name: name, type: type, 
+             game_server_pid: game_pid, event_server_pid: event_pid }
   end
 
   # READ
@@ -91,17 +91,17 @@ defmodule Player do
 
   @spec games_summary(Keyword.t) :: String.t
   def games_summary(args) when is_list(args) and is_tuple(Kernel.hd(args)) do
-  	
-		{:ok, avg} = Keyword.fetch(args, :average_score)
-		{:ok, games} = Keyword.fetch(args, :games)
-		{:ok, scores} = Keyword.fetch(args, :results)
+    
+    {:ok, avg} = Keyword.fetch(args, :average_score)
+    {:ok, games} = Keyword.fetch(args, :games)
+    {:ok, scores} = Keyword.fetch(args, :results)
 
-		results = Enum.reduce(scores, "",  fn {k,v}, acc -> 
-			acc <> " (#{k}: #{v})"  end)
-			
-		"Game Over! Average Score: #{avg}, " 
-		<> "# Games: #{games}, Scores: #{results}"
-	end
+    results = Enum.reduce(scores, "",  fn {k,v}, acc -> 
+      acc <> " (#{k}: #{v})"  end)
+      
+    "Game Over! Average Score: #{avg}, " 
+    <> "# Games: #{games}, Scores: #{results}"
+  end
 
   @doc """
   Returns `game` status
@@ -111,14 +111,14 @@ defmodule Player do
   def status(%Player{} = p, :game_round), do: Round.status(p)
 
   def status(%Player{} = p, :games_over) do
-  	case games_over?(p) do
-  		true -> {:games_over, p.games_summary}
-  		false -> status(p, :game_round)
-  	end
+    case games_over?(p) do
+      true -> {:games_over, p.games_summary}
+      false -> status(p, :game_round)
+    end
   end
 
 
-	# UPDATE
+  # UPDATE
 
   @doc """
   Routine starts a new `Player`. Notifies player specific event server.
@@ -129,7 +129,7 @@ defmodule Player do
   """
 
   @spec start(t) :: result
-	def start(%Player{} = p) do
+  def start(%Player{} = p) do
     if p.game_no >= 1 do
       p = %Player{ name: p.name, type: p.type, 
                         game_server_pid: p.game_server_pid,
@@ -150,7 +150,7 @@ defmodule Player do
     end
 
     result
-	end
+  end
 
 
   @doc """
@@ -159,8 +159,8 @@ defmodule Player do
   """
 
   @spec choices(t, Guess.directive, :atom) :: {t, Guess.option}
-	def choices(%Player{} = p, :choose_letters = _directive, options \\ nil) do
-  	
+  def choices(%Player{} = p, :choose_letters = _directive, options \\ nil) do
+    
     @human = p.type
 
     fn_run = fn ->
@@ -202,7 +202,7 @@ defmodule Player do
     end
 
     rescue_wrap(p, fn_run)
-	end
+  end
 
   def guess(%Player{} = p, :game_start = _mode) do
     @robot = p.type
@@ -214,7 +214,7 @@ defmodule Player do
     end
 
     rescue_wrap(p, fn_run)
-	end
+  end
 
   @doc """
   Routine for `:human` player type.
@@ -230,7 +230,7 @@ defmodule Player do
   """
 
   @spec guess(p :: t, guess :: Guess.directive | Guess.t) :: result
-	def guess(%Player{} = p, :guess_last_word = _guess) do
+  def guess(%Player{} = p, :guess_last_word = _guess) do
     @human = p.type
 
     fn_run = fn ->
@@ -247,7 +247,7 @@ defmodule Player do
     end
 
     rescue_wrap(p, fn_run)
-	end
+  end
 
 
   def guess(%Player{} = p, {:guess_letter, l} = guess)
@@ -261,7 +261,7 @@ defmodule Player do
     end
 
     rescue_wrap(p, fn_run)
-	end
+  end
 
   # Delay the running of function object until this method
   # if error, return status code :game_reset along with error message
@@ -286,7 +286,7 @@ defmodule Player do
   """
 
   @spec delete(t) :: t
-  def delete(%Player{} = _p), do:	%Player{}
+  def delete(%Player{} = _p), do: %Player{}
 
 
   # EXTRA

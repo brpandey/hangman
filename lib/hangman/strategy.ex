@@ -9,7 +9,7 @@ defmodule Strategy do
   be presented to `human` to manually choose.
   """
 
-	defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
+  defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
 
   @opaque t :: %__MODULE__{}
@@ -17,17 +17,17 @@ defmodule Strategy do
   @type result :: {t, Guess.t}
 
   # English letter frequency of english letters (Wikipedia)
-	@eng_letter_freq			%{
-		"a" => 8.167, "b" => 1.492, "c" => 2.782, "d" => 4.253, "e" => 12.702, 
-		"f" => 2.228, "g" => 2.015, "h" => 6.094, "i" => 6.966, "j" => 0.153,
-		"k" => 0.772, "l" => 4.025, "m" => 2.406, "n" => 6.749, "o" => 7.507,
-		"p" => 1.929, "q" => 0.095, "r" => 5.987, "s" => 6.327, "t" => 9.056,
-		"u" => 2.758, "v" => 0.978, "w" => 2.360, "x" => 0.150, "y" => 1.974,
-		"z" => 0.074}
+  @eng_letter_freq      %{
+    "a" => 8.167, "b" => 1.492, "c" => 2.782, "d" => 4.253, "e" => 12.702, 
+    "f" => 2.228, "g" => 2.015, "h" => 6.094, "i" => 6.966, "j" => 0.153,
+    "k" => 0.772, "l" => 4.025, "m" => 2.406, "n" => 6.749, "o" => 7.507,
+    "p" => 1.929, "q" => 0.095, "r" => 5.987, "s" => 6.327, "t" => 9.056,
+    "u" => 2.758, "v" => 0.978, "w" => 2.360, "x" => 0.150, "y" => 1.974,
+    "z" => 0.074}
   
-	@word_set_size		%{micro: 2, tiny: 5, small: 9, large: 550}
-	
-	@top_threshhold		2
+  @word_set_size    %{micro: 2, tiny: 5, small: 9, large: 550}
+  
+  @top_threshhold   2
 
   @letter_choices 5
 
@@ -40,7 +40,7 @@ defmodule Strategy do
   """
 
   @spec new :: t
-	def new, do: %Strategy{}
+  def new, do: %Strategy{}
 
   # READ
 
@@ -79,33 +79,33 @@ defmodule Strategy do
 
   @spec prepare_guess(t) :: t
   defp prepare_guess(%Strategy{} = strategy) do
-  	case strategy.pass.size do 
-  		0 ->	raise HangmanError, "Word not in dictionary"
-  		1 ->
+    case strategy.pass.size do 
+      0 ->  raise HangmanError, "Word not in dictionary"
+      1 ->
         final_word = strategy.pass.last_word
 
-  			if {:guess_word, final_word} != strategy.prior_guess 
+        if {:guess_word, final_word} != strategy.prior_guess 
         and {} != strategy.prior_guess
-  			and MapSet.size(strategy.guessed_letters) > 0 do
+        and MapSet.size(strategy.guessed_letters) > 0 do
 
           strategy = Kernel.put_in(strategy.guess, {:guess_word, final_word})        
-  			else
-  				raise HangmanError, "Exhausted all words, word not in dictionary"
-  			end
+        else
+          raise HangmanError, "Exhausted all words, word not in dictionary"
+        end
 
-  		_pass_size ->
-  			letter = retrieve_best_letter(strategy)
-  			
-  			if letter != nil and letter != "" 
+      _pass_size ->
+        letter = retrieve_best_letter(strategy)
+        
+        if letter != nil and letter != "" 
           and {:guess_letter, letter} != strategy.prior_guess do
-  				guessed_letters = MapSet.put(strategy.guessed_letters, letter)
-  				
+          guessed_letters = MapSet.put(strategy.guessed_letters, letter)
+          
           strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
           strategy = Kernel.put_in(strategy.guess, {:guess_letter, letter})            
-  			else
-  				raise HangmanError, "Unable to determine next guess as no valid letter left"
-  			end
-  	end
+        else
+          raise HangmanError, "Unable to determine next guess as no valid letter left"
+        end
+    end
 
     strategy
   end
@@ -207,7 +207,7 @@ defmodule Strategy do
 
     # If user has decided to put in a letter, not in the choices
     # grab the letter that had the highest letter counts
-  	unless letter in top_choices, do: letter = Kernel.hd(top_choices)
+    unless letter in top_choices, do: letter = Kernel.hd(top_choices)
     
     {:guess_letter, letter}
   end
@@ -244,7 +244,7 @@ defmodule Strategy do
 
         text = possible_words_txt <>
           "Player {name}, Round {round_no}, {status}.\n" <>
-        	"#{size} weighted letter choices : #{choices_text}" <> 
+          "#{size} weighted letter choices : #{choices_text}" <> 
           " (* robot choice)"
         
         {:game_choose_letter, text}

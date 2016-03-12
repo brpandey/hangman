@@ -35,9 +35,9 @@ defmodule Pass.Writer.Worker do
   """
   
   @spec stop(pid) :: {}
-	def stop(pid) do
-		GenServer.call pid, :stop
-	end
+  def stop(pid) do
+    GenServer.call pid, :stop
+  end
 
   @doc """
   Write is an `asynchronous` call.
@@ -71,20 +71,20 @@ defmodule Pass.Writer.Worker do
     {:ok, {}}
   end
   
-	@docp """
-	Writes pass data chunk, uses pass_key for ets insertion
-	"""
+  @docp """
+  Writes pass data chunk, uses pass_key for ets insertion
+  """
   
   #@callback handle_cast(:atom, Pass.key, Chunks.t, {}) :: tuple
   def handle_cast({:write, {id, game_no, round_no} = _pass_key,
                    %Chunks{} = chunks}, {}) do
     
-		if :ets.info(@ets_table_name) == :undefined do
+    if :ets.info(@ets_table_name) == :undefined do
       raise HangmanError, "table not loaded yet"
     end
     
-		next_pass_key = {id, game_no, round_no + 1}
-		:ets.insert(@ets_table_name, {next_pass_key, chunks})
+    next_pass_key = {id, game_no, round_no + 1}
+    :ets.insert(@ets_table_name, {next_pass_key, chunks})
     
     {:noreply, {}}
   end
@@ -94,17 +94,17 @@ defmodule Pass.Writer.Worker do
   """
   
   #@callback handle_call(:atom, tuple, {}) :: tuple
-	def handle_call(:stop, _from, {}) do
-		{ :stop, :normal, :ok, {}}
-	end 
+  def handle_call(:stop, _from, {}) do
+    { :stop, :normal, :ok, {}}
+  end 
   
-	@docp """
-	Terminates the pass writer worker `server`
-	No special cleanup
-	"""
+  @docp """
+  Terminates the pass writer worker `server`
+  No special cleanup
+  """
   
   #@callback terminate(term, term) :: :ok
-	def terminate(_reason, _state) do
-		:ok
-	end
+  def terminate(_reason, _state) do
+    :ok
+  end
 end
