@@ -3,7 +3,7 @@ defmodule Hangman.Mixfile do
 
   def project do
     [
-      app: :play_hangman,
+      app: :hangman,
       name: "Hangman",
       version: "0.9.1",
       elixir: "~> 1.2.0",
@@ -29,7 +29,7 @@ defmodule Hangman.Mixfile do
     args = [{dict_type, true}]
 
     [
-      applications: [:logger, :gproc],
+      applications: [:logger, :gproc, :httpoison, :cowboy, :plug, :exprof, :ex_doc],
       mod: {Hangman.Application, args}
     ]
   end
@@ -52,7 +52,8 @@ defmodule Hangman.Mixfile do
       {:ex_doc, "~> 0.11"}, # for mix docs
       {:cowboy, "1.0.4"}, # for hangman web
       {:plug, "1.1.0"},  # for hangman web
-      {:httpoison, "~> 0.8.0", only: :test} # for hangman web
+      {:httpoison, "~> 0.8.0"}, # for hangman web
+      {:exrm, "1.0.0"} # for mix release
     ] 
   end
 end

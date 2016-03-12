@@ -97,6 +97,15 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
+    <a href="#random/1">random(count)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns random word secrets given count</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#rounds_handler/2">rounds_handler(arg, atom)</a>
   </div>
   
@@ -107,12 +116,6 @@
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#run/5">run(name, type, secrets, log, display)</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#run0/5">run0(name, type, secrets, log, display)</a>
   </div>
   
     <div class="summary-synopsis"><p>Function run connects all the <code>player</code> specific components together and runs the player <code>game</code></p>
@@ -137,6 +140,12 @@
 </div>
   
 </div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#web_run/5">web_run(name, type, secrets, log, display)</a>
+  </div>
+  
+</div>
 
   </div>
 
@@ -158,14 +167,41 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="rounds_handler/2">
+          <div class="detail" id="random/1">
+  <div class="detail-header">
+    <a href="#random/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">random(count)</span>
+      
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-61" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">random(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns random word secrets given count</p>
+
+  </section>
+</div>
+<div class="detail" id="rounds_handler/2">
   <div class="detail-header">
     <a href="#rounds_handler/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
     <span class="signature">rounds_handler(arg, atom)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-102" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-113" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -193,7 +229,7 @@
     </a>
     <span class="signature">run(name, type, secrets, log, display)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-46" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-25" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -204,32 +240,6 @@
       <div class="specs-list">
         
           <pre><code class="elixir">run(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="Player.html#t:kind/0">Player.kind</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], boolean, boolean) :: :ok</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="run0/5">
-  <div class="detail-header">
-    <a href="#run0/5" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">run0(name, type, secrets, log, display)</span>
-      
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-24" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">run0(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="Player.html#t:kind/0">Player.kind</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], boolean, boolean) :: :ok</code></pre>
         
       </div>
     </div>
@@ -246,7 +256,7 @@
     </a>
     <span class="signature">setup(name, secrets, log, display)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-75" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-86" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -273,7 +283,7 @@
     </a>
     <span class="signature">start_player(name, type, game_pid, notify_pid)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-65" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-76" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -291,6 +301,32 @@
   <section class="docstring">
     <p>Start dynamic <code>player</code> child <code>worker</code></p>
 
+  </section>
+</div>
+<div class="detail" id="web_run/5">
+  <div class="detail-header">
+    <a href="#web_run/5" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">web_run(name, type, secrets, log, display)</span>
+      
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_game.ex#cl-47" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">web_run(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="Player.html#t:kind/0">Player.kind</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], boolean, boolean) :: :ok</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
   </section>
 </div>
 

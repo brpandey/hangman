@@ -11,6 +11,7 @@ defmodule Player.Game do
   Wraps fsm game play into an enumerable for easy running.
   """
 
+  @max_random_words_request 10
 
   @human Player.human
   @robot Player.robot
@@ -20,8 +21,8 @@ defmodule Player.Game do
   and runs the player `game`
   """
 
-  @spec run0(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def run0(name, type, secrets, log, display) when is_binary(name)
+  @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
+  def run(name, type, secrets, log, display) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
 
@@ -42,23 +43,33 @@ defmodule Player.Game do
   end
 
   # for Web playing
-  @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def run(name, type, secrets, log, _display) when is_binary(name)
+  @spec web_run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
+  def web_run(name, type, secrets, log, _display) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) do
     
-    l = List.new
-
     name 
     |> setup(secrets, log, false)
 		|> rounds_handler(type)
-		|> Stream.into(l)
-		|> Stream.run
-    
-    IO.puts "web run list is: #{inspect l}"
+    |> Enum.to_list
+
   end
 
+
+  @doc "Returns random word secrets given count"
+  @spec random(String.t) :: [String.t] | no_return
+  def random(count) do
+    # convert user input to integer value
+    value = String.to_integer(count)
+    cond do
+      value > 0 and value <= @max_random_words_request ->
+        Dictionary.Cache.lookup(:random, value)
+      true ->
+        raise HangmanError, "submitted random count value is not valid"
+    end
+  end
   
+
   @doc "Start dynamic `player` child `worker`"
   
   @spec start_player(String.t, Player.kind, pid, pid) :: Supervisor.on_start_child

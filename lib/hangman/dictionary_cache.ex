@@ -34,10 +34,10 @@ defmodule Dictionary.Cache do
 
   # Use for admin of random words extract 
   @ets_random_words_key :random_hangman_words
-  @random_words_per_chunk 10
+  @random_words_per_chunk 20
   @min_random_word_length 5
   @max_random_word_length 15
-  @max_random_words_request 10
+  @max_random_words_request 200
 
   @name __MODULE__
 	# External API

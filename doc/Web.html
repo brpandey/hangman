@@ -72,6 +72,11 @@
       </h1>
 
       
+        <section id="moduledoc" class="docstring">
+          <p>Implements <code>Hangman</code> http web server for playing <code>Hangman</code> games.</p>
+
+        </section>
+      
 
       
         <section id="summary" class="details-list">
@@ -108,8 +113,20 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#run_game/1">run_game(conn)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Retrieves connection params <code>name</code> and <code>secret</code> or <code>random</code>. Runs web game. Returns complete game results in connection response body</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#start_server/0">start_server()</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Starts the cowboy web server</p>
+</div>
   
 </div>
 
@@ -169,6 +186,33 @@
 
   </section>
 </div>
+<div class="detail" id="run_game/1">
+  <div class="detail-header">
+    <a href="#run_game/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">run_game(conn)</span>
+      
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-32" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">run_game(Plug.Conn.t) :: Plug.Conn.t</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Retrieves connection params <code>name</code> and <code>secret</code> or <code>random</code>. Runs web game. Returns complete game results in connection response body</p>
+
+  </section>
+</div>
 <div class="detail" id="start_server/0">
   <div class="detail-header">
     <a href="#start_server/0" class="detail-link" title="Link to this function">
@@ -176,14 +220,15 @@
     </a>
     <span class="signature">start_server()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-7" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-12" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
   </div>
   
   <section class="docstring">
-    
+    <p>Starts the cowboy web server</p>
+
   </section>
 </div>
 
