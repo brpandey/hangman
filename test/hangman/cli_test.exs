@@ -79,7 +79,7 @@ defmodule CLI.Test do
     argv = String.split(command)
 
     assert catch_error(CLI.main(argv)) ==
-		  %HangmanError{message: "user must specify either --\"secret\" or --\"random\" option"}
+      %HangmanError{message: "user must specify either --\"secret\" or --\"random\" option"}
 
   end
 
