@@ -18,8 +18,15 @@ defmodule Player do
 
 
   @opaque t :: %__MODULE__{}
+
+  @typedoc "Standardizes format around player result"
   @type result :: {t, Round.result}
+
+  @typedoc "Defines player kind"
   @type kind :: :human | :robot
+
+  @typedoc "Defines player key used with `Game.Server`"
+  @type key :: {id :: String.t, client_pid :: pid}
 
   @human :human
   @robot :robot
