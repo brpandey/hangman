@@ -7,7 +7,7 @@ defmodule Dictionary.File.Stream do
 
   alias Dictionary.File.Stream, as: FileStream
 
-	defstruct file: nil, type: nil, group_id: -1, group_index: -1
+  defstruct file: nil, type: nil, group_id: -1, group_index: -1
 
   @opaque t :: %__MODULE__{}
 
@@ -22,7 +22,7 @@ defmodule Dictionary.File.Stream do
   @chunks_file_delimiter Dictionary.chunks_file_delimiter
 
 
-	# Create
+  # Create
   @doc """
   Returns a new empty file `stream`
   """
@@ -35,7 +35,7 @@ defmodule Dictionary.File.Stream do
   end
 
 
-	# Read / Update
+  # Read / Update
   @doc """
   Returns input file `stream`
   """
@@ -45,20 +45,20 @@ defmodule Dictionary.File.Stream do
     file_handler(fstream, fstream.type)
   end
 
-	# Delete
+  # Delete
 
   @doc """
   Deletes `fstream`, returns empty file `stream`
   """
 
   @spec delete(t) :: t
-	def delete(%FileStream{} = fstream) do
-		File.close(fstream.file)
-		%FileStream{}
-	end	
+  def delete(%FileStream{} = fstream) do
+    File.close(fstream.file)
+    %FileStream{}
+  end 
 
 
-	# Private
+  # Private
 
   # chunked file specific input stream, wrapping underlying file
 
@@ -93,98 +93,98 @@ defmodule Dictionary.File.Stream do
   
   # grouped file specific input stream generator, wrapping underlying file
 
-	def file_handler(%FileStream{} = fstream, {:read, @grouped}) do
-		Stream.resource(
-			fn -> fstream end,
-		
-			fn fstream ->
-				case IO.read(fstream.file, :line) do
+  def file_handler(%FileStream{} = fstream, {:read, @grouped}) do
+    Stream.resource(
+      fn -> fstream end,
+    
+      fn fstream ->
+        case IO.read(fstream.file, :line) do
           # if newline or empty binary prompt for next value in stream
-					data when data in ["\n", ""] -> {[], fstream}
-					
-					data when is_binary(data) ->
+          data when data in ["\n", ""] -> {[], fstream}
+          
+          data when is_binary(data) ->
               # split line into group attributes
               [len, ind, word] = String.split(data, " ")
               length = String.to_integer(len)
               index = String.to_integer(ind)
-						  word = word |> String.strip
-						{ [{length, index, word}], fstream }
+              word = word |> String.strip
+            { [{length, index, word}], fstream }
 
-					_ -> {:halt, fstream}
-				end
-			end,
-			
+          _ -> {:halt, fstream}
+        end
+      end,
+      
       # be a responsible file user upon stream end
-			fn fstream -> File.close(fstream.file) end)
-	end
+      fn fstream -> File.close(fstream.file) end)
+  end
 
   # sorted file specific input stream generator, wrapping underlying file
   # since we know the input is sorted, we can create a grouping output
 
-	def file_handler(%FileStream{} = fstream, {:read, @sorted}) do
-		Stream.resource(
-			fn ->	fstream	end,
-		
-			fn fstream ->
-				case IO.read(fstream.file, :line) do
+  def file_handler(%FileStream{} = fstream, {:read, @sorted}) do
+    Stream.resource(
+      fn -> fstream end,
+    
+      fn fstream ->
+        case IO.read(fstream.file, :line) do
           # if newline or empty binary prompt for next value in stream
-					data when data in ["\n", ""] -> {[], fstream}
+          data when data in ["\n", ""] -> {[], fstream}
 
-					data when is_binary(data) ->
-						data = data |> String.strip
-						length = String.length(data)
+          data when is_binary(data) ->
+            data = data |> String.strip
+            length = String.length(data)
 
-						# Tracking group index as we iterate through the stream, to 
-						# allow the logic alg to be "online" as we have access to prev value
-						# with the addition of the Fstream module
+            # Tracking group index as we iterate through the stream, to 
+            # allow the logic alg to be "online" as we have access to prev value
+            # with the addition of the Fstream module
 
-						case fstream.group_id == length do
-							true -> 
-								# increment the group ctr index by 1
-								fstream = Kernel.put_in(fstream.group_index, 
+            case fstream.group_id == length do
+              true -> 
+                # increment the group ctr index by 1
+                fstream = Kernel.put_in(fstream.group_index, 
                                         fstream.group_index + 1)
 
-							false ->
-								# update new group_id and reset ctr index to 1
-								fstream = Kernel.put_in(fstream.group_id, length)								
-								fstream = Kernel.put_in(fstream.group_index, 1)
-						end
+              false ->
+                # update new group_id and reset ctr index to 1
+                fstream = Kernel.put_in(fstream.group_id, length)               
+                fstream = Kernel.put_in(fstream.group_index, 1)
+            end
 
-						{ [{length, fstream.group_index, data}], fstream }
+            { [{length, fstream.group_index, data}], fstream }
 
-					_ -> {:halt, fstream}
-				end
-			end,
+          _ -> {:halt, fstream}
+        end
+      end,
 
-      # be a responsible file user upon stream end			
-			fn fstream -> File.close(fstream.file) end)
-	end
+      # be a responsible file user upon stream end      
+      fn fstream -> File.close(fstream.file) end)
+  end
 
   # unsorted file specific input stream generator, wrapping underlying file
   # likely handles original dictionary file
 
-	def file_handler(%FileStream{} = fstream, {:read, @unsorted}) do
-		Stream.resource(
-			fn -> fstream end,
-		
-			fn fstream ->
-				case IO.read(fstream.file, :line) do
+  def file_handler(%FileStream{} = fstream, {:read, @unsorted}) do
+    Stream.resource(
+      fn -> fstream end,
+    
+      fn fstream ->
+        case IO.read(fstream.file, :line) do
           # if newline or empty binary prompt for next value in stream
-					data when data in ["\n", ""] -> {[], fstream}
-					
-					data when is_binary(data) ->
+          data when data in ["\n", ""] -> {[], fstream}
+          
+          data when is_binary(data) ->
               # Since we are dealing with the original dictionary file
               # make sure words are lowercased
-						  data = data |> String.downcase
+              data = data |> String.downcase
             
-						{ [data], fstream }
+            { [data], fstream }
 
-					_ -> {:halt, fstream}
-				end
-			end,
+          _ -> {:halt, fstream}
+        end
+      end,
 
-      # be a responsible file user upon stream end			
-			fn fstream -> File.close(fstream.file) end)
-	end
+      # be a responsible file user upon stream end      
+      fn fstream -> File.close(fstream.file) end)
+  end
 
 end

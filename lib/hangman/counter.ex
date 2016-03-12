@@ -12,7 +12,7 @@ defmodule Counter do
   """
 
   @doc false
-	defstruct map: %{}
+  defstruct map: %{}
 
   @opaque t :: %__MODULE__{}
 
@@ -22,143 +22,143 @@ defmodule Counter do
 
   @chunk_words_size Chunks.container_size
 
-	# Letter Frequency Counter for words
-	
-	# CREATE
+  # Letter Frequency Counter for words
+  
+  # CREATE
 
-	@doc "Returns new, empty `Counter`"
+  @doc "Returns new, empty `Counter`"
   @spec new(none | []) :: t
-	def new, do: %Counter{}
-	def new([]), do: %Counter{}
+  def new, do: %Counter{}
+  def new([]), do: %Counter{}
 
   @doc """
-	Returns new `Counter` that reflects contents of either `String.t, [tuple], map`
+  Returns new `Counter` that reflects contents of either `String.t, [tuple], map`
   """
 
   @spec new(String.t | [tuple] | map) :: t
-	def new(word) when is_binary(word) do 
-		add_letters(new(), word) 
-	end
-	
+  def new(word) when is_binary(word) do 
+    add_letters(new(), word) 
+  end
+  
   # note: not a keyword list because we are not using atoms for keys, String.t instead
-	def new(tuple_list) when is_list(tuple_list) and is_tuple(hd(tuple_list)) do
-		map = Enum.into tuple_list, Map.new
-		%Counter{ map: map }
-	end
+  def new(tuple_list) when is_list(tuple_list) and is_tuple(hd(tuple_list)) do
+    map = Enum.into tuple_list, Map.new
+    %Counter{ map: map }
+  end
 
-	def new(%{} = map) do
-		map = Enum.into map, Map.new
-		%Counter{ map: map }
-	end
+  def new(%{} = map) do
+    map = Enum.into map, Map.new
+    %Counter{ map: map }
+  end
 
-	# READ
+  # READ
 
-	@doc "Returns true if `Counters` equal"
+  @doc "Returns true if `Counters` equal"
   @spec equal?(t, t) :: boolean
-	def equal?(%Counter{} = c1, %Counter{} = c2) do
+  def equal?(%Counter{} = c1, %Counter{} = c2) do
     Map.equal?(c1, c2)
-	end
+  end
 
-	@doc "Returns a `key-value` list of {`letter`, `count`} `tuples`"
+  @doc "Returns a `key-value` list of {`letter`, `count`} `tuples`"
   @spec items(t) :: [tuple]
-	def items(%Counter{map: map} = _counter) do
-		Enum.into map, []
-	end
+  def items(%Counter{map: map} = _counter) do
+    Enum.into map, []
+  end
 
   @doc "Returns `true` or `false` whether `Counter` is empty"
   @spec empty?(t) :: boolean
-	def empty?(%Counter{map: map} = _counter) do
-		Enum.empty?(map)
-	end
+  def empty?(%Counter{map: map} = _counter) do
+    Enum.empty?(map)
+  end
 
-	@doc "Returns `list` of the most common `n` codepoint `keys` and codepoint `values`"
+  @doc "Returns `list` of the most common `n` codepoint `keys` and codepoint `values`"
   @spec most_common(t, pos_integer) :: [tuple]
-	def most_common(%Counter{map: map} = _counter, n) 
-		when is_number(n) and n > 0 do
-		
-		tuple_list = Enum.into map, []
+  def most_common(%Counter{map: map} = _counter, n) 
+    when is_number(n) and n > 0 do
+    
+    tuple_list = Enum.into map, []
 
-		#Sort from highest count to lowest count
-		tuple_sort_lambda = fn ({_letter_1, x}), ({_letter_2, y})  -> y <= x end
+    #Sort from highest count to lowest count
+    tuple_sort_lambda = fn ({_letter_1, x}), ({_letter_2, y})  -> y <= x end
 
-		tuple_list 
-			|> Enum.sort(tuple_sort_lambda) 
-			|> Enum.take(n)
-	end
+    tuple_list 
+      |> Enum.sort(tuple_sort_lambda) 
+      |> Enum.take(n)
+  end
 
-	@doc "Returns `list` of the most common `n` codepoint `keys`"
+  @doc "Returns `list` of the most common `n` codepoint `keys`"
   @spec most_common_key(t, pos_integer) :: list
-	def most_common_key(%Counter{} = counter, n) 
-		when is_number(n) and n > 0 do
-		
-		most_common(counter, n)
-			|> Enum.map( fn ({letter, _count }) -> letter end)	# Just grab the letter key
-	end
+  def most_common_key(%Counter{} = counter, n) 
+    when is_number(n) and n > 0 do
+    
+    most_common(counter, n)
+      |> Enum.map( fn ({letter, _count }) -> letter end)  # Just grab the letter key
+  end
 
-	# UPDATE
+  # UPDATE
 
-	@doc """
+  @doc """
   Increment `value` for a given `key` by the given `value`. 
   Default increment `value` 1.
   """
   @spec inc_by(t, key) :: t
   @spec inc_by(t, key, value) :: t
-	def inc_by(%Counter{map: map} = counter, key, value \\ 1)
+  def inc_by(%Counter{map: map} = counter, key, value \\ 1)
   when is_binary(key) and is_number(value) and value > 0 do
-		%Counter{ counter | map: Map.update(map, key, value, &(&1 + value)) }
-	end
+    %Counter{ counter | map: Map.update(map, key, value, &(&1 + value)) }
+  end
 
-	@doc """
+  @doc """
   Adds letters to `Counter` without checking for duplicate letters.  
   Returns an updated `Counter`.
   """
 
   @spec add_letters(t, [] | String.t | Enumerable.t) :: t
 
-	# Handle case where list is empty
-	def add_letters(%Counter{} = counter, []), do: counter
+  # Handle case where list is empty
+  def add_letters(%Counter{} = counter, []), do: counter
 
   def add_letters(%Counter{} = counter, word) when is_binary(word) do
     add_letters(counter, String.codepoints(word))
   end
 
-	def add_letters(%Counter{map: map} = counter, codepoints) do
+  def add_letters(%Counter{map: map} = counter, codepoints) do
 
-		false = Enum.empty?(codepoints)
+    false = Enum.empty?(codepoints)
 
-		# Splits word into codepoints enumerable, 
+    # Splits word into codepoints enumerable, 
     # and then reduces this enumerable into
-		# the map, updating the count by one if the key
-		# is already present in the map, else setting 1 as the initial value
+    # the map, updating the count by one if the key
+    # is already present in the map, else setting 1 as the initial value
 
-		map_updated = 
-			Enum.reduce(
-				codepoints,
-				map, 
-				fn head, acc -> Map.update(acc, head, 1, &(&1 + 1)) end
-			)
+    map_updated = 
+      Enum.reduce(
+        codepoints,
+        map, 
+        fn head, acc -> Map.update(acc, head, 1, &(&1 + 1)) end
+      )
 
-		%Counter{ counter | map: map_updated }
-	end
+    %Counter{ counter | map: map_updated }
+  end
 
 
-	@doc """
+  @doc """
   Adds letters to `Counter`. Ensure letters are unique. 
   Returns an updated `Counter`
   """
 
   @spec add_unique_letters(t, String.t | [String.t]) :: t
 
-	def add_unique_letters(%Counter{} = counter, word) 
-	when is_binary(word) do
-		
-		# Splits word into unique codepoints list, 
+  def add_unique_letters(%Counter{} = counter, word) 
+  when is_binary(word) do
+    
+    # Splits word into unique codepoints list, 
     # and then reduces this list into
-		# the map dict, updating the count by one if the key
-		# is already present in the map Map
+    # the map dict, updating the count by one if the key
+    # is already present in the map Map
 
-		add_letters(counter, String.codepoints(word) |> Enum.uniq)
-	end
+    add_letters(counter, String.codepoints(word) |> Enum.uniq)
+  end
 
   @doc """
   Adds words `list` to `Counter`. Converts words to char `list` and 
@@ -243,23 +243,23 @@ defmodule Counter do
   end
 
 
-	# DELETE
+  # DELETE
 
-	@doc "Returns an updated `Counter` after deleting specified `keys` in letters"
+  @doc "Returns an updated `Counter` after deleting specified `keys` in letters"
   @spec delete(t, none | [] | [String.t]) :: t
 
   def delete(%Counter{} = counter, []), do: counter
 
-	def delete(%Counter{map: map} = counter, letters) 
-		when is_list(letters) and is_binary(hd(letters)) do
+  def delete(%Counter{map: map} = counter, letters) 
+    when is_list(letters) and is_binary(hd(letters)) do
 
-		map_updated = Map.drop(map, letters)
-		%Counter{ counter | map: map_updated}
-	end
+    map_updated = Map.drop(map, letters)
+    %Counter{ counter | map: map_updated}
+  end
 
-	def delete(%Counter{} = _counter) do
-		%Counter{}
-	end
+  def delete(%Counter{} = _counter) do
+    %Counter{}
+  end
 
   defimpl Inspect do
     import Inspect.Algebra

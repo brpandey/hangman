@@ -1,41 +1,41 @@
 defmodule Game.Server do
-	use GenServer
+  use GenServer
   
   require Logger
-	
-	@moduledoc """
+  
+  @moduledoc """
   Module implements `Hangman` `Game` server using `GenServer`.
   Wraps `Game` abstraction as server state.  Runs 
   each `game` or set of `games` sequentially
 
-	Interacts with client `player` through public interface and
-	maintains `game` state
-	"""
+  Interacts with client `player` through public interface and
+  maintains `game` state
+  """
   
   @type id :: String.t
   
-	@vsn "0"
-	@name __MODULE__
+  @vsn "0"
+  @name __MODULE__
 
-	@max_wrong 5
+  @max_wrong 5
   
-	#####
-	# External API
+  #####
+  # External API
   
   
-	@doc """
-	Start public interface method with `secret(s)`
-	"""
+  @doc """
+  Start public interface method with `secret(s)`
+  """
   
   @spec start_link(String.t, (String.t | [String.t]), 
                    pos_integer) :: {:ok, pid}
-	def start_link(player_name, secret, max_wrong \\ @max_wrong) do
-		Logger.info "Starting Hangman Game Server"
-		args = Game.load(player_name, secret, max_wrong)
-		options = [name: via_tuple(player_name)] #,  debug: [:trace]]
+  def start_link(player_name, secret, max_wrong \\ @max_wrong) do
+    Logger.info "Starting Hangman Game Server"
+    args = Game.load(player_name, secret, max_wrong)
+    options = [name: via_tuple(player_name)] #,  debug: [:trace]]
     
-		GenServer.start_link(@name, args, options)
-	end
+    GenServer.start_link(@name, args, options)
+  end
   
   @doc """
   Routine returns game server `pid` from process registry using `gproc`
@@ -43,15 +43,15 @@ defmodule Game.Server do
   """
   
   @spec whereis(id) :: pid | :atom
-	def whereis(id_key) do
+  def whereis(id_key) do
     :gproc.whereis_name({:n, :l, {:hangman_server, id_key}})
-	end
+  end
   
   # Used to register / lookup process in process registry via gproc
   @spec via_tuple(id) :: tuple
-	defp via_tuple(id_key) do
-		{:via, :gproc, {:n, :l, {:hangman_server, id_key}}}
-	end
+  defp via_tuple(id_key) do
+    {:via, :gproc, {:n, :l, {:hangman_server, id_key}}}
+  end
   
   @doc """
   Loads new `game` into server process. 
@@ -59,15 +59,15 @@ defmodule Game.Server do
   """
   
   @spec load(pid, id, (String.t | [String.t]), pos_integer) :: :ok
-	def load(game_pid, id_key, secret, max_wrong \\ @max_wrong)
+  def load(game_pid, id_key, secret, max_wrong \\ @max_wrong)
   
-	def load(game_pid, id_key, secret, max_wrong) when is_binary(secret) do
-		GenServer.cast game_pid, {:load_game, id_key, secret, max_wrong}
-	end
+  def load(game_pid, id_key, secret, max_wrong) when is_binary(secret) do
+    GenServer.cast game_pid, {:load_game, id_key, secret, max_wrong}
+  end
   
-	def load(game_pid, id_key, secrets, max_wrong) when is_list(secrets) do
-		GenServer.cast game_pid, {:load_games, id_key, secrets, max_wrong}
-	end
+  def load(game_pid, id_key, secrets, max_wrong) when is_list(secrets) do
+    GenServer.cast game_pid, {:load_games, id_key, secrets, max_wrong}
+  end
   
   @doc """
   Issues guess `letter` or `word` request, returns guess `result`
@@ -77,49 +77,49 @@ defmodule Game.Server do
 
   Guesses follow two types
 
-    * `{:guess_letter, letter}` - 	If correct, 
+    * `{:guess_letter, letter}` -   If correct, 
     returns the `:correct_letter` data tuple along with game info
-	  otherwise, returns the `:incorrect_letter` data tuple along with game info
+    otherwise, returns the `:incorrect_letter` data tuple along with game info
 
-    * `{:guess_word, word}` - 	If correct, returns 
+    * `{:guess_word, word}` -   If correct, returns 
     the `:correct_word` data tuple along with game info
-	  If incorrect, returns the :incorrect_word data tuple with game info
-	  
+    If incorrect, returns the :incorrect_word data tuple with game info
+    
   """
   
   @spec guess(pid, Guess.t) :: tuple
-	def guess(game_pid, {:guess_letter, letter})
+  def guess(game_pid, {:guess_letter, letter})
   when is_binary(letter) do
-		GenServer.call game_pid, {:guess_letter, letter}
-	end
+    GenServer.call game_pid, {:guess_letter, letter}
+  end
     
-	def guess(game_pid, {:guess_word, word})
+  def guess(game_pid, {:guess_word, word})
   when is_binary(word) do
-		GenServer.call game_pid, {:guess_word, word}
-	end
+    GenServer.call game_pid, {:guess_word, word}
+  end
   
   @doc """
   Retrieves `Game` status data
   """
   
   @spec status(pid) :: tuple
-	def status(game_pid) do
-		GenServer.call game_pid, :game_status
-	end
+  def status(game_pid) do
+    GenServer.call game_pid, :game_status
+  end
   
   @doc """
   Retrieves `Game` secret length
   """
   
   @spec secret_length(pid) :: tuple
-	def secret_length(game_pid) do
-		GenServer.call game_pid, :secret_length
-	end
+  def secret_length(game_pid) do
+    GenServer.call game_pid, :secret_length
+  end
   
   '''
-	def another_game(secret, max_wrong \\ 5) when is_binary(secret) do
-	GenServer.cast @name, {:another_game, secret, max_wrong}
-	end
+  def another_game(secret, max_wrong \\ 5) when is_binary(secret) do
+  GenServer.cast @name, {:another_game, secret, max_wrong}
+  end
   '''
   
   @doc """
@@ -127,107 +127,107 @@ defmodule Game.Server do
   """
   
   @spec stop(pid) :: tuple
-	def stop(game_pid) do
-		GenServer.call game_pid, :stop
-	end
+  def stop(game_pid) do
+    GenServer.call game_pid, :stop
+  end
   
-	#####
-	# GenServer implementation
+  #####
+  # GenServer implementation
   
   @docp """
   GenServer callback to initalize server process
   """
   
   #@callback init(Game.t) :: tuple
-	def init(game) do
-		{:ok, game}
-	end
+  def init(game) do
+    {:ok, game}
+  end
   
-	@docp """
-	Loads a new `Game`
-	"""
+  @docp """
+  Loads a new `Game`
+  """
   
 #  @callback handle_cast(tuple, Game.t) :: tuple
-	def handle_cast({:load_game, id_key, secret, max_wrong}, _game) do
-		game = Game.load(id_key, secret, max_wrong)
+  def handle_cast({:load_game, id_key, secret, max_wrong}, _game) do
+    game = Game.load(id_key, secret, max_wrong)
     
-		{:noreply, game}
-	end
+    {:noreply, game}
+  end
   
-	@docp """
-	Loads a set of games
-	"""
+  @docp """
+  Loads a set of games
+  """
   
 #  @callback handle_cast(tuple, Game.t) :: tuple  
-	def handle_cast({:load_games, id_key, secret, max_wrong}, _game) do
-		game = Game.load(id_key, secret, max_wrong)
-		
-		{ :noreply, game }
-	end
+  def handle_cast({:load_games, id_key, secret, max_wrong}, _game) do
+    game = Game.load(id_key, secret, max_wrong)
+    
+    { :noreply, game }
+  end
   
   
-	@docp """
-	{:guess_letter, letter}
-	Guess the specified letter and update the pattern state accordingly
+  @docp """
+  {:guess_letter, letter}
+  Guess the specified letter and update the pattern state accordingly
 
   Returns result data tuple
-	"""
+  """
   
 #  @callback handle_call(Guess.t, tuple, Game.t) :: tuple
-	def handle_call(guess = {:guess_letter, _letter}, _from, 
+  def handle_call(guess = {:guess_letter, _letter}, _from, 
                   game) do
     
     {game, result} = Game.guess(game, guess)
     
-		{ :reply, result, game }
-	end
+    { :reply, result, game }
+  end
   
-	@docp """
-	{:guess_word, word}
-	Guess the specified word and update the pattern state accordingly
+  @docp """
+  {:guess_word, word}
+  Guess the specified word and update the pattern state accordingly
   
   Returns result data tuple
-	"""
+  """
   
 #  @callback handle_call(Guess.t, tuple, Game.t) :: tuple
-	def handle_call(guess = {:guess_word, _word}, _from, 
+  def handle_call(guess = {:guess_word, _word}, _from, 
                   game) do
     
     {game, result} = Game.guess(game, guess)
-		{ :reply, result, game }
-	end
+    { :reply, result, game }
+  end
   
-	@docp """
-	Returns the game status text
-	"""
+  @docp """
+  Returns the game status text
+  """
 
 #  @callback handle_call(:atom, tuple, Game.t) :: tuple
-	def handle_call(:game_status, _from, game) do
-		{ :reply, Game.status(game), game }
-	end
+  def handle_call(:game_status, _from, game) do
+    { :reply, Game.status(game), game }
+  end
   
-	@docp """
-	Returns the hangman secret length
-	"""
-  
-#  @callback handle_call(:atom, tuple, Game.t) :: tuple
-	def handle_call(:secret_length, _from, game) do
-		{_, _, status_text} = Game.status(game)
-		length = String.length(game.secret)
-    
-		# Let's piggyback the round status text with the secret length value
-    
-		{ :reply, {game.id, :secret_length, length, status_text}, game }
-	end
-  
-	@docp """
-	Stops the server is a normal graceful way
-	"""
+  @docp """
+  Returns the hangman secret length
+  """
   
 #  @callback handle_call(:atom, tuple, Game.t) :: tuple
-	def handle_call(:stop, _from, game) do
-		{ :stop, :normal, {:ok, game.id}, game }
-	end
+  def handle_call(:secret_length, _from, game) do
+    {_, _, status_text} = Game.status(game)
+    length = String.length(game.secret)
+    
+    # Let's piggyback the round status text with the secret length value
+    
+    { :reply, {game.id, :secret_length, length, status_text}, game }
+  end
+  
+  @docp """
+  Stops the server is a normal graceful way
+  """
+  
+#  @callback handle_call(:atom, tuple, Game.t) :: tuple
+  def handle_call(:stop, _from, game) do
+    { :stop, :normal, {:ok, game.id}, game }
+  end
   
   
   _ = """
@@ -250,20 +250,20 @@ defmodule Game.Server do
   '''
   @docp "Used for debugging purposes, returns game data of server process"
   @spec format_status(term, [...]) :: [...]
-	defp format_status(_reason, [ _pdict, game ]) do
-		[data: [{'State', "The current hangman server state is {inspect game} and {Game.status(game)}"}]]
-	end
+  defp format_status(_reason, [ _pdict, game ]) do
+    [data: [{'State', "The current hangman server state is {inspect game} and {Game.status(game)}"}]]
+  end
   '''
   
-	@docp """
-	Terminates the `game` server
-	No special cleanup other than refreshing the state
-	"""
+  @docp """
+  Terminates the `game` server
+  No special cleanup other than refreshing the state
+  """
   
 #  @callback terminate(term, term) :: :ok
-	def terminate(_reason, _state) do
-		Logger.info "Terminating Hangman Game Server"
-		:ok
-	end
+  def terminate(_reason, _state) do
+    Logger.info "Terminating Hangman Game Server"
+    :ok
+  end
   
 end

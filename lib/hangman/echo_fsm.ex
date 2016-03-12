@@ -1,5 +1,5 @@
 defmodule Player.Async.Echo do
-	@behaviour :gen_fsm
+  @behaviour :gen_fsm
 
   @moduledoc false
 
@@ -12,7 +12,7 @@ defmodule Player.Async.Echo do
   Stream.run, runs automatically itself
   '''
 
-	# External API
+  # External API
 
   @doc """
   gen fsm start_link wrapper function
@@ -33,7 +33,7 @@ defmodule Player.Async.Echo do
 
   @spec echo_guess(pid, pid) :: {}
   def echo_guess(fsm_pid, other_pid) do
- 	  :gen_fsm.send_event(fsm_pid, {:echo_guess, other_pid})
+    :gen_fsm.send_event(fsm_pid, {:echo_guess, other_pid})
   end
 
   # FSM Callbacks
@@ -55,8 +55,8 @@ defmodule Player.Async.Echo do
 
   @callback echo({:atom, pid}, []) :: {:atom, :atom, []}
   def echo({:echo_guess, other_pid}, state) do
-  	Player.FSM.async_guess(other_pid)
-  	{:next_state, :echo, state}
+    Player.FSM.async_guess(other_pid)
+    {:next_state, :echo, state}
   end
 
 

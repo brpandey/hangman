@@ -1,5 +1,5 @@
 defmodule Game.System.Supervisor do 
-	use Supervisor
+  use Supervisor
 
   @moduledoc false
 
@@ -7,13 +7,13 @@ defmodule Game.System.Supervisor do
   Module implements `Supervisor` behaviour.
 
   Module is a second line supervisor
-	as it supervises a first-line supervisor, Game.Server.Supervisor
-	along with the Game.Pid.Cache
+  as it supervises a first-line supervisor, Game.Server.Supervisor
+  along with the Game.Pid.Cache
   '''
   
   require Logger
 
-	@name __MODULE__
+  @name __MODULE__
 
 
   @doc """
@@ -21,25 +21,25 @@ defmodule Game.System.Supervisor do
   """
   
   @spec start_link :: Supervisor.on_start
-	def start_link do
-		Logger.info "Starting Hangman Game System Supervisor"
+  def start_link do
+    Logger.info "Starting Hangman Game System Supervisor"
 
-		Supervisor.start_link(@name, nil)
-	end
+    Supervisor.start_link(@name, nil)
+  end
 
   @doc """
   Supervisor callback to initialize server process
   """
 
   @callback init(term) :: {}
-	def init(_) do
+  def init(_) do
 
-		children = [
-				supervisor(Game.Server.Supervisor, []),
-				worker(Game.Pid.Cache, [])
-		]
+    children = [
+        supervisor(Game.Server.Supervisor, []),
+        worker(Game.Pid.Cache, [])
+    ]
 
-		supervise(children, strategy: :one_for_one)	
-	end
+    supervise(children, strategy: :one_for_one) 
+  end
 
 end

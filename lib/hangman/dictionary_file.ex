@@ -92,8 +92,8 @@ defmodule Dictionary.File do
     fn read_path, write_path ->
       case File.open(write_path) do
         # if transformed file already exists, return file name
-			  {:ok, _file} -> write_path
-			  {:error, :enoent} ->
+        {:ok, _file} -> write_path
+        {:error, :enoent} ->
           # get file pid for new transformed file
           {:ok, write_file} = File.open(write_path, [:append])
 
@@ -101,7 +101,7 @@ defmodule Dictionary.File do
           fn_transform.(read_path, write_file)
 
           # be a responsible file user
-				  File.close(write_file)
+          File.close(write_file)
 
           # return the "transformed" new path
           write_path
@@ -113,13 +113,13 @@ defmodule Dictionary.File do
   @doc "Specific handler implementations for `sort`, `group`, and `chunk` transform"
   @spec transform_handler(String.t, String.t, Dict.transform) :: String.t
 
-	def transform_handler(path, new_path, @sorted) do
+  def transform_handler(path, new_path, @sorted) do
 
     # called from fn_transform
     fn_write_lambda = fn
-      "\n", _ ->	nil
+      "\n", _ ->  nil
       term, file_pid -> IO.write(file_pid, term) 
-		end
+    end
 
     # sort specific transform
     fn_sort = fn
@@ -127,8 +127,8 @@ defmodule Dictionary.File do
         
         Dict.File.Stream.new({:read, @unsorted}, read_path)
         |> Dict.File.Stream.gets_lazy
-			  |> Enum.sort_by(&String.length/1, &<=/2)
-			  |> Enum.each(&fn_write_lambda.(&1, file_pid))
+        |> Enum.sort_by(&String.length/1, &<=/2)
+        |> Enum.each(&fn_write_lambda.(&1, file_pid))
     end
 
     # invokes function builder to generate type specific transform    
@@ -138,11 +138,11 @@ defmodule Dictionary.File do
     new_path = sort_transform.(path, new_path)
     
     new_path
-	end
+  end
 
   # specific handler for group transform
 
-	def transform_handler(path, new_path, @grouped) do
+  def transform_handler(path, new_path, @grouped) do
 
     # called from fn_transform
     fn_write_lambda = fn
@@ -156,9 +156,9 @@ defmodule Dictionary.File do
 
         Dict.File.Stream.new({:read, @sorted}, read_path)
         |> Dict.File.Stream.gets_lazy
-		    |> Stream.each(&fn_write_lambda.(&1, file_pid))
+        |> Stream.each(&fn_write_lambda.(&1, file_pid))
         |> Stream.run
-		end
+    end
   
     # invokes function builder to generate type specific transform    
     group_transform = make_file_transform(fn_group)
@@ -167,11 +167,11 @@ defmodule Dictionary.File do
     new_path = group_transform.(path, new_path)
 
     new_path
-	end
+  end
 
   # specific handler for chunk transform
 
-	def transform_handler(path, new_path, @chunked) do
+  def transform_handler(path, new_path, @chunked) do
 
     # called from fn_transform
     fn_write_lambda = fn
@@ -190,9 +190,9 @@ defmodule Dictionary.File do
         Dict.File.Stream.new({:read, @grouped}, read_path) 
         |> Dict.File.Stream.gets_lazy
         |> Chunks.Stream.transform(@grouped, @chunked)
-		    |> Stream.each(&fn_write_lambda.(&1, file_pid))
-		    |> Stream.run      
-		end
+        |> Stream.each(&fn_write_lambda.(&1, file_pid))
+        |> Stream.run      
+    end
 
     # invokes function builder to generate type specific transform    
     chunk_transform = make_file_transform(fn_chunk)
@@ -201,6 +201,6 @@ defmodule Dictionary.File do
     new_path = chunk_transform.(path, new_path)
         
     new_path
-	end
+  end
 
 end

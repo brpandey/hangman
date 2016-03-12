@@ -39,15 +39,15 @@ defmodule Dictionary do
   %{
     :regular => %{
       :path => "lib/hangman/data/words.txt",
-	    :sorted => "lib/hangman/data/words_sorted.txt",
+      :sorted => "lib/hangman/data/words_sorted.txt",
       :grouped => "lib/hangman/data/words_grouped.txt",
       :chunked => "lib/hangman/data/words_chunked.txt"
     },
-	  :big => %{
+    :big => %{
       :path => "lib/hangman/data/words_big.txt",
-	    :sorted => "lib/hangman/data/words_big_sorted.txt",
-	    :grouped => "lib/hangman/data/words_big_grouped.txt",
-	    :chunked => "lib/hangman/data/words_big_chunked.txt"
+      :sorted => "lib/hangman/data/words_big_sorted.txt",
+      :grouped => "lib/hangman/data/words_big_grouped.txt",
+      :chunked => "lib/hangman/data/words_big_chunked.txt"
     }
   }
   end

@@ -45,21 +45,21 @@ defmodule CLI do
   @spec parse_args([String.t]) :: Keyword.t
   defp parse_args(args) do
     {parsed, _argv, _errors} = OptionParser.parse(args, 
-    	[
-	    	strict: [
-	    		name: :string, # --name or alias -n, string only
-	    		type: :string, # --type or alias -t, string only
+      [
+        strict: [
+          name: :string, # --name or alias -n, string only
+          type: :string, # --type or alias -t, string only
           random: :string, # --random or alas -t, string only
-	    		secret: :string, # --secret or alias -w, string only
-	    		baseline: :boolean, # --baseline or alias -bl, boolean only
+          secret: :string, # --secret or alias -w, string only
+          baseline: :boolean, # --baseline or alias -bl, boolean only
           log: :boolean, # -- log or alias -l, boolean only
           display: :boolean, # -- display or alias -d, boolean only
-	    		help: :boolean # --help or alias -h, boolean only
-	    	],
+          help: :boolean # --help or alias -h, boolean only
+        ],
 
-	    	aliases: [n: :name, t: :type, r: :random, s: :secret, 
+        aliases: [n: :name, t: :type, r: :random, s: :secret, 
                   bl: :baseline, l: :log, d: :display, h: :help]
-	    ])
+      ])
 
     parsed
   end
@@ -73,19 +73,19 @@ defmodule CLI do
   @spec print(Keyword.t) :: Keyword.t | no_return
   defp print(parsed) do
 
-		case Keyword.fetch(parsed, :help) do
+    case Keyword.fetch(parsed, :help) do
       # if no help supplied, resume normally and return parsed output
       :error -> parsed
 
-			{:ok, true} ->
-				IO.puts "--name (player id) --type (\"human\" or \"robot\")" <> 
+      {:ok, true} ->
+        IO.puts "--name (player id) --type (\"human\" or \"robot\")" <> 
           " --random (num random secrets, max 10)" <>
           " [--secret (hangman word(s)) --baseline] [--log --display]\n"
         
-				IO.puts "or aliases: -n (player id) -t (\"human\" or \"robot\") " <> 
+        IO.puts "or aliases: -n (player id) -t (\"human\" or \"robot\") " <> 
           "-r (num random secrets, max 10) [-s (hangman word(s)) -bl] [-l -d]"
-		    System.halt(0)
-		end
+        System.halt(0)
+    end
 
   end
 
@@ -104,7 +104,7 @@ defmodule CLI do
         :error -> 
           # if no baseline arg is specified
           
-  	      secrets = 
+          secrets = 
             case Keyword.fetch(args, :secret) do
               {:ok, value} -> 
                 # split always returns a list
@@ -144,7 +144,7 @@ defmodule CLI do
 
     name = 
       case Keyword.fetch(args, :name) do
-  	    {:ok, value} -> value
+        {:ok, value} -> value
         :error -> raise HangmanError, "name argument missing"
       end
 
