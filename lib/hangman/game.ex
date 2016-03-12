@@ -18,11 +18,27 @@ defmodule Game do
   incorrect_letters: MapSet.new, incorrect_words: MapSet.new
   
   @opaque t :: %__MODULE__{}
-  
+
+  @typedoc "`Game` id is String.t (currently using player's name as unique key)"
   @type id :: String.t
   
-  @type result :: {t, tuple}
-  
+  @typedoc "`Game` status code values"
+  @type code :: :game_start | :game_keep_guessing | 
+  :game_won | :game_lost | :games_over | :game_reset
+
+  @typedoc """
+  `Game` summary values, either [] if we are still playing or [...] if game finished
+  """
+  @type summary :: [] | [status: :games_over, average_score: integer, 
+     games: pos_integer, results: [tuple]]
+
+  @typedoc "returned `Game` data"
+  @type data :: {id, Round.code, code, pattern :: String.t, 
+                 status :: String.t, summary}
+
+  @typedoc "Game result tuple returned to `Game.Server`"
+  @type result :: {t, data}
+
   @status_codes  %{
     game_won: {:game_won, 'GAME_WON', -2}, 
     game_lost: {:game_lost, 'GAME_LOST', 25}, 
@@ -163,7 +179,7 @@ defmodule Game do
   
   # Helper function to check current game status code
   
-  @spec status_code(t) :: tuple
+  @spec status_code(t) :: {code, String.t, integer}
   defp status_code(%Game{} = game) do
     cond do
       game.secret == "" ->
@@ -181,7 +197,7 @@ defmodule Game do
   Returns current `Game` status text
   """
   
-  @spec status(t) :: tuple
+  @spec status(t) :: {id, code, String.t}
   def status(%Game{} = game) do
     
     # small lambda to dry up functionality
@@ -258,7 +274,7 @@ defmodule Game do
         # And update the game
         scores = List.insert_at(game.scores, game.current, score(game))
         game = %{ game | scores: scores }
-        results = summary(game)
+        results = final_summary(game)
         
         # Clear and return game so server process can be reused, 
         # along with results data
@@ -307,8 +323,8 @@ defmodule Game do
   
   # Returns games summary status for when all games are over
   
-  @spec summary(t) :: Keyword.t
-  defp summary(%Game{} = game) do
+  @spec final_summary(t) :: summary
+  defp final_summary(%Game{} = game) do
     total_score = Enum.reduce(game.scores, 0, &(&1 + &2))
     games_played = game.current + 1
     average_score = total_score / games_played

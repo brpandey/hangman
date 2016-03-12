@@ -89,7 +89,7 @@ defmodule Player do
   score per game, per game `score`.
   """
 
-  @spec games_summary(Keyword.t) :: String.t
+  @spec games_summary(Game.summary) :: String.t
   def games_summary(args) when is_list(args) and is_tuple(Kernel.hd(args)) do
     
     {:ok, avg} = Keyword.fetch(args, :average_score)

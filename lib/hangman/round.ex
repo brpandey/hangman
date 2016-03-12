@@ -14,7 +14,9 @@ defmodule Round do
   status_code: nil, status_text: "", pattern: "", 
   final_result: ""
 
-  @type result :: {status_code :: :atom, status_txt :: String.t}
+  @type code :: :correct_letter | :incorrect_letter | :incorrect_word
+
+  @type result :: {code, status :: String.t}
 
   @type t :: %__MODULE__{} 
 
