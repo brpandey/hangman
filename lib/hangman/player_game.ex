@@ -89,6 +89,10 @@ defmodule Player.Game do
     
     # Grab game pid first from game pid cache
     game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
+
+#    # Let's setup a trace for debug
+#    :sys.trace(game_pid, true)
+
     
     # Get event server pid next
     {:ok, notify_pid} = 

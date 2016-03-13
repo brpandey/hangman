@@ -153,6 +153,7 @@ defmodule Game.Server do
   def init(state) do
     # Trap client exits
     Process.flag(:trap_exit, true)
+
     {:ok, state}
   end
   
@@ -286,22 +287,34 @@ defmodule Game.Server do
   Handles client pid down
   """
 
+
   #@callback handle_info(term, tuple, t) :: tuple
 
-  def handle_info({:EXIT, _pid, :normal} = msg, _from, state) do
-    IO.puts "In Game.Server handle info, received EXIT msg: #{inspect msg}"
+  def handle_info({:EXIT, pid, :normal} = msg, state) do
+    Logger.debug "In Game.Server handle info, received EXIT normal msg: #{inspect msg}"
+
+    # generate player key
+    key = key(state, pid)
+
+    # remove player from active
+    state = remove(state, key)
+
+    Logger.debug("{:EXIT, _, :normal}, #{inspect state}")
+
     { :noreply, state }
   end
 
 
-  def handle_info({:EXIT, _pid, _reason} = msg, _from, state) do
-    IO.puts "In Game.Server handle info, received EXIT msg: #{inspect msg}"
+  def handle_info({:EXIT, _pid, _reason} = msg, state) do
+    Logger.debug "In Game.Server handle info, received EXIT abnormal msg: #{inspect msg}"
+
+    Logger.debug("{:EXIT, _, abnormal}, #{inspect state}")
     { :noreply, state }
   end
 
   # Generic
-  def handle_info(msg, _from, state) do
-    IO.puts "In Game.Server handle info, msg is #{inspect msg}"
+  def handle_info(msg, state) do
+    Logger.debug "In Game.Server handle info, msg is #{inspect msg}"
     { :noreply, state }
   end
 
@@ -343,6 +356,7 @@ defmodule Game.Server do
         # Ensure the client id matches the pid -- sanity check
         ^client_id = Map.get(state.active_pids, client_pid)
 
+
       false -> 
         # Add
 
@@ -383,6 +397,17 @@ defmodule Game.Server do
 
   # READ
 
+
+  # Helper to retrieve the player key given pid
+  
+  @spec key(t, pid) :: Player.key
+  defp key(state, pid) when is_pid(pid) do
+    case Map.get(state.active_pids, pid) do
+      nil -> raise HangmanError, "Unable to generate key, pid not found"
+      id_key -> {id_key, pid}
+    end
+  end
+  
   # Helper to retrieve the player client's game state
 
   @spec game(t, Player.key) :: Game.t
@@ -406,8 +431,6 @@ defmodule Game.Server do
           # Client id not active, return empty game
           %Game{}
       end
-
-
     
     game
   end
@@ -451,10 +474,12 @@ defmodule Game.Server do
         # Update state
         state = Kernel.put_in(state.games, games)
 
-      true ->
+
+      true -> ""
+
         # remove player from active
-        Logger.debug("About to remove player pid from active list")
-        state = remove(key, state)
+#        Logger.debug("About to remove player pid from active list")
+#        state = remove(state, key)
     end
     
     state
@@ -465,11 +490,12 @@ defmodule Game.Server do
 
   # remove client pid from active pid list
 
-  @spec remove(Player.key, t) :: t
-  defp remove({client_id, client_pid} = _key, state)
+  @spec remove(t, Player.key) :: t
+  defp remove(state, {client_id, client_pid} = _key)
   when is_binary(client_id) and is_pid(client_pid) do
 
     # Destructuring bind
+    Logger.debug("About to remove player pid from active list")
 
     case Map.get(state.active_pids, client_pid) do
       nil -> 
