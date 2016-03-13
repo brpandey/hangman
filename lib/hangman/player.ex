@@ -5,7 +5,7 @@ defmodule Player do
   Heavily relies upon `Round` and `Action`.
   """
 
-  defstruct name: "", 
+  defstruct name: "", pid: nil,
   type: nil,
   round_no: 0,  
   round: %Round{},
@@ -50,7 +50,7 @@ defmodule Player do
       raise HangmanError, "invalid and unknown player type" 
     end
     
-    %Player{ name: name, type: type, 
+    %Player{ name: name, type: type, pid: self(),
              game_server_pid: game_pid, event_server_pid: event_pid }
   end
 
@@ -137,8 +137,12 @@ defmodule Player do
 
   @spec start(t) :: result
   def start(%Player{} = p) do
+
+    # If we are on more than 1 game get 
+    # e.g. if we've already played our first game
     if p.game_no >= 1 do
-      p = %Player{ name: p.name, type: p.type, 
+      # Copy over the state from the prior player game
+      p = %Player{ name: p.name, type: p.type, pid: p.pid, 
                         game_server_pid: p.game_server_pid,
                         event_server_pid: p.event_server_pid,
                         game_no: p.game_no + 1 }

@@ -82,9 +82,12 @@ defmodule Round do
   def setup(%Player{} = player, :game_start) do
 
     name = player.name
+    
+    player_key = key(player)
 
+    # Initiate the game and grab the secret length
     {^name, :secret_length, secret_length, status_text} =
-      Game.Server.secret_length(player.game_server_pid)
+      Game.Server.initiate_and_length(player.game_server_pid, player_key)
 
     Player.Events.notify_length(player.event_server_pid,
       {name, player.game_no, secret_length})
@@ -103,7 +106,7 @@ defmodule Round do
   def setup(%Player{} = player, context) 
   when is_nil(context) == false do
 
-    {name, strategy, game_no, seq_no} = params(player)
+    {name, _key, strategy, game_no, seq_no} = params(player)
 
     pass_key = {name, game_no, seq_no}
 
@@ -136,7 +139,7 @@ defmodule Round do
   def augment_choices(%Player{} = player, {code, choices_text})
   when is_binary(choices_text) do
     
-    {name, _strategy, _game_no, seq_no} = params(player)
+    {name, _key, _strategy, _game_no, seq_no} = params(player)
     {_, status} = status(player)
 
     text = choices_text 
@@ -167,10 +170,10 @@ defmodule Round do
   @spec do_guess(Player.t, Guess.t) :: t
   defp do_guess(%Player{} = player, guess) do
     
-    {name, _strategy, game_no, seq_no} = params(player)
+    {name, player_key, _strategy, game_no, seq_no} = params(player)
     
     {{^name, result, code, pattern, text}, final} =
-      Game.Server.guess(player.game_server_pid, guess)
+      Game.Server.guess(player.game_server_pid, player_key, guess)
     
     Player.Events.notify_guess(player.event_server_pid, guess,
                                {name, game_no})
@@ -236,11 +239,17 @@ defmodule Round do
   defp params(%Player{} = player) do
 
     name = player.name
+    key = key(player)
     strategy = player.strategy
     game_no = player.game_no
     seq_no =  player.round_no + 1
 
-    {name, strategy, game_no, seq_no}
+    {name, key, strategy, game_no, seq_no}
+  end
+
+  @spec key(Player.t) :: Player.key
+  defp key(%Player{} = player) do
+    {player.name, player.pid}
   end
 
 end

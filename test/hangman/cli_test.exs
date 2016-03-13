@@ -34,10 +34,9 @@ defmodule CLI.Test do
   end
 
   
-  test "robot single word with log option only" do
+  test "robot double word with log option only" do
 
-    command = "-n anastasia_test -t robot -s sleek -l"
-    argv = String.split(command)
+    argv  = ["-n", "anastasia_test", "-t", "robot", "-s", "sleek macaroon", "-l"]
     CLI.main(argv)
     
   end

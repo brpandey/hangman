@@ -10,7 +10,7 @@ defmodule Game do
   """
   
   
-  defstruct id: nil, 
+  defstruct id: nil, client_pid: nil,
   current: 0, #Current game index
   secret: "", pattern: "", score: 0,
   secrets: [],  patterns: [], scores: [],
@@ -78,7 +78,29 @@ defmodule Game do
           pattern: List.first(patterns), secrets: secrets, 
           patterns: patterns, max_wrong: max_wrong}
   end
-  
+
+  @doc """
+  Returns boolean whether `Game` states are identical
+  """
+
+  @spec equal?(t, t) :: boolean
+  def equal?(%Game{} = game1, %Game{} = game2) do
+    map1 = Map.from_struct(game1)
+    map2 = Map.from_struct(game2)
+    
+    Map.equal?(map1, map2)
+  end
+
+
+  @doc """
+  Returns boolean whether `Game` is empty
+  """
+
+  @spec empty?(t) :: boolean
+  def empty?(%Game{} = game) do
+    equal?(game, %Game{})
+  end
+
   
   @doc """
   Runs `guess` against `Game` `secret`. Updates `Hangman` pattern, status, and
@@ -92,8 +114,7 @@ defmodule Game do
 
     * `{:guess_word, word}` -   If correct, returns 
     the :correct_word data tuple along with `game`
-    If incorrect, returns the :incorrect_word data tuple with `game` data
-    
+    If incorrect, returns the :incorrect_word data tuple with `game` data    
   """
 
   @spec guess(t, guess :: Guess.t) :: result
@@ -353,6 +374,7 @@ defmodule Game do
     
     info = [
       id: g.id,
+      client_pid: g.client_pid,
       current_game_index: g.current,
       secret: g.secret,
       pattern: g.pattern,
