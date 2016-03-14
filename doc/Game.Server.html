@@ -73,8 +73,9 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements <code>Hangman</code> <a href="Game.html"><code>Game</code></a> server. Each player's active game state is maintained, until the player process exits.</p>
-<p>Runs each game one at a time and supports multiple games concurrently.</p>
+          <p>Module handles <code>Hangman</code> <a href="Game.html"><code>Game</code></a> serving to multiple clients.<br />Each player's active game state is maintained, until the player process exits.</p>
+<p>In the event the player aborts abnormally, the player's game state is maintained but removed from active status.</p>
+<p>NOTE: The server runs each game one at a time and handles support for multiple games concurrently but is currently not harnessed by the <code>Game.Pid.Cache.Server</code> for initial simplicity purposes and therefore not presently utilized.</p>
 
         </section>
       
@@ -224,7 +225,7 @@
     </a>
     <span class="signature">guess(game_pid, key, arg)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-99" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-106" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -257,7 +258,7 @@
     </a>
     <span class="signature">initiate_and_length(game_pid, key)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-124" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-131" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -284,7 +285,7 @@
     </a>
     <span class="signature">load(game_pid, id_key, secret, max_wrong \\ 5)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-70" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-77" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -311,7 +312,7 @@
     </a>
     <span class="signature">start_link(id_key, secret, max_wrong \\ 5)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-34" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-41" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -338,7 +339,7 @@
     </a>
     <span class="signature">status(game_pid, key)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-114" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-121" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -365,7 +366,7 @@
     </a>
     <span class="signature">stop(game_pid)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-139" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-146" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -392,7 +393,7 @@
     </a>
     <span class="signature">whereis(id_key)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-54" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-61" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

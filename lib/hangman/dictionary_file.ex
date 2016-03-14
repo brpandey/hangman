@@ -16,7 +16,7 @@ defmodule Dictionary.File do
 
   Transformation types are `unsorted` to `sorted`, `sorted` to `grouped`, 
   and `grouped` to `chunked`.  Each transform handler encapsulates each 
-  transform procedure
+  transform procedure.
   """
 
   alias Dictionary, as: Dict

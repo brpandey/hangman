@@ -1,13 +1,28 @@
 defmodule Player do
+
   @moduledoc """
-  Module for creating players and using them to engage with the game server.
+  Module for creating players and maximizing our winning chances in conjunction
+  with the player strategy against the 'implicit' other player the `game server`.
   Handles choosing letters, guessing letters and words.
+
+  In `Hangman` we have two players.  One explict - the one guessing, the other
+  implicit, 'the game', 'the user tracking the penalties', or 'the stumper
+  stumping the guesser with hard words'.  In this instance the `Player` is
+  merely the user making and choosing the guess selections.  
+
+  The `human` player is given the choice of the top letter choices to choose
+  from and is able to make an interactive guess.  The `robot` player is reliant
+  on the game strategy to automatically self select the best guess.
 
   Player is one of four modules that drive the game play mechanics, the others 
   being `Round`, `Strategy` and `Action`.
 
   Player encapsulates the data used along with Strategy data. `Round` functionality
-  extends the scope of the player to handle the actual game details.
+  extends the scope of the player to handle the actual game round details.
+
+  NOTE: Should a player submit a secret hangman word that does not actually
+  reside in the `Dictionary.Cache` the game will currently be prematurely 
+  aborted.
   """
 
   defstruct name: "", pid: nil,

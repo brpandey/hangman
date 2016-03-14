@@ -1,11 +1,30 @@
 defmodule Game do
   @moduledoc """
-  Module to create new `Hangman` game abstractions. Serves as the core of
-  the application.  Handles a single `Hangman` game or multiple 
-  `Hangman` games and runs each runs sequentially.  Therefore only 
-  one `game` is in play at any one time.
+  Module to create and manage `Hangman` game abstractions. 
+
+  Naturally serves as the symbolic core of the game application.  
+
+  The game embodies the structure of play in this context of letter and word
+  guessing.  Therefore it maintains the secret pattern state along with
+  the guess state, delineated by correct and incorrect, letter and word.
+
+  Further, a game wouldn't amount to much without a quantifiable outcome
+  thus we maintain a score state.  If a game is lost, the score is 
+  automatically 25, as deemed by the threshhold of the particular max incorect 
+  guesses.  
+
+  The game rules are simply to stay within the max incorrect guesses and choose
+  letters consistent with the game.  No timing or other such rules are imposed.
   
-  Primary functions are `load/3`, `guess/2`, `status/1`.
+  If the number of incorrect letter guesses exceeds the threshhold,
+  the game is lost.  The lower the score and hence the fewer rounds to guess 
+  the word, the more desirable aim.
+
+  The `Game` handles a single `Hangman` game or multiple `Hangman` games and 
+  runs each runs sequentially.  Therefore only one `game` is in play at
+  any one time.
+  
+  Primary game functions are `load/3`, `guess/2`, `status/1`.
   """
   
   require Logger

@@ -6,10 +6,17 @@ defmodule Game.Server do
   require Logger
   
   @moduledoc """
-  Module implements `Hangman` `Game` server.  Each player's active game
-  state is maintained, until the player process exits.
+  Module handles `Hangman` `Game` serving to multiple clients.  
+  Each player's active game state is maintained, until the player 
+  process exits.
+  
+  In the event the player aborts abnormally, the player's game state
+  is maintained but removed from active status.
 
-  Runs each game one at a time and supports multiple games concurrently.
+  NOTE: The server runs each game one at a time and handles support for 
+  multiple games concurrently but is currently not harnessed by the 
+  `Game.Pid.Cache.Server` for initial simplicity purposes and therefore
+  not presently utilized.
   """
   
   @type id :: String.t

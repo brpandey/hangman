@@ -73,7 +73,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module provides access to a game server pid cache. Pid <code>caching</code> prevents a <a href="Game.Server.html"><code>Game.Server</code></a> process from having to be created every time. Upon game server startup, the new pid is stored into the pid cache. Upon successive game plays with the same game server, the pid does not need to be regenerated, but simply retrieved from the cache.</p>
+          <p>Module provides access to a game server pid cache. Pid <code>caching</code> prevents a <a href="Game.Server.html"><code>Game.Server</code></a> process from having to be created every time. Upon game server startup, the new pid is stored into the pid cache.<br />Upon successive game plays with the same game server, the pid does not need to be regenerated, but simply retrieved from the cache.</p>
+<p>Note: Currently, the <a href="Game.Pid.Cache.html#content"><code>Game.Pid.Cache</code></a> maps one player_name to one game server. Thus effectively preventing a single game server from supporting multiple unique players. The simple idea for now, is to have multiple tiny game servers map to multiple tiny players</p>
 
         </section>
       
@@ -139,7 +140,7 @@
     </a>
     <span class="signature">get_server_pid(player_name, secret)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-36" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-41" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -166,7 +167,7 @@
     </a>
     <span class="signature">start_link()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-21" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-26" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

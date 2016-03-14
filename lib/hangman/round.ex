@@ -1,9 +1,11 @@
 defmodule Round do
   @moduledoc """
-  Module provides access to `Hangman` guessing round functions.
+  Module provides access to game round functions.
 
-  Works in conjuction with `Strategy` and `Game.Server`
-  to orchestrate actual `round` game play.
+  `Round` represents the time period in the `Hangman` game which 
+  consists of a repetitve sequence of word set reduction, guess assistance and
+  guess actions. It works in conjuction with `Strategy` and 
+  `Game.Server` to orchestrate actual `round` game play.
 
   When playing a `Hangman` game, we first setup our round, which involves 
   obtaining the secret word length from the game server.  Next, we

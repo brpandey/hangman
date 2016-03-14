@@ -144,21 +144,21 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.html">Game</a></div>
   
-    <div class="summary-synopsis"><p>Module to create new <code>Hangman</code> game abstractions. Serves as the core of the application. Handles a single <code>Hangman</code> game or multiple <code>Hangman</code> games and runs each runs sequentially. Therefore only one <code>game</code> is in play at any one time</p>
+    <div class="summary-synopsis"><p>Module to create and manage <code>Hangman</code> game abstractions</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.Pid.Cache.html">Game.Pid.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Module provides access to a game server pid cache. Pid <code>caching</code> prevents a <a href="Game.Server.html"><code>Game.Server</code></a> process from having to be created every time. Upon game server startup, the new pid is stored into the pid cache. Upon successive game plays with the same game server, the pid does not need to be regenerated, but simply retrieved from the cache</p>
+    <div class="summary-synopsis"><p>Module provides access to a game server pid cache. Pid <code>caching</code> prevents a <a href="Game.Server.html"><code>Game.Server</code></a> process from having to be created every time. Upon game server startup, the new pid is stored into the pid cache.<br />Upon successive game plays with the same game server, the pid does not need to be regenerated, but simply retrieved from the cache</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.Server.html">Game.Server</a></div>
   
-    <div class="summary-synopsis"><p>Module implements <code>Hangman</code> <a href="Game.html"><code>Game</code></a> server. Each player's active game state is maintained, until the player process exits</p>
+    <div class="summary-synopsis"><p>Module handles <code>Hangman</code> <a href="Game.html"><code>Game</code></a> serving to multiple clients.<br />Each player's active game state is maintained, until the player process exits</p>
 </div>
   
 </div>
@@ -221,7 +221,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Player.html">Player</a></div>
   
-    <div class="summary-synopsis"><p>Module for creating players and using them to engage with the game server. Handles choosing letters, guessing letters and words</p>
+    <div class="summary-synopsis"><p>Module for creating players and maximizing our winning chances in conjunction with the player strategy against the 'implicit' other player the <code>game server</code>. Handles choosing letters, guessing letters and words</p>
 </div>
   
 </div>
@@ -284,7 +284,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Round.html">Round</a></div>
   
-    <div class="summary-synopsis"><p>Module provides access to <code>Hangman</code> guessing round functions</p>
+    <div class="summary-synopsis"><p>Module provides access to game round functions</p>
 </div>
   
 </div>

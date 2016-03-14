@@ -22,6 +22,9 @@ defmodule CLI do
   -n (player id) -t ("human" or "robot") -r (num random secrets, max 10)
   [-s (hangman word(s)) -bl] [-l -d]`
 
+  NOTE: Should a player submit a secret hangman word that does not actually
+  reside in the `Dictionary.Cache` the entire game will currently be 
+  prematurely aborted.
   """
 
 

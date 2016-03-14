@@ -4,9 +4,14 @@ defmodule Game.Pid.Cache do
   @moduledoc """
   Module provides access to a game server pid cache.  Pid `caching`
   prevents a `Game.Server` process from having to be created every time. 
-  Upon game server startup, the new pid is stored
-  into the pid cache.  Upon successive game plays with the same game server,
-  the pid does not need to be regenerated, but simply retrieved from the cache.
+  Upon game server startup, the new pid is stored into the pid cache.  
+  Upon successive game plays with the same game server, the pid does not need
+  to be regenerated, but simply retrieved from the cache.
+
+  Note: Currently, the `Game.Pid.Cache` maps one player_name to one game server.
+  Thus effectively preventing a single game server from supporting multiple 
+  unique players.  The simple idea for now, is to have multiple tiny game 
+  servers map to multiple tiny players
   """
   
   require Logger
@@ -33,8 +38,7 @@ defmodule Game.Pid.Cache do
   """
   
   @spec get_server_pid(name :: String.t, args :: String.t) :: pid
-  def get_server_pid(player_name, secret) do
-    
+  def get_server_pid(player_name, secret) do    
     case Game.Server.whereis(player_name) do
       :undefined ->
         GenServer.call(@name, {:get_server, player_name, secret})

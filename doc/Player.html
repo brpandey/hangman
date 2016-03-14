@@ -73,9 +73,11 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module for creating players and using them to engage with the game server. Handles choosing letters, guessing letters and words.</p>
+          <p>Module for creating players and maximizing our winning chances in conjunction with the player strategy against the 'implicit' other player the <code>game server</code>. Handles choosing letters, guessing letters and words.</p>
+<p>In <code>Hangman</code> we have two players. One explict - the one guessing, the other implicit, 'the game', 'the user tracking the penalties', or 'the stumper stumping the guesser with hard words'. In this instance the <a href="Player.html#content"><code>Player</code></a> is merely the user making and choosing the guess selections.</p>
+<p>The <code>human</code> player is given the choice of the top letter choices to choose from and is able to make an interactive guess. The <code>robot</code> player is reliant on the game strategy to automatically self select the best guess.</p>
 <p>Player is one of four modules that drive the game play mechanics, the others being <a href="Round.html"><code>Round</code></a>, <a href="Strategy.html"><code>Strategy</code></a> and <a href="Action.html"><code>Action</code></a>.</p>
-<p>Player encapsulates the data used along with Strategy data. <a href="Round.html"><code>Round</code></a> functionality extends the scope of the player to handle the actual game details.</p>
+<p>Player encapsulates the data used along with Strategy data. <a href="Round.html"><code>Round</code></a> functionality extends the scope of the player to handle the actual game round details.</p>
 
         </section>
       
@@ -326,7 +328,7 @@
     </a>
     <span class="signature">choices(p, directive, options \\ nil)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-178" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-188" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -353,7 +355,7 @@
     </a>
     <span class="signature">delete(p)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-305" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-315" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -380,7 +382,7 @@
     </a>
     <span class="signature">game_lost?(p)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-90" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-100" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -407,7 +409,7 @@
     </a>
     <span class="signature">game_won?(p)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-82" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-92" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -434,7 +436,7 @@
     </a>
     <span class="signature">games_over?(p)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-97" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-107" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -461,7 +463,7 @@
     </a>
     <span class="signature">games_summary(args)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-105" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-115" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -488,7 +490,7 @@
     </a>
     <span class="signature">guess(p)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-211" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-221" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -506,7 +508,7 @@
     </a>
     <span class="signature">guess(p, guess)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-223" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-233" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -537,7 +539,7 @@
     </a>
     <span class="signature">human()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-39" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-49" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -554,7 +556,7 @@
     </a>
     <span class="signature">info(p)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-311" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-321" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -580,7 +582,7 @@
     </a>
     <span class="signature">last_word?(p)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-70" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-80" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -607,7 +609,7 @@
     </a>
     <span class="signature">new(name, type, game_pid, event_pid)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-50" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-60" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -634,7 +636,7 @@
     </a>
     <span class="signature">robot()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-40" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-50" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -651,7 +653,7 @@
     </a>
     <span class="signature">start(p)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-144" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-154" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -679,7 +681,7 @@
     </a>
     <span class="signature">status(p, atom)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-123" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-133" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
