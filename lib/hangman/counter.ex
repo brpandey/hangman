@@ -1,14 +1,36 @@
 defmodule Counter do
   @moduledoc """
 
-  Module implements a set of functions for working 
-  with letter frequency tallies.
-
+  Module for creating and using letter frequency tallies.
+  Contains a set of functions for tallies, such as adding 
+  letters, words, lists, and streams, and retrieving their
+  most common letters.
+  
   Conventional `Hangman` strategy deals exclusively with 
   letter frequency data.
-
+  
   `Counter` is a key value store where a `key` 
   is a letter string and a `value` is a positive integer.
+
+  ## Examples
+
+      iex> tally = Counter.new
+      #Counter<[]>
+
+      iex> tally = Counter.add_unique_letters(tally, "mississippi")
+      #Counter<[{"i", 1}, {"m", 1}, {"p", 1}, {"s", 1}]>
+
+      iex> Counter.most_common(tally, 5)
+      [{"i", 1}, {"m", 1}, {"p", 1}, {"s", 1}]
+
+      iex> tally = Counter.new                                     
+      #Counter<[]>
+
+      iex> tally = Counter.add_letters(tally, "mississippi")
+      #Counter<[{"i", 4}, {"m", 1}, {"p", 2}, {"s", 4}]>
+
+      iex> Counter.most_common(tally, 5)
+      [{"i", 4}, {"s", 4}, {"p", 2}, {"m", 1}]
   """
 
   @doc false

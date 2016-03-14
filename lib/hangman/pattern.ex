@@ -1,6 +1,22 @@
 defmodule Pattern do
   @moduledoc """
   Module handles `Hangman` pattern updates given guessed `letter`.
+
+  Given an initial starting state of `-------` and given a letter `a`, 
+  it will update the pattern to `a---a--`. 
+
+  After letters `o`, and `d`, we are two letters shy of `avocado`.
+
+  ## Example
+      iex> p = Pattern.update "-------", "avocado",  "a"
+      "a---a--"
+
+      iex> p = Pattern.update p, "avocado",  "o"        
+      "a-o-a-o"
+
+      iex> p = Pattern.update p, "avocado",  "d"
+      "a-o-ado"
+
   """
 
   @doc """
@@ -37,5 +53,3 @@ defmodule Pattern do
   end
 
 end
-
-#Pattern.update "-------", "beloved",  "e"
