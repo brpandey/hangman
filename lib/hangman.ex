@@ -6,7 +6,7 @@ defmodule Hangman.Application do
 
   From `Wikipedia`
 
-  Hangman is a paper and pencil guessing game for two or more players. 
+  `Hangman` is a paper and pencil guessing game for two or more players. 
   One player thinks of a word, phrase or sentence and the other tries 
   to guess it by suggesting letters or numbers, within a certain number of 
   guesses.
@@ -30,10 +30,10 @@ defmodule Hangman.Application do
   win by guessing all the letters or numbers that appears in the word, thereby 
   completing the word, before the diagram is completed.
   
-  The game show `Wheel of Fortune` is based on Hangman, but with 
+  The game show `Wheel of Fortune` is based on `Hangman`, but with 
   the addition of a roulette-styled wheel and cash is awarded for each letter.
 
-  NOTE: The game implementation of Hangman has removed the ability to guess
+  NOTE: The game implementation of `Hangman` has removed the ability to guess
   the word at any time, but only at the end. No visual depiction of a man is 
   drawn, simply the word represented by a row of dashes.
   

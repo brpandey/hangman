@@ -9,8 +9,8 @@ defmodule Round do
   obtaining the secret word length from the game server.  Next, we
   take steps to reduce the possible `Hangman` words set to narrow our 
   word choices.  From there on we choose the best letter to guess given
-  the knowledge we have of our words data set.  If we are a `:human', we
-  are given letter choices to pick, and if we are a ':robot', we trust our
+  the knowledge we have of our words data set.  If we are a `:human`, we
+  are given letter choices to pick, and if we are a `:robot`, we trust our
   friend `Strategy`. After a guess is made either by `:human` or `:robot` we
   update our round recordkeeping structures with the guess results and proceed
   for the next round -- to do it all over again.
