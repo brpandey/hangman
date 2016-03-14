@@ -6,12 +6,10 @@ defmodule Game.Server do
   require Logger
   
   @moduledoc """
-  Module implements `Hangman` `Game` server using `GenServer`.
-  Wraps `Game` abstraction as server state.  Runs 
-  each game play one at a time. Handles multiple games concurrently.
+  Module implements `Hangman` `Game` server.  Each player's active game
+  state is maintained, until the player process exit.
 
-  Interacts with client player through public interface and
-  maintains game state
+  Runs each game play one at a time and supports multiple games concurrently.
   """
   
   @type id :: String.t
@@ -287,6 +285,11 @@ defmodule Game.Server do
   Handles client pid down
   """
 
+  @docp """
+  Handles state cleanup when player client process exits. 
+  If normal exit, remove player from state. If not, keep player
+  game state around to inspect and potentially for retry.
+  """
 
   #@callback handle_info(term, tuple, t) :: tuple
 
@@ -296,8 +299,10 @@ defmodule Game.Server do
     # generate player key
     key = key(state, pid)
 
-    # remove player from active
-    state = remove(state, key)
+    # remove player from actives and games
+    # it was a normal exit, clean the state
+    state = remove(state, key, :actives)
+    state = remove(state, key, :games)
 
     Logger.debug("{:EXIT, _, :normal}, #{inspect state}")
 
@@ -305,8 +310,17 @@ defmodule Game.Server do
   end
 
 
-  def handle_info({:EXIT, _pid, _reason} = msg, state) do
+  def handle_info({:EXIT, pid, _reason} = msg, state) do
     Logger.debug "In Game.Server handle info, received EXIT abnormal msg: #{inspect msg}"
+
+    # remove player from actives
+    # keep the player state if we want to look at it, since
+    # it was an abnormal exit
+
+    # generate player key
+    key = key(state, pid)
+
+    state = remove(state, key, :actives)
 
     Logger.debug("{:EXIT, _, abnormal}, #{inspect state}")
     { :noreply, state }
@@ -477,9 +491,6 @@ defmodule Game.Server do
 
       true -> ""
 
-        # remove player from active
-#        Logger.debug("About to remove player pid from active list")
-#        state = remove(state, key)
     end
     
     state
@@ -490,11 +501,10 @@ defmodule Game.Server do
 
   # remove client pid from active pid list
 
-  @spec remove(t, Player.key) :: t
-  defp remove(state, {client_id, client_pid} = _key)
+  @spec remove(t, Player.key, atom) :: t
+  defp remove(state, {client_id, client_pid} = _key, :actives)
   when is_binary(client_id) and is_pid(client_pid) do
 
-    # Destructuring bind
     Logger.debug("About to remove player pid from active list")
 
     case Map.get(state.active_pids, client_pid) do
@@ -508,17 +518,7 @@ defmodule Game.Server do
         active_pids = Map.delete(state.active_pids, client_pid)
         state = Kernel.put_in(state.active_pids, active_pids)
 
-        ''' 
-        Leave game state there... until process terminates
-        # Second, Remove client game state from server games recordkeeping
-        # if it isn't there, raise error again
-        case Map.has_key?(state.games, client_id) do
-          false -> raise HangmanError, "Can't remove game state that doesn't exist"
-          true -> 
-            games = Map.delete(state.games, client_id)
-            state = Kernel.put_in(state.games, games)
-        end
-        '''
+        
       _ ->
         # We have the pid but it has a different id_key! flag error
         raise HangmanError, "Client pid found, but different Client id. Strange!"
@@ -530,4 +530,23 @@ defmodule Game.Server do
 
     state
   end
+
+
+  defp remove(state, {client_id, _client_pid} = _key, :games)
+  when is_binary(client_id) do
+
+    Logger.debug("About to remove player state from games")
+
+    # Remove client game state from server games recordkeeping
+    # if it isn't there, raise error
+
+    case Map.has_key?(state.games, client_id) do
+      false -> raise HangmanError, "Can't remove game state that doesn't exist"
+      true -> 
+        games = Map.delete(state.games, client_id)
+        state = Kernel.put_in(state.games, games)
+    end
+
+  end
+
 end
