@@ -2,12 +2,11 @@ defmodule Game.Pid.Cache do
   use GenServer
   
   @moduledoc """
-  Module implements `GenServer` functionality to 
-  provide `Game.Server` pid caching.  Ultimately relies
-  on the `gproc` module to administer `registry` facilities.
-
-  Pid `caching` prevents a `Game.Server` process
-  from having to be loaded from scratch on every use
+  Module provides access to a game server pid cache.  Pid `caching`
+  prevents a `Game.Server` process from having to be created every time. 
+  Upon game server startup, the new pid is stored
+  into the pid cache.  Upon successive game plays with the same game server,
+  the pid does not need to be regenerated, but simply retrieved from the cache.
   """
   
   require Logger

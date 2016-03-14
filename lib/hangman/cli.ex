@@ -1,16 +1,16 @@
 defmodule CLI do
   @moduledoc """
 
-  Module handles command line interpreter interface
-  to application.
+  Module provides a command line interpreter interface
+  to the `Hangman` application.
 
-  Able to run interactive human games with manually specified
-  secrets and also able to run human and robot games with 
+  Runs interactive human games with manually specified
+  secrets and also runs human and robot games with 
   randomly generated secrets.
 
   Robot games are auto-guessed based on simple strategy heuristics.
 
-  Game archival can be captured through logging, e.g. --log option
+  Player game archival can be captured through logging, e.g. --log option
 
   `Usage:
   --name (player id) --type ("human" or "robot") --random (num random secrets, max 10)

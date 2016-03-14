@@ -1,8 +1,13 @@
 defmodule Player do
   @moduledoc """
-  Module handles `Player` abstraction and defines `Player` type.
-  Implements `player` functionality to choose letters, guess letters and words.
-  Heavily relies upon `Round` and `Action`.
+  Module for creating players and using them to engage with the game server.
+  Handles choosing letters, guessing letters and words.
+
+  Player is one of four modules that drive the game play mechanics, the others 
+  being `Round`, `Strategy` and `Action`.
+
+  Player encapsulates the data used along with Strategy data. `Round` functionality
+  extends the scope of the player to handle the actual game details.
   """
 
   defstruct name: "", pid: nil,

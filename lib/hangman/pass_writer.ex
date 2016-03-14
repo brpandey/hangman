@@ -1,16 +1,13 @@
 defmodule Pass.Writer do
   
   @moduledoc """
-  Module implements words `pass` write functionality into the `Pass.Cache` `ETS` table.
+  Module is responsible for words `pass` writes into the `Pass.Cache` table. 
+  The write `load` is handled through the `Pass.Writer.Pool`. It distributes
+  `write/2` request based on `pass` key id attribute to `workers`.
 
-  Write `load` is handled through `Pass.Writer.Pool`.
-
-  `Distributes` `write/2` request based on `pass` key id attribute to `workers`.
-
-  Pool supervisor supervises writer workers, which are each responsible for
-  the write operations.
-
-  Primary `writer` worker method is `Pass.Writer.Worker.write/3`
+  The writer pool supervisor supervises the workers, which are each 
+  responsible for the write operations. The primary `writer` worker 
+  method is `Pass.Writer.Worker.write/3`
   """
     
   @pool_size 10

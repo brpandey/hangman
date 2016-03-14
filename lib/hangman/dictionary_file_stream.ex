@@ -1,7 +1,7 @@
 defmodule Dictionary.File.Stream do
   @moduledoc """
   Module for accessing input file stream for 
-  various `Dictionary.File` transformed types ranging
+  various original and transformed dictionary file types ranging
   from `unsorted`, `sorted`, `grouped`, `chunked`
   """
 

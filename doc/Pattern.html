@@ -74,6 +74,17 @@
       
         <section id="moduledoc" class="docstring">
           <p>Module handles <code>Hangman</code> pattern updates given guessed <code>letter</code>.</p>
+<p>Given an initial starting state of <code>-------</code> and given a letter <code>a</code>, it will update the pattern to <code>a---a--</code>.</p>
+<p>After letters <code>o</code>, and <code>d</code>, we are two letters shy of <code>avocado</code>.</p>
+<h2 id="example">Example</h2>
+<pre><code class="iex elixir">iex&gt; p = Pattern.update &quot;-------&quot;, &quot;avocado&quot;,  &quot;a&quot;
+&quot;a---a--&quot;
+
+iex&gt; p = Pattern.update p, &quot;avocado&quot;,  &quot;o&quot;        
+&quot;a-o-a-o&quot;
+
+iex&gt; p = Pattern.update p, &quot;avocado&quot;,  &quot;d&quot;
+&quot;a-o-ado&quot;</code></pre>
 
         </section>
       
@@ -130,7 +141,7 @@
     </a>
     <span class="signature">update(pattern, secret, letter)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pattern.ex#cl-11" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pattern.ex#cl-27" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

@@ -2,11 +2,14 @@ defmodule Reduction.Engine.Worker do
   use GenServer
 
   @moduledoc """
-  Module is a worker `GenServer` that implements `Hangman` words reduction, 
-  primarily through `reduce_and_store/4`.
+  Module implements workers that handle `Hangman` words reduction.
+  Used primarily by `Reduction.Engine` through `reduce_and_store/4` to perform
+  a series of steps:
 
-  Retrieves `pass` data from `Pass.Cache`. Reduces word set based on `reduce_key`.
-  Stores reduced set back into `Pass.Cache`.  Returns new `Pass`.
+    * Retrieves `pass` data from `Pass.Cache`. 
+    * Reduces word set based on `reduce_key`.
+    * Stores reduced set back into `Pass.Cache`.  
+    * Returns new `Pass`.
   """
 
   require Logger

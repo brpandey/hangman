@@ -2,16 +2,22 @@ defmodule Pass.Cache do
   use GenServer
 
   @moduledoc """
-  Given a player, a game and round number, `Pass.Cache` maintains a words pass `cache`.
+  Module provides cache access to the game words pass.
+  Given a player, a game and round number, `Pass.Cache` maintains a words pass `cache`
+  of current word passes.
 
-  Internally the module implements a `GenServer` which uses `ETS`.
+  Given a new `Hangman` game, initially the words pass is the size of all words
+  in the dictionary of secret length k.  As each round proceeds, this is reduced by the 
+  `Hangman` pattern sequence.  It is these remaining possible word set instances
+  that are stored in the cache.
 
   After each player has made their `Hangman` round guess, the resultant reduced
   words `pass` data is stored into the `Pass.Cache` for access on the 
   subsequent round.  The expired `pass` data from stale rounds is subsequently 
   removed from the `cache`.
 
-  `Pass.Cache` performs `unserialized` reads and uses type `key` for cache  `get/2` and `get/3`. 
+  `Pass.Cache` performs `unserialized` reads and uses type `key` for 
+  cache  `get/2` and `get/3`. 
   """
 
   require Logger

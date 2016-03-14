@@ -1,8 +1,10 @@
 defmodule Dictionary do
 
   @moduledoc """
-  Module defines `Dictionary` common attributes and types
-  functionality. Serves as a central point to access or update such attributes
+  Module defines `Dictionary` common attributes and types. 
+  Serves as a central point to access or update such attributes
+
+  Used in `Dictionary.Cache`, `Dictionary.File`, `Dictionary.File.Stream`
   """
 
   @type transform :: :unsorted | :sorted | :grouped | :chunked

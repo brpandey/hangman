@@ -73,8 +73,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module is a <code>GenServer</code> that implements writer worker functionality. Specifically, Pass.Writer.Worker is a <code>write-operation</code> specific module that performs <code>async</code> writes into <a href="Pass.Cache.html"><code>Pass.Cache</code></a> <code>ETS</code> table.</p>
-<p>If the <a href="Pass.Writer.Worker.html#write/3"><code>Pass.Writer.Worker.write/3</code></a> operation fails for whatever reason, it doesn't bring down the table-owning <a href="Pass.Cache.html"><code>Pass.Cache</code></a> process and interrupt cache reads. Hence the separation. The primary module method is <a href="Pass.Writer.Worker.html#write/3"><code>Pass.Writer.Worker.write/3</code></a></p>
+          <p>Module handles writer worker functionality used by <a href="Pass.Writer.html"><code>Pass.Writer</code></a>. Specifically, <a href="Pass.Writer.Worker.html#content"><code>Pass.Writer.Worker</code></a> is a <code>write-operation</code> specific module that performs <code>async</code> writes into <a href="Pass.Cache.html"><code>Pass.Cache</code></a> <code>ETS</code> table.</p>
+<p>If the <a href="#write/3"><code>write/3</code></a> operation fails for whatever reason, it doesn't bring down the table-owning <a href="Pass.Cache.html"><code>Pass.Cache</code></a> process and interrupt cache reads. Hence the separation. The primary module method is <a href="#write/3"><code>write/3</code></a></p>
 
         </section>
       
@@ -146,7 +146,7 @@
     </a>
     <span class="signature">start_link(worker_id)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-25" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-24" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -163,7 +163,7 @@
     </a>
     <span class="signature">stop(pid)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-38" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-37" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -190,7 +190,7 @@
     </a>
     <span class="signature">write(worker_id, pass_key, chunks)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-48" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer_worker.ex#cl-47" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

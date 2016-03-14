@@ -1,9 +1,9 @@
 defmodule Player.Events do
   @moduledoc """
-  Module implements `GenEvent` manager for use with `player`.
+  Module handles player event manager.
 
-  Handles writing of `event` notification data to a `player` log file or
-  displaying them as a `feed` to the user
+  Provides access to write `event` notification data to a `player` log file or
+  to a displayed user `feed`.
   """
 
   require Logger

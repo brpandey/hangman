@@ -73,11 +73,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements words <code>pass</code> write functionality into the <a href="Pass.Cache.html"><code>Pass.Cache</code></a> <code>ETS</code> table.</p>
-<p>Write <code>load</code> is handled through <a href="Pass.Writer.Pool.html"><code>Pass.Writer.Pool</code></a>.</p>
-<p><code>Distributes</code> <a href="#write/2"><code>write/2</code></a> request based on <code>pass</code> key id attribute to <code>workers</code>.</p>
-<p>Pool supervisor supervises writer workers, which are each responsible for the write operations.</p>
-<p>Primary <code>writer</code> worker method is <a href="Pass.Writer.Worker.html#write/3"><code>Pass.Writer.Worker.write/3</code></a></p>
+          <p>Module is responsible for words <code>pass</code> writes into the <a href="Pass.Cache.html"><code>Pass.Cache</code></a> table. The write <code>load</code> is handled through the <a href="Pass.Writer.Pool.html"><code>Pass.Writer.Pool</code></a>. It distributes <a href="#write/2"><code>write/2</code></a> request based on <code>pass</code> key id attribute to <code>workers</code>.</p>
+<p>The writer pool supervisor supervises the workers, which are each responsible for the write operations. The primary <code>writer</code> worker method is <a href="Pass.Writer.Worker.html#write/3"><code>Pass.Writer.Worker.write/3</code></a></p>
 
         </section>
       
@@ -143,7 +140,7 @@
     </a>
     <span class="signature">start_link()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-24" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-21" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -170,7 +167,7 @@
     </a>
     <span class="signature">write(pass_key, chunks)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-35" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-32" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

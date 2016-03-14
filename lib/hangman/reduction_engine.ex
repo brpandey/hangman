@@ -1,7 +1,7 @@
 defmodule Reduction.Engine do
 
   @moduledoc """
-  Module implements words reduction engine.  
+  Module provides access to the words reduction engine.  
   
   Reduces possible `Hangman` words set based on the provided reduce `key`.  Reduction 
   `load` is handled through `Reduction.Engine.Pool`.

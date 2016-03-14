@@ -1,18 +1,22 @@
 defmodule Dictionary.File do
   @moduledoc """
-  Provides abstraction for various `Dictionary` files.
+  Provides routines to generate various intermediate and
+  cached `Dictionary` files.
 
   The original `Dictionary` file is transformed into 
-  intermediate files as cached representations of each
-  transformation layer. Unless the original file changes, transformation 
-  every time isn't necessary since the intermediate files are stored on disk.  
+  intermediary representations. Given an original dictionary file f1, this 
+  file may be transformed a few times until it is suitable to be loaded 
+  into `ETS`.  E.g. `f1` -> `f2` -> `f3` -> `f4`.
 
-  Load time is only determined by the last transformed chunk file, 
+  This sequence of transforms is done initially and does not need to be repeated unless
+  the original file changes.
+
+  Dictionary word load time is only determined by the last transformed file `f4`, 
   which is optimized for `ETS` load.
 
-  Transformation types are `unsorted` to `sorted`, 
-  `sorted` to `grouped`, and `grouped` to `chunked`.  Each transform handler 
-  encapsulates each transform procedure
+  Transformation types are `unsorted` to `sorted`, `sorted` to `grouped`, 
+  and `grouped` to `chunked`.  Each transform handler encapsulates each 
+  transform procedure
   """
 
   alias Dictionary, as: Dict

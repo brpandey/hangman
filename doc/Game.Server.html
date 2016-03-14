@@ -73,8 +73,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements <code>Hangman</code> <a href="Game.html"><code>Game</code></a> server using <code>GenServer</code>. Wraps <a href="Game.html"><code>Game</code></a> abstraction as server state. Runs each <code>game</code> or set of <code>games</code> sequentially</p>
-<p>Interacts with client <code>player</code> through public interface and maintains <code>game</code> state</p>
+          <p>Module implements <code>Hangman</code> <a href="Game.html"><code>Game</code></a> server. Each player's active game state is maintained, until the player process exits.</p>
+<p>Runs each game one at a time and supports multiple games concurrently.</p>
 
         </section>
       
@@ -98,6 +98,12 @@
   </div>
   
 </div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t/0">t()</a>
+  </div>
+  
+</div>
 
   </div>
 
@@ -109,7 +115,7 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#guess/2">guess(game_pid, arg)</a>
+    <a href="#guess/3">guess(game_pid, key, arg)</a>
   </div>
   
     <div class="summary-synopsis"><p>Issues guess <code>letter</code> or <code>word</code> request, returns guess <code>result</code></p>
@@ -118,25 +124,25 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#initiate_and_length/2">initiate_and_length(game_pid, key)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Initiates link with client and return secret length Retrieves <a href="Game.html"><code>Game</code></a> secret length</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#load/4">load(game_pid, id_key, secret, max_wrong \\ 5)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Loads new <code>game</code> into server process. Used primarily by <a href="Game.Pid.Cache.html"><code>Game.Pid.Cache</code></a></p>
+    <div class="summary-synopsis"><p>Loads new <code>game</code> into server process state. Used primarily by <a href="Game.Pid.Cache.html"><code>Game.Pid.Cache</code></a></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#secret_length/1">secret_length(game_pid)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Retrieves <a href="Game.html"><code>Game</code></a> secret length</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#start_link/3">start_link(player_name, secret, max_wrong \\ 5)</a>
+    <a href="#start_link/3">start_link(id_key, secret, max_wrong \\ 5)</a>
   </div>
   
     <div class="summary-synopsis"><p>Start public interface method with <code>secret(s)</code></p>
@@ -145,7 +151,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#status/1">status(game_pid)</a>
+    <a href="#status/2">status(game_pid, key)</a>
   </div>
   
     <div class="summary-synopsis"><p>Retrieves <a href="Game.html"><code>Game</code></a> status data</p>
@@ -194,6 +200,10 @@
   <pre><code class="elixir"><a href="#t:id/0">id</a> :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a></code></pre>
   
 </div>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
+  
+</div>
 
           </div>
         </section>
@@ -207,14 +217,14 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="guess/2">
+          <div class="detail" id="guess/3">
   <div class="detail-header">
-    <a href="#guess/2" class="detail-link" title="Link to this function">
+    <a href="#guess/3" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">guess(game_pid, arg)</span>
+    <span class="signature">guess(game_pid, key, arg)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-91" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-99" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -224,7 +234,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">guess(pid, <a href="Guess.html#t:t/0">Guess.t</a>) :: tuple</code></pre>
+          <pre><code class="elixir">guess(pid, <a href="Player.html#t:key/0">Player.key</a>, <a href="Guess.html#t:t/0">Guess.t</a>) :: tuple</code></pre>
         
       </div>
     </div>
@@ -240,6 +250,33 @@
 
   </section>
 </div>
+<div class="detail" id="initiate_and_length/2">
+  <div class="detail-header">
+    <a href="#initiate_and_length/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">initiate_and_length(game_pid, key)</span>
+      
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-124" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">initiate_and_length(pid, <a href="Player.html#t:key/0">Player.key</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Initiates link with client and return secret length Retrieves <a href="Game.html"><code>Game</code></a> secret length</p>
+
+  </section>
+</div>
 <div class="detail" id="load/4">
   <div class="detail-header">
     <a href="#load/4" class="detail-link" title="Link to this function">
@@ -247,7 +284,7 @@
     </a>
     <span class="signature">load(game_pid, id_key, secret, max_wrong \\ 5)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-62" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-70" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -263,34 +300,7 @@
     </div>
   
   <section class="docstring">
-    <p>Loads new <code>game</code> into server process. Used primarily by <a href="Game.Pid.Cache.html"><code>Game.Pid.Cache</code></a></p>
-
-  </section>
-</div>
-<div class="detail" id="secret_length/1">
-  <div class="detail-header">
-    <a href="#secret_length/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">secret_length(game_pid)</span>
-      
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-115" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">secret_length(pid) :: tuple</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Retrieves <a href="Game.html"><code>Game</code></a> secret length</p>
+    <p>Loads new <code>game</code> into server process state. Used primarily by <a href="Game.Pid.Cache.html"><code>Game.Pid.Cache</code></a></p>
 
   </section>
 </div>
@@ -299,9 +309,9 @@
     <a href="#start_link/3" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">start_link(player_name, secret, max_wrong \\ 5)</span>
+    <span class="signature">start_link(id_key, secret, max_wrong \\ 5)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-32" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-34" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -311,7 +321,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">start_link(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], pos_integer) :: {:ok, pid}</code></pre>
+          <pre><code class="elixir">start_link(<a href="#t:id/0">id</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], pos_integer) :: {:ok, pid}</code></pre>
         
       </div>
     </div>
@@ -321,14 +331,14 @@
 
   </section>
 </div>
-<div class="detail" id="status/1">
+<div class="detail" id="status/2">
   <div class="detail-header">
-    <a href="#status/1" class="detail-link" title="Link to this function">
+    <a href="#status/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">status(game_pid)</span>
+    <span class="signature">status(game_pid, key)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-106" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-114" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -338,7 +348,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">status(pid) :: tuple</code></pre>
+          <pre><code class="elixir">status(pid, <a href="Player.html#t:key/0">Player.key</a>) :: tuple</code></pre>
         
       </div>
     </div>
@@ -355,7 +365,7 @@
     </a>
     <span class="signature">stop(game_pid)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-130" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-139" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -382,7 +392,7 @@
     </a>
     <span class="signature">whereis(id_key)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-46" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server.ex#cl-54" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

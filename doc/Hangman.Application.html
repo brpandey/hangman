@@ -64,8 +64,6 @@
         <small class="visible-xs">Hangman v0.9.1</small>
         Hangman.Application
         
-          <small>behaviour</small>
-        
         
           <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman.ex#cl-1" title="View Source" class="view-source" rel="help">
             <i class="icon-code"></i>
@@ -76,6 +74,14 @@
       
         <section id="moduledoc" class="docstring">
           <p>Main <code>Hangman</code> application.</p>
+<p>From <code>Wikipedia</code></p>
+<p>Hangman is a paper and pencil guessing game for two or more players. One player thinks of a word, phrase or sentence and the other tries to guess it by suggesting letters or numbers, within a certain number of guesses.</p>
+<p>The word to guess is represented by a row of dashes, representing each letter of the word. In most variants, proper nouns, such as names, places, and brands, are not allowed.</p>
+<p>If the guessing player suggests a letter which occurs in the word, the other player writes it in all its correct positions. If the suggested letter or number does not occur in the word, the other player draws one element of a hanged man stick figure as a tally mark.</p>
+<p>The player guessing the word may, at any time, attempt to guess the whole word. If the word is correct, the game is over and the guesser wins.</p>
+<p>Otherwise, the other player may choose to penalize the guesser by adding an element to the diagram. On the other hand, if the other player makes enough incorrect guesses to allow his opponent to complete the diagram, the game is also over, this time with the guesser losing. However, the guesser can also win by guessing all the letters or numbers that appears in the word, thereby completing the word, before the diagram is completed.</p>
+<p>The game show <code>Wheel of Fortune</code> is based on Hangman, but with the addition of a roulette-styled wheel and cash is awarded for each letter.</p>
+<p>NOTE: The game implementation of Hangman has removed the ability to guess the word at any time, but only at the end. No visual depiction of a man is drawn, simply the word represented by a row of dashes.</p>
 <p><code>Usage: --name (player id) --type (&quot;human&quot; or &quot;robot&quot;) --random (num random secrets, max 10) [--secret (hangman word(s)) --baseline] [--log --display]</code></p>
 <p>or</p>
 <p><code>Aliase Usage:  -n (player id) -t (&quot;human&quot; or &quot;robot&quot;) -r (num random secrets, max 10) [-s (hangman word(s)) -bl] [-l -d]</code></p>
@@ -114,22 +120,6 @@
           
 
           
-  <div class="summary-callbacks summary">
-    <h2>
-      <a href="#callbacks">Callbacks</a>
-    </h2>
-    <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:start/2">start(term, arg1)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Main <code>application</code> callback start method. Calls <code>Root.Supervisor</code></p>
-</div>
-  
-</div>
-
-  </div>
-
 
         </section>
       
@@ -151,7 +141,7 @@
     </a>
     <span class="signature">start(type, args)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman.ex#cl-27" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman.ex#cl-61" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -168,43 +158,6 @@
 
       
 
-      
-        <section id="callbacks" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#callbacks">
-              <i class="icon-link"></i>
-            </a>
-            Callbacks
-          </h1>
-          <div class="detail" id="c:start/2">
-  <div class="detail-header">
-    <a href="#c:start/2" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">start(term, arg1)</span>
-      
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman.ex#cl-26" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">start(term, <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Supervisor.html#t:on_start/0">Supervisor.on_start</a></code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Main <code>application</code> callback start method. Calls <code>Root.Supervisor</code></p>
-
-  </section>
-</div>
-
-        </section>
       
         <footer class="footer">
       <p>

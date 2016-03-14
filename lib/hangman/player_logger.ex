@@ -3,7 +3,6 @@ defmodule Player.Logger.Handler do
 
   @moduledoc """
   Module implements event logger handler for `Player.Events`.
- 
   Each `event` is logged to a file named after the player `id`.
   """
 

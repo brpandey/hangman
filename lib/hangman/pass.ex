@@ -1,6 +1,6 @@
 defmodule Pass do
   @moduledoc """
-  Module defines words `Pass.key` and `Pass.t`
+  Module defines types `Pass.key` and `Pass.t`
   """
 
   defstruct size: 0, tally: %{}, possible: "", last_word: ""

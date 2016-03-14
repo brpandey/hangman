@@ -73,9 +73,27 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements a set of functions for working with letter frequency tallies.</p>
+          <p>Module for creating and using letter frequency tallies. Contains a set of functions for tallies, such as adding letters, words, lists, and streams, and retrieving their most common letters.</p>
 <p>Conventional <code>Hangman</code> strategy deals exclusively with letter frequency data.</p>
 <p><a href="Counter.html#content"><code>Counter</code></a> is a key value store where a <code>key</code> is a letter string and a <code>value</code> is a positive integer.</p>
+<h2 id="examples">Examples</h2>
+<pre><code class="iex elixir">iex&gt; tally = Counter.new
+#Counter&lt;[]&gt;
+
+iex&gt; tally = Counter.add_unique_letters(tally, &quot;mississippi&quot;)
+#Counter&lt;[{&quot;i&quot;, 1}, {&quot;m&quot;, 1}, {&quot;p&quot;, 1}, {&quot;s&quot;, 1}]&gt;
+
+iex&gt; Counter.most_common(tally, 5)
+[{&quot;i&quot;, 1}, {&quot;m&quot;, 1}, {&quot;p&quot;, 1}, {&quot;s&quot;, 1}]
+
+iex&gt; tally = Counter.new                                     
+#Counter&lt;[]&gt;
+
+iex&gt; tally = Counter.add_letters(tally, &quot;mississippi&quot;)
+#Counter&lt;[{&quot;i&quot;, 4}, {&quot;m&quot;, 1}, {&quot;p&quot;, 2}, {&quot;s&quot;, 4}]&gt;
+
+iex&gt; Counter.most_common(tally, 5)
+[{&quot;i&quot;, 4}, {&quot;s&quot;, 4}, {&quot;p&quot;, 2}, {&quot;m&quot;, 1}]</code></pre>
 
         </section>
       
@@ -295,7 +313,7 @@
     </a>
     <span class="signature">add_letters(counter, word)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-119" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-141" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -322,7 +340,7 @@
     </a>
     <span class="signature">add_unique_letters(counter, word)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-152" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-174" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -349,7 +367,7 @@
     </a>
     <span class="signature">add_words(counter, words)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-170" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-192" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -376,7 +394,7 @@
     </a>
     <span class="signature">add_words(counter, words_stream, exclusion_set)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-226" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-248" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -403,7 +421,7 @@
     </a>
     <span class="signature">delete(counter)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-260" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-282" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -420,7 +438,7 @@
     </a>
     <span class="signature">delete(counter, letters)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-251" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-273" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -447,7 +465,7 @@
     </a>
     <span class="signature">empty?(counter)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-70" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-92" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -474,7 +492,7 @@
     </a>
     <span class="signature">equal?(c1, c2)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-58" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-80" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -501,7 +519,7 @@
     </a>
     <span class="signature">inc_by(counter, key, value \\ 1)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-106" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-128" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -528,7 +546,7 @@
     </a>
     <span class="signature">items(counter)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-64" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-86" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -555,7 +573,7 @@
     </a>
     <span class="signature">most_common(counter, n)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-76" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-98" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -582,7 +600,7 @@
     </a>
     <span class="signature">most_common_key(counter, n)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-91" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-113" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -609,7 +627,7 @@
     </a>
     <span class="signature">new()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-31" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-53" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -627,7 +645,7 @@
     </a>
     <span class="signature">new(word)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-32" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-54" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

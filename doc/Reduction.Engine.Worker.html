@@ -75,8 +75,13 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module is a worker <code>GenServer</code> that implements <code>Hangman</code> words reduction, primarily through <a href="#reduce_and_store/4"><code>reduce_and_store/4</code></a>.</p>
-<p>Retrieves <code>pass</code> data from <a href="Pass.Cache.html"><code>Pass.Cache</code></a>. Reduces word set based on <code>reduce_key</code>. Stores reduced set back into <a href="Pass.Cache.html"><code>Pass.Cache</code></a>. Returns new <a href="Pass.html"><code>Pass</code></a>.</p>
+          <p>Module implements workers that handle <code>Hangman</code> words reduction. Used primarily by <a href="Reduction.Engine.html"><code>Reduction.Engine</code></a> through <a href="#reduce_and_store/4"><code>reduce_and_store/4</code></a> to perform a series of steps:</p>
+<ul>
+<li>Retrieves <code>pass</code> data from <a href="Pass.Cache.html"><code>Pass.Cache</code></a>.</li>
+<li>Reduces word set based on <code>reduce_key</code>.</li>
+<li>Stores reduced set back into <a href="Pass.Cache.html"><code>Pass.Cache</code></a>.<br /></li>
+<li>Returns new <a href="Pass.html"><code>Pass</code></a>.</li>
+</ul>
 
         </section>
       
@@ -158,7 +163,7 @@
     </a>
     <span class="signature">reduce_and_store(worker_id, pass_key, regex_key, exc)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-43" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-46" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -187,7 +192,7 @@
     </a>
     <span class="signature">start_link(worker_id)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-22" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-25" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -228,7 +233,7 @@
     </a>
     <span class="signature">terminate(term, term)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-66" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-69" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

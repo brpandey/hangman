@@ -73,9 +73,10 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module to implement <code>Hangman</code> game <code>round</code> abstraction.</p>
+          <p>Module provides access to <code>Hangman</code> guessing round functions.</p>
 <p>Works in conjuction with <a href="Strategy.html"><code>Strategy</code></a> and <a href="Game.Server.html"><code>Game.Server</code></a> to orchestrate actual <code>round</code> game play.</p>
-<p>Basic <a href="Round.html#content"><code>Round</code></a> functionality includes <a href="#setup/2"><code>setup/2</code></a>, <a href="#guess/2"><code>guess/2</code></a>, <a href="#update/3"><code>update/3</code></a>, <a href="#status/1"><code>status/1</code></a></p>
+<p>When playing a <code>Hangman</code> game, we first setup our round, which involves obtaining the secret word length from the game server. Next, we take steps to reduce the possible <code>Hangman</code> words set to narrow our word choices. From there on we choose the best letter to guess given the knowledge we have of our words data set. If we are a <code>:human', we are given letter choices to pick, and if we are a ':robot', we trust our friend [</code>Strategy<code>](Strategy.html). After a guess is made either by</code>:human<code>or</code>:robot` we update our round recordkeeping structures with the guess results and proceed for the next round -- to do it all over again.</p>
+<p>Basic <a href="Round.html#content"><code>Round</code></a> functionality includes <a href="#setup/2"><code>setup/2</code></a>, <a href="#guess/2"><code>guess/2</code></a>, <a href="#update/3"><code>update/3</code></a>, <a href="#status/1"><code>status/1</code></a>.</p>
 
         </section>
       
@@ -94,6 +95,12 @@
       <a href="#types">Types</a>
     </h2>
     <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:code/0">code()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature">
     <a href="#t:result/0">result()</a>
   </div>
@@ -200,8 +207,15 @@
             Types
           </h1>
           <div class="types-list">
-            <div id="t:result/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:result/0">result</a> :: {status_code :: :atom, status_txt :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}</code></pre>
+            <div id="t:code/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:code/0">code</a> ::
+  :correct_letter |
+  :incorrect_letter |
+  :incorrect_word</code></pre>
+  
+</div>
+<div id="t:result/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:result/0">result</a> :: {<a href="#t:code/0">code</a>, status :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}</code></pre>
   
 </div>
 <div id="t:t/0" class="type-detail">
@@ -228,7 +242,7 @@
     </a>
     <span class="signature">augment_choices(player, arg)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-134" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-149" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -255,7 +269,7 @@
     </a>
     <span class="signature">context(player)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-28" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-40" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -282,7 +296,7 @@
     </a>
     <span class="signature">guess(p, arg)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-157" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-172" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -310,7 +324,7 @@
     </a>
     <span class="signature">setup(player)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-76" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-88" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -330,7 +344,7 @@
     </a>
     <span class="signature">setup(player, context)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-80" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-92" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -356,7 +370,7 @@
     </a>
     <span class="signature">status(player)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-56" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-68" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -383,7 +397,7 @@
     </a>
     <span class="signature">update(player, round)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-210" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-225" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -400,7 +414,7 @@
     </a>
     <span class="signature">update(player, round, arg)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-196" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-211" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

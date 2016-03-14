@@ -1,16 +1,9 @@
 defmodule Action do
 
   @moduledoc """
-  Module encapsulates `Round` guess actions 
-  and the data associated with carrying them out. 
-
-  Uses function builder strategy to easily be
-  able to add new data retrievers, and updaters.
-
-  Data retrievers are `Strategy` methods.
-  Updaters are `Round` methods.
-
-  Relies on `Strategy` and `Round` to return updated `Player`.
+  Module for running round actions.  Actions encapsulate guessing actions
+  and the data associated with carrying them out. Uses a function builder
+  strategy to easily be able to add new data retrievers, and updaters.
   """
 
 

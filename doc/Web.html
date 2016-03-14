@@ -73,7 +73,25 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Implements <code>Hangman</code> http web server for playing <code>Hangman</code> games.</p>
+          <p>Module provides access to small and simple http web server for playing <code>Hangman</code> games via a tool such as curl or HTTPoison.</p>
+<h2 id="example">Example</h2>
+<pre><code class="iex elixir">iex&gt; HTTPoison.get(&quot;http://127.0.0.1:3737/play?name=julio&amp;secret=kiwi&quot;)
+
+{:ok,
+%HTTPoison.Response{body: &quot;(#) ----; score=1; status=KEEP_GUESSING (#) ----; score=2; status=KEEP_GUESSING (#) ----; score=3; status=KEEP_GUESSING (#) -I-I; score=4; status=KEEP_GUESSING (#) -I-I; score=5; status=KEEP_GUESSING (#) -I-I; score=6; status=KEEP_GUESSING (#) -I-I; score=25; status=GAME_LOST (#) Game Over! Average Score: 25.0, # Games: 1, Scores:  (KIWI: 25) &quot;,
+headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon, 14 Mar 2016 04:27:39 GMT&quot;},
+{&quot;content-length&quot;, &quot;345&quot;},
+{&quot;cache-control&quot;, &quot;max-age=0, private, must-revalidate&quot;},
+{&quot;content-type&quot;, &quot;text/plain; charset=utf-8&quot;}], status_code: 200}}
+
+iex&gt; HTTPoison.get(&quot;http://127.0.0.1:3737/play?name=julio&amp;random=2&quot;)
+
+{:ok,
+%HTTPoison.Response{body: &quot;(#) --E-----------; score=1; status=KEEP_GUESSING (#) --E--------O--; score=2; status=KEEP_GUESSING (#) --E--------O--; score=3; status=KEEP_GUESSING (#) --E----C---O--; score=4; status=KEEP_GUESSING (#) PREVARICATIONS; score=4; status=GAME_WON (#) ---------; score=1; status=KEEP_GUESSING (#) --A------; score=2; status=KEEP_GUESSING (#) -IA----I-; score=3; status=KEEP_GUESSING (#) -IA----I-; score=4; status=KEEP_GUESSING (#) -IAG---I-; score=5; status=KEEP_GUESSING (#) DIAGNOSIS; score=5; status=GAME_WON (#) Game Over! Average Score: 4.5, # Games: 2, Scores:  (PREVARICATIONS: 4) (DIAGNOSIS: 5) &quot;,
+headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon, 14 Mar 2016 04:29:05 GMT&quot;},
+{&quot;content-length&quot;, &quot;601&quot;},
+{&quot;cache-control&quot;, &quot;max-age=0, private, must-revalidate&quot;},
+{&quot;content-type&quot;, &quot;text/plain; charset=utf-8&quot;}], status_code: 200}}</code></pre>
 
         </section>
       
@@ -193,7 +211,7 @@
     </a>
     <span class="signature">run_game(conn)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-32" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-54" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -220,7 +238,7 @@
     </a>
     <span class="signature">start_server()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-12" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-34" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

@@ -4,13 +4,13 @@ defmodule Dictionary.Cache do
   require Logger
 
   @moduledoc """
-  Module loads `Dictionary.File` words into `chunks` and stores
-  into `ETS`.  Letter frequency `tallies` are computed and stored into `ETS`
-  upon startup. Words identified as `random` are tagged and stored.
+  Module provides access to a dictionary word cache. 
+  Provides lookup routines to access `chunks`, `tallys`, and `random` words.
 
-  Implements `GenServer`.
-
-  Provides lookup routines to access `chunks`, `tallys`, and `random` words
+  `Dictionary.Cache` loads dictionary words into `chunks` and stores them
+  into `ETS`.  Upon startup, letter frequency `tallies` are computed 
+  and stored into `ETS`. Words identified as `random` are tagged and 
+  stored as well.
   """
 
   alias Dictionary, as: Dict

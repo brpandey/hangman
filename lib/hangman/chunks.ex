@@ -2,14 +2,14 @@ defmodule Chunks do
   defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
   
   @moduledoc """
-  Module to handle word list `Chunks` for a given length key.  
-  Internally maintains standardized `containers` for word lists and 
-  keeps track of total word counts and number of `containers`.
-  
-  Splits big words list into smaller more manageable list `Chunks`.
-  
-  The need for chunking arises when we may have arbitrary long word
-  lists/streams, so we chunk the word list to a standard size of 500 words.  
+  Module to manage word list chunks for a given secret length key.  
+
+  The need for chunking arises when we have arbitrary long word
+  lists/streams, as it provides structure.
+
+  Chunks internally maintains standardized `containers` for word lists and 
+  keeps track of total word counts and number of `containers`. Splits big 
+  words list into smaller more manageable list `Chunks`.
   
   A single `Chunks` abstraction can contain a single chunked word list or 
   multiple chunked word lists.

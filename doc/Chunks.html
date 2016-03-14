@@ -73,9 +73,9 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module to handle word list <a href="Chunks.html#content"><code>Chunks</code></a> for a given length key.<br /> Internally maintains standardized <code>containers</code> for word lists and keeps track of total word counts and number of <code>containers</code>.</p>
-<p>Splits big words list into smaller more manageable list <a href="Chunks.html#content"><code>Chunks</code></a>.</p>
-<p>The need for chunking arises when we may have arbitrary long word lists/streams, so we chunk the word list to a standard size of 500 words.</p>
+          <p>Module to manage word list chunks for a given secret length key.</p>
+<p>The need for chunking arises when we have arbitrary long word lists/streams, as it provides structure.</p>
+<p>Chunks internally maintains standardized <code>containers</code> for word lists and keeps track of total word counts and number of <code>containers</code>. Splits big words list into smaller more manageable list <a href="Chunks.html#content"><code>Chunks</code></a>.</p>
 <p>A single <a href="Chunks.html#content"><code>Chunks</code></a> abstraction can contain a single chunked word list or multiple chunked word lists.</p>
 <p><a href="Chunks.html#content"><code>Chunks</code></a> provide more manageability especially when we store into the database because the abstraction automatically binaries data leaving a smaller footprint.</p>
 <p>Primary functions are <a href="#new/2"><code>new/2</code></a>, <a href="#count/1"><code>count/1</code></a>, <a href="#add/2"><code>add/2</code></a>, and <a href="#get_words_lazy/1"><code>get_words_lazy/1</code></a>.</p>

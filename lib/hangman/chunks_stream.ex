@@ -1,7 +1,7 @@
 defmodule Chunks.Stream do
   @moduledoc """
-  Module implements transform routine to take
-  a `grouped` words `stream` and return a `chunked` words `stream`
+  Module for generating a `chunked` stream from a `grouped`
+  words stream.
 
   Similiar functionality to `Dictionary.File` transform handlers
   but more closely associated with `Chunks`.

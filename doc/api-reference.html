@@ -81,84 +81,84 @@
         <div class="summary-row">
   <div class="summary-signature"><a href="Action.html">Action</a></div>
   
-    <div class="summary-synopsis"><p>Module encapsulates <a href="Round.html"><code>Round</code></a> guess actions and the data associated with carrying them out</p>
+    <div class="summary-synopsis"><p>Module for running round actions. Actions encapsulate guessing actions and the data associated with carrying them out. Uses a function builder strategy to easily be able to add new data retrievers, and updaters</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="CLI.html">CLI</a></div>
   
-    <div class="summary-synopsis"><p>Module handles command line interpreter interface to application</p>
+    <div class="summary-synopsis"><p>Module provides a command line interpreter interface to the <code>Hangman</code> application</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Chunks.html">Chunks</a></div>
   
-    <div class="summary-synopsis"><p>Module to handle word list <a href="Chunks.html#content"><code>Chunks</code></a> for a given length key.<br /> Internally maintains standardized <code>containers</code> for word lists and keeps track of total word counts and number of <code>containers</code></p>
+    <div class="summary-synopsis"><p>Module to manage word list chunks for a given secret length key</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Chunks.Stream.html">Chunks.Stream</a></div>
   
-    <div class="summary-synopsis"><p>Module implements transform routine to take a <code>grouped</code> words <code>stream</code> and return a <code>chunked</code> words <code>stream</code></p>
+    <div class="summary-synopsis"><p>Module for generating a <code>chunked</code> stream from a <code>grouped</code> words stream</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Counter.html">Counter</a></div>
   
-    <div class="summary-synopsis"><p>Module implements a set of functions for working with letter frequency tallies</p>
+    <div class="summary-synopsis"><p>Module for creating and using letter frequency tallies. Contains a set of functions for tallies, such as adding letters, words, lists, and streams, and retrieving their most common letters</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Dictionary.html">Dictionary</a></div>
   
-    <div class="summary-synopsis"><p>Module defines <a href="Dictionary.html#content"><code>Dictionary</code></a> common attributes and types functionality. Serves as a central point to access or update such attributes</p>
+    <div class="summary-synopsis"><p>Module defines <a href="Dictionary.html#content"><code>Dictionary</code></a> common attributes and types. Serves as a central point to access or update such attributes</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Dictionary.Cache.html">Dictionary.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Module loads <a href="Dictionary.File.html"><code>Dictionary.File</code></a> words into <code>chunks</code> and stores into <code>ETS</code>. Letter frequency <code>tallies</code> are computed and stored into <code>ETS</code> upon startup. Words identified as <code>random</code> are tagged and stored</p>
+    <div class="summary-synopsis"><p>Module provides access to a dictionary word cache. Provides lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Dictionary.File.html">Dictionary.File</a></div>
   
-    <div class="summary-synopsis"><p>Provides abstraction for various <a href="Dictionary.html"><code>Dictionary</code></a> files</p>
+    <div class="summary-synopsis"><p>Provides routines to generate various intermediate and cached <a href="Dictionary.html"><code>Dictionary</code></a> files</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Dictionary.File.Stream.html">Dictionary.File.Stream</a></div>
   
-    <div class="summary-synopsis"><p>Module for accessing input file stream for various <a href="Dictionary.File.html"><code>Dictionary.File</code></a> transformed types ranging from <code>unsorted</code>, <code>sorted</code>, <code>grouped</code>, <code>chunked</code></p>
+    <div class="summary-synopsis"><p>Module for accessing input file stream for various original and transformed dictionary file types ranging from <code>unsorted</code>, <code>sorted</code>, <code>grouped</code>, <code>chunked</code></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.html">Game</a></div>
   
-    <div class="summary-synopsis"><p>Module defines <code>Hangman</code> <a href="Game.html#content"><code>Game</code></a> abstraction which can handle a single <code>Hangman</code> game or multiple <code>Hangman</code> games</p>
+    <div class="summary-synopsis"><p>Module to create new <code>Hangman</code> game abstractions. Serves as the core of the application. Handles a single <code>Hangman</code> game or multiple <code>Hangman</code> games and runs each runs sequentially. Therefore only one <code>game</code> is in play at any one time</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.Pid.Cache.html">Game.Pid.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Module implements <code>GenServer</code> functionality to provide <a href="Game.Server.html"><code>Game.Server</code></a> pid caching. Ultimately relies on the <code>gproc</code> module to administer <code>registry</code> facilities</p>
+    <div class="summary-synopsis"><p>Module provides access to a game server pid cache. Pid <code>caching</code> prevents a <a href="Game.Server.html"><code>Game.Server</code></a> process from having to be created every time. Upon game server startup, the new pid is stored into the pid cache. Upon successive game plays with the same game server, the pid does not need to be regenerated, but simply retrieved from the cache</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Game.Server.html">Game.Server</a></div>
   
-    <div class="summary-synopsis"><p>Module implements <code>Hangman</code> <a href="Game.html"><code>Game</code></a> server using <code>GenServer</code>. Wraps <a href="Game.html"><code>Game</code></a> abstraction as server state. Runs each <code>game</code> or set of <code>games</code> sequentially</p>
+    <div class="summary-synopsis"><p>Module implements <code>Hangman</code> <a href="Game.html"><code>Game</code></a> server. Each player's active game state is maintained, until the player process exits</p>
 </div>
   
 </div>
@@ -179,21 +179,21 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Pass.html">Pass</a></div>
   
-    <div class="summary-synopsis"><p>Module defines words <code>Pass.key</code> and <code>Pass.t</code></p>
+    <div class="summary-synopsis"><p>Module defines types <code>Pass.key</code> and <code>Pass.t</code></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Pass.Cache.html">Pass.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Given a player, a game and round number, <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> maintains a words pass <code>cache</code></p>
+    <div class="summary-synopsis"><p>Module provides cache access to the game words pass. Given a player, a game and round number, <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> maintains a words pass <code>cache</code> of current word passes</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Pass.Writer.html">Pass.Writer</a></div>
   
-    <div class="summary-synopsis"><p>Module implements words <code>pass</code> write functionality into the <a href="Pass.Cache.html"><code>Pass.Cache</code></a> <code>ETS</code> table</p>
+    <div class="summary-synopsis"><p>Module is responsible for words <code>pass</code> writes into the <a href="Pass.Cache.html"><code>Pass.Cache</code></a> table. The write <code>load</code> is handled through the <a href="Pass.Writer.Pool.html"><code>Pass.Writer.Pool</code></a>. It distributes <a href="#write/2"><code>write/2</code></a> request based on <code>pass</code> key id attribute to <code>workers</code></p>
 </div>
   
 </div>
@@ -207,7 +207,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Pass.Writer.Worker.html">Pass.Writer.Worker</a></div>
   
-    <div class="summary-synopsis"><p>Module is a <code>GenServer</code> that implements writer worker functionality. Specifically, Pass.Writer.Worker is a <code>write-operation</code> specific module that performs <code>async</code> writes into <a href="Pass.Cache.html"><code>Pass.Cache</code></a> <code>ETS</code> table</p>
+    <div class="summary-synopsis"><p>Module handles writer worker functionality used by <a href="Pass.Writer.html"><code>Pass.Writer</code></a>. Specifically, <a href="Pass.Writer.Worker.html#content"><code>Pass.Writer.Worker</code></a> is a <code>write-operation</code> specific module that performs <code>async</code> writes into <a href="Pass.Cache.html"><code>Pass.Cache</code></a> <code>ETS</code> table</p>
 </div>
   
 </div>
@@ -221,14 +221,14 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Player.html">Player</a></div>
   
-    <div class="summary-synopsis"><p>Module handles <a href="Player.html#content"><code>Player</code></a> abstraction and defines <a href="Player.html#content"><code>Player</code></a> type. Implements <code>player</code> functionality to choose letters, guess letters and words. Heavily relies upon <a href="Round.html"><code>Round</code></a> and <a href="Action.html"><code>Action</code></a></p>
+    <div class="summary-synopsis"><p>Module for creating players and using them to engage with the game server. Handles choosing letters, guessing letters and words</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Player.Events.html">Player.Events</a></div>
   
-    <div class="summary-synopsis"><p>Module implements <code>GenEvent</code> manager for use with <code>player</code></p>
+    <div class="summary-synopsis"><p>Module handles player event manager</p>
 </div>
   
 </div>
@@ -242,7 +242,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Player.Logger.Handler.html">Player.Logger.Handler</a></div>
   
-    <div class="summary-synopsis"><p>Module implements event logger handler for <a href="Player.Events.html"><code>Player.Events</code></a></p>
+    <div class="summary-synopsis"><p>Module implements event logger handler for <a href="Player.Events.html"><code>Player.Events</code></a>. Each <code>event</code> is logged to a file named after the player <code>id</code></p>
 </div>
   
 </div>
@@ -256,7 +256,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Reduction.Engine.html">Reduction.Engine</a></div>
   
-    <div class="summary-synopsis"><p>Module implements words reduction engine</p>
+    <div class="summary-synopsis"><p>Module provides access to the words reduction engine</p>
 </div>
   
 </div>
@@ -270,7 +270,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Reduction.Engine.Worker.html">Reduction.Engine.Worker</a></div>
   
-    <div class="summary-synopsis"><p>Module is a worker <code>GenServer</code> that implements <code>Hangman</code> words reduction, primarily through <a href="#reduce_and_store/4"><code>reduce_and_store/4</code></a></p>
+    <div class="summary-synopsis"><p>Module implements workers that handle <code>Hangman</code> words reduction. Used primarily by <a href="Reduction.Engine.html"><code>Reduction.Engine</code></a> through <a href="#reduce_and_store/4"><code>reduce_and_store/4</code></a> to perform a series of steps</p>
 </div>
   
 </div>
@@ -284,21 +284,21 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Round.html">Round</a></div>
   
-    <div class="summary-synopsis"><p>Module to implement <code>Hangman</code> game <code>round</code> abstraction</p>
+    <div class="summary-synopsis"><p>Module provides access to <code>Hangman</code> guessing round functions</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Strategy.html">Strategy</a></div>
   
-    <div class="summary-synopsis"><p>Handles letter guessing strategy for <a href="Player.html"><code>Player</code></a></p>
+    <div class="summary-synopsis"><p>Module provides access to a set of functions handling guessing strategy</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Web.html">Web</a></div>
   
-    <div class="summary-synopsis"><p>Implements <code>Hangman</code> http web server for playing <code>Hangman</code> games</p>
+    <div class="summary-synopsis"><p>Module provides access to small and simple http web server for playing <code>Hangman</code> games via a tool such as curl or HTTPoison</p>
 </div>
   
 </div>

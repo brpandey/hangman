@@ -1,12 +1,35 @@
 defmodule Strategy do
   @moduledoc """
-  Handles letter guessing strategy for `Player`.
+  Module provides access to a set of functions handling guessing strategy.
 
-  For `robot` player type, retrieves best letter considering `English`
-  letter frequencies and letter tally counts.
+  From `Wikipedia`
 
-  For `human` player type, retries a set of top letter choices to
-  be presented to `human` to manually choose.
+  In the English language, the twelve most commonly occurring letters are, 
+  in descending order: e-t-a-o-i-n-s-h-r-d-l-u. This and other letter-frequency 
+  lists are used by the guessing player to increase the odds when it is their 
+  turn to guess. On the other hand, the same lists can be used by the puzzle 
+  setter to stump their opponent by choosing a word which deliberately avoids 
+  common letters (e.g. rhythm or zephyr) or one that contains rare letters 
+  (e.g. jazz).
+
+  Another common strategy is to guess vowels first, as English only has five 
+  vowels (a, e, i, o, and u, while y may sometimes, but rarely, be used as
+  a vowel) and almost every word has at least one.
+
+  According to a 2010 study conducted by Jon McLoone for Wolfram Research, the 
+  most difficult words to guess include jazz, buzz, hajj, faff, fizz, fuzz and
+  variations of these.
+
+  NOTE: For the implementation, letter-frequency lists are primarily used.  A
+  vowel strategy is not explicitly used, and perhaps is utilized implicitly 
+  through letter-frequency lists.  No effort at this point is made to stump
+  the player.
+
+  For the `robot` player type, the strategy retrieves the best letter 
+  considering `English` letter frequencies and letter tally counts.
+
+  For the `human` player type, the strategy retries a set of top letter 
+  choices to be presented to `human` to manually choose.
   """
 
   defstruct guessed_letters: MapSet.new, pass: %Pass{}, 

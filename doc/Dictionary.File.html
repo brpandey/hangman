@@ -73,9 +73,10 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Provides abstraction for various <a href="Dictionary.html"><code>Dictionary</code></a> files.</p>
-<p>The original <a href="Dictionary.html"><code>Dictionary</code></a> file is transformed into intermediate files as cached representations of each transformation layer. Unless the original file changes, transformation every time isn't necessary since the intermediate files are stored on disk.</p>
-<p>Load time is only determined by the last transformed chunk file, which is optimized for <code>ETS</code> load.</p>
+          <p>Provides routines to generate various intermediate and cached <a href="Dictionary.html"><code>Dictionary</code></a> files.</p>
+<p>The original <a href="Dictionary.html"><code>Dictionary</code></a> file is transformed into intermediary representations. Given an original dictionary file f1, this file may be transformed a few times until it is suitable to be loaded into <code>ETS</code>. E.g. <code>f1</code> -&gt; <code>f2</code> -&gt; <code>f3</code> -&gt; <code>f4</code>.</p>
+<p>This sequence of transforms is done initially and does not need to be repeated unless the original file changes.</p>
+<p>Dictionary word load time is only determined by the last transformed file <code>f4</code>, which is optimized for <code>ETS</code> load.</p>
 <p>Transformation types are <code>unsorted</code> to <code>sorted</code>, <code>sorted</code> to <code>grouped</code>, and <code>grouped</code> to <code>chunked</code>. Each transform handler encapsulates each transform procedure</p>
 
         </section>
@@ -151,7 +152,7 @@
     </a>
     <span class="signature">make_file_transform(fn_transform)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_file.ex#cl-89" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_file.ex#cl-93" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -179,7 +180,7 @@
     </a>
     <span class="signature">transform(path, arg, kind)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_file.ex#cl-41" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_file.ex#cl-45" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -206,7 +207,7 @@
     </a>
     <span class="signature">transform_handler(path, new_path, atom)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_file.ex#cl-116" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_file.ex#cl-120" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

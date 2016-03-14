@@ -73,8 +73,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Given a player, a game and round number, <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> maintains a words pass <code>cache</code>.</p>
-<p>Internally the module implements a <code>GenServer</code> which uses <code>ETS</code>.</p>
+          <p>Module provides cache access to the game words pass. Given a player, a game and round number, <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> maintains a words pass <code>cache</code> of current word passes.</p>
+<p>Given a new <code>Hangman</code> game, initially the words pass is the size of all words in the dictionary of secret length k. As each round proceeds, this is reduced by the <code>Hangman</code> pattern sequence. It is these remaining possible word set instances that are stored in the cache.</p>
 <p>After each player has made their <code>Hangman</code> round guess, the resultant reduced words <code>pass</code> data is stored into the <a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> for access on the subsequent round. The expired <code>pass</code> data from stale rounds is subsequently removed from the <code>cache</code>.</p>
 <p><a href="Pass.Cache.html#content"><code>Pass.Cache</code></a> performs <code>unserialized</code> reads and uses type <code>key</code> for cache <a href="#get/2"><code>get/2</code></a> and <a href="#get/3"><code>get/3</code></a>.</p>
 
@@ -189,7 +189,7 @@
     </a>
     <span class="signature">get(cache_key, pass_key)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-156" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-162" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -220,7 +220,7 @@
     </a>
     <span class="signature">get(cache_key, pass_key, reduce_key)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-104" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-110" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -254,7 +254,7 @@
     </a>
     <span class="signature">start_link()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-33" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-39" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -271,7 +271,7 @@
     </a>
     <span class="signature">stop(pid)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-45" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-51" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

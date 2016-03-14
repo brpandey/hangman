@@ -73,9 +73,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module loads <a href="Dictionary.File.html"><code>Dictionary.File</code></a> words into <code>chunks</code> and stores into <code>ETS</code>. Letter frequency <code>tallies</code> are computed and stored into <code>ETS</code> upon startup. Words identified as <code>random</code> are tagged and stored.</p>
-<p>Implements <code>GenServer</code>.</p>
-<p>Provides lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words</p>
+          <p>Module provides access to a dictionary word cache. Provides lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words.</p>
+<p><a href="Dictionary.Cache.html#content"><code>Dictionary.Cache</code></a> loads dictionary words into <code>chunks</code> and stores them into <code>ETS</code>. Upon startup, letter frequency <code>tallies</code> are computed and stored into <code>ETS</code>. Words identified as <code>random</code> are tagged and stored as well.</p>
 
         </section>
       
