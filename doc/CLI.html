@@ -80,6 +80,7 @@
 <p><code>Usage: --name (player id) --type (&quot;human&quot; or &quot;robot&quot;) --random (num random secrets, max 10) [--secret (hangman word(s)) --baseline] [--log --display]</code></p>
 <p>or</p>
 <p><code>Aliase Usage:  -n (player id) -t (&quot;human&quot; or &quot;robot&quot;) -r (num random secrets, max 10) [-s (hangman word(s)) -bl] [-l -d]</code></p>
+<p>NOTE: Should a player submit a secret hangman word that does not actually reside in the <a href="Dictionary.Cache.html"><code>Dictionary.Cache</code></a> the entire game will currently be prematurely aborted.</p>
 
         </section>
       
@@ -136,7 +137,7 @@
     </a>
     <span class="signature">main(args)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/cli.ex#cl-41" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/cli.ex#cl-44" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

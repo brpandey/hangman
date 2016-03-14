@@ -76,7 +76,9 @@
           <p>Module to create and manage <code>Hangman</code> game abstractions.</p>
 <p>Naturally serves as the symbolic core of the game application.</p>
 <p>The game embodies the structure of play in this context of letter and word guessing. Therefore it maintains the secret pattern state along with the guess state, delineated by correct and incorrect, letter and word.</p>
-<p>Further, a game wouldn't amount to much without a score. If a game is lost the score is automatically 25, as deemed by the threshhold of the particular max incorect guesses. If the number of incorrect letter guesses exceeds the threshhold, the game is lost. The lower the score and hence the fewer rounds to guess the word, the more desirable aim.</p>
+<p>Further, a game wouldn't amount to much without a quantifiable outcome thus we maintain a score state. If a game is lost, the score is automatically 25, as deemed by the threshhold of the particular max incorect guesses.</p>
+<p>The game rules are simply to stay within the max incorrect guesses and choose letters consistent with the game. No timing or other such rules are imposed.</p>
+<p>If the number of incorrect letter guesses exceeds the threshhold, the game is lost. The lower the score and hence the fewer rounds to guess the word, the more desirable aim.</p>
 <p>The <a href="Game.html#content"><code>Game</code></a> handles a single <code>Hangman</code> game or multiple <code>Hangman</code> games and runs each runs sequentially. Therefore only one <code>game</code> is in play at any one time.</p>
 <p>Primary game functions are <a href="#load/3"><code>load/3</code></a>, <a href="#guess/2"><code>guess/2</code></a>, <a href="#status/1"><code>status/1</code></a>.</p>
 
@@ -312,7 +314,7 @@
     </a>
     <span class="signature">empty?(game)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-113" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-119" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -339,7 +341,7 @@
     </a>
     <span class="signature">equal?(game1, game2)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-100" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-106" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -366,7 +368,7 @@
     </a>
     <span class="signature">finished?(game)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-122" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-128" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -393,7 +395,7 @@
     </a>
     <span class="signature">guess(game, arg)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-143" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-149" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -425,7 +427,7 @@
     </a>
     <span class="signature">info(g)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-388" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-394" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -452,7 +454,7 @@
     </a>
     <span class="signature">load(id_key, secret, max_wrong)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-74" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-80" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -479,7 +481,7 @@
     </a>
     <span class="signature">mystery_letter()</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-66" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-72" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -505,7 +507,7 @@
     </a>
     <span class="signature">status(game)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-244" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-250" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
