@@ -28,7 +28,7 @@ defmodule Game.Test do
       # incorrect word exotly 7
       {game, result} = Game.guess(game, {:guess_word, "exotly"})
 
-      game_text = "#Game<[id: \"fred\", current_game_index: 0, secret: \"EXOTIC\", pattern: \"EXOT--\", score: 0, secrets: [], patterns: [], scores: [], max_wrong_guesses: 5, guessed_letters: [correct: [\"E\", \"O\", \"T\", \"X\"], incorrect: [\"S\", \"U\"]], guessed_words: [incorrect: [\"EXOTLY\"]]]>"
+      game_text = "#Game<[id: \"fred\", client_pid: nil, finished: false, current_game_index: 0, secret: \"EXOTIC\", pattern: \"EXOT--\", score: 0, secrets: [], patterns: [], scores: [], max_wrong_guesses: 5, guessed_letters: [correct: [\"E\", \"O\", \"T\", \"X\"], incorrect: [\"S\", \"U\"]], guessed_words: [incorrect: [\"EXOTLY\"]]]>"
 
 
       assert game_text == "#{inspect game}"

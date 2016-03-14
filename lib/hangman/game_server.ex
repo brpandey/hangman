@@ -7,9 +7,9 @@ defmodule Game.Server do
   
   @moduledoc """
   Module implements `Hangman` `Game` server.  Each player's active game
-  state is maintained, until the player process exit.
+  state is maintained, until the player process exits.
 
-  Runs each game play one at a time and supports multiple games concurrently.
+  Runs each game one at a time and supports multiple games concurrently.
   """
   
   @type id :: String.t
@@ -207,7 +207,7 @@ defmodule Game.Server do
     # Update server state with updated game state
     state = update(state, key, game)
 
-    Logger.debug("guess letter, Game.Server: #{inspect state}")
+    Logger.debug("guessed letter, Game.Server: #{inspect state}")
     
     { :reply, result, state }
   end
@@ -231,7 +231,7 @@ defmodule Game.Server do
     # Update server state with updated game state
     state = update(state, key, game)
 
-    Logger.debug("guess word, Game.Server: #{inspect state}")
+    Logger.debug("guessed word, Game.Server: #{inspect state}")
 
     { :reply, result, state }
   end
@@ -462,36 +462,23 @@ defmodule Game.Server do
 
   @spec update(t, id | Player.key, Game.t) :: t
   defp update(state, key, game) when is_binary(key) do
-
-    # Put game state into server state games map
-    games = Map.put(state.games, key, game)
-    
-    # Update state
-    state = Kernel.put_in(state.games, games)
-
-    state
+    do_update(state, key, game)
   end
 
   defp update(state, key, game) when is_tuple(key) do
 
     # De-bind
     {client_id, _client_pid} = key
+    do_update(state, client_id, game)
+  end
 
-    # If we are given an empty game -- we know we have game over
-    # So don't update -- leave the game state as is
+  defp do_update(state, key, game) when is_binary(key) do
 
-    case Game.empty?(game) do
-      false ->
-        # Put game state into server state games map
-        games = Map.put(state.games, client_id, game)
-        
-        # Update state
-        state = Kernel.put_in(state.games, games)
-
-
-      true -> ""
-
-    end
+    # Put game state into server state games map
+    games = Map.put(state.games, key, game)
+    
+    # Update state
+    state = Kernel.put_in(state.games, games)
     
     state
   end

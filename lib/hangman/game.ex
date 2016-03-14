@@ -1,16 +1,16 @@
 defmodule Game do
   @moduledoc """
-  Module defines `Hangman` `Game` abstraction which can handle
-  a single `Hangman` game or multiple `Hangman` games.
-
-  Runs each `game` or `games` sequentially.  Therefore only one `game`
-  is in play at any one time.
+  Module to create new `Hangman` game abstractions. Serves as the core of
+  the application.  Handles a single `Hangman` game or multiple 
+  `Hangman` games and runs each runs sequentially.  Therefore only 
+  one `game` is in play at any one time.
   
-  Primary functions are `Game.load/3`, `Game.guess/2`, `Game.status/1`.
+  Primary functions are `load/3`, `guess/2`, `status/1`.
   """
   
+  require Logger
   
-  defstruct id: nil, client_pid: nil,
+  defstruct id: nil, client_pid: nil, finished: false,
   current: 0, #Current game index
   secret: "", pattern: "", score: 0,
   secrets: [],  patterns: [], scores: [],
@@ -99,6 +99,15 @@ defmodule Game do
   @spec empty?(t) :: boolean
   def empty?(%Game{} = game) do
     equal?(game, %Game{})
+  end
+
+  @doc """
+  Return boolean whether `Game` is finished
+  """
+
+  @spec finished?(t) :: boolean
+  def finished?(%Game{} = game) do
+    game.finished
   end
 
   
@@ -294,12 +303,12 @@ defmodule Game do
         # Store the current score in the game.scores list - insert
         # And update the game
         scores = List.insert_at(game.scores, game.current, score(game))
-        game = %{ game | scores: scores }
+        game = %{ game | scores: scores, finished: true}
         results = final_summary(game)
         
-        # Clear and return game so server process can be reused, 
-        # along with results data
-        {%Game{}, {data, results}}
+        # Return results data
+        
+        {game, {data, results}}
     end
   end
 
@@ -375,6 +384,7 @@ defmodule Game do
     info = [
       id: g.id,
       client_pid: g.client_pid,
+      finished: g.finished,
       current_game_index: g.current,
       secret: g.secret,
       pattern: g.pattern,
