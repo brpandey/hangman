@@ -1,0 +1,14 @@
+
+=====
+===== LOGGING STARTED Fri Mar 11 21:26:00 PST 2016
+=====
+Using /home/brpandey/Workspace/elixir-hangman/rel/hangman/releases/0.9.1/hangman.sh
+Exec: /home/brpandey/Workspace/elixir-hangman/rel/hangman/erts-7.2/bin/erlexec -boot /home/brpandey/Workspace/elixir-hangman/rel/hangman/releases/0.9.1/hangman -boot_var ERTS_LIB_DIR /home/brpandey/Workspace/elixir-hangman/rel/hangman/erts-7.2/../lib -env ERL_LIBS /home/brpandey/Workspace/elixir-hangman/rel/hangman/lib -config /home/brpandey/Workspace/elixir-hangman/rel/hangman/running-config/sys.config -pa /home/brpandey/Workspace/elixir-hangman/rel/hangman/lib/hangman-0.9.1/consolidated -args_file /home/brpandey/Workspace/elixir-hangman/rel/hangman/running-config/vm.args -user Elixir.IEx.CLI -extra --no-halt +iex -- console
+Root: /home/brpandey/Workspace/elixir-hangman/rel/hangman
+/home/brpandey/Workspace/elixir-hangman/rel/hangman
+Erlang/OTP 18 [erts-7.2] [source] [async-threads:10] [kernel-poll:false]
+
+{"Kernel pid terminated",application_controller,"{application_start_failure,hangman,{{shutdown,{failed_to_start_child,'Elixir.Player.System.Supervisor',{shutdown,{failed_to_start_child,'Elixir.Dictionary.Cache',{{badmatch,{error,enoent}},[{'Elixir.Dictionary.File','-make_file_transform/1-fun-0-',3,[{file,\"lib/hangman/dictionary_file.ex\"},{line,98}]},{'Elixir.Dictionary.Cache',normalize,2,[{file,\"lib/hangman/dictionary_cache.ex\"},{line,335}]},{'Elixir.Dictionary.Cache',setup,1,[{file,\"lib/hangman/dictionary_cache.ex\"},{line,204}]},{'Elixir.Dictionary.Cache',init,1,[{file,\"lib/hangman/dictionary_cache.ex\"},{line,132}]},{gen_server,init_it,6,[{file,\"gen_server.erl\"},{line,328}]},{proc_lib,init_p_do_apply,3,[{file,\"proc_lib.erl\"},{line,240}]}]}}}}},{'Elixir.Hangman.Application',start,[normal,[{regular,true}]]}}}"}
+
+Crash dump is being written to: erl_crash.dump...done
+Kernel pid terminated (application_controller) ({application_start_failure,hangman,{{shutdown,{failed_to_start_child,'Elixir.Player.System.Supervisor',{shutdown,{failed_to_start_child,'Elixir.Dictio
