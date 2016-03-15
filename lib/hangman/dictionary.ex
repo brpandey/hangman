@@ -33,23 +33,25 @@ defmodule Dictionary do
   @doc "Returns `big` type"
   @spec big :: kind
   def big, do:  :big
- 
+  
+  @root_path :code.priv_dir(:hangman)
+
   @doc """
   Returns `Dictionary.File` `paths` map, arranged by types `regular` and `big`
   """
   def paths do
   %{
     :regular => %{
-      :path => "lib/hangman/data/words.txt",
-      :sorted => "lib/hangman/data/words_sorted.txt",
-      :grouped => "lib/hangman/data/words_grouped.txt",
-      :chunked => "lib/hangman/data/words_chunked.txt"
+      :path => "#{@root_path}/dictionary/data/words.txt",
+      :sorted => "#{@root_path}/dictionary/data/words_sorted.txt",
+      :grouped => "#{@root_path}/dictionary/data/words_grouped.txt",
+      :chunked => "#{@root_path}/dictionary/data/words_chunked.txt"
     },
     :big => %{
-      :path => "lib/hangman/data/words_big.txt",
-      :sorted => "lib/hangman/data/words_big_sorted.txt",
-      :grouped => "lib/hangman/data/words_big_grouped.txt",
-      :chunked => "lib/hangman/data/words_big_chunked.txt"
+      :path => "#{@root_path}/dictionary/data/words_big.txt",
+      :sorted => "#{@root_path}/dictionary/data/words_big_sorted.txt",
+      :grouped => "#{@root_path}/dictionary/data/words_big_grouped.txt",
+      :chunked => "#{@root_path}/dictionary/data/words_big_chunked.txt"
     }
   }
   end
