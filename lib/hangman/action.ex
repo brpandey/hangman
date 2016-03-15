@@ -90,7 +90,7 @@ defmodule Action do
   Supported modes
 
     * `{:guess_letter, letter}` - validates the letter is in 
-    the top strategy letter choices, if not choices top letter choice.
+    the top strategy letter choices, if not chooses top letter choice.
     Guesses with letter
     * `:guess_last_word` - retrieves the last word from set
     of possible hangman word

@@ -1,8 +1,8 @@
-run_erl [6839] Tue Mar 15 12:15:55 2016
+run_erl [2862] Tue Mar 15 13:00:44 2016
 Args before exec of shell:
-run_erl [6839] Tue Mar 15 12:15:55 2016
+run_erl [2862] Tue Mar 15 13:00:44 2016
 argv[0] = sh
-run_erl [6839] Tue Mar 15 12:15:55 2016
+run_erl [2862] Tue Mar 15 13:00:44 2016
 argv[1] = -c
-run_erl [6839] Tue Mar 15 12:15:55 2016
+run_erl [2862] Tue Mar 15 13:00:44 2016
 argv[2] = exec "/home/brpandey/Workspace/elixir-hangman/rel/hangman/bin/hangman" "console"
