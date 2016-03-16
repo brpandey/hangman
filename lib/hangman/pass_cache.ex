@@ -152,6 +152,7 @@ defmodule Pass.Cache do
   Get routine retrieves `pass` chunks cache data
 
   We can obtain `chunks` data, for cache `keys` with the `:chunks` atom
+
     * `:chunks` - retrieves chunks data for a given pass key
 
   These get requests are not `serialized` through the 

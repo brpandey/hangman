@@ -3,7 +3,7 @@ defmodule Pattern do
   Module handles `Hangman` pattern updates given guessed `letter`.
 
   Given an initial starting state of `-------` and given a letter `a`, 
-  it will update the pattern to `a---a--`. 
+  it will update the pattern to `a---a--`, for the secret 'avocado'. 
 
   After letters `o`, and `d`, we are two letters shy of `avocado`.
 
@@ -20,7 +20,7 @@ defmodule Pattern do
   """
 
   @doc """
-  Recursive function, returns `pattern` string after update
+  Tail recursive function, returns `pattern` string after update
   """
 
   @spec update(String.t, String.t, String.t) :: String.t | no_return

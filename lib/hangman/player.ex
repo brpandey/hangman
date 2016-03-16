@@ -2,12 +2,12 @@ defmodule Player do
 
   @moduledoc """
   Module for creating players and maximizing our winning chances in conjunction
-  with the player strategy against the 'implicit' other player the `game server`.
+  with the player strategy against the 'implicit' other player, the `game server`.
   Handles choosing letters, guessing letters and words.
 
   In `Hangman` we have two players.  One explict - the one guessing, the other
   implicit, 'the game', 'the user tracking the penalties', or 'the stumper
-  stumping the guesser with hard words'.  In this instance the `Player` is
+  stumping the guesser with hard words'.  In this instance, the `Player` is
   merely the user making and choosing the guess selections.  
 
   The `human` player is given the choice of the top letter choices to choose
@@ -21,7 +21,7 @@ defmodule Player do
   extends the scope of the player to handle the actual game round details.
 
   NOTE: Should a player submit a secret hangman word that does not actually
-  reside in the `Dictionary.Cache` the game will currently be prematurely 
+  reside in the `Dictionary.Cache`, the game will currently be prematurely 
   aborted.
   """
 

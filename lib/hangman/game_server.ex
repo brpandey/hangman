@@ -97,7 +97,7 @@ defmodule Game.Server do
     otherwise, returns the `:incorrect_letter` data tuple along with game info
 
     * `{:guess_word, word}` -   If correct, returns 
-    the `:correct_word` data tuple along with game info
+    the `:correct_word` data tuple along with game info.
     If incorrect, returns the :incorrect_word data tuple with game info
     
   """

@@ -3,7 +3,7 @@ defmodule Round do
   Module provides access to game round functions.
 
   `Round` represents the time period in the `Hangman` game which 
-  consists of a repetitve sequence of word set reduction, guess assistance and
+  consists of a repetitive sequence of word set reduction, guess assistance and
   guess actions. It works in conjuction with `Strategy` and 
   `Game.Server` to orchestrate actual `round` game play.
 

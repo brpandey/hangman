@@ -74,7 +74,7 @@
       
         <section id="moduledoc" class="docstring">
           <p>Module handles <code>Hangman</code> pattern updates given guessed <code>letter</code>.</p>
-<p>Given an initial starting state of <code>-------</code> and given a letter <code>a</code>, it will update the pattern to <code>a---a--</code>.</p>
+<p>Given an initial starting state of <code>-------</code> and given a letter <code>a</code>, it will update the pattern to <code>a---a--</code>, for the secret 'avocado'.</p>
 <p>After letters <code>o</code>, and <code>d</code>, we are two letters shy of <code>avocado</code>.</p>
 <h2 id="example">Example</h2>
 <pre><code class="iex elixir">iex&gt; p = Pattern.update &quot;-------&quot;, &quot;avocado&quot;,  &quot;a&quot;
@@ -109,7 +109,7 @@ iex&gt; p = Pattern.update p, &quot;avocado&quot;,  &quot;d&quot;
     <a href="#update/3">update(pattern, secret, letter)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Recursive function, returns <code>pattern</code> string after update</p>
+    <div class="summary-synopsis"><p>Tail recursive function, returns <code>pattern</code> string after update</p>
 </div>
   
 </div>
@@ -159,7 +159,7 @@ iex&gt; p = Pattern.update p, &quot;avocado&quot;,  &quot;d&quot;
     </div>
   
   <section class="docstring">
-    <p>Recursive function, returns <code>pattern</code> string after update</p>
+    <p>Tail recursive function, returns <code>pattern</code> string after update</p>
 
   </section>
 </div>

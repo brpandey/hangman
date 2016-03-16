@@ -73,7 +73,7 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module provides access to small and simple http web server for playing <code>Hangman</code> games via a tool such as curl or HTTPoison.</p>
+          <p>Module provides access to a http web server for playing <code>Hangman</code> games via a tool such as curl or HTTPoison.</p>
 <h2 id="example">Example</h2>
 <pre><code class="iex elixir">iex&gt; HTTPoison.get(&quot;http://127.0.0.1:3737/play?name=julio&amp;secret=kiwi&quot;)
 
@@ -134,7 +134,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
     <a href="#run_game/1">run_game(conn)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Retrieves connection params <code>name</code> and <code>secret</code> or <code>random</code>. Runs web game. Returns complete game results in connection response body</p>
+    <div class="summary-synopsis"><p>Retrieves connection params <code>name</code> and either a <code>secret</code> or <code>random</code>. Runs web game. Returns complete game results in connection response body</p>
 </div>
   
 </div>
@@ -227,7 +227,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
     </div>
   
   <section class="docstring">
-    <p>Retrieves connection params <code>name</code> and <code>secret</code> or <code>random</code>. Runs web game. Returns complete game results in connection response body</p>
+    <p>Retrieves connection params <code>name</code> and either a <code>secret</code> or <code>random</code>. Runs web game. Returns complete game results in connection response body</p>
 
   </section>
 </div>

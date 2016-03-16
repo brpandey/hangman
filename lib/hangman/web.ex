@@ -2,7 +2,7 @@ defmodule Web do
   use Plug.Router
 
   @moduledoc """
-  Module provides access to small and simple http web server for playing 
+  Module provides access to a http web server for playing 
   `Hangman` games via a tool such as curl or HTTPoison.
   
   ## Example
@@ -46,8 +46,8 @@ defmodule Web do
   end
 
   @doc """
-  Retrieves connection params `name` and `secret` or `random`. Runs web game.
-  Returns complete game results in connection response body
+  Retrieves connection params `name` and either a `secret` or `random`. 
+  Runs web game. Returns complete game results in connection response body
   """
   
   @spec run_game(Plug.Conn.t) :: Plug.Conn.t

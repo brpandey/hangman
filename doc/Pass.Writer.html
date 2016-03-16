@@ -73,7 +73,7 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module is responsible for words <code>pass</code> writes into the <a href="Pass.Cache.html"><code>Pass.Cache</code></a> table. The write <code>load</code> is handled through the <a href="Pass.Writer.Pool.html"><code>Pass.Writer.Pool</code></a>. It distributes <a href="#write/2"><code>write/2</code></a> request based on <code>pass</code> key id attribute to <code>workers</code>.</p>
+          <p>Module is responsible for words <code>pass</code> writes into the <a href="Pass.Cache.html"><code>Pass.Cache</code></a> table. The write <code>load</code> is handled through the <a href="Pass.Writer.Pool.html"><code>Pass.Writer.Pool</code></a>. It distributes <a href="#write/2"><code>write/2</code></a> request based on the <code>pass</code> key id attribute to <code>workers</code>.</p>
 <p>The writer pool supervisor supervises the workers, which are each responsible for the write operations. The primary <code>writer</code> worker method is <a href="Pass.Writer.Worker.html#write/3"><code>Pass.Writer.Worker.write/3</code></a></p>
 
         </section>
@@ -108,7 +108,7 @@
     <a href="#write/2">write(pass_key, chunks)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Write is an <code>asynchronous</code> call, no need to wait around for response Based on key <code>id</code>, selects writer <code>worker</code> to hand off request to</p>
+    <div class="summary-synopsis"><p>Write is an <code>asynchronous</code> call, there is no need to wait around for the response. Based on the key <code>id</code>, selects the writer <code>worker</code> to hand the request off to</p>
 </div>
   
 </div>
@@ -167,7 +167,7 @@
     </a>
     <span class="signature">write(pass_key, chunks)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-32" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_writer.ex#cl-33" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -183,7 +183,7 @@
     </div>
   
   <section class="docstring">
-    <p>Write is an <code>asynchronous</code> call, no need to wait around for response Based on key <code>id</code>, selects writer <code>worker</code> to hand off request to.</p>
+    <p>Write is an <code>asynchronous</code> call, there is no need to wait around for the response. Based on the key <code>id</code>, selects the writer <code>worker</code> to hand the request off to.</p>
 
   </section>
 </div>

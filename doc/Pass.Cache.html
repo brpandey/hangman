@@ -189,7 +189,7 @@
     </a>
     <span class="signature">get(cache_key, pass_key)</span>
       
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-162" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-163" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -208,7 +208,10 @@
   
   <section class="docstring">
     <p>Get routine retrieves <code>pass</code> chunks cache data</p>
-<p>We can obtain <code>chunks</code> data, for cache <code>keys</code> with the <code>:chunks</code> atom * <code>:chunks</code> - retrieves chunks data for a given pass key</p>
+<p>We can obtain <code>chunks</code> data, for cache <code>keys</code> with the <code>:chunks</code> atom</p>
+<ul>
+<li><code>:chunks</code> - retrieves chunks data for a given pass key</li>
+</ul>
 <p>These get requests are not <code>serialized</code> through the server process since we are doing <code>reads</code></p>
 
   </section>

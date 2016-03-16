@@ -6,8 +6,8 @@ defmodule Pass.Writer.Pool do
   of pass writer workers.
 
   Write `load` is handled through `Pass.Writer.Pool`.
-  Module `distributes` write - `Pass.Writer.write/2` requests based on 
-  `pass` key `id` attribute.
+  Module `distributes` write requests in the form of `Pass.Writer.write/2`
+  requests based on `pass` key `id` attribute.
   """
 
   @name __MODULE__

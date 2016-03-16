@@ -3,7 +3,7 @@ defmodule Pass.Writer do
   @moduledoc """
   Module is responsible for words `pass` writes into the `Pass.Cache` table. 
   The write `load` is handled through the `Pass.Writer.Pool`. It distributes
-  `write/2` request based on `pass` key id attribute to `workers`.
+  `write/2` request based on the `pass` key id attribute to `workers`.
 
   The writer pool supervisor supervises the workers, which are each 
   responsible for the write operations. The primary `writer` worker 
@@ -24,8 +24,9 @@ defmodule Pass.Writer do
   
   
   @doc """
-  Write is an `asynchronous` call, no need to wait around for response
-  Based on key `id`, selects writer `worker` to hand off request to.
+  Write is an `asynchronous` call, there is no need to wait around for 
+  the response. Based on the key `id`, selects the writer `worker` to
+  hand the request off to.
   """
   
   @spec write(Pass.key, Chunks.t) :: :ok

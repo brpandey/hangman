@@ -21,7 +21,7 @@ defmodule Game do
   the word, the more desirable aim.
 
   The `Game` handles a single `Hangman` game or multiple `Hangman` games and 
-  runs each runs sequentially.  Therefore only one `game` is in play at
+  runs each game sequentially.  Therefore only one `game` is in play at
   any one time.
   
   Primary game functions are `load/3`, `guess/2`, `status/1`.
