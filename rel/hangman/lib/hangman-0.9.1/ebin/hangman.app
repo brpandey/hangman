@@ -31,5 +31,5 @@
                         'Elixir.Reduction.Options','Elixir.Root.Supervisor',
                         'Elixir.Round','Elixir.Strategy','Elixir.Web']},
               {applications,[kernel,stdlib,elixir,logger,gproc,httpoison,
-                             cowboy,plug,exprof,ex_doc]},
+                             cowboy,plug,exprof,ex_doc,runtime_tools]},
               {mod,{'Elixir.Hangman.Application',[{regular,true}]}}]}.

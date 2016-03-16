@@ -29,7 +29,8 @@ defmodule Hangman.Mixfile do
     args = [{dict_type, true}]
 
     [
-      applications: [:logger, :gproc, :httpoison, :cowboy, :plug, :exprof, :ex_doc],
+      applications: [:logger, :gproc, :httpoison, :cowboy, 
+                     :plug, :exprof, :ex_doc, :runtime_tools],
       mod: {Hangman.Application, args}
     ]
   end

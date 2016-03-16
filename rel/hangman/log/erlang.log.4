@@ -1,0 +1,134 @@
+
+=====
+===== LOGGING STARTED Wed Mar 16 16:12:15 PDT 2016
+=====
+
+
+16:12:15.423 module=Pass.Cache [info]  Starting Hangman Pass Cache GenServer
+
+16:12:15.430 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 1
+
+16:12:15.430 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 2
+
+16:12:15.430 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 3
+
+16:12:15.431 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 4
+
+16:12:15.431 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 5
+
+16:12:15.431 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 6
+
+16:12:15.431 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 7
+
+16:12:15.431 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 8
+
+16:12:15.431 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 9
+
+16:12:15.431 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 10
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 1
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 2
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 3
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 4
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 5
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 6
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 7
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 8
+
+16:12:15.438 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 9
+
+16:12:15.439 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 10
+
+16:12:15.442 module=Player.Group.Supervisor [info]  Starting Hangman Player Group Supervisor, args: {}
+
+16:12:15.444 module=Player.Supervisor [info]  Starting Hangman Player Supervisor 
+
+16:12:15.446 module=Player.Events.Supervisor [info]  Starting Hangman Player Events Supervisor
+Interactive Elixir (1.2.3) - press Ctrl+C to exit (type h() ENTER for help)
+iex(hangman@egret)1> 
+=====
+===== LOGGING STARTED Wed Mar 16 16:34:47 PDT 2016
+=====
+Using /home/brpandey/Workspace/elixir-hangman/rel/hangman/releases/0.9.1/hangman.sh
+Exec: /home/brpandey/Workspace/elixir-hangman/rel/hangman/erts-7.2/bin/erlexec -boot /home/brpandey/Workspace/elixir-hangman/rel/hangman/releases/0.9.1/hangman -boot_var ERTS_LIB_DIR /home/brpandey/Workspace/elixir-hangman/rel/hangman/erts-7.2/../lib -env ERL_LIBS /home/brpandey/Workspace/elixir-hangman/rel/hangman/lib -config /home/brpandey/Workspace/elixir-hangman/rel/hangman/running-config/sys.config -pa /home/brpandey/Workspace/elixir-hangman/rel/hangman/lib/hangman-0.9.1/consolidated -args_file /home/brpandey/Workspace/elixir-hangman/rel/hangman/running-config/vm.args -user Elixir.IEx.CLI -extra --no-halt +iex -- console
+Root: /home/brpandey/Workspace/elixir-hangman/rel/hangman
+/home/brpandey/Workspace/elixir-hangman/rel/hangman
+Erlang/OTP 18 [erts-7.2] [source] [async-threads:10] [kernel-poll:false]
+
+
+16:34:47.825 module=Hangman.Application [info]  Starting Hangman Application, args: [regular: true]
+
+16:34:47.828 module=Root.Supervisor [info]  Starting Hangman Supervisor, args: [regular: true]
+
+16:34:47.830 module=Game.System.Supervisor [info]  Starting Hangman Game System Supervisor
+
+16:34:47.834 module=Game.Server.Supervisor [info]  Starting Hangman Game Server Supervisor
+
+16:34:47.836 module=Game.Pid.Cache [info]  Starting Game Pid Cache Server
+
+16:34:47.839 module=Player.System.Supervisor [info]  Starting Hangman Player System Supervisor, args: [regular: true]
+
+16:34:47.842 module=Dictionary.Cache [info]  Starting Hangman Dictionary Cache Server, args [regular: true]
+
+16:34:53.183 module=Dictionary.Cache [debug] :chunks, ets info is: [read_concurrency: false, write_concurrency: false, compressed: false, memory: 14362, owner: #PID<0.112.0>, heir: :none, name: :dictionary_cache_table, size: 190, node: :hangman@egret, named_table: true, type: :bag, keypos: 1, protection: :protected]
+
+
+16:34:55.339 module=Dictionary.Cache [debug] :counter + chunks, ets info is: [read_concurrency: false, write_concurrency: false, compressed: false, memory: 14778, owner: #PID<0.112.0>, heir: :none, name: :dictionary_cache_table, size: 216, node: :hangman@egret, named_table: true, type: :bag, keypos: 1, protection: :protected]
+
+
+16:34:55.343 module=Pass.Cache [info]  Starting Hangman Pass Cache GenServer
+
+16:34:55.352 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 1
+
+16:34:55.352 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 2
+
+16:34:55.352 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 3
+
+16:34:55.352 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 4
+
+16:34:55.352 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 5
+
+16:34:55.352 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 6
+
+16:34:55.352 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 7
+
+16:34:55.353 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 8
+
+16:34:55.353 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 9
+
+16:34:55.353 module=Reduction.Engine.Worker [debug] Starting Engine Reduce Worker 10
+
+16:34:55.360 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 1
+
+16:34:55.360 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 2
+
+16:34:55.360 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 3
+
+16:34:55.360 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 4
+
+16:34:55.360 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 5
+
+16:34:55.361 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 6
+
+16:34:55.361 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 7
+
+16:34:55.361 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 8
+
+16:34:55.361 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 9
+
+16:34:55.361 module=Pass.Writer.Worker [debug] Starting Pass Writer Worker 10
+
+16:34:55.365 module=Player.Group.Supervisor [info]  Starting Hangman Player Group Supervisor, args: {}
+
+16:34:55.367 module=Player.Supervisor [info]  Starting Hangman Player Supervisor 
+
+16:34:55.370 module=Player.Events.Supervisor [info]  Starting Hangman Player Events Supervisor
+Interactive Elixir (1.2.3) - press Ctrl+C to exit (type h() ENTER for help)
+iex(hangman@egret)1> 

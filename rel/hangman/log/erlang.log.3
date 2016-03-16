@@ -1327,3 +1327,40 @@ iex(hangman@egret)1>
 13:18:16.211 module=Game.Server [debug] About to remove player state from games
 
 13:18:16.211 module=Game.Server [debug] {:EXIT, _, :normal}, %Game.Server{active_pids: %{}, games: %{}}
+
+===== ALIVE Tue Mar 15 13:33:16 PDT 2016
+
+===== ALIVE Tue Mar 15 13:48:16 PDT 2016
+
+===== ALIVE Tue Mar 15 14:03:16 PDT 2016
+
+===== ALIVE Tue Mar 15 14:18:16 PDT 2016
+
+=====
+===== LOGGING STARTED Wed Mar 16 16:12:07 PDT 2016
+=====
+Using /home/brpandey/Workspace/elixir-hangman/rel/hangman/releases/0.9.1/hangman.sh
+Exec: /home/brpandey/Workspace/elixir-hangman/rel/hangman/erts-7.2/bin/erlexec -boot /home/brpandey/Workspace/elixir-hangman/rel/hangman/releases/0.9.1/hangman -boot_var ERTS_LIB_DIR /home/brpandey/Workspace/elixir-hangman/rel/hangman/erts-7.2/../lib -env ERL_LIBS /home/brpandey/Workspace/elixir-hangman/rel/hangman/lib -config /home/brpandey/Workspace/elixir-hangman/rel/hangman/running-config/sys.config -pa /home/brpandey/Workspace/elixir-hangman/rel/hangman/lib/hangman-0.9.1/consolidated -args_file /home/brpandey/Workspace/elixir-hangman/rel/hangman/running-config/vm.args -user Elixir.IEx.CLI -extra --no-halt +iex -- console
+Root: /home/brpandey/Workspace/elixir-hangman/rel/hangman
+/home/brpandey/Workspace/elixir-hangman/rel/hangman
+Erlang/OTP 18 [erts-7.2] [source] [async-threads:10] [kernel-poll:false]
+
+
+16:12:08.256 module=Hangman.Application [info]  Starting Hangman Application, args: [regular: true]
+
+16:12:08.258 module=Root.Supervisor [info]  Starting Hangman Supervisor, args: [regular: true]
+
+16:12:08.261 module=Game.System.Supervisor [info]  Starting Hangman Game System Supervisor
+
+16:12:08.265 module=Game.Server.Supervisor [info]  Starting Hangman Game Server Supervisor
+
+16:12:08.267 module=Game.Pid.Cache [info]  Starting Game Pid Cache Server
+
+16:12:08.269 module=Player.System.Supervisor [info]  Starting Hangman Player System Supervisor, args: [regular: true]
+
+16:12:08.272 module=Dictionary.Cache [info]  Starting Hangman Dictionary Cache Server, args [regular: true]
+
+16:12:13.476 module=Dictionary.Cache [debug] :chunks, ets info is: [read_concurrency: false, write_concurrency: false, compressed: false, memory: 14348, owner: #PID<0.107.0>, heir: :none, name: :dictionary_cache_table, size: 190, node: :hangman@egret, named_table: true, type: :bag, keypos: 1, protection: :protected]
+
+
+16:12:15.419 module=Dictionary.Cache [debug] :counter + chunks, ets info is: [read_concurrency: false, write_concurrency: false, compressed: false, memory: 14764, owner: #PID<0.107.0>, heir: :none, name: :dictionary_cache_table, size: 216, node: :hangman@egret, named_table: true, type: :bag, keypos: 1, protection: :protected]
