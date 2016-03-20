@@ -132,3 +132,30 @@ Erlang/OTP 18 [erts-7.2] [source] [async-threads:10] [kernel-poll:false]
 16:34:55.370 module=Player.Events.Supervisor [info]  Starting Hangman Player Events Supervisor
 Interactive Elixir (1.2.3) - press Ctrl+C to exit (type h() ENTER for help)
 iex(hangman@egret)1> 
+=====
+===== LOGGING STARTED Thu Mar 17 15:09:42 PDT 2016
+=====
+Using /home/bibek/Workspace/elixir-hangman/rel/hangman/releases/0.9.1/hangman.sh
+Exec: /home/bibek/Workspace/elixir-hangman/rel/hangman/erts-7.2/bin/erlexec -boot /home/bibek/Workspace/elixir-hangman/rel/hangman/releases/0.9.1/hangman -boot_var ERTS_LIB_DIR /home/bibek/Workspace/elixir-hangman/rel/hangman/erts-7.2/../lib -env ERL_LIBS /home/bibek/Workspace/elixir-hangman/rel/hangman/lib -config /home/bibek/Workspace/elixir-hangman/rel/hangman/running-config/sys.config -pa /home/bibek/Workspace/elixir-hangman/rel/hangman/lib/hangman-0.9.1/consolidated -args_file /home/bibek/Workspace/elixir-hangman/rel/hangman/running-config/vm.args -user Elixir.IEx.CLI -extra --no-halt +iex -- console
+Root: /home/bibek/Workspace/elixir-hangman/rel/hangman
+/home/bibek/Workspace/elixir-hangman/rel/hangman
+Erlang/OTP 18 [erts-7.2] [source] [smp:2:2] [async-threads:10] [kernel-poll:false]
+
+
+15:09:43.500 module=Hangman.Application [info]  Starting Hangman Application, args: [regular: true]
+
+15:09:43.503 module=Root.Supervisor [info]  Starting Hangman Supervisor, args: [regular: true]
+
+15:09:43.507 module=Game.System.Supervisor [info]  Starting Hangman Game System Supervisor
+
+15:09:43.512 module=Game.Server.Supervisor [info]  Starting Hangman Game Server Supervisor
+
+15:09:43.515 module=Game.Pid.Cache [info]  Starting Game Pid Cache Server
+
+15:09:43.518 module=Player.System.Supervisor [info]  Starting Hangman Player System Supervisor, args: [regular: true]
+
+15:09:43.523 module=Dictionary.Cache [info]  Starting Hangman Dictionary Cache Server, args [regular: true]
+{"Kernel pid terminated",application_controller,"{application_start_failure,hangman,{{shutdown,{failed_to_start_child,'Elixir.Player.System.Supervisor',{shutdown,{failed_to_start_child,'Elixir.Dictionary.Cache',{{badmatch,{error,enoent}},[{'Elixir.Dictionary.File','-make_file_transform/1-fun-0-',3,[{file,\"lib/hangman/dictionary_file.ex\"},{line,102}]},{'Elixir.Dictionary.Cache',normalize,2,[{file,\"lib/hangman/dictionary_cache.ex\"},{line,335}]},{'Elixir.Dictionary.Cache',setup,1,[{file,\"lib/hangman/dictionary_cache.ex\"},{line,204}]},{'Elixir.Dictionary.Cache',init,1,[{file,\"lib/hangman/dictionary_cache.ex\"},{line,132}]},{gen_server,init_it,6,[{file,\"gen_server.erl\"},{line,328}]},{proc_lib,init_p_do_apply,3,[{file,\"proc_lib.erl\"},{line,240}]}]}}}}},{'Elixir.Hangman.Application',start,[normal,[{regular,true}]]}}}"}
+
+Crash dump is being written to: erl_crash.dump...done
+Kernel pid terminated (application_controller) ({application_start_failure,hangman,{{shutdown,{failed_to_start_child,'Elixir.Player.System.Supervisor',{shutdown,{failed_to_start_child,'Elixir.Dictio

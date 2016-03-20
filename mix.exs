@@ -52,8 +52,8 @@ defmodule Hangman.Mixfile do
       {:exprof, "~> 0.2.0"}, # to facilitate profiling
       {:ex_doc, "~> 0.11"}, # for mix docs
       {:cowboy, "1.0.4"}, # for hangman web
-      {:plug, "1.1.0"},  # for hangman web
-      {:httpoison, "~> 0.8.0"}, # for hangman web
+      {:plug, "1.1.2"},  # for hangman web
+      {:httpoison, "~> 0.8.2"}, # for hangman web
       {:exrm, "1.0.1"} # for mix release
     ] 
   end
