@@ -1,4 +1,4 @@
-defmodule Dictionary.File do
+defmodule Hangman.Dictionary.File do
   @moduledoc """
   Provides routines to generate various intermediate and
   cached `Dictionary` files.
@@ -18,8 +18,9 @@ defmodule Dictionary.File do
   and `grouped` to `chunked`.  Each transform handler encapsulates each 
   transform procedure.
   """
+  alias Hangman.{Chunks}
 
-  alias Dictionary, as: Dict
+  alias Hangman.Dictionary, as: Dict
 
   # Dictionary attribute tokens
   @regular Dict.regular

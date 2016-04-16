@@ -1,4 +1,4 @@
-defmodule Chunks.Stream do
+defmodule Hangman.Chunks.Stream do
   @moduledoc """
   Module for generating a `chunked` stream from a `grouped`
   words stream.
@@ -6,6 +6,8 @@ defmodule Chunks.Stream do
   Similiar functionality to `Dictionary.File` transform handlers
   but more closely associated with `Chunks`.
   """
+
+  alias Hangman.{Dictionary}
 
   @grouped Dictionary.grouped
   @chunked Dictionary.chunked

@@ -1,10 +1,12 @@
-defmodule Player.Events do
+defmodule Hangman.Player.Events do
   @moduledoc """
   Module handles player event manager.
 
   Provides access to write `event` notification data to a `player` log file or
   to a displayed user `feed`.
   """
+
+  alias Hangman.{Player, Guess}
 
   require Logger
 

@@ -1,5 +1,7 @@
-defmodule Player.Events.Supervisor do
+defmodule Hangman.Player.Events.Supervisor do
   use Supervisor
+
+  alias Hangman.{Player}
 
   @moduledoc false
 

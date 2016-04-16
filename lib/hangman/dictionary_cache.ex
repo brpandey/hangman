@@ -1,4 +1,4 @@
-defmodule Dictionary.Cache do
+defmodule Hangman.Dictionary.Cache do
   use GenServer
 
   require Logger
@@ -13,7 +13,8 @@ defmodule Dictionary.Cache do
   stored as well.
   """
 
-  alias Dictionary, as: Dict
+  alias Hangman.{Chunks, Counter}
+  alias Hangman.Dictionary, as: Dict
 
   # Dictionary attribute tokens
   @regular Dict.regular

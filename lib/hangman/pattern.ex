@@ -1,4 +1,4 @@
-defmodule Pattern do
+defmodule Hangman.Pattern do
   @moduledoc """
   Module handles `Hangman` pattern updates given guessed `letter`.
 

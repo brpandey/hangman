@@ -1,8 +1,10 @@
-defmodule Reduction.Options do
+defmodule Hangman.Reduction.Options do
   @moduledoc """
   Module generates `Reduction` key for use when reducing 
   possible `Hangman` words set. Used primarily during `Round` setup.
   """
+
+  alias Hangman.{Reduction, Guess}
 
   @doc """
   Generates `Reduction.key` given round context

@@ -1,4 +1,4 @@
-defmodule Chunks do
+defmodule Hangman.Chunks do
   defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
   
   @moduledoc """
@@ -19,6 +19,8 @@ defmodule Chunks do
   
   Primary functions are `new/2`, `count/1`, `add/2`, and `get_words_lazy/1`.
   """
+
+  alias Hangman.{Chunks}
   
   @opaque t :: %__MODULE__{}
   @type binary_chunk ::  {binary, integer}

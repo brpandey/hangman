@@ -1,5 +1,7 @@
-defmodule Pass.Cache.Stub do 
+defmodule Hangman.Pass.Cache.Stub do 
   @moduledoc false
+
+  alias Hangman.{Pass, Reduction, Counter}
 
   '''
   Stub module to mimic `Pass.Cache` functionality

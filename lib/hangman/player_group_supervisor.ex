@@ -1,4 +1,4 @@
-defmodule Player.Group.Supervisor do
+defmodule Hangman.Player.Group.Supervisor do
   use Supervisor
 
   @moduledoc false
@@ -10,6 +10,8 @@ defmodule Player.Group.Supervisor do
   Module supervises those player supervisors which dynamically
   start workers, namely player supervisor and player events supervisor
   '''
+
+  alias Hangman.{Player}
 
   require Logger
 

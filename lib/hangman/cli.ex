@@ -1,4 +1,4 @@
-defmodule CLI do
+defmodule Hangman.CLI do
   @moduledoc """
 
   Module provides a command line interpreter interface
@@ -31,6 +31,7 @@ defmodule CLI do
   @min_secret_length 3
   @max_secret_length 28
 
+  alias Hangman.{Player}
 
   @human Player.human
   @robot Player.robot

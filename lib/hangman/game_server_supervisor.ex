@@ -1,6 +1,8 @@
-defmodule Game.Server.Supervisor do
+defmodule Hangman.Game.Server.Supervisor do
   use Supervisor
   
+  alias Hangman.{Game}
+
   @moduledoc false 
 
   '''

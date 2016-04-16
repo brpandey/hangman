@@ -1,4 +1,4 @@
-defmodule Pass.Cache do
+defmodule Hangman.Pass.Cache do
   use GenServer
 
   @moduledoc """
@@ -22,7 +22,8 @@ defmodule Pass.Cache do
 
   require Logger
   
-  alias Dictionary.Cache, as: DCache
+  alias Hangman.Dictionary.Cache, as: DCache
+  alias Hangman.{Pass, Reduction, Chunks, Counter}
   
   @name __MODULE__
   @ets_table_name :engine_pass_table

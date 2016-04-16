@@ -1,4 +1,4 @@
-defmodule Game.System.Supervisor do 
+defmodule Hangman.Game.System.Supervisor do 
   use Supervisor
 
   @moduledoc false
@@ -13,6 +13,8 @@ defmodule Game.System.Supervisor do
   
   require Logger
 
+  alias Hangman.{Game}
+  
   @name __MODULE__
 
 

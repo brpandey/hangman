@@ -1,4 +1,4 @@
-defmodule Player.Game do
+defmodule Hangman.Player.Game do
   @moduledoc """
   Module handles game playing for synchronous `human` and `robot`
   player types. Handles relationship between 
@@ -10,6 +10,8 @@ defmodule Player.Game do
   Manages specific `player` fsm behaviour (`human` or `robot`).
   Wraps fsm game play into an enumerable for easy running.
   """
+
+  alias Hangman.{Player, Game, Dictionary}
 
   @max_random_words_request 10
 

@@ -1,4 +1,4 @@
-defmodule Player.System.Supervisor do
+defmodule Hangman.Player.System.Supervisor do
   use Supervisor
 
   @moduledoc false
@@ -12,6 +12,8 @@ defmodule Player.System.Supervisor do
   Module is a third line supervisor as it supervises two 
   first-line supervisors and 1 second-line supervisor.
   '''
+
+  alias Hangman.{Dictionary, Pass, Reduction, Player}
 
   require Logger
 

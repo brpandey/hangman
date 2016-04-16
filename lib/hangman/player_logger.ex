@@ -1,4 +1,4 @@
-defmodule Player.Logger.Handler do
+defmodule Hangman.Player.Logger.Handler do
   use GenEvent
 
   @moduledoc """

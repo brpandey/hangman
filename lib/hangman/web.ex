@@ -1,5 +1,7 @@
-defmodule Web do
+defmodule Hangman.Web do
   use Plug.Router
+
+  alias Hangman.{Player}
 
   @moduledoc """
   Module provides access to a http web server for playing 

@@ -1,9 +1,11 @@
-defmodule Game.Server do
+defmodule Hangman.Game.Server do
   use GenServer
   
   defstruct games: %{}, active_pids: %{}
   
   require Logger
+
+  alias Hangman.{Game, Player, Guess}
   
   @moduledoc """
   Module handles `Hangman` `Game` serving to multiple clients.  

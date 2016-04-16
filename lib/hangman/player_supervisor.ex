@@ -1,4 +1,4 @@
-defmodule Player.Supervisor do
+defmodule Hangman.Player.Supervisor do
   use Supervisor
 
   @moduledoc false
@@ -16,6 +16,8 @@ defmodule Player.Supervisor do
   which will dynamically start its children
   '''
   
+  alias Hangman.{Player}
+
   require Logger
 
   @name __MODULE__

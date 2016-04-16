@@ -1,4 +1,4 @@
-defmodule Reduction do
+defmodule Hangman.Reduction do
   @moduledoc """
   Module implements `Reduction` `key` type.
   """

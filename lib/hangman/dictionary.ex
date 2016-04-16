@@ -1,4 +1,4 @@
-defmodule Dictionary do
+defmodule Hangman.Dictionary do
 
   @moduledoc """
   Module defines `Dictionary` common attributes and types. 

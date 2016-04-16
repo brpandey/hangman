@@ -1,4 +1,4 @@
-defmodule Counter do
+defmodule Hangman.Counter do
   @moduledoc """
 
   Module for creating and using letter frequency tallies.
@@ -32,6 +32,8 @@ defmodule Counter do
       iex> Counter.most_common(tally, 5)
       [{"i", 4}, {"s", 4}, {"p", 2}, {"m", 1}]
   """
+
+  alias Hangman.{Chunks, Counter}
 
   @doc false
   defstruct map: %{}

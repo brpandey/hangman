@@ -1,4 +1,4 @@
-defmodule Pass.Writer.Worker do
+defmodule Hangman.Pass.Writer.Worker do
   use GenServer
 
   @moduledoc """
@@ -12,6 +12,8 @@ defmodule Pass.Writer.Worker do
   """
   
   require Logger
+
+  alias Hangman.{Pass, Chunks}
 
   @name __MODULE__
   @ets_table_name :engine_pass_table

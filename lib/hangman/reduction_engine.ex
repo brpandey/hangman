@@ -1,4 +1,4 @@
-defmodule Reduction.Engine do
+defmodule Hangman.Reduction.Engine do
 
   @moduledoc """
   Module provides access to the words reduction engine.  
@@ -13,8 +13,7 @@ defmodule Reduction.Engine do
   The pool supervises the reduction `workers`.
   """
 
-
-  alias Reduction.Engine, as: Engine
+  alias Hangman.{Reduction.Engine, Pass}
 
   @pool_size 10
 

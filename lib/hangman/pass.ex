@@ -1,4 +1,4 @@
-defmodule Pass do
+defmodule Hangman.Pass do
   @moduledoc """
   Module defines types `Pass.key` and `Pass.t`
   """

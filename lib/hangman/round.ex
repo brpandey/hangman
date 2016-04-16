@@ -1,4 +1,4 @@
-defmodule Round do
+defmodule Hangman.Round do
   @moduledoc """
   Module provides access to game round functions.
 
@@ -21,6 +21,7 @@ defmodule Round do
   `update/3`, `status/1`.
   """
 
+  alias Hangman.{Round, Game, Guess, Pass, Player, Reduction, Strategy}
 
   defstruct seq_no: 0, guess: {}, result_code: nil, 
   status_code: nil, status_text: "", pattern: "", 

@@ -1,4 +1,4 @@
-defmodule Game do
+defmodule Hangman.Game do
   @moduledoc """
   Module to create and manage `Hangman` game abstractions. 
 
@@ -28,6 +28,8 @@ defmodule Game do
   """
   
   require Logger
+
+  alias Hangman.{Round, Game, Guess, Pattern}
   
   defstruct id: nil, client_pid: nil, finished: false,
   current: 0, #Current game index

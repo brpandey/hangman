@@ -1,4 +1,4 @@
-defmodule Pass.Writer do
+defmodule Hangman.Pass.Writer do
   
   @moduledoc """
   Module is responsible for words `pass` writes into the `Pass.Cache` table. 
@@ -9,6 +9,8 @@ defmodule Pass.Writer do
   responsible for the write operations. The primary `writer` worker 
   method is `Pass.Writer.Worker.write/3`
   """
+
+  alias Hangman.{Pass, Chunks}
     
   @pool_size 10
   

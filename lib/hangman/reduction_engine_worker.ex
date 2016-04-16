@@ -1,5 +1,7 @@
-defmodule Reduction.Engine.Worker do
+defmodule Hangman.Reduction.Engine.Worker do
   use GenServer
+
+  alias Hangman.{Pass, Chunks, Counter}
 
   @moduledoc """
   Module implements workers that handle `Hangman` words reduction.

@@ -1,10 +1,12 @@
-defmodule Reduction.Engine.Pool do
+defmodule Hangman.Reduction.Engine.Pool do
   use Supervisor
 
   @moduledoc """
   Module is a `Supervisor` that supervises a `pool` of 
   word `Reduction.Engine` workers
   """
+
+  alias Hangman.{Reduction}
 
   @name __MODULE__
 

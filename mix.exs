@@ -9,7 +9,7 @@ defmodule Hangman.Mixfile do
       elixir: "~> 1.2.0",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
-      escript: [main_module: CLI],
+      escript: [main_module: Hangman.CLI],
       deps: deps,
       docs: [
         source_url: "https://bitbucket.org/brpandey/elixir-hangman/",
@@ -24,8 +24,8 @@ defmodule Hangman.Mixfile do
 
   # Runtime dependencies
   def application do
-    dict_type = Dictionary.regular
-    # dict_type = Dictionary.big
+    dict_type = Hangman.Dictionary.regular
+    # dict_type = Hangman.Dictionary.big
     args = [{dict_type, true}]
 
     [

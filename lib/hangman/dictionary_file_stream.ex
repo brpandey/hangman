@@ -1,11 +1,13 @@
-defmodule Dictionary.File.Stream do
+defmodule Hangman.Dictionary.File.Stream do
   @moduledoc """
   Module for accessing input file stream for 
   various original and transformed dictionary file types ranging
   from `unsorted`, `sorted`, `grouped`, `chunked`
   """
 
-  alias Dictionary.File.Stream, as: FileStream
+  alias Hangman.Dictionary.File.Stream, as: FileStream
+
+  alias Hangman.{Dictionary}
 
   defstruct file: nil, type: nil, group_id: -1, group_index: -1
 

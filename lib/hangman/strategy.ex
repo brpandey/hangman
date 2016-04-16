@@ -1,4 +1,4 @@
-defmodule Strategy do
+defmodule Hangman.Strategy do
   @moduledoc """
   Module provides access to a set of functions handling guessing strategy.
 
@@ -31,6 +31,8 @@ defmodule Strategy do
   For the `human` player type, the strategy retries a set of top letter 
   choices to be presented to `human` to manually choose.
   """
+
+  alias Hangman.{Counter, Guess, Pass, Player, Strategy}
 
   defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}

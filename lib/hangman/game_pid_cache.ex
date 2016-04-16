@@ -1,4 +1,4 @@
-defmodule Game.Pid.Cache do 
+defmodule Hangman.Game.Pid.Cache do 
   use GenServer
   
   @moduledoc """
@@ -15,6 +15,8 @@ defmodule Game.Pid.Cache do
   """
   
   require Logger
+
+  alias Hangman.{Game}
   
   @name __MODULE__
   

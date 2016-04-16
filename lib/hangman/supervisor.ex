@@ -1,7 +1,9 @@
-defmodule Root.Supervisor do 
+defmodule Hangman.Supervisor do 
   use Supervisor
 
   @moduledoc false
+
+  alias Hangman.{Game, Player}
   
   '''
   Module is the root level supervisor.

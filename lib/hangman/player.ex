@@ -1,4 +1,4 @@
-defmodule Player do
+defmodule Hangman.Player do
 
   @moduledoc """
   Module for creating players and maximizing our winning chances in conjunction
@@ -24,6 +24,8 @@ defmodule Player do
   reside in the `Dictionary.Cache`, the game will currently be prematurely 
   aborted.
   """
+
+  alias Hangman.{Player, Round, Strategy, Game, Action}
 
   defstruct name: "", pid: nil,
   type: nil,

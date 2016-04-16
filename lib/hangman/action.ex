@@ -1,4 +1,4 @@
-defmodule Action do
+defmodule Hangman.Action do
 
   @moduledoc """
   Module for running round actions.  Actions encapsulate guessing actions
@@ -6,6 +6,7 @@ defmodule Action do
   strategy to easily be able to add new data retrievers, and updaters.
   """
 
+  alias Hangman.{Player, Strategy, Guess, Round}
 
   @human Player.human
   @robot Player.robot

@@ -1,4 +1,4 @@
-defmodule Pass.Writer.Pool do
+defmodule Hangman.Pass.Writer.Pool do
   use Supervisor
 
   @moduledoc """
@@ -9,6 +9,8 @@ defmodule Pass.Writer.Pool do
   Module `distributes` write requests in the form of `Pass.Writer.write/2`
   requests based on `pass` key `id` attribute.
   """
+
+  alias Hangman.{Pass}
 
   @name __MODULE__
 

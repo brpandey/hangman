@@ -1,4 +1,4 @@
-defmodule Player.FSM do
+defmodule Hangman.Player.FSM do
   @behaviour :gen_fsm
 
   @moduledoc false
@@ -18,7 +18,8 @@ defmodule Player.FSM do
 
   require Logger
 
-  alias Player.Async.Echo, as: Echo
+  alias Hangman.Player.Async.Echo, as: Echo
+  alias Hangman.{Player, Guess}
 
   @human Player.human
   @robot Player.robot

@@ -1,7 +1,9 @@
-defmodule Player.Async.Echo do
+defmodule Hangman.Player.Async.Echo do
   @behaviour :gen_fsm
 
   @moduledoc false
+
+  alias Hangman.{Player}
 
   '''
   Module serves as an asynchronous echo server for
