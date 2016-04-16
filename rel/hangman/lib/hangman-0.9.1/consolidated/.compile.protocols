@@ -1,6 +1,0 @@
-v1.
-{'Elixir.Inspect.Chunks',{impl,'Elixir.Inspect'}}.
-{'Elixir.Inspect.Counter',{impl,'Elixir.Inspect'}}.
-{'Elixir.Inspect.Game',{impl,'Elixir.Inspect'}}.
-{'Elixir.Inspect.Strategy',{impl,'Elixir.Inspect'}}.
-{'Elixir.Inspect.Player',{impl,'Elixir.Inspect'}}.
