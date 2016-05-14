@@ -13,17 +13,8 @@ defmodule Hangman.Dictionary.Cache do
   stored as well.
   """
 
-  alias Hangman.{Chunks, Counter}
-  alias Hangman.Dictionary, as: Dict
-
-  # Dictionary attribute tokens
-  @regular Dict.regular
-  @big Dict.big
-
-  @unsorted Dict.unsorted
-  @sorted Dict.sorted
-  @grouped Dict.grouped
-  @chunked Dict.chunked
+  alias Hangman.{Chunks, Counter, Dictionary}
+  alias Hangman.Dictionary.File.{Reader}
 
   @ets_table_name :dictionary_cache_table
 
@@ -48,7 +39,7 @@ defmodule Hangman.Dictionary.Cache do
   """
 
   @spec start_link(Keyword.t) :: {:ok, pid}
-  def start_link(args \\ [{@regular, true}]) do
+  def start_link(args \\ [{Dictionary.regular, true}]) do
     Logger.info "Starting Hangman Dictionary Cache Server, args #{inspect args}"
     options = [name: :hangman_dictionary_cache_server]
     GenServer.start_link(@name, args, options)
@@ -124,13 +115,26 @@ defmodule Hangman.Dictionary.Cache do
     if is_pid(pid), do: GenServer.call pid, :stop
   end
 
-  @docp """
+  @doc """
   GenServer callback to initalize server process
+
+  Loads normalized `Dictionary.File` into `ETS`. Calculates and 
+  loads `chunked` word lists. Computes and stores letter 
+  `tallies` by word length `key`.  Tags and stores `random` words.
   """
 
-  #@callback init(Keyword.t) :: {}
+  # @callback init(Keyword.t) :: {}
   def init(args) do
-    setup(args)
+
+    case :ets.info(@ets_table_name) do
+      :undefined -> 
+        # if fresh, empty table only process
+        # normalize then load into table
+        Dictionary.normalize(args) |> load(@ets_table_name)
+      
+        _ -> raise HangmanError, "cache already setup!"
+    end
+    
     {:ok, {}}
   end
 
@@ -202,7 +206,7 @@ defmodule Hangman.Dictionary.Cache do
     case :ets.info(@ets_table_name) do
       :undefined -> # if fresh, empty table only process
         # normalize then load into table
-        normalize(:file, args) |> load(@ets_table_name)
+        Dictionary.normalize(args) |> load(@ets_table_name)
 
       _ -> raise HangmanError, "cache already setup!"
     end
@@ -319,49 +323,6 @@ defmodule Hangman.Dictionary.Cache do
 
   # UPDATE
 
-  #Ensure the dictionary file has been normalized in order to be
-  #loaded into the ets table.  Normalization is done through a series of
-  #transformations.  Returns path of final, transformed, chunked dictionary file
-
-  @spec normalize(:atom, Keyword.t) :: String.t
-  defp normalize(:file, args) do
-
-    # transform dictionary file, 3 times if necessary
-    # handle normal dictionary size ~ 174k words
-    path = 
-      case Keyword.fetch(args, @regular) do
-        {:ok, true} -> 
-          
-          nil 
-          |> Dict.File.transform({@unsorted, @sorted}, @regular)
-          |> Dict.File.transform({@sorted, @grouped}, @regular)
-          |> Dict.File.transform({@grouped, @chunked}, @regular)
-
-        _ -> nil
-      end
-        
-    # handle big dictionary size ~ 340k words
-    if path == nil do
-      path = 
-        case Keyword.fetch(args, @big) do
-          {:ok, true} ->
-    
-            nil 
-            |> Dict.File.transform({@unsorted, @sorted}, @big)
-            |> Dict.File.transform({@sorted, @grouped}, @big)
-            |> Dict.File.transform({@grouped, @chunked}, @big)
-
-          _ -> nil
-        end
-    end
-    
-    if path == nil, do: raise "valid dictionary type not provided"
-    
-    path
-  end
-
-
-
   # Load dictionary word file into ets table @ets_table_name
   # Segments of the dictionary word stream are broken up into chunks, 
   # normalized and stored in the ets
@@ -404,11 +365,11 @@ defmodule Hangman.Dictionary.Cache do
       :ets.insert(table_name, {ets_key, ets_value}) 
     end
 
-    # Group the word stream by chunks, 
-    # normalize the chunks then insert into ets
+    # Group the word reader stream by chunks, 
+    # unpack the chunks then insert into ets
     
-    Dict.File.Stream.new({:read, @chunked}, path)
-    |> Dict.File.Stream.gets_lazy
+    Reader.new(Dictionary.chunked, path)
+    |> Reader.stream
     |> Stream.each(fn_ets_insert_chunks)
     |> Stream.each(&ets_put_random_words/1)
     |> Stream.run

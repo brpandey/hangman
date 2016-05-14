@@ -1,22 +1,20 @@
-defmodule Hangman.Dictionary.File.Stream do
+defmodule Hangman.Dictionary.File.Reader do
+
   @moduledoc """
   Module for accessing input file stream for 
   various original and transformed dictionary file types ranging
-  from `unsorted`, `sorted`, `grouped`, `chunked`
+  from `original`, `sorted`, `grouped`, `chunked`
   """
 
-  alias Hangman.Dictionary.File.Stream, as: FileStream
-
   alias Hangman.{Dictionary}
+  alias Hangman.Dictionary.File.{Reader}
 
   defstruct file: nil, type: nil, group_id: -1, group_index: -1
 
   @opaque t :: %__MODULE__{}
 
-  @type mode :: :read
-
   # Dictionary attribute tokens
-  @unsorted Dictionary.unsorted
+  @original Dictionary.original
   @sorted Dictionary.sorted
   @grouped Dictionary.grouped
   @chunked Dictionary.chunked
@@ -26,14 +24,15 @@ defmodule Hangman.Dictionary.File.Stream do
 
   # Create
   @doc """
-  Returns a new empty file `stream`
+  Returns a new empty file reader
   """
 
-  @spec new({mode, Dictionary.transform}, String.t) :: t
-  def new(type = {:read, dict_file_type}, path)
-  when dict_file_type in [@sorted, @unsorted, @grouped, @chunked] do
+  @spec new(Dictionary.transform, String.t) :: t
+  def new(type = dict_file_type, path)
+  when dict_file_type in [@original, @sorted, @grouped, @chunked] do
+
     file = File.open!(path)
-    %FileStream{ file: file, type: type}
+    %Reader{ file: file, type: type }
   end
 
 
@@ -42,21 +41,21 @@ defmodule Hangman.Dictionary.File.Stream do
   Returns input file `stream`
   """
 
-  @spec gets_lazy(t) :: Enumerable.t
-  def gets_lazy(%FileStream{} = fstream) do
-    file_handler(fstream, fstream.type)
+  @spec stream(t) :: Enumerable.t
+  def stream(%Reader{} = reader) do
+    read_handler(reader, reader.type)
   end
 
   # Delete
 
   @doc """
-  Deletes `fstream`, returns empty file `stream`
+  Deletes `reader`, returns empty file `stream`
   """
 
   @spec delete(t) :: t
-  def delete(%FileStream{} = fstream) do
-    File.close(fstream.file)
-    %FileStream{}
+  def delete(%Reader{} = reader) do
+    File.close(reader.file)
+    %Reader{}
   end 
 
 
@@ -67,11 +66,11 @@ defmodule Hangman.Dictionary.File.Stream do
   @doc """
   Handles file specific input `streams`, wrapping underlying file formats.
   Returns file `stream`, closes file when finished.  Normally accessed
-  through `gets_lazy/1`.
+  through `stream/1`.
   """
-  @spec file_handler(t, {mode, Dictionary.transform}) :: Enumerable.t
+  @spec read_handler(t, Dictionary.transform) :: Enumerable.t
 
-  def file_handler(%FileStream{} = fstream, {:read, @chunked}) do
+  def read_handler(%Reader{} = reader, @chunked) do
 
     # Given the chunks file, read it in raw binary mode all it once
     # split it based on the delimiter
@@ -85,24 +84,27 @@ defmodule Hangman.Dictionary.File.Stream do
         :erlang.binary_to_term(bin)
     end
 
-    chunks_stream = fstream.file
+    chunks_enumerable = reader.file
     |> IO.binread(:all)
     |> :binary.split(@chunks_file_delimiter, [:global])
-    |> Stream.map(fn_unpack)
-    
-    chunks_stream
+    |> Enum.map(fn_unpack)
+
+    # close the file
+    File.close(reader.file)
+
+    chunks_enumerable
   end
   
   # grouped file specific input stream generator, wrapping underlying file
 
-  def file_handler(%FileStream{} = fstream, {:read, @grouped}) do
+  def read_handler(%Reader{} = reader, @grouped) do
     Stream.resource(
-      fn -> fstream end,
+      fn -> reader end,
     
-      fn fstream ->
-        case IO.read(fstream.file, :line) do
+      fn reader ->
+        case IO.read(reader.file, :line) do
           # if newline or empty binary prompt for next value in stream
-          data when data in ["\n", ""] -> {[], fstream}
+          data when data in ["\n", ""] -> {[], reader}
           
           data when is_binary(data) ->
               # split line into group attributes
@@ -110,27 +112,27 @@ defmodule Hangman.Dictionary.File.Stream do
               length = String.to_integer(len)
               index = String.to_integer(ind)
               word = word |> String.strip
-            { [{length, index, word}], fstream }
+            { [{length, index, word}], reader }
 
-          _ -> {:halt, fstream}
+          _ -> {:halt, reader}
         end
       end,
       
       # be a responsible file user upon stream end
-      fn fstream -> File.close(fstream.file) end)
+      fn reader -> File.close(reader.file) end)
   end
 
   # sorted file specific input stream generator, wrapping underlying file
   # since we know the input is sorted, we can create a grouping output
 
-  def file_handler(%FileStream{} = fstream, {:read, @sorted}) do
+  def read_handler(%Reader{} = reader, @sorted) do
     Stream.resource(
-      fn -> fstream end,
+      fn -> reader end,
     
-      fn fstream ->
-        case IO.read(fstream.file, :line) do
+      fn reader ->
+        case IO.read(reader.file, :line) do
           # if newline or empty binary prompt for next value in stream
-          data when data in ["\n", ""] -> {[], fstream}
+          data when data in ["\n", ""] -> {[], reader}
 
           data when is_binary(data) ->
             data = data |> String.strip
@@ -138,55 +140,53 @@ defmodule Hangman.Dictionary.File.Stream do
 
             # Tracking group index as we iterate through the stream, to 
             # allow the logic alg to be "online" as we have access to prev value
-            # with the addition of the Fstream module
+            # with the addition of the Reader module
 
-            case fstream.group_id == length do
+            case reader.group_id == length do
               true -> 
                 # increment the group ctr index by 1
-                fstream = Kernel.put_in(fstream.group_index, 
-                                        fstream.group_index + 1)
-
+                reader = Kernel.put_in(reader.group_index, 
+                                        reader.group_index + 1)
               false ->
                 # update new group_id and reset ctr index to 1
-                fstream = Kernel.put_in(fstream.group_id, length)               
-                fstream = Kernel.put_in(fstream.group_index, 1)
+                reader = Kernel.put_in(reader.group_id, length)               
+                reader = Kernel.put_in(reader.group_index, 1)
             end
 
-            { [{length, fstream.group_index, data}], fstream }
+            { [{length, reader.group_index, data}], reader }
 
-          _ -> {:halt, fstream}
+          _ -> {:halt, reader}
         end
       end,
 
       # be a responsible file user upon stream end      
-      fn fstream -> File.close(fstream.file) end)
+      fn reader -> File.close(reader.file) end)
   end
 
-  # unsorted file specific input stream generator, wrapping underlying file
-  # likely handles original dictionary file
+  # handles original dictionary file
 
-  def file_handler(%FileStream{} = fstream, {:read, @unsorted}) do
+  def read_handler(%Reader{} = reader, @original) do
     Stream.resource(
-      fn -> fstream end,
+      fn -> reader end,
     
-      fn fstream ->
-        case IO.read(fstream.file, :line) do
+      fn reader ->
+        case IO.read(reader.file, :line) do
           # if newline or empty binary prompt for next value in stream
-          data when data in ["\n", ""] -> {[], fstream}
+          data when data in ["\n", ""] -> {[], reader}
           
           data when is_binary(data) ->
               # Since we are dealing with the original dictionary file
               # make sure words are lowercased
               data = data |> String.downcase
             
-            { [data], fstream }
+            { [data], reader }
 
-          _ -> {:halt, fstream}
+          _ -> {:halt, reader}
         end
       end,
 
       # be a responsible file user upon stream end      
-      fn fstream -> File.close(fstream.file) end)
+      fn reader -> File.close(reader.file) end)
   end
 
 end
