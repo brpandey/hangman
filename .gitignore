@@ -5,6 +5,6 @@
 erl_crash.dump
 .DS_Store
 *.ez
-hangman
+play
 *.txt
 /rel
