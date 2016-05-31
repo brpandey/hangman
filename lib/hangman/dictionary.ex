@@ -82,6 +82,8 @@ defmodule Hangman.Dictionary do
           end
       end
     
-    Dictionary.CompositeTransformer.run(kind)
+    Dictionary.Transformer.new(kind) 
+    |> Dictionary.Transformer.run
+    
   end
 end
