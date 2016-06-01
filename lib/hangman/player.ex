@@ -15,7 +15,7 @@ defmodule Hangman.Player do
   on the game strategy to automatically self select the best guess.
 
   Player is one of four modules that drive the game play mechanics, the others 
-  being `Round`, `Strategy` and `Action`.
+  being `Round`, `Strategy`.
 
   Player encapsulates the data used along with Strategy data. `Round` functionality
   extends the scope of the player to handle the actual game round details.
@@ -25,7 +25,7 @@ defmodule Hangman.Player do
   aborted.
   """
 
-  alias Hangman.{Player, Round, Strategy, Game, Action}
+  alias Hangman.{Player, Round, Strategy, Game}
 
   defstruct name: "", pid: nil,
   type: nil,
@@ -91,27 +91,62 @@ defmodule Hangman.Player do
     end
   end
 
+
+  # REFACTOR
+
+  # We are having to do all this extra inference to figure out what state we are
+  # Would be simpler just to have the correct state in round.status_code
+  # and p.games_summary merged into one
+
+  # Simple helper routine to detect if player is at game over and game start
+
+  @spec game_start_or_over_check(Player.t) :: tuple
+  def game_start_or_over_check(%Player{} = player) do
+
+    # If a single game is finished, check if all the games are over, 
+    # otherwise proceed to next game.  Else game over
+
+    case p.round.status_code == :game_won or 
+    p.round.status_code == :game_lost do
+      
+      true -> # Single game finished
+
+        case p.games_summary != nil do # All games over?
+          # All games finished
+          true -> {:games_over}
+
+          # Still more games left
+          false -> {:game_start}
+        end
+
+      false -> # Start guessing
+        {:game_keep_guessing}
+    end
+  end
+
   @doc """
-  Returns `true` or `false` whether the `game` has been won
+  Returns `game` status
   """
 
-  @spec game_won?(t) :: boolean
-  def game_won?(%Player{} = p), do: p.round.status_code == :game_won
+  @spec status(t) :: Round.result
+  def status(%Player{} = p) do
 
+    case p.games_summary != nil do
+      # if games are over
+      true -> {:games_over, p.games_summary}
 
-  @doc """
-  Returns `true` or `false` whether the `game` has been lost
-  """
+      # if games still left
+      false ->
+          # check if the single game is over
+          case p.round.status_code == :game_won or 
+          p.round.status_code == :game_lost do
 
-  @spec game_lost?(t) :: boolean
-  def game_lost?(%Player{} = p), do: p.round.status_code == :game_lost
+            true -> {:game_keep_guessing}
+            false -> Round.status(p)
+          end
+    end
+  end
 
-  @doc """
-  Returns `true` or `false` whether all games are over
-  """
-
-  @spec games_over?(t) :: boolean
-  def games_over?(%Player{} = p), do: p.games_summary != nil
 
   @doc """
   Returns `game` summary as a string.  Includes `number` of games played, `average` 
@@ -130,20 +165,6 @@ defmodule Hangman.Player do
       
     "Game Over! Average Score: #{avg}, " 
     <> "# Games: #{games}, Scores: #{results}"
-  end
-
-  @doc """
-  Returns `game` status
-  """
-
-  @spec status(t, :atom) :: Round.result
-  def status(%Player{} = p, :game_round), do: Round.status(p)
-
-  def status(%Player{} = p, :games_over) do
-    case games_over?(p) do
-      true -> {:games_over, p.games_summary}
-      false -> status(p, :game_round)
-    end
   end
 
 
@@ -177,8 +198,8 @@ defmodule Hangman.Player do
 
     result = 
       case p.type do
-        @robot -> guess(p, :game_start)
-        @human -> choices(p, :choose_letters, :game_start)
+        @robot -> guess(p, :robot, :game_start)
+        @human -> guess(p, :human, :choose_letters, :game_start)
         _ -> raise HangmanError, "Invalid and unknown player type"
     end
 
@@ -191,18 +212,16 @@ defmodule Hangman.Player do
   Setups new `round`, retrieves and returns top letter choices.
   """
 
-  @spec choices(t, Guess.directive, :atom) :: {t, Guess.option}
-  def choices(%Player{} = p, :choose_letters = _directive, options \\ nil) do
+  @spec guess(t, kind, Guess.directive, :atom) :: {t, Guess.option}
+  def guess(%Player{} = p, :human, :choose_letters, options \\ nil) do
     
     @human = p.type
 
     fn_run = fn ->
       p = 
         case options do
-          :game_start -> 
-            p |> Round.setup(:game_start) # Setup round
-          nil ->
-            p |> Round.setup # Setup round
+          :game_start -> p |> Round.setup(:game_start) # Setup round
+          nil -> p |> Round.setup # Setup round
         end
       
       # Retrieve top letter strategy options,
@@ -219,31 +238,28 @@ defmodule Hangman.Player do
 
 
   @doc """
-  Routine for `:robot` player type. Setups new `round`, 
+  Routine for `:robot` player type. Sets up new `round`, 
   performs `auto-generated` guess, returns round `status`
   """
 
   #@spec guess(p :: t, mode :: none | :atom) :: result
 
-  def guess(%Player{} = p) do
+  def guess(%Player{} = p, :robot, mode \\ nil) when is_atom(mode) do
     @robot = p.type
 
     fn_run = fn ->
-      p = p |> Round.setup # Setup round
-      p = Action.perform(p, :robot_guess)
+
+      p = 
+        case mode do
+          :game_start -> Round.setup(p, :game_start) # Setup game start round
+          nil -> Round.setup(p) # Setup round
+        end
+      
+      guess = Strategy.make_guess(p.strategy)
+      round_info = Round.guess(p, guess)
+      p = Round.update(p, round_info)
       {p, Round.status(p)}
-    end
 
-    rescue_wrap(p, fn_run)
-  end
-
-  def guess(%Player{} = p, :game_start = _mode) do
-    @robot = p.type
-
-    fn_run = fn ->
-      p = p |> Round.setup(:game_start) # Setup game start round
-      p = Action.perform(p, :robot_guess)
-      {p, Round.status(p)}
     end
 
     rescue_wrap(p, fn_run)
@@ -263,11 +279,13 @@ defmodule Hangman.Player do
   """
 
   @spec guess(p :: t, guess :: Guess.directive | Guess.t) :: result
-  def guess(%Player{} = p, :guess_last_word = _guess) do
+  def guess(%Player{} = p, :human, :guess_last_word = _guess) do
     @human = p.type
 
     fn_run = fn ->
-      p = Action.perform(p, :guess_last_word)
+      guess = Strategy.last_word(p.strategy)
+      round_info = Round.guess(p, guess)
+      p = Round.update(p, round_info, guess)
       status = Round.status(p)
 
       # If we can supposedly keep guessing, flag as error since this should be end
@@ -283,13 +301,16 @@ defmodule Hangman.Player do
   end
 
 
-  def guess(%Player{} = p, {:guess_letter, l} = guess)
+  def guess(%Player{} = p, :human, {:guess_letter, l} = guess)
   when is_binary(l) do 
 
     @human = p.type
 
     fn_run = fn ->
-      p = Action.perform(p, guess)
+  	  guess = Strategy.letter_in_most_common(p.strategy, letter)
+      round_info = Round.guess(p, guess)
+		  p = Round.update(p, round_info, guess)
+
       {p, Round.status(p)}
     end
 

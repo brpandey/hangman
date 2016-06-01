@@ -216,7 +216,7 @@ defmodule Hangman.Player.FSM do
   def eager_socrates({:guess_letter, guess_letter}, _from, {player, pid}) do
 
     {player, reply} = 
-      Player.guess(player, {:guess_letter, guess_letter})
+      Player.guess(player, :human, {:guess_letter, guess_letter})
 
     {status_code, _} = reply
     
@@ -227,7 +227,7 @@ defmodule Hangman.Player.FSM do
       end
 
     if next == :eager_socrates do
-      {player, reply} = Player.choices(player, :choose_letters)
+      {player, reply} = Player.guess(player, :human, :choose_letters)
 
       if Player.last_word?(player), do: next = :giddy_socrates
     end
@@ -244,7 +244,7 @@ defmodule Hangman.Player.FSM do
   @callback giddy_socrates(Guess.directive, tuple, tuple) :: tuple
   def giddy_socrates(:guess_last_word, _from, {player, pid}) do
 
-    {player, reply} = Player.guess(player, :guess_last_word)
+    {player, reply} = Player.guess(player, :human, :guess_last_word)
 
     {status_code, _} = reply
 
@@ -304,7 +304,7 @@ defmodule Hangman.Player.FSM do
   @callback intrigued_wall_e(:atom, tuple, tuple) :: tuple
   def intrigued_wall_e(:game_keep_guessing, _from, {player, pid}) do
     
-    {player, reply} = Player.guess(player)
+    {player, reply} = Player.guess(player, :robot)
     {status_code, _} = reply
     next = 
       case status_code do
@@ -368,7 +368,7 @@ defmodule Hangman.Player.FSM do
   @callback spellbound_wall_e(:atom, tuple) :: tuple
   def spellbound_wall_e(:game_keep_guessing, {player, echo_pid}) do
 
-    {player, {status_code, _}} = Player.guess(player)
+    {player, {status_code, _}} = Player.guess(player, :robot)
 
     next_state = 
       case status_code do
@@ -407,30 +407,7 @@ defmodule Hangman.Player.FSM do
     { :stop, :normal, {player, pid}}
   end
 
-  # STATE HELPER function(s)
 
-  # Simple helper routine to detect if player is at game over and game start
-
-  @spec game_start_or_over_check(Player.t) :: tuple
-  defp game_start_or_over_check(%Player{} = player) do
-
-    case Player.game_won?(player) or Player.game_lost?(player) do
-      
-      true -> # Single game finished
-
-        case Player.games_over?(player) do # All games over?
-          
-          # All games finished
-          true -> {:games_over}
-
-          # Still more games left
-          false -> {:game_start}
-        end
-
-      false -> # Start guessing
-        {:game_start}
-    end
-  end
 
   # BOILERPLATE
 
@@ -452,7 +429,8 @@ defmodule Hangman.Player.FSM do
   """
 
   @callback handle_sync_event(:atom, tuple, :atom, tuple) :: tuple
-  def handle_sync_event(:games_over_status, _from, state_name, state = {player, _}) do
+  def handle_sync_event(:games_over_status, _from, state_name, 
+                        state = {player, _}) do
 
     status = Player.status(player, :games_over)
 
