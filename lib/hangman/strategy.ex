@@ -1,6 +1,8 @@
-defmodule Hangman.Strategy do
+defmodule Hangman.Letter.Strategy do
+
   @moduledoc """
-  Module provides access to a set of functions handling guessing strategy.
+  Module provides access to a set of functions handling 
+  letter guessing strategy.
 
   From `Wikipedia`
 
@@ -32,9 +34,9 @@ defmodule Hangman.Strategy do
   choices to be presented to `human` to manually choose.
   """
 
-  alias Hangman.{Counter, Guess, Pass, Player, Strategy}
+  alias Hangman.{Counter, Guess, Pass, Player, Letter.Strategy}
 
-  defstruct guessed_letters: MapSet.new, pass: %Pass{}, 
+  defstruct type: nil, guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
 
   @opaque t :: %__MODULE__{}
@@ -53,19 +55,15 @@ defmodule Hangman.Strategy do
   @word_set_size    %{micro: 2, tiny: 5, small: 9, large: 550}
   
   @top_threshhold   2
-
   @letter_choices 5
-
-  @human :human
-  @robot :robot
 
   # CREATE
   @doc """
-  Returns a new `Strategy`
+  Returns a new `Letter.Strategy`
   """
 
-  @spec new :: t
-  def new, do: %Strategy{}
+  @spec new(atom) :: t
+  def new(type) when is_atom(type), do: %Strategy{type: type}
 
   # READ
 
@@ -75,11 +73,11 @@ defmodule Hangman.Strategy do
   """
 
   @spec last_word(t) :: Guess.t
-  def last_word(%Strategy{} = strategy) do
+  defp last_word?(%Strategy{} = strategy) do
     if strategy.pass.size == 1 do
-      {:guess_word, strategy.pass.last_word}
+      {true, {:guess_word, strategy.pass.last_word}}
     else
-      {:guess_word, ""}
+      {false, nil}
     end
   end
 
@@ -87,27 +85,158 @@ defmodule Hangman.Strategy do
   Returns a list of guessed letters up to this point
   """
 
-  @spec get_guessed(t) :: list
-  def get_guessed(%Strategy{} = strategy) do
+  @spec guessed(t) :: list
+  def guessed(%Strategy{} = strategy) do
     MapSet.to_list(strategy.guessed_letters)
   end
 
+  # Helpers
+  @doc """
+  Returns most common `n` letters along with their `counts`
+  """
 
-  @spec possible_words(t) :: String.t
-  defp possible_words(%Strategy{} = strategy), do: strategy.pass.possible
+  @spec most_common(t, pos_integer) :: Keyword.t
+  def most_common(%Strategy{} = strategy, n) 
+  when is_number(n) and n > 0 do
+    counter = strategy.pass.tally
+
+    Counter.most_common(counter, n)
+  end
+
+  @doc """
+  Validates `letter` is within the top strategy letter choices.
+  If not, picks the top `letter` as deemed by heuristics.
+  """
+
+  @spec validate(t, pos_integer, String.t) :: Guess.t
+  def validate(%Strategy{} = strategy, letter, n \\ @letter_choices) 
+  when is_number(n) and n > 0 and is_binary(letter) do
+
+    counter = strategy.pass.tally
+    top_choices = Counter.most_common_key(counter, n)
+
+    # If user has decided to put in a letter, not in the choices
+    # grab the letter that had the highest letter counts
+    unless letter in top_choices, do: letter = Kernel.hd(top_choices)
+    
+    {:guess_letter, letter}
+  end
+
+  @doc """
+  Retrieves letter choices text.  Denotes
+  'strategic' letter pick with an `asterisk`.
+  """
+
+  @spec choices(t, pos_integer) :: Guess.option
+  def choices(%Strategy{} = strategy, n \\ @letter_choices)
+  when is_number(n) and n > 0 do
+    
+    case Strategy.last_word?(strategy) do        
+      {false, _} ->
+        
+        # Return top 5 {letter, count} pairs if possible
+        top_choices = most_common(strategy, n)        
+        possible_words_txt = strategy.pass.possible
+        
+        if String.length(possible_words_txt) > 0 do
+          possible_words_txt = possible_words_txt <> "\n\n"
+        end
+        
+        size = length(top_choices)      
+        choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
+          acc <> " #{k}:#{v}" end)
+        
+        best_letter = optimal(strategy)        
+        choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
+
+        text = possible_words_txt <>
+          "Player {name}, Round {round_no}, {status}.\n" <>
+          "#{size} weighted letter choices : #{choices_text}" <> 
+          " (* robot choice)"
+        
+        {:guess_letter, text}
+
+      {true, {:guess_word, last}} ->
+
+        text = "Player {name}, Round {round_no}, {status}.\n" <>
+          "Last word left: #{last}"
+
+        {:guess_word, last, text}
+    end
+  end
+
+
+
+  @doc """
+  Returns optimal letter
+
+  Method implements the most `common` letter retrieval strategy with a twist.
+  Gets the first letter with the highest frequency for when the 
+  current possible `Hangman` word set space is > "small". 
+  The twist is when we combine the `English` language letter relative 
+  frequency. For the cases where the word set is less than `small`, 
+  takes the letter whose frequencies are less than or equal to half 
+  the possible `Hangman` word pass `size`.
+  
+  E.g.for size 10, the letter `counts` would need to be 5 
+  or lower to be chosen. Doesn't handle tie between letters.
+  """
+
+  @spec optimal(t) :: String.t
+  defp optimal(%Strategy{} = strategy) do
+
+    tally = strategy.pass.tally
+    pass_size = strategy.pass.size
+    
+    if Counter.empty?(tally) do
+      raise HangmanError, 
+      "Word not in dictionary, no words left (tally is empty)"
+    end
+    
+    cond do
+      pass_size > @word_set_size.small ->
+        
+        [{letter1, count1}, {letter2, count2}] = Counter.most_common(tally, 2)
+        
+        size_1 = ( 1 + @eng_letter_freq[letter1] ) * count1
+        size_2 = ( 1 + @eng_letter_freq[letter2] ) * count2
+        
+        if size_2 > size_1, do: letter2, else: letter1
+      true ->
+        # counter is the generator, pass_size/2 is filter guard
+        # grab those key value pairs where value is <= 1/2 pass size
+
+        # returns pairs list
+        kv_list =
+        for {k,v} <- Counter.items(tally), v <= pass_size/2, do: {k,v}
+                    
+        # if no pairs in our list, remove the filter guard and run again
+        if Kernel.length(kv_list) == 0 do
+          kv_list = for {k,v} <- Counter.items(tally), do: {k,v}
+        end
+        
+        # retrieve letter with highest frequency count
+        tally = Counter.new(kv_list)
+        [letter] = Counter.most_common_key(tally, 1)
+        
+        letter
+    end
+  end
+
+
 
   # UPDATE
 
   @docp """
-  Prepares best letter guess as deemed by heuristics
+  sets up best letter guess as deemed by heuristics
   """
 
-  @spec prepare_guess(t) :: t
-  defp prepare_guess(%Strategy{} = strategy) do
+  @spec guess(t, atom) :: t
+  defp setup(%Strategy{} = strategy) do
     case strategy.pass.size do 
       0 ->  raise HangmanError, "Word not in dictionary"
       1 ->
-        final_word = strategy.pass.last_word
+        {true, {:guess_word, final_word}} = last_word?(strategy)
 
         if {:guess_word, final_word} != strategy.prior_guess 
         and {} != strategy.prior_guess
@@ -119,7 +248,7 @@ defmodule Hangman.Strategy do
         end
 
       _pass_size ->
-        letter = retrieve_best_letter(strategy)
+        letter = optimal(strategy)
         
         if letter != nil and letter != "" 
           and {:guess_letter, letter} != strategy.prior_guess do
@@ -139,10 +268,8 @@ defmodule Hangman.Strategy do
   Returns best letter guess as deemed by heuristics
   """
 
-  @spec make_guess(t) :: Guess.t
-  def make_guess(%Strategy{} = strategy) do
-    strategy.guess
-  end
+  @spec guess(t) :: Guess.t
+  def guess(%Strategy{} = strategy), do: strategy.guess
 
   @doc """
   Updates strategy with guess particulars
@@ -166,182 +293,25 @@ defmodule Hangman.Strategy do
   end
 
   @doc """
-  Updates `strategy` with `pass` data.
+  Updates `strategy` with engine `pass` data.
 
   For `robot` player type, when we updated the pass data
   also `prepare` the guess.
   """
 
-  @spec update(t, Pass.t, Player.kind) :: t
+  @spec update(t, Pass.t) :: t
 
-
-  def update(%Strategy{} = strategy, %Pass{} = pass, @human) do
-    prior = strategy.guess
+  def update(%Strategy{} = strategy, %Pass{} = pass) do
+    strategy = %Strategy{ strategy | pass: pass, prior_guess: strategy.guess }
     
-    %Strategy{ strategy | pass: pass, prior_guess: prior}
-  end
-
-  def update(%Strategy{} = strategy, %Pass{} = pass, @robot) do
-    prior = strategy.guess
-    
-    strategy = Kernel.put_in(strategy.pass, pass)
-    strategy = Kernel.put_in(strategy.prior_guess, prior)
-
-    strategy = prepare_guess(strategy)
+    if strategy.type == :robot do
+      strategy = setup(strategy)
+    end
 
     strategy
   end
 
 
-  # Helpers
-  @doc """
-  Returns most common `n` letters along with their `counts`
-  """
-
-  @spec most_common_letter_and_counts(t, pos_integer) :: Keyword.t
-  def most_common_letter_and_counts(%Strategy{} = strategy, n) 
-  when is_number(n) and n > 0 do
-    counter = strategy.pass.tally
-
-    Counter.most_common(counter, n)
-  end
-
-  @doc """
-  Returns most common `n` letters
-  """
-
-  @spec most_common_letter(t, pos_integer) :: list
-  def most_common_letter(%Strategy{} = strategy, n) 
-  when is_number(n) and n > 0 do
-    counter = strategy.pass.tally
-
-    Counter.most_common_key(counter, n)
-  end
-
-  @doc """
-  Validates `letter` is within the top strategy letter choices.
-  If not, picks the top `letter` as deemed by heuristics.
-  """
-
-  @spec letter_in_most_common(t, pos_integer, String.t) :: Guess.t
-  def letter_in_most_common(%Strategy{} = strategy, letter, n \\ @letter_choices) 
-  when is_number(n) and n > 0 and is_binary(letter) do
-
-    counter = strategy.pass.tally
-    top_choices = Counter.most_common_key(counter, n)
-
-    # If user has decided to put in a letter, not in the choices
-    # grab the letter that had the highest letter counts
-    unless letter in top_choices, do: letter = Kernel.hd(top_choices)
-    
-    {:guess_letter, letter}
-  end
-
-  @doc """
-  Retrieves letter choices text.  Denotes
-  'strategic' letter pick with an `asterisk`.
-  """
-
-  @spec choose_letters(t, pos_integer) :: Guess.option
-  def choose_letters(%Strategy{} = strategy, n \\ @letter_choices)
-  when is_number(n) and n > 0 do
-    
-    case Strategy.last_word(strategy) do        
-      {:guess_word, ""} ->
-        
-        # Return top 5 letter, count pairs if possible
-        top_choices = most_common_letter_and_counts(strategy, n)
-        
-        possible_words_txt = possible_words(strategy)
-        
-        if String.length(possible_words_txt) > 0 do
-          possible_words_txt = possible_words_txt <> "\n\n"
-        end
-        
-        size = length(top_choices)
-      
-        choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
-          acc <> " #{k}:#{v}" end)
-        
-        best_letter = retrieve_best_letter(strategy)
-        
-        choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
-
-        text = possible_words_txt <>
-          "Player {name}, Round {round_no}, {status}.\n" <>
-          "#{size} weighted letter choices : #{choices_text}" <> 
-          " (* robot choice)"
-        
-        {:game_choose_letter, text}
-
-      {:guess_word, last} ->
-
-        text = "Player {name}, Round {round_no}, {status}.\n" <>
-          "Last word left: #{last}"
-
-        {:game_last_word, text}
-    end
-  end
-
-
-
-  @doc """
-  Method implements the most `common` letter retrieval strategy with a twist.
-  Gets the first letter with the highest frequency for when the 
-  current possible `Hangman` word set space is > "small". 
-  The twist is when we combine the `English` language letter relative 
-  frequency. For the cases where the word set is less than `small`, 
-  takes the letter whose frequencies are less than or equal to half 
-  the possible `Hangman` word pass `size`.
-  
-  E.g.for size 10, the letter `counts` would need to be 5 
-  or lower to be chosen. Doesn't handle tie between letters.
-  """
-
-  @spec retrieve_best_letter(t) :: String.t
-  def retrieve_best_letter(%Strategy{} = strategy) do
-    do_retrieve_best_letter(strategy.pass.tally, strategy.pass.size)
-  end
-
-  @spec do_retrieve_best_letter(Counter.t, integer) :: String.t
-  defp do_retrieve_best_letter(tally, pass_size) do
-    
-    if Counter.empty?(tally) do
-      raise HangmanError, 
-      "Word not in dictionary, no words left (tally is empty)"
-    end
-    
-    cond do
-      pass_size > @word_set_size.small ->
-        
-        [{letter1, count1}, {letter2, count2}] = Counter.most_common(tally, 2)
-        
-        size_1 = ( 1 + @eng_letter_freq[letter1] ) * count1
-        size_2 = ( 1 + @eng_letter_freq[letter2] ) * count2
-        
-        if size_2 > size_1, do: letter2, else: letter1
-      true ->
-
-        # counter is the generator, pass_size/2 is filter guard
-        # grab those key value pairs where value is <= 1/2 pass size
-
-        # returns pairs list
-        kv_list =
-        for {k,v} <- Counter.items(tally), v <= pass_size/2, do: {k,v}
-        
-            
-        # if no pairs in our list, remove the filter guard and run again
-        if Kernel.length(kv_list) == 0 do
-          kv_list = for {k,v} <- Counter.items(tally), do: {k,v}
-        end
-        
-        # retrieve letter with highest frequency count
-        tally = Counter.new(kv_list)
-        [letter] = Counter.most_common_key(tally, 1)
-        
-        letter
-    end
-  end
 
   @doc """
   Returns `Strategy` information
@@ -355,7 +325,6 @@ defmodule Hangman.Strategy do
         %Counter{} -> Counter.items(s.pass.tally)
         %{} -> []
       end
-
 
     pass = [
       size: s.pass.size,

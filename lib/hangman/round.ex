@@ -17,41 +17,267 @@ defmodule Hangman.Round do
   update our round recordkeeping structures with the guess results and proceed
   for the next round -- to do it all over again.
 
-  Basic `Round` functionality includes `setup/2`, `guess/2`, 
-  `update/3`, `status/1`.
+  Basic `Round` functionality includes `setup/4`, `guess/2`, 
+  `transition/1`, `status/1`.
+
+  We invoke setup before a guess.  Transition is used after a single game over 
+  to determine if we transition to a new game or games over.
   """
 
-  alias Hangman.{Round, Game, Guess, Pass, Player, Reduction, Strategy}
+  alias Hangman.{Round, Game, Guess, Pass, Player, Reduction, Letter.Strategy}
 
-  defstruct seq_no: 0, guess: {}, result_code: nil, 
-  status_code: nil, status_text: "", pattern: "", 
-  final_result: ""
-
+  defstruct id: "", num: 0, game_num: 0, 
+  guess: {}, result_code: nil, status_code: nil, status_text: "", pattern: "",
+  pid: nil, game_pid: nil, event_pid: nil
+  
+  @type t :: %__MODULE__{}
   @type code :: :correct_letter | :incorrect_letter | :incorrect_word
-
   @type result :: {code, status :: String.t}
+  @type key :: {id :: String.t, client_pid :: pid} # Used as game key
 
-  @type t :: %__MODULE__{} 
+  @typedoc """
+  Sum type used to understand prior `guess` result
+  """
 
+  @type context ::  
+  ({:game_start, secret_length :: pos_integer}) |
+  ({:game_keep_guessing, :correct_letter, letter :: String.t, 
+    pattern :: String.t, mystery_letter :: String.t}) |
+  ({:game_keep_guessing, :incorrect_letter, letter :: String.t})
+  
+
+  # CREATE
+
+  # Start the new game round
+
+  def start(%Round{} = round) do
+    
+    if round.game_num == 0 do
+      # Notify the event server that we've started playing hangman
+      Player.Events.notify_start(round.event_pid, round.id)
+
+      # update the passed in round
+      %Round{ round | game_num: round.game_num + 1}
+    else
+      # create a new round with some leftover data from passed in round
+      %Round{ id: round.id, pid: round.pid, game_num: round.game_num + 1, 
+              game_pid: round.game_pid, event_pid: round.event_pid }
+    end
+  end
+  
   # READ
+
+  def reduce_context_key(%Round{} = round) do
+    {round.id, round.game_num, round.num + 1}
+  end
+
+  def game_context_key(%Round{} = round) do
+    {round.id, {round.id, round.pid}, round.game_num, round.num + 1, 
+     round.game_pid, round.event_pid}
+  end
+
+
+  @doc """
+  Returns `round` status tuple
+  """
+
+  @spec status(t) :: result
+  def status(%Round{} = round) do
+    {round.status_code, round.status_text}
+  end
+
+  # UPDATE
+  
+  # Setup the game play round
+
+  @doc """
+  Sets up game play `round`
+
+  For game start stage, retrieves secret length from game server
+  uses secret length to filter possible `Hangman` words from `Pass.Cache` server
+
+  On start and subsequent rounds, also generates a reduce key based on the result of the
+  last guess to filter possible `Hangman` words from `Pass.Cache` server
+  """
+
+  @spec setup(Round.t, List.t, Game.code, (Map.t -> Strategy.t) ) :: Round.t
+
+  # setup routines as arranged by game status codes
+
+  def setup(%Round{} = round, [], :game_start, fn_updater) do
+    {round, pass_info} = round 
+    |> do_setup(:game_server) 
+    |> do_setup([], :reduction_pass)
+
+    updater_result = fn_updater.(pass_info)
+
+    {round, updater_result}
+  end
+
+  def setup(%Round{} = round, exclusion, :game_keep_guessing, fn_updater) do
+    {round, pass_info} = do_setup(round, exclusion, :reduction_pass)
+    updater_result = fn_updater.(pass_info)
+
+    {round, updater_result}
+  end
+
+  # private setup routines as arranged by the type of setup
+
+  defp do_setup(%Round{} = round, :game_server) do
+    {name, key, game_no, _seq_no, game_pid, event_pid} = 
+      Round.game_context_key(round)
+
+    # Initiate the game and grab the secret length
+    {^name, :secret_length, secret_length, status_text} =
+      Game.Server.initiate_and_length(game_pid, key)
+    
+    Player.Events.notify_length(event_pid, {name, game_no, secret_length})
+
+    # Quick assert
+    true = is_number(secret_length) and secret_length > 0
+    
+    round = %Round{ round | status_code: :game_start, 
+                   status_text: status_text, 
+                   context: {:game_start, secret_length}}
+
+    round
+  end
+
+  defp do_setup(%Round{} = round, exclusion, :reduction_pass) do
+    
+    # Generate the word filter options for the words reduction engine
+    ctx = round.context
+
+    reduce_key = ctx |> Reduction.Options.reduce_key(exclusion)
+    match_key = ctx |> Kernel.elem(0)
+
+    pass_key = Round.reduce_context_key(round)
+
+    # Filter the engine hangman word set
+    {^pass_key, pass_info} = 
+      Pass.Cache.get({:pass, match_key}, pass_key, reduce_key)
+
+    {round, pass_info}
+  end
+
+
+  @doc """
+  Issues a client `guess` (either `letter` or `word`) against `Game.Server`.
+  Notifies player `events` of guess `results`.
+
+  Returns received `round` data
+  """
+
+  @spec guess(t, Guess.t) :: t
+  def guess(%Round{} = round, 
+            guess = {id, value}) 
+  when id in [:guess_letter, :guess_word] and is_binary(value) do
+    
+    {id, player_key, game_no, round_num, game_pid, event_pid} = 
+      Round.game_context_key(round)
+    
+
+    %{id: ^id, result: result, code: code, 
+      pattern: pattern, text: text, summary: []} =
+      Game.Server.guess(game_pid, player_key, guess)
+    
+    Player.Events.notify_guess(event_pid, guess,
+                               {id, game_no})
+    
+    Player.Events.notify_status(event_pid,
+                                {id, game_no, seq_no, text})
+    
+    round = %Round{round_num: round_num,
+                   guess: guess, result_code: result, 
+                   status_code: code, pattern: pattern, 
+                   status_text: text}
+
+    # Compute round context for the next round
+    round = Kernel.put_in(round.context, context(round))
+
+    round
+
+  end
+
+  # Specifies steps for end of single game round 
+  # transitions to either a :game_start or :games_over
+
+  @spec transition(t) :: Map.t
+  def transition(%Round{} = round)
+  when round.status_code in [:game_won, :game_lost] do
+
+    {id, player_key, _, _, game_pid, _} = 
+      Round.game_context_key(round)
+
+    %{id: ^id, code: status_code, summary: summary_code} = 
+      Game.Server.status(game_pid, player_key)
+
+    round = Kernel.put_in(round.status_code, status_code)
+
+    if code == :games_over do
+      round = process_summary(round, summary_code)
+    end
+
+    round
+  end
+
+  # Private
+  # Helpers
+
+  # If games are over, process games summary
+
+  defp process_summary(%Round{} = round, summary_code) 
+  when is_list(summary_code) do
+    if (summary_code != "" and summary_code != [] and
+        List.first(summary_code) == {:status, :games_over}) do
+      
+      summary = text_summary(summary_code)
+      round = Kernel.put_in(round.status_text, summary)      
+      
+      Player.Events.notify_games_over(round.event_pid, round.id, summary)
+    end
+
+    round
+  end
+
+
+  @doc """
+  Returns `game` summary as a string.  Includes `number` of games played, `average` 
+  score per game, per game `score`.
+  """
+
+  @spec text_summary(Game.summary) :: String.t
+  defp text_summary(args) when is_list(args) and is_tuple(Kernel.hd(args)) do
+    
+    {:ok, avg} = Keyword.fetch(args, :average_score)
+    {:ok, games} = Keyword.fetch(args, :games)
+    {:ok, scores} = Keyword.fetch(args, :results)
+
+    results = Enum.reduce(scores, "",  fn {k,v}, acc -> 
+      acc <> " (#{k}: #{v})"  end)
+      
+    "Game Over! Average Score: #{avg}, " 
+    <> "# Games: #{games}, Scores: #{results}"
+  end
+
+
+  # Returns round relevant data parameters
 
   @doc """
   Returns round `context` based on results of `last guess`
   """
 
-  @spec context(Player.t) :: Guess.context | no_return
-  def context(%Player{} = player) do
-
-
-    case player.round.result_code do
+  @spec context(t) :: context | no_return
+  defp context(%Round{} = round) do
+    case round.result_code do
       :correct_letter -> 
-        {:guess_letter, letter} = player.round.guess
+        {:guess_letter, letter} = round.guess
 
         {:game_keep_guessing, :correct_letter, letter, 
-            player.round.pattern, player.mystery_letter}
+            round.pattern, Game.mystery_letter}
 
       :incorrect_letter -> 
-        {:guess_letter, letter} = player.round.guess
+        {:guess_letter, letter} = round.guess
 
         {:game_keep_guessing, :incorrect_letter, letter}
 
@@ -63,206 +289,44 @@ defmodule Hangman.Round do
     end
   end
 
-  @doc """
-  Returns `round` status tuple
-  """
-
-  @spec status(Player.t) :: result
-  def status(%Player{} = player) do
-    {player.round.status_code, player.round.status_text}
-  end
-
-  # UPDATE
-  
-  # Setup the game play round
-
-  @doc """
-  Setups game play `round`
-
-  For game start stage, retrieves secret length from game server
-  uses secret length to filter possible `Hangman` words from `Pass.Cache` server
-
-  On subsequent rounds, generates a reduce key based on the result of the
-  last guess to filter possible `Hangman` words from `Pass.Cache` server
-  """
-
-  @spec setup(Player.t, none | :atom | Guess.context) :: Player.t
-
-  def setup(%Player{} = player) do
-    setup(player, context(player))
-  end
-
-  def setup(%Player{} = player, :game_start) do
-
-    name = player.name
+  # EXTRA
+  # Returns player information 
+  @spec info(t) :: Keyword.t
+  def info(%Round{} = round) do
     
-    player_key = key(player)
-
-    # Initiate the game and grab the secret length
-    {^name, :secret_length, secret_length, status_text} =
-      Game.Server.initiate_and_length(player.game_server_pid, player_key)
-
-    Player.Events.notify_length(player.event_server_pid,
-      {name, player.game_no, secret_length})
-
-    player = Kernel.put_in(player.round.status_code, :game_start)
-    player = Kernel.put_in(player.round.status_text, status_text)
-
-    true = is_number(secret_length) and secret_length > 0
-
-    context = {:game_start, secret_length}
-
-    setup(player, context)
+    guess = 
+      case round.guess do
+        {} -> ""
+        {_atom, token} -> token
+      end
+    
+    round_info = [
+        no: round.num,
+        guess: round.guess,
+        guess_result: round.result_code,
+        round_code: round.status_code,
+        round_status: round.status_text,
+        pattern: round.pattern
+    ]
+    
+    _info = [
+      id: round.id,
+      round_no: round.num,
+      game_pid: round.game_pid,
+      event_pid: round.event_pid,
+      round_data: round_info
+    ]
   end
 
+  # Allows users to inspect this module type in a controlled manner
+  defimpl Inspect do
+    import Inspect.Algebra
 
-  def setup(%Player{} = player, context) 
-  when is_nil(context) == false do
-
-    {name, _key, strategy, game_no, seq_no} = params(player)
-
-    pass_key = {name, game_no, seq_no}
-
-    # Generate the word filter options for the words reduction engine
-    exclusion = strategy.guessed_letters
-
-    reduce_key = Reduction.Options.reduce_key(context, exclusion)
-
-    match_key = Kernel.elem(context, 0)
-
-    # Filter the engine hangman word set
-
-    {^pass_key, pass_info} = 
-      Pass.Cache.get({:pass, match_key}, pass_key, reduce_key)
-
-    # Update the round strategy with the result of the reduction pass info _from the engine
-    strategy = Strategy.update(strategy, pass_info, player.type)
-    
-    player = Kernel.put_in(player.strategy, strategy)
-
-    player
-  end
-
-
-  @doc """
-  Interjects `round` specific parameters into `choices text`.
-  """
-
-  @spec augment_choices(Player.t, Guess.option) :: Guess.option
-  def augment_choices(%Player{} = player, {code, choices_text})
-  when is_binary(choices_text) do
-    
-    {name, _key, _strategy, _game_no, seq_no} = params(player)
-    {_, status} = status(player)
-
-    text = choices_text 
-    |> String.replace("{name}", "#{name}")
-    |> String.replace("{round_no}", "#{seq_no}")
-    |> String.replace("{status}", "#{status}")
-    
-    {code, text}
-  end
-
-
-  @doc """
-  Issues a client `guess` (either `letter` or `word`) against `Game.Server`.
-  Notifies player `events` of guess `results`.
-
-  Returns received `round` data
-  """
-
-  @spec guess(Player.t, Guess.t) :: t
-  def guess(%Player{} = p, guess = {:guess_letter, letter}) when is_binary(letter) do
-    do_guess(p, guess)
-  end
-
-  def guess(%Player{} = p, guess = {:guess_word, word}) when is_binary(word) do
-    do_guess(p, guess)
-  end
-  
-  @spec do_guess(Player.t, Guess.t) :: t
-  defp do_guess(%Player{} = player, guess) do
-    
-    {name, player_key, _strategy, game_no, seq_no} = params(player)
-    
-    {{^name, result, code, pattern, text}, final} =
-      Game.Server.guess(player.game_server_pid, player_key, guess)
-    
-    Player.Events.notify_guess(player.event_server_pid, guess,
-                               {name, game_no})
-    
-    Player.Events.notify_status(player.event_server_pid,
-                                {name, game_no, seq_no, text})
-    
-    %Round{seq_no: seq_no,
-           guess: guess, result_code: result, 
-           status_code: code, pattern: pattern, 
-           status_text: text, final_result: final}      
-  end
-
-
-  @doc """
-  Updates `Player` abstraction with `Round` results.  If games are over, updates
-  games summary and notifies `Player.Events`.
-
-  Under human guessing, round `update` will `update` the strategy
-  with the `guess` particulars.  If robot guessing, the strategy will also
-  be `updated`.
-  """
-
-  @spec update(Player.t, Round.t, none | Guess.t) :: Player.t
-  def update(%Player{} = player, %Round{} = round, {:guess_letter, letter}) do
-
-    strategy = Strategy.update(player.strategy, {:guess_letter, letter})
-    player = Kernel.put_in(player.strategy, strategy)
-    update(player, round)
-  end
-
-  def update(%Player{} = player, %Round{} = round, {:guess_word, word}) do
-
-    strategy = Strategy.update(player.strategy, {:guess_word, word})
-    player = Kernel.put_in(player.strategy, strategy)
-    update(player, round)
-  end
-
-  def update(%Player{} = player, %Round{} = round) do
-
-    player = Kernel.put_in(player.round, round)
-    player = Kernel.put_in(player.round_no, round.seq_no)
-       
-    if (round.final_result != "" and round.final_result != [] and
-      List.first(round.final_result) == {:status, :games_over}) do
-
-      summary = Player.games_summary(round.final_result)
-      player = Kernel.put_in(player.games_summary, summary)
-
-      Player.Events.notify_games_over(player.event_server_pid, player.name, summary)
+    def inspect(t, opts) do
+      info = Inspect.List.inspect(Round.info(t), opts)
+      concat ["#Round<", info, ">"]
     end
-
-    player
   end
 
-  # Private
-
-  # Helper
-
-  # Returns round relevant data parameters
-
-  @spec params(Player.t) :: tuple
-  defp params(%Player{} = player) do
-
-    name = player.name
-    key = key(player)
-    strategy = player.strategy
-    game_no = player.game_no
-    seq_no =  player.round_no + 1
-
-    {name, key, strategy, game_no, seq_no}
-  end
-
-  @spec key(Player.t) :: Player.key
-  defp key(%Player{} = player) do
-    {player.name, player.pid}
-  end
 
 end

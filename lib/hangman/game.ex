@@ -31,9 +31,9 @@ defmodule Hangman.Game do
 
   alias Hangman.{Round, Game, Guess, Pattern}
   
-  defstruct id: nil, client_pid: nil, finished: false,
+  defstruct id: nil, client_pid: nil,
   current: 0, #Current game index
-  secret: "", pattern: "", score: 0,
+  secret: "", pattern: "", score: 0, state: :games_reset
   secrets: [],  patterns: [], scores: [],
   max_wrong: 0, correct_letters: MapSet.new, 
   incorrect_letters: MapSet.new, incorrect_words: MapSet.new
@@ -44,8 +44,8 @@ defmodule Hangman.Game do
   @type id :: String.t
   
   @typedoc "`Game` status code values"
-  @type code :: :game_start | :game_keep_guessing | 
-  :game_won | :game_lost | :games_over | :game_reset
+  @type code :: :games_reset | :game_start | :game_keep_guessing | 
+  :game_won | :game_lost | :games_over
 
   @typedoc """
   `Game` summary values, either [] if we are still playing or [...] if game finished
@@ -53,21 +53,27 @@ defmodule Hangman.Game do
   @type summary :: [] | [status: :games_over, average_score: integer, 
      games: pos_integer, results: [tuple]]
 
-  @typedoc "returned `Game` data"
-  @type data :: {id, Round.code, code, pattern :: String.t, 
-                 status :: String.t, summary}
+  @typedoc "returned `Game` feedback data"
+
+  @type feedback :: %{id: String.t, code: code, summary: summary, 
+                      optional(:text :: :atom) => String.t, 
+                      optional(:pattern :: :atom) => String.t,
+                      optional(:result :: :atom) => :atom}
 
   @typedoc "Game result tuple returned to `Game.Server`"
-  @type result :: {t, data}
+  @type result :: {t, feedback}
 
   @status_codes  %{
     game_won: {:game_won, 'GAME_WON', -2}, 
     game_lost: {:game_lost, 'GAME_LOST', 25}, 
-    game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1},
-    game_reset: {:game_reset, 'GAME_RESET', 0}
+    game_keep_guessing: {:game_keep_guessing, 'GAME_KEEP_GUESSING', -1},
+    games_reset: {:games_reset, 'GAME_RESET', 0}
   }
   
   @mystery_letter "-"
+
+  @states [:games_reset, :game_start, :game_keep_guessing, 
+           :game_won, :game_lost, :games_over]
   
   # Returns module attribute constant
   @spec mystery_letter :: String.t
@@ -90,8 +96,7 @@ defmodule Hangman.Game do
   def load(id_key, secrets, max_wrong) when is_list(secrets) do
     #initialize the list of secrets to be uppercase 
     #initialize the list of patterns to fit the secrets length
-    secrets = Enum.map(secrets, &String.upcase(&1))
-    
+    secrets = Enum.map(secrets, &String.upcase(&1))    
     patterns = Enum.map(secrets, &String.duplicate(@mystery_letter, 
                                                    String.length(&1)))
     
@@ -112,7 +117,6 @@ defmodule Hangman.Game do
     Map.equal?(map1, map2)
   end
 
-
   @doc """
   Returns boolean whether `Game` is empty
   """
@@ -122,14 +126,6 @@ defmodule Hangman.Game do
     equal?(game, %Game{})
   end
 
-  @doc """
-  Return boolean whether `Game` is finished
-  """
-
-  @spec finished?(t) :: boolean
-  def finished?(%Game{} = game) do
-    game.finished
-  end
 
   
   @doc """
@@ -151,127 +147,119 @@ defmodule Hangman.Game do
   def guess(%Game{} = game, {:guess_letter, letter}) do
     
     # assert we can guess :)
-    { _, :game_keep_guessing, _} = status(game)
+    {_, %{code: :game_keep_guessing}} = status(game) # Assert
     
-    letter = String.upcase(letter)
-    
-    result = cond do 
-      String.contains?(game.secret, letter) -> 
-        #letter found within secret
+    letter = letter |> String.upcase
+
+    result = 
+      case String.contains?(game.secret, letter) do 
+          true -> 
+          
+          # letter found within secret, update pattern and game
+            pattern = Pattern.update(game.pattern, game.secret, letter)
+            game = Kernel.put_in(game.correct_letters,
+                               MapSet.put(game.correct_letters, letter))
+            game = Kernel.put_in(game.pattern, pattern)
+            :correct_letter
         
-        #Update pattern and game game
-        pattern = Pattern.update(game.pattern, game.secret, letter)
-        
-        game = %{ game | 
-                  correct_letters: 
-                  MapSet.put(game.correct_letters, letter),            
-                  pattern: pattern }
-        
-        :correct_letter
-      true -> #default: letter not found
-        
-        game = %{ game | 
-                  incorrect_letters: 
-                  MapSet.put(game.incorrect_letters, letter) }
-        
-        :incorrect_letter
-    end
+          false -> #default: letter not found
+            game = Kernel.put_in(game.incorrect_letters, 
+                                 MapSet.put(game.incorrect_letters, letter))        
+          :incorrect_letter
+      end
     
     #return updated game status
-    { _, code, display } = status(game)
+    {game, feedback} = status(game)
     
-    # return data tuple
-    data = {game.id, result, code, game.pattern, display}
+    feedback = feedback 
+    |> Map.put(:pattern, game.pattern) 
+    |> Map.put(:result, result)
     
-    #If the current game is finished check if there are remaining games
-    case code do
-      :game_keep_guessing -> data = {data, []} # mark the final results with []
-      _ ->
-        {game, data} = next(game.secrets, game, data)
-    end
-    
-    {game, data}
+    {game, feedback}
   end
   
   
   def guess(%Game{} = game, {:guess_word, word}) do
-    { _, :game_keep_guessing, _ } = status(game) # Assert
+    {_, %{code: :game_keep_guessing}} = status(game) # Assert
     
     word = String.upcase(word)
     
-    result = cond do
-      game.secret == word -> 
-        game = %{ game | pattern: word }
-        
-        :correct_word
-      
-        true ->
-        game = %{ game | 
-                  incorrect_words: 
-                  MapSet.put(game.incorrect_words, word) }
-        
-        :incorrect_word
-    end
+    result = 
+      case game.secret do
+        word -> 
+          game = %{ game | pattern: word }        
+          :correct_word
+        _ -> 
+          game = Kernel.put_in(game.incorrect_words, 
+                               MapSet.put(game.incorrect_words, word))
+          :incorrect_word
+      end
     
-    { _, code, display } = status(game)
-    data = { game.id, result, code, game.pattern, display }
-    
-    #If the current game is finished check if there are remaining games
-    case code do
-      :game_keep_guessing -> 
-        data = {data, []}
-      _ ->
-        {game, data} = next(game.secrets, game, data)
-    end
-    
-    {game, data}
+    {game, feedback} = status(game)
+
+    feedback = feedback 
+    |> Map.put(:pattern, game.pattern) 
+    |> Map.put(:result, result)
+
+    {game, feedback}
   end
   
-  
-  # Helper function to check current game status code
-  
-  @spec status_code(t) :: {code, String.t, integer}
-  defp status_code(%Game{} = game) do
-    cond do
-      game.secret == "" ->
-        @status_codes[:game_reset]
-      game.secret == game.pattern -> 
-        @status_codes[:game_won]
-      incorrect_guesses(game) > game.max_wrong -> 
-        @status_codes[:game_lost]
-      true -> @status_codes[:game_keep_guessing]
-    end
+
+  defp status_helper(%Game{} = game, state) when state in @states do
+    {code, text, score} = @status_codes[state]        
+
+    if score < 0, do: score = score(game)
+
+    augmented_text = "#{game.pattern}; score=#{score}; status=#{text}"
+    feedback = %{id: game.id, code: game.state, text: augmented_text, summary: []}
+
+    {game, feedback}
   end
-  
-  
+
   @doc """
-  Returns current `Game` status text
+  Returns current `Game` status data and updates status code
   """
   
   @spec status(t) :: {id, code, String.t}
   def status(%Game{} = game) do
-    
-    # small lambda to dry up functionality
-    # and return status as text
-    fn_textify = fn
-      pattern, score, text ->
-        "#{pattern}; score=#{score}; status=#{text}"
+
+    new_code = cond do
+      # GAMES_RESET, GAMES_OVER -> GAMES_RESET
+      game.state in [:games_reset, :games_over] -> :games_reset
+      
+      # GAME_KEEP_GUESSING -> GAME_WON
+      game.state == :game_keep_guessing and 
+      game.secret == game.pattern -> :game_won
+
+      # GAME_KEEP_GUESSING -> GAME_LOST
+      game.state == :game_keep_guessing and 
+      incorrect_guesses(game) > game.max_wrong -> :game_lost
+
+      # GAME_START, GAME_KEEP_GUESSING -> GAME_KEEP_GUESSING
+      game.state in [:game_start, :game_keep_guessing] and 
+      game.secret != game.pattern -> :game_keep_guessing
+
+      # GAME_WON, GAME_LOST -> GAME_START, GAMES_OVER (check if games left)
+      game.state in [:game_won, :game_lost] -> :next_game
     end
-    
-    case status_code(game) do
-      {:game_lost, text, score} -> 
-        display_text = fn_textify.(game.pattern, score, text)
-        {game.id, :game_lost, display_text}
-      {:game_reset, text, _score} ->
-        {game.id, :game_reset, text}
-      {status_code, text, _} -> 
-        score = score(game)
-        display_text = fn_textify.(game.pattern, score, text)
-        {game.id, status_code, display_text}
+
+    case new_code do
+      :next_game ->
+        # This returns a tuple with a map 
+        # containing either GAME START or GAMES OVER
+        {game, map} = next(game) 
+
+      _ ->
+        game = Kernel.put_in(game.state, new_code)
+        {game, map} = status_helper(game, new_code)
     end
-    
+
+
+    {game, map}
   end
   
+
+
   # Helper function to return current number of wrong guesses
   
   @spec incorrect_guesses(t) :: non_neg_integer
@@ -282,20 +270,20 @@ defmodule Hangman.Game do
   
   # Helper function to return current game score
   
-  @spec score(t) :: integer
-  defp score(%Game{} = game) do
+  @spec score(code) :: integer
+  defp score(code) do
     
-    case status_code(game) do
+    case code do
       # compute score if not lost and not reset
-      {code, _, _} when code in [:game_keep_guessing, :game_won] ->
+      code when code in [:game_keep_guessing, :game_won] ->
         Set.size(game.incorrect_letters) + 
         Set.size(game.incorrect_words) +
         Set.size(game.correct_letters)
-      {:game_lost, _, score} -> 
+      :game_lost ->
         # return default lost score if game lost
+        {_, _, score} = @status_codes[:game_lost]
         score
-    end
-    
+    end    
   end
   
 
@@ -305,32 +293,34 @@ defmodule Hangman.Game do
   If there are indeed games left to play, 
   updates state and transitions to next game 
   """
-  @spec next(([] | [String.t]), t, term) :: {t, tuple}
-  
-  defp next([], _game, data), do: {%Game{}, data} 
-  
-  defp next(secrets, %Game{} = game, data)
-  when is_list(secrets) do
+  @spec next(t) :: {t, term}  
+  defp next(%Game{} = game) do
+
     games_played = game.current + 1
     
-    case Kernel.length(secrets) > games_played do
-      true ->   
-        # Have games left to play
-        # Updates game
-        game = save_and_load(game)
-        {game, {data, []}}
-      false ->  
-        # Otherwise we have no more games left 
-        # Store the current score in the game.scores list - insert
-        # And update the game
-        scores = List.insert_at(game.scores, game.current, score(game))
-        game = %{ game | scores: scores, finished: true}
-        results = final_summary(game)
-        
-        # Return results data
-        
-        {game, {data, results}}
-    end
+    feedback = 
+      case Kernel.length(game.secrets) > games_played do
+        true ->   
+          # Have games left to play
+          # Updates game
+          
+          # New Game Start
+          game = save_and_load(game)
+          
+          %{id: game.id, code: :game_start, summary: []}
+        false ->
+          # Otherwise we have no more games left 
+          # Store the current score in the game.scores list - insert
+          # And update the game
+          scores = List.insert_at(game.scores, game.current, score(game))
+          game = %{ game | state: :games_over, scores: score }
+          summary = final_summary(game)
+          
+          # Games Over
+          %{id: game.id, code: :games_over, summary: summary}
+      end
+
+    {game, feedback}
   end
 
   
@@ -368,7 +358,8 @@ defmodule Hangman.Game do
        secret: Enum.at(game.secrets, game.current),
        correct_letters: MapSet.new, 
        incorrect_letters: MapSet.new, 
-       incorrect_words: MapSet.new}
+       incorrect_words: MapSet.new,
+       state: :game_start}
   end
   
   
@@ -385,7 +376,6 @@ defmodule Hangman.Game do
     [status: :games_over, average_score: average_score, 
      games: games_played, results: results]
   end
-  
 
 
   @doc """
@@ -405,7 +395,6 @@ defmodule Hangman.Game do
     info = [
       id: g.id,
       client_pid: g.client_pid,
-      finished: g.finished,
       current_game_index: g.current,
       secret: g.secret,
       pattern: g.pattern,

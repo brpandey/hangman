@@ -256,6 +256,8 @@ defmodule Hangman.Game.Server do
     # Retrieve client game
     game = game(state, key)
 
+    state = update(state, key, game)
+
     { :reply, Game.status(game), state }
   end
   
@@ -273,7 +275,7 @@ defmodule Hangman.Game.Server do
     game = game(state, key)
 
     # Game.status is read only
-    {_, _, status_text} = Game.status(game)
+    %{text: status_text} = Game.status(game)
     length = String.length(game.secret)
     
     # Let's piggyback the round status text with the secret length value
@@ -281,6 +283,7 @@ defmodule Hangman.Game.Server do
     { :reply, {game.id, :secret_length, length, status_text}, state }
   end
   
+
   @docp """
   Stops the server is a normal graceful way
   """
@@ -321,7 +324,7 @@ defmodule Hangman.Game.Server do
 
   def handle_info({:EXIT, pid, _reason} = msg, state) do
     Logger.debug "In Game.Server handle info, received EXIT abnormal msg: #{inspect msg}"
-
+    
     # remove player from actives
     # keep the player state if we want to look at it, since
     # it was an abnormal exit
@@ -513,7 +516,6 @@ defmodule Hangman.Game.Server do
         # First, remove pid from active_pids mapping
         active_pids = Map.delete(state.active_pids, client_pid)
         state = Kernel.put_in(state.active_pids, active_pids)
-
         
       _ ->
         # We have the pid but it has a different id_key! flag error
@@ -526,7 +528,6 @@ defmodule Hangman.Game.Server do
 
     state
   end
-
 
   defp remove(state, {client_id, _client_pid} = _key, :games)
   when is_binary(client_id) do
@@ -542,7 +543,5 @@ defmodule Hangman.Game.Server do
         games = Map.delete(state.games, client_id)
         state = Kernel.put_in(state.games, games)
     end
-
   end
-
 end

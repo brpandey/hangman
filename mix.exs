@@ -54,7 +54,8 @@ defmodule Hangman.Mixfile do
       {:cowboy, "1.0.4"}, # for hangman web
       {:plug, "1.1.2"},  # for hangman web
       {:httpoison, "~> 0.8.2"}, # for hangman web
-      {:exrm, "1.0.1"} # for mix release
+      {:exrm, "1.0.1"}, # for mix release
+      {:fsm, "~> 0.2.0"} # for state machine handling
     ] 
   end
 end
