@@ -11,12 +11,7 @@ defmodule Hangman.Player.Game do
   Wraps fsm game play into an enumerable for easy running.
   """
 
-  alias Hangman.{Player, Game, Dictionary}
-
-  @max_random_words_request 10
-
-  @human Player.human
-  @robot Player.robot
+  alias Hangman.{Player, Game}
 
   @doc """
   Function run connects all the `player` specific components together 
@@ -28,64 +23,24 @@ defmodule Hangman.Player.Game do
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
 
-    fn_display = fn
-      _, true -> 
-        # if display arg is true then don't print out round status again
-        "" 
-      text, false -> 
-        IO.puts("\n#{text}")
-    end
-    
-    name 
-    |> setup(secrets, log, display)
-    |> rounds_handler(type)
-    |> Stream.each(&fn_display.(&1, display))
-    |> Stream.run
-    
+    args = {name, type, secrets, log, display}
+    args |> setup |> start_player |> play |> cleanup
   end
 
   # for Web playing
   @spec web_run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def web_run(name, type, secrets, log, _display) when is_binary(name)
-  and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
-  and is_boolean(log) do
-    
-    name 
-    |> setup(secrets, log, false)
-    |> rounds_handler(type)
-    |> Enum.to_list
-
+  def web_run(name, type, secrets, log, _display) do
+    run(name, type, secrets, log, false)
   end
 
 
-  @doc "Returns random word secrets given count"
-  @spec random(String.t) :: [String.t] | no_return
-  def random(count) do
-    # convert user input to integer value
-    value = String.to_integer(count)
-    cond do
-      value > 0 and value <= @max_random_words_request ->
-        Dictionary.Cache.lookup(:random, value)
-      true ->
-        raise HangmanError, "submitted random count value is not valid"
-    end
-  end
-  
-
-  @doc "Start dynamic `player` child `worker`"
-  
-  @spec start_player(String.t, Player.kind, pid, pid) :: Supervisor.on_start_child
-  def start_player(name, type, game_pid, notify_pid) do
-    Player.Supervisor.start_child(name, type, game_pid, notify_pid)
-  end
-  
   @doc """
   Function setup loads the `player` specific `game` components.
   Setups the `game` server and per player `event` server.
   """
   
   @spec setup(String.t, [String.t], boolean, boolean) :: tuple
-  def setup(name, secrets, log, display) when is_binary(name) and
+  def setup(name, type, secrets, log, display) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) and 
   is_boolean(log) and is_boolean(display) do
     
@@ -94,59 +49,62 @@ defmodule Hangman.Player.Game do
 
 #    # Let's setup a trace for debug
 #    :sys.trace(game_pid, true)
-
     
     # Get event server pid next
     {:ok, notify_pid} = 
       Player.Events.Supervisor.start_child(log, display)
 
-    {name, game_pid, notify_pid}
+    {name, type, display, game_pid, notify_pid}
   end
 
 
-  @doc """
-  Permits `robot` or `human` round playing!
-  Wraps the `robot` or `human` player game playing in a stream.
-  Stream resource returns an enumerable.
+  @doc "Start dynamic `player` child `worker`"
+  
+  @spec start_player(String.t, Player.kind, boolean, pid, pid) :: Supervisor.on_start_child
+  def start_player({name, type, display, game_pid, notify_pid}) do
+    {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, 
+                                               game_pid, notify_pid)
 
-  Terminates player `events` server and `fsm` upon finish
-  """
+    {player_pid, game_pid, notify_pid}
+  end
+  
 
-  @spec rounds_handler(tuple, Player.kind) :: Enumerable.t
+  def play({player_pid, game_pid, event_pid})
+  when is_pid(player_pid) and is_pid(event_pid) do
 
-  # Robot round playing!
-
-  def rounds_handler({name, game_pid, notify_pid}, 
-                       @robot) do
-
-    Stream.resource(
-      fn -> 
-        # Dynamically start hangman player
-        {:ok, ppid} = start_player(name, @robot, game_pid, notify_pid)
-        ppid
-        end,
-
-      fn ppid ->
-        case Player.FSM.wall_e_guess(ppid) do
-          {:game_reset, reply} -> 
-            IO.puts "\n#{reply}"
-            {:halt, ppid}
-          
-          # All other game states :game_keep_guessing ... :games_over
-          {_, reply} -> {[reply], ppid}             
-        end
-        
-      end,
+    Enum.reduce_while(Stream.cycle([player_pid]), 0, fn pid, acc ->
       
-      fn ppid -> 
-        # Be a good functional citizen and cleanup server resources
-        Player.Events.stop(notify_pid)
-        Player.FSM.stop(ppid) 
+      case Player.Server.proceed(pid) do
+        {:ok, :guessing, status} -> 
+          IO.puts "GUESSING status: {status}"
+          {:cont, acc + 1}
+
+        {:ok, :starting, status} -> 
+          IO.puts "STARTING status: {status}"
+          {:cont, acc + 1}
+
+        {:ok, :exit, status} -> 
+          IO.puts "EXIT status: {status}"
+          Player.Server.stop(pid)
+          {:halt, acc}
+
+        _ ->
+          raise "Unknown Player Server state abort"
       end
-    )
+      
+    end)
+
+    {player_pid, game_pid, event_pid}
   end
 
-  # Human round playing!
+  def cleanup({player_pid, game_pid, event_pid}) do
+    Player.Server.stop(player_pid)
+    Player.Events.stop(event_pid)
+    Game.Server.stop(game_pid)
+  end
+
+
+  ### DEPRECATED
 
   def rounds_handler({name, game_pid, notify_pid}, @human) do
 
@@ -156,15 +114,15 @@ defmodule Hangman.Player.Game do
     Stream.resource(
       fn -> 
         # Dynamically start hangman player
-        {:ok, ppid} = start_player(name, @human, game_pid, notify_pid)
-        {ppid, []}
+        player = start_player(name, @human, game_pid, notify_pid)
+        {player, []}
         end,
 
       fn {ppid, code} ->
 
         case code do
           [] -> 
-            {code, reply} = Player.FSM.socrates_proceed(ppid)
+            {code, reply} = Player.proceed(player)
             {[reply], {ppid, code}}
 
           :game_choose_letter ->

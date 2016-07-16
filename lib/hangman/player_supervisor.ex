@@ -42,7 +42,7 @@ defmodule Hangman.Player.Supervisor do
   def start_child(player_name, player_type, game_pid, event_pid) do 
 
     Supervisor.start_child(:hangman_player_supervisor, 
-      [event_pid, game_pid, player_name, player_type])
+      [player_name, player_type, game_pid, event_pid])
   end
 
   @doc """
@@ -56,7 +56,7 @@ defmodule Hangman.Player.Supervisor do
   def init(_) do
     children = [
       # Use restart transient option -- only restart if abnormal shutdown
-      worker(Player.FSM, [], restart: :transient) 
+      worker(Hangman.Player, [], restart: :transient) 
     ]
 
     # :simple_one_for_one to indicate that 

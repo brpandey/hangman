@@ -2,36 +2,31 @@ defmodule Hangman.Player.FSM do
 
   @moduledoc """
   Manages state changes in player fsm
-
   Heavily relies on Player.Action protocol
+  Fsm module simplifies state transitions
 
-  Feels much simpler with sasa1977's FSM module
+  Works for all supported player types
   """
 
   alias Hangman.Player.{Action}
 
-  use Fsm, initial_state: :stopped, initial_data: nil
-  
-  defstate stopped do
-    defevent proceed(player) do
+  use Fsm, initial_state: :new, initial_data: nil
 
-      {player, status} = Action.transition(player)
+  defstate new do
+    defevent initialize(name, type, display, game_pid, event_pid) do
 
-      IO.puts "In state: STOPPED, action: PROCEED, status: #{status}"
+      args = {name, display, game_pid, event_pid}
+      action_type = Map.get(Action.Types.mapping, type)
+      player = Action.new(action_type, args)
 
-      case status do
-        {:game_start, _text} -> 
-          next_state(:starting, player)
+      IO.puts "In state: INIT, action: PROCEED, status: #{status}"
 
-        {:games_over, _text} -> 
-          next_state(:exit, player)
-      end
-    end
+      next_state(:starting, player)
+    end    
   end
-  
 
   defstate starting do
-    defevent proceed(player) do
+    defevent proceed, data: player do
 
       {player, status} = player 
       |> Action.start 
@@ -42,11 +37,13 @@ defmodule Hangman.Player.FSM do
       next_state(:guessing, player)
     end    
   end
+
   
   # In guessing state, what if we get a game won or game lost
 
   defstate guessing do
-    defevent proceed(player) do
+    defevent proceed, data: player do
+
       {player, status} = player |> Action.guess
 
       IO.puts "In state: GUESSING, action: PROCEED, status: #{status}"
@@ -63,8 +60,25 @@ defmodule Hangman.Player.FSM do
   end
 
   
+  defstate stopped do
+    defevent proceed, data: player do
+
+      {player, status} = Action.transition(player)
+
+      IO.puts "In state: STOPPED, action: PROCEED, status: #{status}"
+
+      case status do
+        {:game_start, _text} -> 
+          next_state(:starting, player)
+
+        {:games_over, _text} -> 
+          next_state(:exit, player)
+      end
+    end
+  end
+  
   defstate exit do
-    defevent proceed(player) do
+    defevent proceed, data: player do
       #Games Over
       IO.puts "In state: EXIT, action: PROCEED, status: #{player.round.status}"
       next_state(:exit, player)

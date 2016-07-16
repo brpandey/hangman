@@ -27,11 +27,12 @@ defmodule Hangman.CLI do
   prematurely aborted.
   """
 
+  @max_random_words_request 10
 
   @min_secret_length 3
   @max_secret_length 28
 
-  alias Hangman.{Player}
+  alias Hangman.{Player, Dictionary}
 
   @human Player.human
   @robot Player.robot
@@ -119,7 +120,7 @@ defmodule Hangman.CLI do
           if secrets == nil do
             secrets = 
               case Keyword.fetch(args, :random) do
-                {:ok, value} -> Player.Game.random(value)
+                {:ok, value} -> random(value)
                   :error -> nil
               end
           end
@@ -185,6 +186,22 @@ defmodule Hangman.CLI do
   and is_boolean(log) and is_boolean(display) do
 
     Player.Game.run(name, type, secrets, log, display)
+  end
+
+
+  # Private helper
+
+  @doc "Returns random word secrets given count"
+  @spec random(String.t) :: [String.t] | no_return
+  defp random(count) do
+    # convert user input to integer value
+    value = String.to_integer(count)
+    cond do
+      value > 0 and value <= @max_random_words_request ->
+        Dictionary.Cache.lookup(:random, value)
+      true ->
+        raise HangmanError, "submitted random count value is not valid"
+    end
   end
 end
   

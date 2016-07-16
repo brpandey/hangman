@@ -55,7 +55,8 @@ defmodule Hangman.Mixfile do
       {:plug, "1.1.2"},  # for hangman web
       {:httpoison, "~> 0.8.2"}, # for hangman web
       {:exrm, "1.0.1"}, # for mix release
-      {:fsm, "~> 0.2.0"} # for state machine handling
+      {:fsm, "~> 0.2.0"}, # for state machine handling
+      {:exactor, "~> 2.2.0", warn_missing: false} # for simple GenServers
     ] 
   end
 end

@@ -13,17 +13,6 @@ defmodule Hangman.Player.Robot do
 
   defstruct type: :robot, display: false, round: nil, strategy: nil
 
-  @spec new(String.t, atom, pid, pid) :: t
-  def new(name, display, game_pid, event_pid) when is_binary(name) 
-      and is_bool(display) and is_pid(game_pid) and is_pid(event_pid) do
-    
-    round = %Round{ id: name, pid: self(), 
-                    game_pid: game_pid, event_pid: event_pid }
-    
-    strategy = Strategy.new(type)
-    
-    %Robot{display: display, round: round, strategy: strategy}
-  end  
 
   @doc """
   Routine for `:robot` player type. Sets up new `round`, 

@@ -14,16 +14,6 @@ defmodule Hangman.Player.Human do
 
   defstruct type: :human, display: false, round: nil, strategy: nil
 
-  @spec new(String.t, struct, pid, pid) :: t
-  def new(name, display, game_pid, event_pid) when is_binary(name) 
-      and is_bool(display) and is_pid(game_pid) and is_pid(event_pid) do
-    
-    round = %Round{ id: name, pid: self(), 
-                    game_pid: game_pid, event_pid: event_pid }
-    
-    %Human{display: display, round: round}
-  end
-
   defp setup(%Human{} = human) do
     
     round = human.round
