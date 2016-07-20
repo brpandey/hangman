@@ -33,7 +33,7 @@ reside in the `Dictionary.Cache`, the game will currently be prematurely
 aborted.
 """
 
-defmodule Hangman.Player.Action.Types do
+defmodule Hangman.Player.Types do
 
   def mapping do
     %{
@@ -46,11 +46,17 @@ end
 
 defprotocol Hangman.Player.Action do
 
+  @doc "Create new player"
+  def new(player, args)
+
   @doc "Start new game player action"
   def start(player)
+
+  @doc "Sets up each action state"
+  def setup(player)
   
   @doc "Returns player guess"
-  def guess(player)
+  def guess(player, guess \\ nil)
 
   @doc "Returns the correct player transition at the game end"
   def transition(player)
@@ -58,8 +64,6 @@ end
 
 
 defimpl Hangman.Player.Action, for: Human do
-
-
   def new(%Human{} = player, {name, display, game_pid, event_pid}) when is_binary(name) 
       and is_bool(display) and is_pid(game_pid) and is_pid(event_pid) do
 
@@ -67,15 +71,18 @@ defimpl Hangman.Player.Action, for: Human do
     %Human{display: display, round: round}
   end
 
-  end
-
   def start(%Human{} = player) do
     {round, strategy} = Generic.start(player.round, player.type)
     %Human{ player | round: round, strategy: strategy }
   end
+
+  def setup(%Human{} = player) do
+    Human.setup(player) # returns {player, choices}
+    # where choices is {:guess_letter, "choices_text"} or {:guess_word, last, "text"}
+  end
   
-  def guess(%Human{} = player) do
-    Human.guess(player) # returns {player, status} tuple
+  def guess(%Human{} = player, guess) do
+    Human.guess(player, guess) # returns {player, status} tuple
   end
 
   def transition(%Human{} = player) do
@@ -84,15 +91,14 @@ defimpl Hangman.Player.Action, for: Human do
 
     {player, status}
   end
-  
 end
 
 
 defimpl Hangman.Player.Action, for: Robot do
 
-
-  def new(%Human{} = player, {name, display, game_pid, event_pid}) when is_binary(name) 
-      and is_bool(display) and is_pid(game_pid) and is_pid(event_pid) do
+  def new(%Human{} = player, {name, display, game_pid, event_pid})
+  when is_binary(name) and is_bool(display) and is_pid(game_pid)
+  and is_pid(event_pid) do
 
     round = Generic.new(name, game_pid, event_pid)    
     %Robot{display: display, round: round}
@@ -102,8 +108,12 @@ defimpl Hangman.Player.Action, for: Robot do
     {round, strategy} = Generic.start(player.round, player.type)
     %Robot{player | round: round, strategy: strategy}
   end
+
+  def setup(%Robot{} = player) do
+    Robot.setup(player) # returns {player, []} tuple
+  end
   
-  def guess(%Robot{} = player) do
+  def guess(%Robot{} = player, _guess) do
     Robot.guess(player) # returns {player, status} tuple
   end
 

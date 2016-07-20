@@ -14,7 +14,7 @@ defmodule Hangman.Player.Human do
 
   defstruct type: :human, display: false, round: nil, strategy: nil
 
-  defp setup(%Human{} = human) do
+  def setup(%Human{} = human) do
     
     round = human.round
     strategy = human.strategy
@@ -26,7 +26,6 @@ defmodule Hangman.Player.Human do
     end
 
     {mode, _} = Round.status(round)
-    
     exclusion = Strategy.guessed(strategy)
 
     # Set up the game play round
@@ -35,32 +34,28 @@ defmodule Hangman.Player.Human do
     
     # Retrieve top letter strategy options,
     # and then updating options with round specific information
-    letter_choices = Strategy.choices(strategy)
-    letter_choices = augment_choices(round, letter_choices)
-    
-    guess = 
-      case letter_choices do
-        {:guess_letter, text} ->
-          letter = display(human, :letters_and_capture, text)
-
-          # Validate the letter is in the top choices, if not
-          # return the optimal letter
-  	      Strategy.validate(strategy, letter)
-
-        {:guess_word, last_word, text} -> 
-          display(human, :last_word, text)
-          {:guess_word, last_word}
-      end
+    choices = Strategy.choices(strategy)
+    choices = augment_choices(round, choices)
 
     human = Kernel.put_in(human.round, round)
     human = Kernel.put_in(human.strategy, strategy)
 
-    {human, guess}
+    {human, choices}
   end
 
-  #  @spec guess(t, Round.t, Strategy.t) :: result
-  def guess(%Human{} = human) do
-    {human, guess} = setup(human)
+
+  #  @spec guess(t, Guess.t) :: result
+  def guess(%Human{} = human, guess) do
+
+    guess = case guess do
+      {:guess_letter, text} ->
+        # Validate the letter is in the top choices, if not
+        # return the optimal letter
+  	    letter = Strategy.validate(strategy, letter)
+      {:guess_word, last_word, text} -> 
+        {:guess_word, last_word}
+      _ -> raise "Unsupported guess type"
+    end
 
     round = Round.guess(human.round, guess)
     strategy = Strategy.update(human.strategy, guess)
@@ -72,27 +67,6 @@ defmodule Hangman.Player.Human do
     {human, status}
   end
   
-
-  defp display(%Human{} = human, :letters_and_capture, text)
-  when is_binary(text) do
-    case human.display do
-      true -> 
-        IO.puts("\n#{text}")
-        choice = IO.gets("[Please input letter choice] ")
-        letter = String.strip(choice)
-      false -> ""
-    end
-  end
-
-  defp display(%Human{} = human, :last_word, text) 
-  when is_binary(text) do
-    case human.display do
-      true ->
-        IO.puts("\n#{text}")
-      false -> ""
-    end
-  end
-
 
   @doc """
   Interjects specific parameters into `choices text`.

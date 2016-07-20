@@ -24,7 +24,9 @@ defmodule Hangman.Player.Game do
   and is_boolean(log) and is_boolean(display) do
 
     args = {name, type, secrets, log, display}
-    args |> setup |> start_player |> play |> cleanup
+    args |> setup |> start_player |> play
+
+    System.halt(0)
   end
 
   # for Web playing
@@ -64,112 +66,89 @@ defmodule Hangman.Player.Game do
   def start_player({name, type, display, game_pid, notify_pid}) do
     {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, 
                                                game_pid, notify_pid)
-
-    {player_pid, game_pid, notify_pid}
+    {player_pid, notify_pid}
   end
   
 
-  def play({player_pid, game_pid, event_pid})
-  when is_pid(player_pid) and is_pid(event_pid) do
+  def play({player_pid, notify_pid})
+  when is_pid(player_pid) and is_pid(notify_pid) do
 
-    Enum.reduce_while(Stream.cycle([player_pid]), 0, fn pid, acc ->
+    Enum.reduce_while(Stream.cycle([player_pid]), 0, fn ppid, acc ->
       
-      case Player.Server.proceed(pid) do
-        {:ok, :guessing, status} -> 
-          IO.puts "GUESSING status: {status}"
+      feedback = Player.Server.proceed(ppid)
+      feedback = handle_guess_setup(ppid, feedback)
+
+      case feedback do
+
+        {:starting, status} -> 
+          IO.puts "STARTING status: {status}, acc: #{acc}"
           {:cont, acc + 1}
 
-        {:ok, :starting, status} -> 
-          IO.puts "STARTING status: {status}"
+        {:guess_action, status} -> 
+          IO.puts "GUESS ACTION status: #{status}, acc: #{acc}"
           {:cont, acc + 1}
 
-        {:ok, :exit, status} -> 
-          IO.puts "EXIT status: {status}"
-          Player.Server.stop(pid)
+        {:stopped, status} -> 
+          IO.puts "STOPPED status: {status}, acc: #{acc}"
+          {:cont, acc + 1}
+
+        {:exit, status} -> 
+          IO.puts "EXIT status: #{status}, acc: #{acc}"
+          Player.Server.stop(ppid)
+          Player.Events.stop(notify_pid)
           {:halt, acc}
 
-        _ ->
-          raise "Unknown Player Server state abort"
+        _ -> raise "Unknown Player Server state"
       end
-      
+
     end)
 
-    {player_pid, game_pid, event_pid}
-  end
-
-  def cleanup({player_pid, game_pid, event_pid}) do
-    Player.Server.stop(player_pid)
-    Player.Events.stop(event_pid)
-    Game.Server.stop(game_pid)
   end
 
 
-  ### DEPRECATED
+  def handle_guess_setup(ppid, feedback) do
+    # Handle feedback where the response code is :guess_setup
+    case feedback do
+      {:guess_setup, status} ->
 
-  def rounds_handler({name, game_pid, notify_pid}, @human) do
+          case status do
+            [] ->  Player.Server.proceed(ppid)              
+            {display, choices} -> 
+              IO.puts "GUESS SETUP status: display = #{display}, choices = #{choices}"
+              guess = ui(display, choices)
+              Player.Server.proceed(ppid, guess)
+          end
+      _ -> feedback # Pass back the passed in feedback
+    end
+  end
 
-    # Wrap the player fsm game play in a stream
-    # Stream resource returns an enumerable
 
-    Stream.resource(
-      fn -> 
-        # Dynamically start hangman player
-        player = start_player(name, @human, game_pid, notify_pid)
-        {player, []}
-        end,
+  defp ui(display, {:guess_letter, text})
+  when is_bool(display) and is_binary(text) do
 
-      fn {ppid, code} ->
-
-        case code do
-          [] -> 
-            {code, reply} = Player.proceed(player)
-            {[reply], {ppid, code}}
-
-          :game_choose_letter ->
-            choice = IO.gets("[Please input letter choice] ")
-            letter = String.strip(choice)
-            {code, reply} = Player.FSM.socrates_guess(ppid, letter)
-
-            case {code, reply} do
-              {:game_reset, reply} -> 
-                IO.puts "\n#{reply}"
-                {:halt, ppid}
-              _ -> {[reply], {ppid, code}}
-            end
-          
-          :game_last_word ->
-            {code, reply} = Player.FSM.socrates_win(ppid)
-
-            case {code, reply} do
-              {:game_reset, reply} -> 
-                IO.puts "\n#{reply}"
-                {:halt, ppid}
-              _ -> {[reply], {ppid, code}}
-            end
-
-          :game_won -> 
-            {code, reply} = Player.FSM.socrates_proceed(ppid)
-            {[reply], {ppid, code}}
-
-          :game_lost -> 
-            {code, reply} = Player.FSM.socrates_proceed(ppid)
-            {[reply], {ppid, code}}          
-
-          :games_over -> 
-            {:halt, ppid}
-
-            #:games_over
-
-        end
-      end,
-      
-                    
-      fn ppid -> 
-        # Be a good functional citizen and cleanup server resources
-        Player.Events.stop(notify_pid)
-        Player.FSM.stop(ppid) 
+    letter = 
+      case display do
+        true -> 
+          IO.puts("\n#{text}")
+          choice = IO.gets("[Please input letter choice] ")
+          String.strip(choice)
+        false -> "" # If we aren't asking the user, the computer will select
       end
-    )
+    
+    {:guess_letter, letter}
+  end
+
+
+  defp ui(display, {:guess_word, last_word, text}) 
+  when is_bool(display) and is_binary(text) do
+
+    case display do
+      true ->
+        IO.puts("\n#{text}")
+      false -> ""
+    end
+
+    {:guess_word, last_word}
   end
 
 end
