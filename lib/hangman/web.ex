@@ -59,14 +59,14 @@ defmodule Hangman.Web do
 
     if secrets == nil do
       count = conn.params["random"]
-      secrets = Player.Game.random(count)
+      secrets = Player.Handler.random(count)
     else
       secrets = [secrets]
     end
 
     if secrets == nil, do: raise "Can't run hangman with no secrets"
 
-    rounds = Player.Game.web_run(name, :robot, secrets, false, false)
+    rounds = Player.Handler.run(name, :robot, secrets, false, false)
     value = format_rounds(rounds)
         
     Plug.Conn.assign(conn, :response, value)

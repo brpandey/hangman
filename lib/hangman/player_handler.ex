@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Game do
+defmodule Hangman.Player.Handler do
   @moduledoc """
   Module handles game playing for synchronous `human` and `robot`
   player types. Handles relationship between 
@@ -11,7 +11,7 @@ defmodule Hangman.Player.Game do
   Wraps fsm game play into an enumerable for easy running.
   """
 
-  alias Hangman.{Player, Game}
+  alias Hangman.{Player, Game, Dictionary}
 
   @doc """
   Function run connects all the `player` specific components together 
@@ -29,12 +29,6 @@ defmodule Hangman.Player.Game do
     System.halt(0)
   end
 
-  # for Web playing
-  @spec web_run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def web_run(name, type, secrets, log, _display) do
-    run(name, type, secrets, log, false)
-  end
-
 
   @doc """
   Function setup loads the `player` specific `game` components.
@@ -49,8 +43,8 @@ defmodule Hangman.Player.Game do
     # Grab game pid first from game pid cache
     game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
 
-#    # Let's setup a trace for debug
-#    :sys.trace(game_pid, true)
+#   # Let's setup a trace for debug
+#   :sys.trace(game_pid, true)
     
     # Get event server pid next
     {:ok, notify_pid} = 
@@ -65,7 +59,7 @@ defmodule Hangman.Player.Game do
   @spec start_player(String.t, Player.kind, boolean, pid, pid) :: Supervisor.on_start_child
   def start_player({name, type, display, game_pid, notify_pid}) do
     {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, 
-                                               game_pid, notify_pid)
+                                                      game_pid, notify_pid)
     {player_pid, notify_pid}
   end
   
@@ -76,20 +70,20 @@ defmodule Hangman.Player.Game do
     Enum.reduce_while(Stream.cycle([player_pid]), 0, fn ppid, acc ->
       
       feedback = Player.Server.proceed(ppid)
-      feedback = handle_guess_setup(ppid, feedback)
+      feedback = handle_setup(ppid, feedback)
 
       case feedback do
 
-        {:starting, status} -> 
-          IO.puts "STARTING status: {status}, acc: #{acc}"
+        {:start, status} -> 
+          IO.puts "START status: #{status}, acc: #{acc}"
           {:cont, acc + 1}
 
-        {:guess_action, status} -> 
-          IO.puts "GUESS ACTION status: #{status}, acc: #{acc}"
+        {:action, status} -> 
+          IO.puts "ACTION status: #{status}, acc: #{acc}"
           {:cont, acc + 1}
 
-        {:stopped, status} -> 
-          IO.puts "STOPPED status: {status}, acc: #{acc}"
+        {:stop, status} -> 
+          IO.puts "STOP status: #{status}, acc: #{acc}"
           {:cont, acc + 1}
 
         {:exit, status} -> 
@@ -100,23 +94,24 @@ defmodule Hangman.Player.Game do
 
         _ -> raise "Unknown Player Server state"
       end
-
     end)
-
   end
 
 
-  def handle_guess_setup(ppid, feedback) do
-    # Handle feedback where the response code is :guess_setup
-    case feedback do
-      {:guess_setup, status} ->
+  # Helpers
 
+  def handle_setup(ppid, feedback) do
+    # Handle feedback where the response code is :setup
+    case feedback do
+      {:setup, status} ->
           case status do
-            [] ->  Player.Server.proceed(ppid)              
             {display, choices} -> 
-              IO.puts "GUESS SETUP status: display = #{display}, choices = #{choices}"
+              IO.puts "SETUP status: display = #{display}, choices = #{choices}"
+
               guess = ui(display, choices)
               Player.Server.proceed(ppid, guess)
+
+            _ -> raise "Unsupported guess_setup status"
           end
       _ -> feedback # Pass back the passed in feedback
     end
@@ -151,4 +146,16 @@ defmodule Hangman.Player.Game do
     {:guess_word, last_word}
   end
 
+  @doc "Returns random word secrets given count"
+  @spec random(String.t) :: [String.t] | no_return
+  def random(count) do
+    # convert user input to integer value
+    value = String.to_integer(count)
+    cond do
+      value > 0 and value <= @max_random_words_request ->
+        Dictionary.Cache.lookup(:random, value)
+      true ->
+        raise HangmanError, "submitted random count value is not valid"
+    end
+  end
 end

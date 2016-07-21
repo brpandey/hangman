@@ -10,50 +10,46 @@ defmodule Hangman.Player.FSM do
 
   alias Hangman.Player.{Action, Types}
 
-  use Fsm, initial_state: :new, initial_data: nil
+  use Fsm, initial_state: :init, initial_data: nil
 
 
-  defstate new do
+  defstate init do
     defevent initialize(name, type, display, game_pid, event_pid) do
       args = {name, display, game_pid, event_pid}
       action_type = Map.get(Types.mapping, type)
 
       player = Action.new(action_type, args)
 
-      response = {:new, "In state: new, action: initialize"}
-
-      respond(response, :starting, player)
+      next_state(:start, player)
     end    
   end
 
 
-  defstate starting do
+  defstate start do
     defevent proceed, data: player do
       {player, status} = player |> Action.start 
-      respond({:starting, status}, :guess_setup, player)
+      respond({:start, status}, :setup, player)
     end    
   end
 
   
-  # In guessing state, what if we get a game won or game lost
-
-  defstate guess_setup do
+  defstate setup do
     defevent proceed, data: player do
       {player, status} = player |> Action.setup
 
-      new_state = :guess_action
+      new_state = :action
 
       case status do
-        [] -> respond({:guess_setup, []}, 
+        [] -> respond({:setup, []}, 
                       new_state, player)
-        _ ->  respond({:guess_setup, {player.display, status}}, 
+        _ ->  respond({:setup, {player.display, status}}, 
                       new_state, player)
       end
     end
   end
 
 
-  defstate guess_action do
+  defstate action do
     defevent proceed(data // nil), data: player do
 
       {player, status} = player |> Action.guess(data)
@@ -61,24 +57,24 @@ defmodule Hangman.Player.FSM do
       # check if we get game won or game lost
       case status do
         {code, text} when code in [:game_won, :game_lost] -> 
-          respond({:guess_action, text}, :stopped, player)
+          respond({:action, text}, :stop, player)
         {:game_keep_guessing, text} ->
-          respond({:guess_action, text}, :guess_action, player)
+          respond({:action, text}, :action, player)
       end
     end
   end
 
   
-  defstate stopped do
+  defstate stop do
     defevent proceed, data: player do
 
       {player, status} = player |> Action.transition
 
       case status do
         {:game_start, text} -> 
-          respond({:stopped, text}, :starting, player)
+          respond({:stop, text}, :start, player)
         {:games_over, text} -> 
-          respond({:stopped, text}, :exit, player)
+          respond({:stop, text}, :exit, player)
       end
     end
   end
