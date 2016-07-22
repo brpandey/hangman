@@ -143,6 +143,7 @@ defmodule Hangman.Round do
     round
   end
 
+
   defp do_setup(%Round{} = round, exclusion, :reduction_pass) do
     
     # Generate the word filter options for the words reduction engine

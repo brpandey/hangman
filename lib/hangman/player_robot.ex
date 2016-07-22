@@ -52,4 +52,25 @@ defmodule Hangman.Player.Robot do
     {robot, status}
   end
 
+  # EXTRA
+  # Returns player information 
+  @spec info(t) :: Keyword.t
+  def info(%Robot{} = robot) do        
+    _info = [
+      display: robot.display
+    ]
+  end
+
+  # Allows users to inspect this module type in a controlled manner
+  defimpl Inspect do
+    import Inspect.Algebra
+
+    def inspect(t, opts) do
+      player_info = Inspect.List.inspect(Robot.info(t), opts)
+      round_info = Inspect.List.inspect(Round.info(t), opts)
+      concat ["#Player.Robot<", player_info, round_info, ">"]
+    end
+  end
+
+
 end

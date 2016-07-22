@@ -52,7 +52,7 @@ defmodule Hangman.Player.Human do
         # Validate the letter is in the top choices, if not
         # return the optimal letter
   	    letter = Strategy.validate(strategy, letter)
-      {:guess_word, last_word, text} -> 
+      {:guess_word, text} -> 
         {:guess_word, last_word}
       _ -> raise "Unsupported guess type"
     end
@@ -94,7 +94,6 @@ defmodule Hangman.Player.Human do
   @spec info(t) :: Keyword.t
   def info(%Human{} = human) do        
     _info = [
-      id: human.id,
       display: human.display
     ]
   end
@@ -104,9 +103,9 @@ defmodule Hangman.Player.Human do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      human_info = Inspect.List.inspect(Human.info(t), opts)
+      player_info = Inspect.List.inspect(Human.info(t), opts)
       round_info = Inspect.List.inspect(Round.info(t), opts)
-      concat ["#Player.Human<", human_info, round_info, ">"]
+      concat ["#Player.Human<", player_info, round_info, ">"]
     end
   end
 
