@@ -108,8 +108,8 @@ defmodule Hangman.Player.Handler do
             {display, choices} -> 
               IO.puts "SETUP status: display = #{display}, choices = #{choices}"
 
-              guess = ui(display, choices)
-              Player.Server.proceed(ppid, guess)
+              selection = ui(display, choices)
+              ppid |> Player.Server.guess(selection)
 
             _ -> raise "Unsupported guess_setup status"
           end
