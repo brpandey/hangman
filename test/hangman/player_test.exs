@@ -13,8 +13,6 @@ defmodule Player.Test do
       :cases => %{
         :robot => [name: "wall_e_test", type: :robot, 
                    secrets: ["cumulate"]],
-        :turbo_robot => [name: "turbo_wall_e_test", type: :robot, 
-                         secrets: ["cumulate"]],
         :human => [name: "socrates_test", type: :human, 
                    secrets: ["cumulate", "avocado"]]
       }
@@ -53,7 +51,7 @@ defmodule Player.Test do
     map = Map.put(map, :current_player_pid, player_pid)
 
     on_exit fn ->
-      Player.FSM.stop(player_pid)
+      Player.stop(player_pid)
       # Hangman.Game.Server.stop(game_pid)
       IO.puts "Test finished"
     end
@@ -71,77 +69,54 @@ defmodule Player.Test do
 
     #:sys.trace(ppid, true)
 
-    {:game_keep_guessing, reply} = Player.FSM.wall_e_guess(ppid)
+    {:action, reply} = ppid |> Player.proceed
 
     assert "-------E; score=1; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = Player.FSM.wall_e_guess(ppid) 
+    {:action, reply} = ppid |> Player.proceed 
 
     assert "-----A-E; score=2; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = Player.FSM.wall_e_guess(ppid)      
+    {:action, reply} = ppid |> Player.proceed      
 
     assert "-----ATE; score=3; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = Player.FSM.wall_e_guess(ppid)
+    {:action, reply} = ppid |> Player.proceed
     
     assert "-----ATE; score=4; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = Player.FSM.wall_e_guess(ppid)
+    {:action, reply} = ppid |> Player.proceed
 
     assert "-----ATE; score=5; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = Player.FSM.wall_e_guess(ppid)
+    {:action, reply} = ppid |> Player.proceed
 
     assert "----LATE; score=6; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = Player.FSM.wall_e_guess(ppid)
+    {:action, reply} = ppid |> Player.proceed
 
     assert "C---LATE; score=7; status=KEEP_GUESSING" = reply
 
-    {:game_keep_guessing, reply} = Player.FSM.wall_e_guess(ppid)
+    {:action, reply} = ppid |> Player.proceed
 
     assert "C-M-LATE; score=8; status=KEEP_GUESSING" = reply
 
-    {:game_won, reply} = Player.FSM.wall_e_guess(ppid)
+    {:stop, reply} = ppid |> Player.proceed
 
     assert "CUMULATE; score=8; status=GAME_WON" = reply
 
-    {:games_over, reply} = Player.FSM.wall_e_guess(ppid)
+    {:exit, reply} = ppid |> Player.proceed
 
     assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
 
     IO.puts reply
 
-    {:game_reset, reply} = Player.FSM.wall_e_guess(ppid)
+    {:exit, reply} = ppid |> Player.proceed
 
     IO.puts "Asserts successfully passed, #{reply}"
 
   end
 
-  @tag case_key: :turbo_robot
-  test "asynchronous robot player over 1 game", context do
-
-    # Game 2 -- ASYNC ROBOT!! turbo wall_e
-
-    IO.puts "\n2) Starting turbo WALL-e \n"
-
-    ppid = context[:params] |> Map.get(:current_player_pid)
-
-    #:sys.trace(ppid, true)
-
-    :ok = Player.FSM.turbo_wall_e_guess(ppid)
-
-    # sleep for 2 seconds :)
-    receive do
-      after 2000 -> nil
-    end
-
-    {_, reply} = Player.FSM.sync_status(ppid)
-
-    IO.puts "\nturbo WALL-e status: #{reply}"
-
-  end
 
   @tag case_key: :human
   test "synchronous human player over 2 games", context do
@@ -154,85 +129,141 @@ defmodule Player.Test do
 
     #:sys.trace(ppid, true)
 
-    {_code, reply} = Player.FSM.socrates_proceed(ppid)
+    {_code, reply} = ppid |> Player.proceed
 
     IO.puts "\nGame 1: #{reply}"      
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "e")
+    {_code, reply} = ppid |> Player.proceed
 
     IO.puts "\nGame 1: #{reply}"  
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "a")
+    {_code, reply} = ppid |> Player.guess("e")
+
+    IO.puts "\nGame 1: #{reply}"  
+
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 1: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("a")
 
     IO.puts "\nGame 1: #{reply}"
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "t")
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 1: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("t")
 
     IO.puts "\nGame 1: #{reply}"
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "o")
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 1: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("o")
 
     IO.puts "\nGame 1: #{reply}"
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "i")
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 1: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("i")
 
     IO.puts "\nGame 1: #{reply}"
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "l")
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 1: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("l")
 
     IO.puts "\nGame 1: #{reply}"
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "c")
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 1: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("c")
 
     IO.puts "\nGame 1: #{reply}"
 
     assert "Possible hangman words left, 2 words: [\"cumulate\", \"cupulate\"]\n\nPlayer socrates_test, Round 8, C---LATE; score=7; status=KEEP_GUESSING.\n3 weighted letter choices :  u:2 m*:1 p:1 (* robot choice)" = reply
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "m")
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 1: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("m")
 
     assert "Player socrates_test, Round 9, C-M-LATE; score=8; status=KEEP_GUESSING.\nLast word left: cumulate" = reply
 
-    {_code, reply} = Player.FSM.socrates_win(ppid)
+    {_code, reply} = ppid |> Player.proceed
 
     IO.puts "\nGame 1: #{reply}\n"
 
-    {_code, reply} = Player.FSM.socrates_proceed(ppid)
+    {_code, reply} = ppid |> Player.proceed
 
     IO.puts "\nGame 2: #{reply}"  
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "e")
-
-    IO.puts "\nGame 2: #{reply}"    
-
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "a")
-
-    IO.puts "\nGame 2: #{reply}"    
-
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "s")
-
-    IO.puts "\nGame 2: #{reply}"
-
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "r")
-
-    IO.puts "\nGame 2: #{reply}"
-
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "i")
+    {_code, reply} = ppid |> Player.proceed
 
     IO.puts "\nGame 2: #{reply}"  
 
-    {_code, reply} = Player.FSM.socrates_guess(ppid, "d")
+    {_code, reply} = ppid |> Player.guess("e")
+
+    IO.puts "\nGame 2: #{reply}"    
+
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 2: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("a")
+
+    IO.puts "\nGame 2: #{reply}"    
+
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 2: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("s")
 
     IO.puts "\nGame 2: #{reply}"
 
-    {_code, reply} = Player.FSM.socrates_win(ppid)
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 2: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("r")
 
     IO.puts "\nGame 2: #{reply}"
 
-    {_code, reply} = Player.FSM.socrates_proceed(ppid)
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 2: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("i")
+
+    IO.puts "\nGame 2: #{reply}"  
+
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 2: #{reply}"  
+
+    {_code, reply} = ppid |> Player.guess("d")
 
     IO.puts "\nGame 2: #{reply}"
 
-    {_code, reply} = Player.FSM.socrates_proceed(ppid)
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 2: #{reply}"
+
+    {_code, reply} = ppid |> Player.proceed
+
+    IO.puts "\nGame 2: #{reply}"
+
+    {_code, reply} = ppid |> Player.proceed
 
     IO.puts "\nGame 2: #{reply}"
 

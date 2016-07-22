@@ -14,7 +14,7 @@ defmodule Pass.Cache.Test do
 
 
     #### ROUND 1
-    strategy = Strategy.new
+    strategy = Strategy.new(:robot)
 
     pass_key = {id, game_no, round_no} = {"julio", 1, 1}
 
@@ -34,9 +34,9 @@ defmodule Pass.Cache.Test do
 
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
+    strategy = Strategy.update(strategy, pass_info)
 
-    {:guess_letter, "e"} = Strategy.make_guess(strategy)
+    {:guess_letter, "e"} = Strategy.guess(strategy)
 
     IO.puts "strategy 1c is: #{inspect strategy}\n"
 
@@ -49,9 +49,9 @@ defmodule Pass.Cache.Test do
 
     guessed = ["e"]
 
-    assert guessed == Strategy.get_guessed(strategy)
+    assert guessed == Strategy.guessed(strategy)
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     assert ~r/^[^e][^e][^e][^e][^e][^e][^e]e$/  =
       Reduction.Options.regex_match_key(context, guessed)
@@ -65,8 +65,8 @@ defmodule Pass.Cache.Test do
       Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
-    {:guess_letter, "a"} = Strategy.make_guess(strategy)
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "a"} = Strategy.guess(strategy)
 
 
     # Game Server Guess results
@@ -78,9 +78,9 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e"]
 
-    assert guessed == Strategy.get_guessed(strategy)
+    assert guessed == Strategy.guessed(strategy)
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     assert ~r/^[^ae][^ae][^ae][^ae][^ae]a[^ae]e$/ = 
       Reduction.Options.regex_match_key(context, guessed)
@@ -94,8 +94,8 @@ defmodule Pass.Cache.Test do
       Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
-    {:guess_letter, "t"} = Strategy.make_guess(strategy)
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "t"} = Strategy.guess(strategy)
 
 
     # Game Server Guess results
@@ -107,9 +107,9 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "t"]
 
-    assert guessed == Strategy.get_guessed(strategy)
+    assert guessed == Strategy.guessed(strategy)
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     assert ~r/^[^aet][^aet][^aet][^aet][^aet]ate$/ = 
       Reduction.Options.regex_match_key(context, guessed)
@@ -123,8 +123,8 @@ defmodule Pass.Cache.Test do
       Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
-    {:guess_letter, "o"} = Strategy.make_guess(strategy)
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "o"} = Strategy.guess(strategy)
 
 
     # Game Server Guess results
@@ -136,9 +136,9 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "o", "t"]
 
-    assert guessed == Strategy.get_guessed(strategy)
+    assert guessed == Strategy.guessed(strategy)
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     assert ~r/^[^o]*$/  =
       Reduction.Options.regex_match_key(context, guessed)
@@ -154,8 +154,8 @@ defmodule Pass.Cache.Test do
       Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
-    {:guess_letter, "i"} = Strategy.make_guess(strategy)
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "i"} = Strategy.guess(strategy)
 
 
     # Game Server Guess results
@@ -169,9 +169,9 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "i", "o", "t"]
 
-    assert guessed == Strategy.get_guessed(strategy)
+    assert guessed == Strategy.guessed(strategy)
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     assert ~r/^[^i]*$/ = 
       Reduction.Options.regex_match_key(context, guessed)
@@ -188,8 +188,8 @@ defmodule Pass.Cache.Test do
       Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
-    {:guess_letter, "l"} = Strategy.make_guess(strategy)
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "l"} = Strategy.guess(strategy)
 
 
     # Game Server Guess results
@@ -201,9 +201,9 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "i", "l", "o", "t"]
 
-    assert guessed == Strategy.get_guessed(strategy)
+    assert guessed == Strategy.guessed(strategy)
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     assert ~r/^[^aeilot][^aeilot][^aeilot][^aeilot]late$/  = 
       Reduction.Options.regex_match_key(context, guessed)
@@ -219,8 +219,8 @@ defmodule Pass.Cache.Test do
       Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
-    {:guess_letter, "c"} = Strategy.make_guess(strategy)
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "c"} = Strategy.guess(strategy)
 
     IO.puts "strategy round 7 is: #{inspect strategy}"
 
@@ -234,9 +234,9 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "c", "e", "i", "l", "o", "t"]
 
-    assert guessed == Strategy.get_guessed(strategy)     
+    assert guessed == Strategy.guessed(strategy)     
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     assert ~r/^c[^aceilot][^aceilot][^aceilot]late$/  = 
       Reduction.Options.regex_match_key(context, guessed)
@@ -252,8 +252,8 @@ defmodule Pass.Cache.Test do
       Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
-    {:guess_letter, "m"} = Strategy.make_guess(strategy)
+    strategy = Strategy.update(strategy, pass_info)
+    {:guess_letter, "m"} = Strategy.guess(strategy)
 
 
     # Game Server Guess results
@@ -264,9 +264,9 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no + 1}
     guessed = ["a", "c", "e", "i", "l", "m", "o", "t"]
 
-    assert guessed == Strategy.get_guessed(strategy) 
+    assert guessed == Strategy.guessed(strategy) 
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     assert ~r/^c[^aceilmot]m[^aceilmot]late$/  = 
       Reduction.Options.regex_match_key(context, guessed)
@@ -280,9 +280,9 @@ defmodule Pass.Cache.Test do
       Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info, @robot)
+    strategy = Strategy.update(strategy, pass_info)
 
-    {:guess_word, "cumulate"} = Strategy.make_guess(strategy)
+    {:guess_word, "cumulate"} = Strategy.guess(strategy)
 
   end
 
