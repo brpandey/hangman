@@ -105,8 +105,8 @@ defmodule Hangman.Player.Handler do
     case feedback do
       {:setup, kw} ->
 
-        display = Keyword.get(kw, :display)
-        choices = Keyword.get(kw, :status)
+        {:ok, display} = Keyword.fetch(kw, :display)
+        {:ok, choices} = Keyword.fetch(kw, :status)
 
         IO.puts "SETUP status: display = #{display}, choices = #{inspect choices}"
 
