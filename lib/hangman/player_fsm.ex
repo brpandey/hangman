@@ -50,7 +50,7 @@ defmodule Hangman.Player.FSM do
 
 
   defstate action do
-    defevent proceed(data // nil), data: player do
+    defevent guess(data // nil), data: player do
 
       {player, status} = player |> Action.guess(data)
 

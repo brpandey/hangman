@@ -24,25 +24,27 @@ defmodule Hangman.Player do
 
 
   # The heart of the player server, the proceed request
-  defcall proceed(guess \\ nil), state: fsm do
+  defcall proceed, state: fsm do
 
     # request the next state transition :proceed to player fsm
-
-    {response, fsm} = 
-      case guess do # permit proceeding with or w/o a guess value
-        nil -> fsm |> Player.FSM.proceed
-        _ -> fsm |> Player.FSM.proceed(guess)
-      end
+    {response, fsm} = fsm |> Player.FSM.proceed
 
     case response do
       # if there is no setup data required for the user e.g. [], 
-      # as marked during robot guess setup, skip to next proceed
-      {:setup, []} -> {response, fsm} = fsm |> Player.FSM.proceed
+      # as marked during robot guess setup, skip to guess
+      {:setup, []} -> {response, fsm} = fsm |> Player.FSM.guess
       _ -> ""
     end
 
     set_and_reply(fsm, response)
   end
+
+  
+  defcall guess(data \\ nil), state: fsm do
+    {response, fsm} = fsm |> Player.FSM.guess(data)
+    set_and_reply(fsm, response)
+  end
+
 
   defcast stop, do: stop_server(:normal)
 

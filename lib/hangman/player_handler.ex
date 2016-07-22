@@ -24,7 +24,7 @@ defmodule Hangman.Player.Handler do
   and is_boolean(log) and is_boolean(display) do
 
     args = {name, type, secrets, log, display}
-    args |> setup |> start_player |> play
+    args |> setup |> start |> play
 
     System.halt(0)
   end
@@ -56,8 +56,8 @@ defmodule Hangman.Player.Handler do
 
   @doc "Start dynamic `player` child `worker`"
   
-  @spec start_player(String.t, Player.kind, boolean, pid, pid) :: Supervisor.on_start_child
-  def start_player({name, type, display, game_pid, notify_pid}) do
+  @spec start(String.t, Player.kind, boolean, pid, pid) :: Supervisor.on_start_child
+  def start({name, type, display, game_pid, notify_pid}) do
     {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, 
                                                       game_pid, notify_pid)
     {player_pid, notify_pid}
@@ -100,7 +100,7 @@ defmodule Hangman.Player.Handler do
 
   # Helpers
 
-  def handle_setup(ppid, feedback) do
+  defp handle_setup(ppid, feedback) do
     # Handle feedback where the response code is :setup
     case feedback do
       {:setup, status} ->
