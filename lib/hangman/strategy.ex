@@ -231,7 +231,7 @@ defmodule Hangman.Letter.Strategy do
   sets up best letter guess as deemed by heuristics
   """
 
-  @spec guess(t, atom) :: t
+  @spec setup(t) :: t
   defp setup(%Strategy{} = strategy) do
     case strategy.pass.size do 
       0 ->  raise HangmanError, "Word not in dictionary"

@@ -69,7 +69,7 @@ defmodule Hangman.Player.Handler do
 
     Enum.reduce_while(Stream.cycle([player_pid]), 0, fn ppid, acc ->
       
-      feedback = Player.Server.proceed(ppid)
+      feedback = ppid |> Player.proceed
       feedback = handle_setup(ppid, feedback)
 
       case feedback do
@@ -88,11 +88,11 @@ defmodule Hangman.Player.Handler do
 
         {:exit, status} -> 
           IO.puts "EXIT status: #{status}, acc: #{acc}"
-          Player.Server.stop(ppid)
+          Player.stop(ppid)
           Player.Events.stop(notify_pid)
           {:halt, acc}
 
-        _ -> raise "Unknown Player Server state"
+        _ -> raise "Unknown Player state"
       end
     end)
   end
@@ -109,7 +109,7 @@ defmodule Hangman.Player.Handler do
               IO.puts "SETUP status: display = #{display}, choices = #{choices}"
 
               selection = ui(display, choices)
-              ppid |> Player.Server.guess(selection)
+              ppid |> Player.guess(selection)
 
             _ -> raise "Unsupported guess_setup status"
           end
