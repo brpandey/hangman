@@ -6,8 +6,6 @@ functionality for various player types
 
 ## NEEDS TO BE REWRITTEN BELOW
 
-Module for to represent the highest player abstraction.
-
 The goal of the player is to maximize our winning chances in conjunction
 with the player strategy against the 'implicit' other player, the `game server`.
 
@@ -22,8 +20,6 @@ The `human` player is given the choice of the top letter choices to choose
 from and is able to make an interactive guess.  The `robot` player is reliant
 on the game strategy to automatically self select the best guess.
 
-Player is one of seven modules that drive the game play mechanics, the others 
-being `Player.Human`, `Player.Robot`, `Player.Generic`, `Player.FSM`, `Round`, `Strategy`.
 
 Player encapsulates the data used along with Strategy data. `Round` functionality
 extends the scope of the player to handle the actual game round details.

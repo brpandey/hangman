@@ -3,6 +3,12 @@ defmodule Hangman.Player do
   @moduledoc """
   Simple server module to implement Player
 
+  Module represents the highest player abstraction.
+
+  Player is one of many modules that drive the intermediary game play mechanics, the others 
+  being `Player.Action`, `Player.Human`, `Player.Robot`, `Player.Generic`, `Player.FSM`, 
+  `Round`, `Strategy`.
+
   Keeps Player FSM internally as state
   """
 
