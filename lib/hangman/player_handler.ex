@@ -103,16 +103,16 @@ defmodule Hangman.Player.Handler do
   defp handle_setup(ppid, feedback) do
     # Handle feedback where the response code is :setup
     case feedback do
-      {:setup, status} ->
-          case status do
-            {display, choices} -> 
-              IO.puts "SETUP status: display = #{display}, choices = #{choices}"
+      {:setup, kw} ->
 
-              selection = ui(display, choices)
-              ppid |> Player.guess(selection)
+        display = Keyword.get(kw, :display)
+        choices = Keyword.get(kw, :status)
 
-            _ -> raise "Unsupported guess_setup status"
-          end
+        IO.puts "SETUP status: display = #{display}, choices = #{inspect choices}"
+
+        selection = ui(display, choices)
+        ppid |> Player.guess(selection)
+
       _ -> feedback # Pass back the passed in feedback
     end
   end

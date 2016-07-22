@@ -19,9 +19,8 @@ defmodule Hangman.Player.FSM do
       action_type = Map.get(Types.mapping, type)
 
       player = Action.new(action_type, args)
-
       next_state(:start, player)
-    end    
+    end
   end
 
 
@@ -42,7 +41,7 @@ defmodule Hangman.Player.FSM do
       case status do
         [] -> respond({:setup, []}, 
                       new_state, player)
-        _ ->  respond({:setup, {player.display, status}}, 
+        _ ->  respond({:setup, [display: player.display, status: status]}, 
                       new_state, player)
       end
     end
@@ -50,7 +49,7 @@ defmodule Hangman.Player.FSM do
 
 
   defstate action do
-    defevent guess(data // nil), data: player do
+    defevent guess(data \\ nil), data: player do
 
       {player, status} = player |> Action.guess(data)
 
