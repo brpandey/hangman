@@ -1,24 +1,18 @@
 alias Hangman.Player.{Human, Robot, Generic}
 
 @moduledoc """
-Protocol to implement player dynamic dispatch 
-functionality for various player types
+Module implements player functionality 
+for various player types via protocol mechanism
 
-## NEEDS TO BE REWRITTEN BELOW
+The Action protocol is implemented for the Human and Robot types, with
+Generic Player handling overlaps in functionality.  The Action protocol
+could be thought of as a sort of virtual player as it defers implementation
+to a combination of type specific functionality and generic type functionality.
 
-The goal of the player is to maximize our winning chances in conjunction
-with the player strategy against the 'implicit' other player, the `game server`.
+The goal of a player is to maximize our winning chances in conjunction
+with a letter strategy against the 'implicit' other player, the `game server`.
 
 Player functionality handles choosing letters, guessing letters and words.
-
-In `Hangman` we have two players.  One explict - the one guessing, the other
-implicit, 'the game', 'the user tracking the penalties', or 'the stumper
-stumping the guesser with hard words'.  In this instance, the `Player` is
-merely the user making and choosing the guess selections.  
-
-The `human` player is given the choice of the top letter choices to choose
-from and is able to make an interactive guess.  The `robot` player is reliant
-on the game strategy to automatically self select the best guess.
 
 
 Player encapsulates the data used along with Strategy data. `Round` functionality

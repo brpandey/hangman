@@ -1,9 +1,14 @@
 defmodule Hangman.Player.FSM do
 
   @moduledoc """
-  Manages state changes in player fsm
-  Heavily relies on Player.Action protocol
-  Fsm module simplifies state transitions
+  Module implements a non-process player fsm
+  which handles managing the state of types implemented
+  through the Player Action protocol.  
+
+  The FSM is not coupled at all to the
+  specific player type but the Action Protocol, which
+  provides for succinct code along with the already succinct
+  design of the Fsm module code.
 
   Works for all supported player types
   """
@@ -11,7 +16,6 @@ defmodule Hangman.Player.FSM do
   alias Hangman.Player.{Action, Types}
 
   use Fsm, initial_state: :init, initial_data: nil
-
 
   defstate init do
     defevent initialize(name, type, display, game_pid, event_pid) do

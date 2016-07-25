@@ -3,9 +3,13 @@ defmodule Hangman.Player.Human do
   @moduledoc """
   Implements human player specific functionality
 
-  Primarily guess setup and guessing
-  and user input retrieval (later should be passed to Player
-  GenServer processed to be displayed back to CLI via message passing)
+  In `Hangman` we have two players.  One explict - the one guessing, the other
+  implicit, 'the game', 'the user tracking the penalties', or 'the stumper
+  stumping the guesser with hard words'.  In this instance, the `Player` is
+  merely the user making and choosing the guess selections.  
+
+  The `human` player is given the choice of the top letter choices to choose
+  from and is able to make an interactive guess.  
   """
 
   alias Hangman.{Player.Human, Round, Letter.Strategy, Game, Pass}

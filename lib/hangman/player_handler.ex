@@ -1,14 +1,18 @@
 defmodule Hangman.Player.Handler do
   @moduledoc """
-  Module handles game playing for synchronous `human` and `robot`
-  player types. Handles relationship between 
-  `Player.FSM`, `Game.Server` and `Player.Events`
 
-  Loads up the `player` specific `game` components: 
-  a dynamic `game` server, and a dynamic `event` server
+  Module drives `Player` server behaviour, while
+  setting up the proper `Game` and `Event` state.
 
-  Manages specific `player` fsm behaviour (`human` or `robot`).
-  Wraps fsm game play into an enumerable for easy running.
+  Simply stated it politely nudges the player to proceed to the next 
+  course of action or make the next guess.  The handler also collects 
+  input from the user as necessary and displays data back to the 
+  user.
+
+  When the game is finished it politely ends the game playing.
+
+  `Player.Handler` is the goto destination after all the arguments
+  have been collected in `Player.CLI`
   """
 
   alias Hangman.{Player, Game, Dictionary}

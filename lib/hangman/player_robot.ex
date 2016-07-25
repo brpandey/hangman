@@ -3,7 +3,13 @@ defmodule Hangman.Player.Robot do
   @moduledoc """
   Implements robot player specific functionality
 
-  Primarily guess setup and guessing
+  In `Hangman` we have two players.  One explict - the one guessing, the other
+  implicit, 'the game', 'the user tracking the penalties', or 'the stumper
+  stumping the guesser with hard words'.  In this instance, the `Player` is
+  merely the user making and choosing the guess selections.  
+
+  The `robot` player is reliant on the game strategy to automatically 
+  self select the best guess.
   """
 
   @opaque t :: %__MODULE__{}

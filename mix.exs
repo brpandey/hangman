@@ -6,7 +6,7 @@ defmodule Hangman.Mixfile do
       app: :play,
       name: "Hangman",
       version: "0.9.1",
-      elixir: "~> 1.2.0",
+      elixir: "~> 1.3.0",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       escript: [main_module: Hangman.CLI],
