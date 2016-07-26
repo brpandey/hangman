@@ -86,16 +86,16 @@ defmodule Hangman.Dictionary.Cache do
   end
 
   @spec lookup(pid, atom, pos_integer) :: Chunks.t | Counter.t | [String.t] | no_return
-  defp lookup(pid, :random, count) do
+  def lookup(pid, :random, count) do
     GenServer.call pid, {:lookup_random, count}
   end
 
-  defp lookup(pid, :tally, length_key)
+  def lookup(pid, :tally, length_key)
   when is_number(length_key) and length_key > 0 do
     GenServer.call pid, {:lookup_tally, length_key}
   end
 
-  defp lookup(pid, :chunks, length_key)
+  def lookup(pid, :chunks, length_key)
   when is_number(length_key) and length_key > 0 do
     GenServer.call pid, {:lookup_chunks, length_key}
   end

@@ -26,10 +26,15 @@ defmodule Hangman.Player do
 
   @name __MODULE__
 
-  defstart start_link(args = 
-    {_player_name, _player_type, _display, _game_pid, _event_pid}) do
-#  when is_binary(player_name) and is_atom(player_type) 
-#  and is_boolean(display) and is_pid(game_pid) and is_pid(event_pid) do
+  defstart start_link({player_name, player_type, display, game_pid, event_pid}) do
+
+    true = is_binary(player_name)
+    true = is_atom(player_type)
+    true = is_boolean(display)
+    true = is_pid(game_pid)
+    true = is_pid(event_pid)
+
+    args = {player_name, player_type, display, game_pid, event_pid}
 
     Logger.info "Starting Hangman Player Server"
 
