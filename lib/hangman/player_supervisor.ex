@@ -16,8 +16,6 @@ defmodule Hangman.Player.Supervisor do
   which will dynamically start its children
   '''
   
-  alias Hangman.{Player}
-
   require Logger
 
   @name __MODULE__
@@ -38,11 +36,11 @@ defmodule Hangman.Player.Supervisor do
   Starts a player fsm worker dynamically
   """
 
-  @spec start_child(String.t, :atom, pid, pid) :: Supervisor.on_start_child
-  def start_child(player_name, player_type, game_pid, event_pid) do 
+  @spec start_child(String.t, :atom, boolean, pid, pid) :: Supervisor.on_start_child
+  def start_child(player_name, player_type, display, game_pid, event_pid) do 
 
     Supervisor.start_child(:hangman_player_supervisor, 
-      [player_name, player_type, game_pid, event_pid])
+      [player_name, player_type, display, game_pid, event_pid])
   end
 
   @doc """

@@ -1,29 +1,9 @@
 alias Hangman.Player.{Human, Robot, Generic}
 
-@moduledoc """
-Module implements player functionality 
-for various player types via protocol mechanism
-
-The Action protocol is implemented for the Human and Robot types, with
-Generic Player handling overlaps in functionality.  The Action protocol
-could be thought of as a sort of virtual player as it defers implementation
-to a combination of type specific functionality and generic type functionality.
-
-The goal of a player is to maximize our winning chances in conjunction
-with a letter strategy against the 'implicit' other player, the `game server`.
-
-Player functionality handles choosing letters, guessing letters and words.
-
-
-Player encapsulates the data used along with Strategy data. `Round` functionality
-extends the scope of the player to handle the actual game round details.
-
-NOTE: Should a player submit a secret hangman word that does not actually
-reside in the `Dictionary.Cache`, the game will currently be prematurely 
-aborted.
-"""
-
 defmodule Hangman.Player.Types do
+
+  def human, do: :human
+  def robot, do: :robot
 
   def mapping do
     %{
@@ -35,6 +15,28 @@ defmodule Hangman.Player.Types do
 end
 
 defprotocol Hangman.Player.Action do
+
+  @moduledoc """
+  Module implements player functionality 
+  for various player types via protocol mechanism
+  
+  The Action protocol is implemented for the Human and Robot types, with
+  Generic Player handling overlaps in functionality.  The Action protocol
+  could be thought of as a sort of virtual player as it defers implementation
+  to a combination of type specific functionality and generic type functionality.
+  
+  The goal of a player is to maximize our winning chances in conjunction
+  with a letter strategy against the 'implicit' other player, the `game server`.
+  
+  Player functionality handles choosing letters, guessing letters and words.
+  
+  Player encapsulates the data used along with Strategy data. `Round` functionality
+  extends the scope of the player to handle the actual game round details.
+  
+  NOTE: Should a player submit a secret hangman word that does not actually
+  reside in the `Dictionary.Cache`, the game will currently be prematurely 
+  aborted.
+  """
 
   @doc "Create new player"
   def new(player, args)
@@ -55,10 +57,10 @@ end
 
 defimpl Hangman.Player.Action, for: Human do
   def new(%Human{} = player, {name, display, game_pid, event_pid}) when is_binary(name) 
-      and is_bool(display) and is_pid(game_pid) and is_pid(event_pid) do
+      and is_boolean(display) and is_pid(game_pid) and is_pid(event_pid) do
 
-    round = Generic.new(name, game_pid, event_pid)
-    %Human{display: display, round: round}
+    round = Generic.init(name, game_pid, event_pid)
+    %Human{player | display: display, round: round}
   end
 
   def start(%Human{} = player) do
@@ -86,12 +88,12 @@ end
 
 defimpl Hangman.Player.Action, for: Robot do
 
-  def new(%Human{} = player, {name, display, game_pid, event_pid})
-  when is_binary(name) and is_bool(display) and is_pid(game_pid)
+  def new(%Robot{} = player, {name, display, game_pid, event_pid})
+  when is_binary(name) and is_boolean(display) and is_pid(game_pid)
   and is_pid(event_pid) do
 
-    round = Generic.new(name, game_pid, event_pid)    
-    %Robot{display: display, round: round}
+    round = Generic.init(name, game_pid, event_pid)    
+    %Robot{player | display: display, round: round}
   end
 
   def start(%Robot{} = player) do
@@ -104,7 +106,7 @@ defimpl Hangman.Player.Action, for: Robot do
   end
   
   def guess(%Robot{} = player, _guess) do
-    Robot.guess(player) # returns {player, status} tuple
+    Robot.guess(player, nil) # returns {player, status} tuple
   end
 
   def transition(%Robot{} = player) do

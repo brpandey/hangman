@@ -5,11 +5,12 @@ defmodule Hangman.Player.Generic do
   the Player Action protocol
   """
   
+  alias Hangman.{Round, Letter.Strategy}
+
   def init(name, game_pid, event_pid) when is_binary(name) 
-      and is_bool(display) and is_pid(game_pid) and is_pid(event_pid) do
+      and is_pid(game_pid) and is_pid(event_pid) do
     
-    round = %Round{ id: name, pid: self(), 
-                    game_pid: game_pid, event_pid: event_pid }    
+    %Round{ id: name, pid: self(), game_pid: game_pid, event_pid: event_pid }
   end
 
   def start(%Round{} = round, type) do

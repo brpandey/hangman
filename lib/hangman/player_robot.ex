@@ -15,7 +15,7 @@ defmodule Hangman.Player.Robot do
   @opaque t :: %__MODULE__{}
 
 
-  alias Hangman.{Player.Robot, Round, Letter.Strategy, Game}
+  alias Hangman.{Player.Robot, Round, Letter.Strategy, Pass}
 
   defstruct type: :robot, display: false, round: nil, strategy: nil
 
@@ -37,6 +37,8 @@ defmodule Hangman.Player.Robot do
     
     # Setup game start round
     {round, strategy} = Round.setup(round, exclusion, mode, fn_updater)
+
+    robot = Kernel.put_in(robot.round, round)
     robot = Kernel.put_in(robot.strategy, strategy)
 
     {robot, []}
@@ -47,7 +49,7 @@ defmodule Hangman.Player.Robot do
   performs `auto-generated` guess, returns round `status`
   """
 
-  @spec guess(t) :: result
+  @spec guess(t, Guess.t) :: tuple()
   def guess(%Robot{} = robot, _data) do
     
     guess = Strategy.guess(robot.strategy)

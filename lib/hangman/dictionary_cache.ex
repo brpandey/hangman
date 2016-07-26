@@ -253,10 +253,10 @@ defmodule Hangman.Dictionary.Cache do
 
     # crypto method apparently produces genuinely random bytes 
     # w/o unintended side effects
-    << a :: 32, b :: 32, c :: 32 >> = :crypto.rand_bytes(12)
+    << a :: 32, b :: 32, c :: 32 >> = :crypto.strong_rand_bytes(12)
     r_seed = {a, b, c}
-    :random.seed r_seed
-    :random.seed r_seed
+    :rand.seed r_seed
+    :rand.seed r_seed
 
     # Using list comp to retrieve the list of count random words
     randoms = for _x <- 1..count do Enum.random(randoms) end
@@ -505,10 +505,10 @@ defmodule Hangman.Dictionary.Cache do
 
       length >= @min_random_word_length and length <= @max_random_word_length ->
         # seed random number generator with random seed
-        << a :: 32, b :: 32, c :: 32 >> = :crypto.rand_bytes(12)
+        << a :: 32, b :: 32, c :: 32 >> = :crypto.strong_rand_bytes(12)
         r_seed = {a, b, c}
-        :random.seed r_seed
-        :random.seed r_seed
+        :rand.seed r_seed
+        :rand.seed r_seed
       
         # Grab @random_words_per_chunk random words
       

@@ -122,15 +122,12 @@ defmodule Hangman.Reduction.Engine.Worker do
 
     pass_size = Chunks.count(new_data)
 
-    possible_txt = ""
-    last_word = ""
-    
     # let's collect possible hangman words if pass size is small enough
     # and return them for guessing aid
 
     # if down to 1 word, return the last word
-    cond do
-      pass_size == 0 -> ""
+    {last_word, possible_txt} = cond do
+      pass_size == 0 -> {"", ""}
       # Note: lets strategy handle error higher up, don't crash process
       # raise "Word not in dictionary, pass size can't be zero"
 
@@ -138,15 +135,18 @@ defmodule Hangman.Reduction.Engine.Worker do
         last_word = Chunks.get_words_lazy(new_data)
         |> Enum.take(1) |> List.first
 
+      {last_word, ""}
+
       pass_size > 1 and pass_size < @possible_words_left ->
         l = Chunks.get_words_lazy(new_data) |> Enum.take(pass_size)
 
         possible_txt = 
             "Possible hangman words left, #{pass_size} words: #{inspect l}"
 
-        last_word = ""
+      {"", possible_txt}
 
-      pass_size > 1 -> last_word = ""
+      # since greater than possible words left, don't show text yet
+      pass_size > 1 -> {"", ""} 
 
       true -> raise HangmanError, "Invalid pass_size value #{pass_size}"
     end

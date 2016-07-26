@@ -29,11 +29,11 @@ defmodule Hangman.Game do
   
   require Logger
 
-  alias Hangman.{Round, Game, Guess, Pattern}
+  alias Hangman.{Game, Guess, Pattern}
   
   defstruct id: nil, client_pid: nil,
   current: 0, #Current game index
-  secret: "", pattern: "", score: 0, state: :games_reset
+  secret: "", pattern: "", score: 0, state: :games_reset,
   secrets: [],  patterns: [], scores: [],
   max_wrong: 0, correct_letters: MapSet.new, 
   incorrect_letters: MapSet.new, incorrect_words: MapSet.new
@@ -55,10 +55,10 @@ defmodule Hangman.Game do
 
   @typedoc "returned `Game` feedback data"
 
-  @type feedback :: %{id: String.t, code: code, summary: summary, 
-                      optional(:text :: :atom) => String.t, 
-                      optional(:pattern :: :atom) => String.t,
-                      optional(:result :: :atom) => :atom}
+  @type feedback :: %{id: String.t, code: code, summary: summary} 
+#                      optional(String.t) => String.t, 
+#                      optional(:pattern) => String.t,
+#                      optional(:result) => :atom}
 
   @typedoc "Game result tuple returned to `Game.Server`"
   @type result :: {t, feedback}
@@ -151,7 +151,7 @@ defmodule Hangman.Game do
     
     letter = letter |> String.upcase
 
-    result = 
+    {game, result} = 
       case String.contains?(game.secret, letter) do 
           true -> 
           
@@ -160,12 +160,12 @@ defmodule Hangman.Game do
             game = Kernel.put_in(game.correct_letters,
                                MapSet.put(game.correct_letters, letter))
             game = Kernel.put_in(game.pattern, pattern)
-            :correct_letter
+            {game, :correct_letter}
         
           false -> #default: letter not found
             game = Kernel.put_in(game.incorrect_letters, 
                                  MapSet.put(game.incorrect_letters, letter))        
-          :incorrect_letter
+          {game, :incorrect_letter}
       end
     
     #return updated game status
@@ -184,15 +184,15 @@ defmodule Hangman.Game do
     
     word = String.upcase(word)
     
-    result = 
+    {game, result} = 
       case game.secret do
-        word -> 
+        ^word -> 
           game = %{ game | pattern: word }        
-          :correct_word
+          {game, :correct_word}
         _ -> 
           game = Kernel.put_in(game.incorrect_words, 
                                MapSet.put(game.incorrect_words, word))
-          :incorrect_word
+          {game, :incorrect_word}
       end
     
     {game, feedback} = status(game)
@@ -206,9 +206,9 @@ defmodule Hangman.Game do
   
 
   defp status_helper(%Game{} = game, state) when state in @states do
-    {code, text, score} = @status_codes[state]        
+    {_code, text, score} = @status_codes[state]        
 
-    if score < 0, do: score = score(game)
+    score = if score < 0 do score(game) else score end
 
     augmented_text = "#{game.pattern}; score=#{score}; status=#{text}"
     feedback = %{id: game.id, code: game.state, text: augmented_text, summary: []}
@@ -243,17 +243,18 @@ defmodule Hangman.Game do
       game.state in [:game_won, :game_lost] -> :next_game
     end
 
-    case new_code do
-      :next_game ->
-        # This returns a tuple with a map 
-        # containing either GAME START or GAMES OVER
-        {game, map} = next(game) 
-
-      _ ->
-        game = Kernel.put_in(game.state, new_code)
-        {game, map} = status_helper(game, new_code)
-    end
-
+    {game, map} = 
+      case new_code do
+        :next_game ->
+          # This returns a tuple with a map 
+          # containing either GAME START or GAMES OVER
+          next(game) 
+        
+          _ ->
+          game = Kernel.put_in(game.state, new_code)
+          status_helper(game, new_code)
+      end
+    
 
     {game, map}
   end
@@ -270,8 +271,10 @@ defmodule Hangman.Game do
   
   # Helper function to return current game score
   
-  @spec score(code) :: integer
-  defp score(code) do
+  @spec score(t) :: integer
+  defp score(%Game{} = game) do
+
+    {_, %{code: code}} = status(game)
     
     case code do
       # compute score if not lost and not reset
@@ -298,7 +301,7 @@ defmodule Hangman.Game do
 
     games_played = game.current + 1
     
-    feedback = 
+    {game, feedback} = 
       case Kernel.length(game.secrets) > games_played do
         true ->   
           # Have games left to play
@@ -307,17 +310,17 @@ defmodule Hangman.Game do
           # New Game Start
           game = save_and_load(game)
           
-          %{id: game.id, code: :game_start, summary: []}
+          {game, %{id: game.id, code: :game_start, summary: []}}
         false ->
           # Otherwise we have no more games left 
           # Store the current score in the game.scores list - insert
           # And update the game
           scores = List.insert_at(game.scores, game.current, score(game))
-          game = %{ game | state: :games_over, scores: score }
+          game = %{ game | state: :games_over, scores: scores }
           summary = final_summary(game)
           
           # Games Over
-          %{id: game.id, code: :games_over, summary: summary}
+          {game, %{id: game.id, code: :games_over, summary: summary}}
       end
 
     {game, feedback}

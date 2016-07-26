@@ -27,15 +27,13 @@ defmodule Hangman.CLI do
   prematurely aborted.
   """
 
-  @max_random_words_request 10
-
   @min_secret_length 3
   @max_secret_length 28
 
-  alias Hangman.{Player, Dictionary}
+  alias Hangman.{Player}
 
-  @human Player.human
-  @robot Player.robot
+  @human Player.Types.human
+  @robot Player.Types.robot
 
   @doc """
   Gateway function to fetch and validate parameters.  Handles display
@@ -117,13 +115,13 @@ defmodule Hangman.CLI do
               :error -> nil
             end
           
+          secrets = 
           if secrets == nil do
-            secrets = 
-              case Keyword.fetch(args, :random) do
-                {:ok, value} -> Player.Handler.random(value)
-                  :error -> nil
-              end
-          end
+            case Keyword.fetch(args, :random) do
+              {:ok, value} -> Player.Handler.random(value)
+              :error -> nil
+            end
+          else secrets end
 
           if secrets == nil do
             raise HangmanError, "user must specify either --\"secret\" or --\"random\" option"

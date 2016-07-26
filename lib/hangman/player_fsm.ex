@@ -18,8 +18,8 @@ defmodule Hangman.Player.FSM do
   use Fsm, initial_state: :init, initial_data: nil
 
   defstate init do
-    defevent initialize(name, type, display, game_pid, event_pid) do
-      args = {name, display, game_pid, event_pid}
+    defevent initialize(args = {_name, type, _display, _game_pid, _event_pid}) do
+
       action_type = Map.get(Types.mapping, type)
 
       player = Action.new(action_type, args)
@@ -53,7 +53,7 @@ defmodule Hangman.Player.FSM do
 
 
   defstate action do
-    defevent guess(data \\ nil), data: player do
+    defevent guess(data), data: player do
 
       {player, status} = player |> Action.guess(data)
 

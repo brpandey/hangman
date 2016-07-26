@@ -50,10 +50,10 @@ defmodule Hangman.Mixfile do
     [
       {:gproc, "0.5.0"}, # for pid registry
       {:exprof, "~> 0.2.0"}, # to facilitate profiling
-      {:ex_doc, "~> 0.11"}, # for mix docs
+      {:ex_doc, "~> 0.13"}, # for mix docs
       {:cowboy, "1.0.4"}, # for hangman web
-      {:plug, "1.1.2"},  # for hangman web
-      {:httpoison, "~> 0.8.2"}, # for hangman web
+      {:plug, "1.1.6"},  # for hangman web
+      {:httpoison, "~> 0.9.0"}, # for hangman web
       {:exrm, "1.0.1"}, # for mix release
       {:fsm, "~> 0.2.0"}, # for state machine handling
       {:exactor, "~> 2.2.0", warn_missing: false} # for simple GenServers

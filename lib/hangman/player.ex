@@ -20,12 +20,16 @@ defmodule Hangman.Player do
   """
 
   use ExActor.GenServer
+  require Logger
+
+  alias Hangman.{Player}
 
   @name __MODULE__
 
-  defstart start_link(args = {player_name, player_type, display, game_pid, event_pid})
-  when is_binary(player_name) and is_atom(player_type) 
-  and is_bool(display) and is_pid(game_pid) and is_pid(event_pid) do
+  defstart start_link(args = 
+    {_player_name, _player_type, _display, _game_pid, _event_pid}) do
+#  when is_binary(player_name) and is_atom(player_type) 
+#  and is_boolean(display) and is_pid(game_pid) and is_pid(event_pid) do
 
     Logger.info "Starting Hangman Player Server"
 
@@ -42,18 +46,18 @@ defmodule Hangman.Player do
     # request the next state transition :proceed to player fsm
     {response, fsm} = fsm |> Player.FSM.proceed
 
-    case response do
+    {response, fsm} = case response do
       # if there is no setup data required for the user e.g. [], 
       # as marked during robot guess setup, skip to guess
-      {:setup, []} -> {response, fsm} = fsm |> Player.FSM.guess
-      _ -> ""
+      {:setup, []} -> fsm |> Player.FSM.guess(nil)
+      _ -> {response, fsm}
     end
 
     set_and_reply(fsm, response)
   end
 
   
-  defcall guess(data \\ nil), state: fsm do
+  defcall guess(data), state: fsm do
     {response, fsm} = fsm |> Player.FSM.guess(data)
     set_and_reply(fsm, response)
   end

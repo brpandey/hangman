@@ -142,17 +142,17 @@ defmodule Hangman.Dictionary.File.Reader do
             # allow the logic alg to be "online" as we have access to prev value
             # with the addition of the Reader module
 
-            case reader.group_id == length do
-              true -> 
-                # increment the group ctr index by 1
-                reader = Kernel.put_in(reader.group_index, 
-                                        reader.group_index + 1)
-              false ->
-                # update new group_id and reset ctr index to 1
-                reader = Kernel.put_in(reader.group_id, length)               
-                reader = Kernel.put_in(reader.group_index, 1)
-            end
-
+            reader = 
+              case reader.group_id == length do
+                true -> 
+                  # increment the group ctr index by 1
+                  Kernel.put_in(reader.group_index, reader.group_index + 1)
+                false ->
+                  # update new group_id and reset ctr index to 1
+                  reader = Kernel.put_in(reader.group_id, length)               
+                  Kernel.put_in(reader.group_index, 1)
+              end
+            
             { [{length, reader.group_index, data}], reader }
 
           _ -> {:halt, reader}

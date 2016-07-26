@@ -26,7 +26,7 @@ defmodule Hangman.Round do
 
   alias Hangman.{Round, Game, Guess, Pass, Player, Reduction, Letter.Strategy}
 
-  defstruct id: "", num: 0, game_num: 0, 
+  defstruct id: "", num: 0, game_num: 0, context: nil,
   guess: {}, result_code: nil, status_code: nil, status_text: "", pattern: "",
   pid: nil, game_pid: nil, event_pid: nil
   
@@ -186,9 +186,9 @@ defmodule Hangman.Round do
                                {id, game_no})
     
     Player.Events.notify_status(event_pid,
-                                {id, game_no, seq_no, text})
+                                {id, game_no, round_num, text})
     
-    round = %Round{round_num: round_num,
+    round = %Round{num: round_num,
                    guess: guess, result_code: result, 
                    status_code: code, pattern: pattern, 
                    status_text: text}
@@ -204,8 +204,9 @@ defmodule Hangman.Round do
   # transitions to either a :game_start or :games_over
 
   @spec transition(t) :: Map.t
-  def transition(%Round{} = round)
-  when round.status_code in [:game_won, :game_lost] do
+  def transition(%Round{} = round) do
+
+    true = round.status_code in [:game_won, :game_lost]
 
     {id, player_key, _, _, game_pid, _} = 
       Round.game_context_key(round)
@@ -215,8 +216,10 @@ defmodule Hangman.Round do
 
     round = Kernel.put_in(round.status_code, status_code)
 
-    if code == :games_over do
-      round = process_summary(round, summary_code)
+    if status_code == :games_over do
+      process_summary(round, summary_code) 
+    else
+      round
     end
 
     round
@@ -229,20 +232,22 @@ defmodule Hangman.Round do
 
   defp process_summary(%Round{} = round, summary_code) 
   when is_list(summary_code) do
+
+    round =
     if (summary_code != "" and summary_code != [] and
         List.first(summary_code) == {:status, :games_over}) do
       
       summary = text_summary(summary_code)
-      round = Kernel.put_in(round.status_text, summary)      
-      
       Player.Events.notify_games_over(round.event_pid, round.id, summary)
+      
+      Kernel.put_in(round.status_text, summary)
     end
-
+    
     round
   end
 
 
-  @doc """
+  @docp """
   Returns `game` summary as a string.  Includes `number` of games played, `average` 
   score per game, per game `score`.
   """
@@ -264,7 +269,7 @@ defmodule Hangman.Round do
 
   # Returns round relevant data parameters
 
-  @doc """
+  @docp """
   Returns round `context` based on results of `last guess`
   """
 
@@ -303,7 +308,7 @@ defmodule Hangman.Round do
     
     round_info = [
         no: round.num,
-        guess: round.guess,
+        guess: guess,
         guess_result: round.result_code,
         round_code: round.status_code,
         round_status: round.status_text,

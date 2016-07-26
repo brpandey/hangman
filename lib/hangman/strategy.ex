@@ -34,7 +34,7 @@ defmodule Hangman.Letter.Strategy do
   choices to be presented to `human` to manually choose.
   """
 
-  alias Hangman.{Counter, Guess, Pass, Player, Letter.Strategy}
+  alias Hangman.{Counter, Guess, Pass, Letter.Strategy}
 
   defstruct type: nil, guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
@@ -67,12 +67,12 @@ defmodule Hangman.Letter.Strategy do
 
   # READ
 
-  @doc """
+  @docp """
   If we have reached the last possible hangman word,
   return it so we can guess it
   """
 
-  @spec last_word(t) :: Guess.t
+  @spec last_word?(t) :: Guess.t
   defp last_word?(%Strategy{} = strategy) do
     if strategy.pass.size == 1 do
       {true, {:guess_word, strategy.pass.last_word}}
@@ -117,7 +117,8 @@ defmodule Hangman.Letter.Strategy do
 
     # If user has decided to put in a letter, not in the choices
     # grab the letter that had the highest letter counts
-    unless letter in top_choices, do: letter = Kernel.hd(top_choices)
+    letter = 
+      unless letter in top_choices do Kernel.hd(top_choices) else letter end
     
     {:guess_letter, letter}
   end
@@ -131,16 +132,15 @@ defmodule Hangman.Letter.Strategy do
   def choices(%Strategy{} = strategy, n \\ @letter_choices)
   when is_number(n) and n > 0 do
     
-    case Strategy.last_word?(strategy) do        
+    case last_word?(strategy) do        
       {false, _} ->
         
         # Return top 5 {letter, count} pairs if possible
         top_choices = most_common(strategy, n)        
-        possible_words_txt = strategy.pass.possible
+
+        wrap = if String.length(strategy.pass.possible) > 0 do "\n\n" else "" end
         
-        if String.length(possible_words_txt) > 0 do
-          possible_words_txt = possible_words_txt <> "\n\n"
-        end
+        possible_words_txt = strategy.pass.possible <> wrap
         
         size = length(top_choices)      
         choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
@@ -167,7 +167,7 @@ defmodule Hangman.Letter.Strategy do
 
 
 
-  @doc """
+  @docp """
   Returns optimal letter
 
   Method implements the most `common` letter retrieval strategy with a twist.
@@ -207,13 +207,14 @@ defmodule Hangman.Letter.Strategy do
         # grab those key value pairs where value is <= 1/2 pass size
 
         # returns pairs list
-        kv_list =
-        for {k,v} <- Counter.items(tally), v <= pass_size/2, do: {k,v}
-                    
+        kv_list = 
+        for {k,v} <- Counter.items(tally), v <= pass_size/2 do {k,v} end
+                      
         # if no pairs in our list, remove the filter guard and run again
+        kv_list = 
         if Kernel.length(kv_list) == 0 do
-          kv_list = for {k,v} <- Counter.items(tally), do: {k,v}
-        end
+          for {k,v} <- Counter.items(tally) do {k,v} end
+        else kv_list end
         
         # retrieve letter with highest frequency count
         tally = Counter.new(kv_list)
@@ -233,34 +234,35 @@ defmodule Hangman.Letter.Strategy do
 
   @spec setup(t) :: t
   defp setup(%Strategy{} = strategy) do
-    case strategy.pass.size do 
-      0 ->  raise HangmanError, "Word not in dictionary"
-      1 ->
-        {true, {:guess_word, final_word}} = last_word?(strategy)
 
-        if {:guess_word, final_word} != strategy.prior_guess 
-        and {} != strategy.prior_guess
-        and MapSet.size(strategy.guessed_letters) > 0 do
-
-          strategy = Kernel.put_in(strategy.guess, {:guess_word, final_word})        
-        else
-          raise HangmanError, "Exhausted all words, word not in dictionary"
-        end
-
-      _pass_size ->
-        letter = optimal(strategy)
-        
-        if letter != nil and letter != "" 
-          and {:guess_letter, letter} != strategy.prior_guess do
-          guessed_letters = MapSet.put(strategy.guessed_letters, letter)
+    strategy = 
+      case strategy.pass.size do 
+        0 ->  raise HangmanError, "Word not in dictionary"
+        1 ->
+          {true, {:guess_word, final_word}} = last_word?(strategy)
           
-          strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
-          strategy = Kernel.put_in(strategy.guess, {:guess_letter, letter})            
-        else
-          raise HangmanError, "Unable to determine next guess as no valid letter left"
-        end
-    end
+          if {:guess_word, final_word} != strategy.prior_guess 
+          and {} != strategy.prior_guess
+          and MapSet.size(strategy.guessed_letters) > 0 do
+            Kernel.put_in(strategy.guess, {:guess_word, final_word})        
+          else
+            raise HangmanError, "Exhausted all words, word not in dictionary"
+          end
 
+        _pass_size ->
+          letter = optimal(strategy)
+          
+          if letter != nil and letter != "" 
+          and {:guess_letter, letter} != strategy.prior_guess do
+            guessed_letters = MapSet.put(strategy.guessed_letters, letter)
+            
+            strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
+            Kernel.put_in(strategy.guess, {:guess_letter, letter})            
+          else
+            raise HangmanError, "Unable to determine next guess as no valid letter left"
+          end
+      end
+    
     strategy
   end
 
@@ -304,13 +306,9 @@ defmodule Hangman.Letter.Strategy do
   def update(%Strategy{} = strategy, %Pass{} = pass) do
     strategy = %Strategy{ strategy | pass: pass, prior_guess: strategy.guess }
     
-    if strategy.type == :robot do
-      strategy = setup(strategy)
-    end
+    if strategy.type == :robot do strategy = setup(strategy) else strategy end
 
-    strategy
   end
-
 
 
   @doc """

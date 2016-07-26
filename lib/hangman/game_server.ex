@@ -377,46 +377,47 @@ defmodule Hangman.Game.Server do
     # Check if this client_pid is already added 
     # (e.g. from a previous game in a multiple game set)
 
-    case Map.has_key?(state.active_pids, client_pid) do
-      true ->
-        # Ensure the client id matches the pid -- sanity check
-        ^client_id = Map.get(state.active_pids, client_pid)
+    state = 
+      case Map.has_key?(state.active_pids, client_pid) do
+        true ->
+          # Ensure the client id matches the pid -- sanity check
+          ^client_id = Map.get(state.active_pids, client_pid)
+          state
+        false -> 
+          # Add
 
-
-      false -> 
-        # Add
-
-        # Establish the link to the client pid in case we get a client crash    
-        Process.link(client_pid)
+          # Establish the link to the client pid in case we get a client crash    
+          Process.link(client_pid)
         
-        # Let's preserve the client pid to client id mapping
-
-        # if we want to remove the client by pid
-        # its easy to find the client id, so we can also remove the 
-        # client game state if desired
-        
-        active_pids = Map.put(state.active_pids, client_pid, client_id)
-        
-        # Update state
-        state = Kernel.put_in(state.active_pids, active_pids)
-
-        # retrieve already loaded game state 
-        # update client_pid field with pid
-        case Map.get(state.games, client_id) do
-          nil -> 
-            # We should have client game state, so error
-            raise HangmanError, "Expecting to find client game, not found"
-          game ->
-            # First put pid value in client game state
-            game = Kernel.put_in(game.client_pid, client_pid)
-
-            # Put single client game back into server games state
-            games = Map.put(state.games, client_id, game)
-            
-            # Lastly, update server state
-            state = Kernel.put_in(state.games, games)
-        end
-    end
+          # Let's preserve the client pid to client id mapping
+          
+          # if we want to remove the client by pid
+          # its easy to find the client id, so we can also remove the 
+          # client game state if desired
+          
+          active_pids = Map.put(state.active_pids, client_pid, client_id)
+          
+          # Update state
+          state = Kernel.put_in(state.active_pids, active_pids)
+          
+          # retrieve already loaded game state 
+          # update client_pid field with pid
+          state = 
+            case Map.get(state.games, client_id) do
+              nil -> 
+                # We should have client game state, so error
+                raise HangmanError, "Expecting to find client game, not found"
+              game ->
+                # First put pid value in client game state
+                game = Kernel.put_in(game.client_pid, client_pid)
+                
+                # Put single client game back into server games state
+                games = Map.put(state.games, client_id, game)
+                
+                # Lastly, update server state
+                Kernel.put_in(state.games, games)
+            end
+      end
 
     state
   end
@@ -506,23 +507,24 @@ defmodule Hangman.Game.Server do
 
     Logger.debug("About to remove player pid from active list")
 
-    case Map.get(state.active_pids, client_pid) do
-      nil -> 
-        # Flag as error if we can't find client pid in our system
-        # something is weird
-        raise HangmanError, "Can't remove a client pid that doesn't exist"
-      ^client_id -> 
-        # Match against client id value
-        # First, remove pid from active_pids mapping
-        active_pids = Map.delete(state.active_pids, client_pid)
-        state = Kernel.put_in(state.active_pids, active_pids)
-        
-      _ ->
-        # We have the pid but it has a different id_key! flag error
-        raise HangmanError, "Client pid found, but different Client id. Strange!"
-        
-    end
-
+    state = 
+      case Map.get(state.active_pids, client_pid) do
+        nil -> 
+          # Flag as error if we can't find client pid in our system
+          # something is weird
+          raise HangmanError, "Can't remove a client pid that doesn't exist"
+        ^client_id -> 
+          # Match against client id value
+          # First, remove pid from active_pids mapping
+          active_pids = Map.delete(state.active_pids, client_pid)
+          state = Kernel.put_in(state.active_pids, active_pids)
+          state
+        _ ->
+          # We have the pid but it has a different id_key! flag error
+          raise HangmanError, "Client pid found, but different Client id. Strange!"
+          
+      end
+    
     # unlink last, now that we've removed from recordkeeping
     Process.unlink client_pid
 

@@ -17,6 +17,8 @@ defmodule Hangman.Player.Handler do
 
   alias Hangman.{Player, Game, Dictionary}
 
+  @max_random_words_request 10
+
   @doc """
   Function run connects all the `player` specific components together 
   and runs the player `game`
@@ -39,8 +41,8 @@ defmodule Hangman.Player.Handler do
   Setups the `game` server and per player `event` server.
   """
   
-  @spec setup(String.t, [String.t], boolean, boolean) :: tuple
-  def setup(name, type, secrets, log, display) when is_binary(name) and
+  @spec setup(tuple()) :: tuple
+  def setup({name, type, secrets, log, display}) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) and 
   is_boolean(log) and is_boolean(display) do
     
@@ -60,7 +62,7 @@ defmodule Hangman.Player.Handler do
 
   @doc "Start dynamic `player` child `worker`"
   
-  @spec start(String.t, Player.kind, boolean, pid, pid) :: Supervisor.on_start_child
+  @spec start(tuple()) :: Supervisor.on_start_child
   def start({name, type, display, game_pid, notify_pid}) do
     {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, 
                                                       game_pid, notify_pid)
@@ -123,7 +125,7 @@ defmodule Hangman.Player.Handler do
 
 
   defp ui(display, {:guess_letter, text})
-  when is_bool(display) and is_binary(text) do
+  when is_boolean(display) and is_binary(text) do
 
     letter = 
       case display do
@@ -139,7 +141,7 @@ defmodule Hangman.Player.Handler do
 
 
   defp ui(display, {:guess_word, last_word, text}) 
-  when is_bool(display) and is_binary(text) do
+  when is_boolean(display) and is_binary(text) do
 
     case display do
       true ->

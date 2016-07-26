@@ -12,7 +12,7 @@ defmodule Hangman.Player.Human do
   from and is able to make an interactive guess.  
   """
 
-  alias Hangman.{Player.Human, Round, Letter.Strategy, Game, Pass}
+  alias Hangman.{Player.Human, Round, Letter.Strategy, Pass}
 
   @opaque t :: %__MODULE__{}
 
@@ -48,15 +48,15 @@ defmodule Hangman.Player.Human do
   end
 
 
-  #  @spec guess(t, Guess.t) :: result
+  @spec guess(t, Guess.t) :: tuple()
   def guess(%Human{} = human, guess) do
 
     guess = case guess do
-      {:guess_letter, text} ->
+      {:guess_letter, letter} ->
         # Validate the letter is in the top choices, if not
         # return the optimal letter
-  	    letter = Strategy.validate(strategy, letter)
-      {:guess_word, text} -> 
+  	    letter = Strategy.validate(human.strategy, letter)
+      {:guess_word, last_word} -> 
         {:guess_word, last_word}
       _ -> raise "Unsupported guess type"
     end

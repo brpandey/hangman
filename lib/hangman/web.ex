@@ -57,13 +57,14 @@ defmodule Hangman.Web do
     name = conn.params["name"]
     secrets = conn.params["secret"]
 
+    secrets = 
     if secrets == nil do
       count = conn.params["random"]
-      secrets = Player.Handler.random(count)
+      Player.Handler.random(count)
     else
-      secrets = [secrets]
+      [secrets]
     end
-
+    
     if secrets == nil, do: raise "Can't run hangman with no secrets"
 
     rounds = Player.Handler.run(name, :robot, secrets, false, false)
