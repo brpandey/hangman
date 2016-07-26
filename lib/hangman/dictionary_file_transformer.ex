@@ -1,5 +1,8 @@
 defmodule Hangman.Dictionary.File.Transformer do
 
+  alias Hangman.{Dictionary}
+  alias Hangman.Dictionary.File.{Writer}
+
   @moduledoc """
   This module specifies the interface routines to transform 
   the input dictionary file to a new file, based on the 
@@ -19,8 +22,24 @@ defmodule Hangman.Dictionary.File.Transformer do
   # Reads input stream and transforms file 
   @callback transform(String.t, pid) :: :ok
 
-  # Runs transform 1-arity
-  @callback run(kind :: atom) :: String.t
+  # Run the transform
+  # transform from original to sorted
+#  @spec run(atom, term, tuple()) :: String.t
+  def run(kind, fn_transform, {src, dest}) when is_atom(kind) do
+
+    # assert 
+    true = kind in [Dictionary.regular, Dictionary.big]
+    
+    # Access path string from nested data structure
+    path = get_in Dictionary.paths, [kind, src]
+    new_path = get_in Dictionary.paths, [kind, dest]
+
+    # create the writer given the specific transform function
+    transform_handler = Writer.make_writer(fn_transform)
+
+    # run the transform!!!
+    transform_handler.(path, new_path)
+  end
 
 end
 
@@ -29,9 +48,9 @@ end
 defmodule Hangman.Dictionary.File.Sorter do
 
   alias Hangman.{Dictionary}
-  alias Hangman.Dictionary.File.{Reader, Writer}
+  alias Hangman.Dictionary.File.{Reader, Transformer}
 
-  @behaviour Hangman.Dictionary.File.Transformer
+  @behaviour Transformer
 
   # called from fn_transform
   def write("\n", _file_pid), do:  nil
@@ -39,27 +58,14 @@ defmodule Hangman.Dictionary.File.Sorter do
   
   # sort specific transform
   def transform(read_path, file_pid) when is_pid(file_pid) do
-
     Reader.new(Dictionary.original, read_path)
     |> Reader.stream
     |> Enum.sort_by(&String.length/1, &<=/2)
     |> Enum.each(&write(&1, file_pid))
   end
   
-  # run the transform
-  # transform from original to sorted
-  @spec run(atom) :: String.t
   def run(kind) when is_atom(kind) do
-
-    # assert 
-    true = kind in [Dictionary.regular, Dictionary.big]
-    
-    # Access path string from nested data structure
-    path = get_in Dictionary.paths, [kind, Dictionary.original]
-    new_path = get_in Dictionary.paths, [kind, Dictionary.sorted]
-
-    transform_handler = Writer.make_writer(&transform/2)
-    transform_handler.(path, new_path)
+    Transformer.run(kind, &transform/2, {Dictionary.original, Dictionary.sorted})
   end
 
 end
@@ -68,9 +74,9 @@ end
 defmodule Hangman.Dictionary.File.Grouper do
 
   alias Hangman.{Dictionary}
-  alias Hangman.Dictionary.File.{Writer, Reader}
+  alias Hangman.Dictionary.File.{Reader, Transformer}
 
-  @behaviour Hangman.Dictionary.File.Transformer
+  @behaviour Transformer
   
   def write({length, index, word}, file_pid) when is_pid(file_pid) do
     IO.puts(file_pid, "#{length} #{index} #{word}")
@@ -84,22 +90,8 @@ defmodule Hangman.Dictionary.File.Grouper do
     |> Stream.run
   end
 
-
-  # run the transform
-  # transform from sorted to grouped
-  @spec run(atom) :: String.t
-
   def run(kind) when is_atom(kind) do
-
-    # assert 
-    true = kind in [Dictionary.regular, Dictionary.big]
-        
-    # Access path string from nested data structure
-    path = get_in Dictionary.paths, [kind, Dictionary.sorted]
-    new_path = get_in Dictionary.paths, [kind, Dictionary.grouped]
-
-    transform_handler = Writer.make_writer(&transform/2)
-    transform_handler.(path, new_path)
+    Transformer.run(kind, &transform/2, {Dictionary.sorted, Dictionary.grouped})
   end
 
 end
@@ -108,9 +100,9 @@ end
 defmodule Hangman.Dictionary.File.Chunker do
 
   alias Hangman.{Dictionary, Chunks}
-  alias Hangman.Dictionary.File.{Reader, Writer}
+  alias Hangman.Dictionary.File.{Reader, Transformer}
 
-  @behaviour Hangman.Dictionary.File.Transformer
+  @behaviour Transformer
 
   def write(chunk, file_pid) when is_pid(file_pid) do
     bin_chunk = :erlang.term_to_binary(chunk)
@@ -129,22 +121,8 @@ defmodule Hangman.Dictionary.File.Chunker do
     |> Stream.run
   end
 
-
-  # run the transform
-  # transform from grouped to chunked
-  @spec run(atom) :: String.t
   def run(kind) when is_atom(kind) do
-
-    # assert 
-    true = kind in [Dictionary.regular, Dictionary.big]
-    
-    # Access path string from nested data structure
-
-    path = get_in Dictionary.paths, [kind, Dictionary.grouped]
-    new_path = get_in Dictionary.paths, [kind, Dictionary.chunked]
-
-    transform_handler = Writer.make_writer(&transform/2)
-    transform_handler.(path, new_path)
+    Transformer.run(kind, &transform/2, {Dictionary.grouped, Dictionary.chunked})
   end
 
 end

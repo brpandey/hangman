@@ -32,8 +32,14 @@ defmodule Hangman.Dictionary.Transformer do
 
 
   # Delay the actual function invocation to this method
+  # We are making the assumption that the enumerable will be 
+  # processed from keys 1 to 3
+  # NOTE: Need stronger guarentee check
   def run(%Transformer{} = state) do
-    Enum.map(state.enumerable, fn {_key, func} -> func.(state.kind) end)
+    Enum.reduce(state.enumerable, "", fn ({_key, func}, _acc) -> 
+      func.(state.kind)
+    end)
+
   end
 
 end

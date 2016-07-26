@@ -255,8 +255,9 @@ defmodule Hangman.Dictionary.Cache do
     # w/o unintended side effects
     << a :: 32, b :: 32, c :: 32 >> = :crypto.strong_rand_bytes(12)
     r_seed = {a, b, c}
-    :rand.seed r_seed
-    :rand.seed r_seed
+
+    :rand.seed(:exsplus, r_seed)
+    :rand.seed(:exsplus, r_seed)
 
     # Using list comp to retrieve the list of count random words
     randoms = for _x <- 1..count do Enum.random(randoms) end
@@ -502,13 +503,12 @@ defmodule Hangman.Dictionary.Cache do
   @spec ets_put_random_words({[String.t], pos_integer}) :: :ok
   defp ets_put_random_words({words_chunk_list, length}) do
     cond do
-
       length >= @min_random_word_length and length <= @max_random_word_length ->
         # seed random number generator with random seed
         << a :: 32, b :: 32, c :: 32 >> = :crypto.strong_rand_bytes(12)
         r_seed = {a, b, c}
-        :rand.seed r_seed
-        :rand.seed r_seed
+        :rand.seed(:exsplus, r_seed)
+        :rand.seed(:exsplus, r_seed)
       
         # Grab @random_words_per_chunk random words
       
