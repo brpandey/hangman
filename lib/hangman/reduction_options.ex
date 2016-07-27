@@ -10,8 +10,8 @@ defmodule Hangman.Reduction.Options do
   Generates `Reduction.key` given round context
   """
 
-  @spec reduce_key(Guess.context, exclusion :: MapSet.t) :: Reduction.key
-  def reduce_key({:game_start, secret_length} = _context, %MapSet{} = _letters) do
+  @spec reduce_key(Guess.context, exclusion :: Enumerable.t) :: Reduction.key
+  def reduce_key({:game_start, secret_length} = _context, _letters) do
     
     Keyword.new([
       {:game_start, true},
@@ -20,8 +20,10 @@ defmodule Hangman.Reduction.Options do
   end
   
   def reduce_key({_, :correct_letter, guess, _pattern, 
-                  _mystery_letter} = context, %MapSet{} = letters) do
+                  _mystery_letter} = context, letters) do
     
+    letters = letters |> Enum.into(MapSet.new)
+
     # generate regex match key given context to be used to reduce words set
     regex = regex_match_key(context, letters)
     
@@ -33,7 +35,9 @@ defmodule Hangman.Reduction.Options do
   end
   
   def reduce_key({_, :incorrect_letter, guess} = context, 
-                 %MapSet{} = letters) do
+                 letters) do
+
+    letters = letters |> Enum.into(MapSet.new)
 
     # generate regex match key given context to be used to reduce words set    
     regex = regex_match_key(context, letters)
@@ -60,7 +64,7 @@ defmodule Hangman.Reduction.Options do
   We create a `regex` key to reflect this information.
   """
 
-  @spec regex_match_key(Guess.context, exclusion :: MapSet.t) :: Regex.t
+  @spec regex_match_key(Guess.context, Enumerable.t) :: Regex.t
 
   def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
     pattern = String.downcase(pattern)

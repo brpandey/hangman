@@ -1,5 +1,7 @@
-defmodule Pass.Cache.Test do
+defmodule Hangman.Pass.Cache.Test do
   use ExUnit.Case #, async: true
+
+  alias Hangman.{Pass, Reduction, Letter.Strategy, Counter}
 
   @robot :robot
 
@@ -20,7 +22,9 @@ defmodule Pass.Cache.Test do
 
     context = {:game_start, 8} 
 
-    reduce_key = Reduction.Options.reduce_key(context, strategy.guessed_letters)
+    guessed = Strategy.guessed(strategy)
+
+    reduce_key = Reduction.Options.reduce_key(context, guessed)
 
     tally = Counter.new(%{"e" => 19600, "s" => 16560, "i" => 15530, "a" => 14490, "r" => 14211, "n" => 12186, "t" => 11870, "o" => 11462, "l" => 11026, "d" => 8046, "c" => 7815, "u" => 7377, "g" => 6009, "m" => 5793, "p" => 5763, "h" => 5111, "b" => 4485, "y" => 3395, "f" => 2897, "k" => 2628, "w" => 2313, "v" => 2156, "z" => 783, "x" => 662, "q" => 422, "j" => 384})
 
@@ -49,7 +53,7 @@ defmodule Pass.Cache.Test do
 
     guessed = ["e"]
 
-    assert guessed == Strategy.guessed(strategy)
+    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -78,7 +82,7 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e"]
 
-    assert guessed == Strategy.guessed(strategy)
+    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -107,7 +111,7 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "t"]
 
-    assert guessed == Strategy.guessed(strategy)
+    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -136,7 +140,7 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy)
+    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -169,7 +173,7 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "i", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy)
+    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -201,7 +205,7 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "i", "l", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy)
+    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -234,7 +238,7 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "c", "e", "i", "l", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy)     
+    assert guessed == Strategy.guessed(strategy) |> Enum.to_list     
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -264,7 +268,7 @@ defmodule Pass.Cache.Test do
     pass_key = {id, game_no, round_no + 1}
     guessed = ["a", "c", "e", "i", "l", "m", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy) 
+    assert guessed == Strategy.guessed(strategy) |> Enum.to_list 
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
