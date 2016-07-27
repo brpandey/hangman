@@ -23,10 +23,11 @@ defmodule Hangman.Dictionary.Transformer do
     # Store the transform run functions by order
     # First we sort, then group, then chunk
 
-    transforms = Map.put(%{}, 1, &Dictionary.File.Sorter.run/1)
-    transforms = Map.put(transforms, 2, &Dictionary.File.Grouper.run/1)
-    transforms = Map.put(transforms, 3, &Dictionary.File.Chunker.run/1)
-
+    transforms = %{}
+    |> Map.put(1, &Dictionary.File.Sorter.run/1)
+    |> Map.put(2, &Dictionary.File.Grouper.run/1)
+    |> Map.put(3, &Dictionary.File.Chunker.run/1)
+    
     %Transformer{kind: kind, enumerable: transforms}
   end
 
