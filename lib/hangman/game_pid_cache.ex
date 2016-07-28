@@ -45,7 +45,7 @@ defmodule Hangman.Game.Pid.Cache do
       :undefined ->
         GenServer.call(@name, {:get_server, player_name, secret})
       pid -> 
-        Game.Server.load(pid, player_name, secret)
+        Game.Server.setup(pid, player_name, secret)
         pid
     end
   end
@@ -72,7 +72,7 @@ defmodule Hangman.Game.Pid.Cache do
             Game.Server.Supervisor.start_child(player_name, secret)
           pid
         pid ->
-          Game.Server.load(pid, player_name, secret)
+          Game.Server.setup(pid, player_name, secret)
           pid
       end
     

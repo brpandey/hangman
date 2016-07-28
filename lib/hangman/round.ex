@@ -127,9 +127,9 @@ defmodule Hangman.Round do
     {name, key, game_no, _seq_no, game_pid, event_pid} = 
       Round.game_context_key(round)
 
-    # Initiate the game and grab the secret length
-    {^name, :secret_length, secret_length, status_text} =
-      Game.Server.initiate_and_length(game_pid, key)
+    # Register the client with the game server and grab the secret length
+    {^name, secret_length, status_text} =
+      Game.Server.register(game_pid, key)
     
     Player.Events.notify_length(event_pid, {name, game_no, secret_length})
 

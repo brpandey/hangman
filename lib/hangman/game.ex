@@ -81,19 +81,19 @@ defmodule Hangman.Game do
   
   
   @doc """
-  Loads a new `Game` state given new `secret(s)`
+  Creates a new `Game` state given new `secret(s)`
   """
   
-  @spec load(id, String.t | [String.t], pos_integer) :: t
-  def load(id_key, secret, max_wrong)
+  @spec new(id, String.t | [String.t], pos_integer) :: t
+  def new(id_key, secret, max_wrong)
   when is_binary(id_key) and is_binary(secret) do
     pattern = String.duplicate(@mystery_letter, String.length(secret))
     
     %Game{id: id_key, secret: String.upcase(secret), 
-          pattern: pattern, max_wrong: max_wrong}
+          pattern: pattern, max_wrong: max_wrong, state: :game_start}
   end
   
-  def load(id_key, secrets, max_wrong) when is_list(secrets) do
+  def new(id_key, secrets, max_wrong) when is_list(secrets) do
     #initialize the list of secrets to be uppercase 
     #initialize the list of patterns to fit the secrets length
     secrets = Enum.map(secrets, &String.upcase(&1))    
@@ -102,7 +102,7 @@ defmodule Hangman.Game do
     
     %Game{id: id_key, secret: List.first(secrets), 
           pattern: List.first(patterns), secrets: secrets, 
-          patterns: patterns, max_wrong: max_wrong}
+          patterns: patterns, max_wrong: max_wrong, state: :game_start}
   end
 
   @doc """
@@ -145,8 +145,15 @@ defmodule Hangman.Game do
 
   @spec guess(t, guess :: Guess.t) :: result
   def guess(%Game{} = game, {:guess_letter, letter}) do
+
+
+    IO.puts "guess game : #{inspect game}"
     
     # assert we can guess :)
+    foo = status(game)
+
+    IO.puts "guess foo : #{inspect foo}"
+
     {_, %{code: :game_keep_guessing}} = status(game) # Assert
     
     letter = letter |> String.upcase
@@ -203,18 +210,6 @@ defmodule Hangman.Game do
 
     {game, feedback}
   end
-  
-
-  defp status_helper(%Game{} = game, state) when state in @states do
-    {_code, text, score} = @status_codes[state]        
-
-    score = if score < 0 do score(game) else score end
-
-    augmented_text = "#{game.pattern}; score=#{score}; status=#{text}"
-    feedback = %{id: game.id, code: game.state, text: augmented_text, summary: []}
-
-    {game, feedback}
-  end
 
   @doc """
   Returns current `Game` status data and updates status code
@@ -233,7 +228,7 @@ defmodule Hangman.Game do
 
       # GAME_KEEP_GUESSING -> GAME_LOST
       game.state == :game_keep_guessing and 
-      incorrect_guesses(game) > game.max_wrong -> :game_lost
+      incorrect(game) > game.max_wrong -> :game_lost
 
       # GAME_START, GAME_KEEP_GUESSING -> GAME_KEEP_GUESSING
       game.state in [:game_start, :game_keep_guessing] and 
@@ -252,23 +247,14 @@ defmodule Hangman.Game do
         
           _ ->
           game = Kernel.put_in(game.state, new_code)
-          status_helper(game, new_code)
+          map = build_feedback(game, new_code)
+          {game, map}
       end
     
 
     {game, map}
   end
-  
-
-
-  # Helper function to return current number of wrong guesses
-  
-  @spec incorrect_guesses(t) :: non_neg_integer
-  defp incorrect_guesses(%Game{} = game) do
-    Set.size(game.incorrect_letters) + 
-    Set.size(game.incorrect_words)
-  end
-  
+    
   # Helper function to return current game score
   
   @spec score(t) :: integer
@@ -287,8 +273,16 @@ defmodule Hangman.Game do
         {_, _, score} = @status_codes[:game_lost]
         score
     end    
-  end
+  end  
+
+  # Helper function to return current number of wrong guesses
   
+  @spec incorrect(t) :: non_neg_integer
+  defp incorrect(%Game{} = game) do
+    Set.size(game.incorrect_letters) + 
+    Set.size(game.incorrect_words)
+  end
+
 
   @docp """
   Returns next game, in the process of doing so checks
@@ -308,7 +302,7 @@ defmodule Hangman.Game do
           # Updates game
           
           # New Game Start
-          game = save_and_load(game)
+          game = archive_and_update(game)
           
           {game, %{id: game.id, code: :game_start, summary: []}}
         false ->
@@ -317,7 +311,7 @@ defmodule Hangman.Game do
           # And update the game
           scores = List.insert_at(game.scores, game.current, score(game))
           game = %{ game | state: :games_over, scores: scores }
-          summary = final_summary(game)
+          summary = build_summary(game)
           
           # Games Over
           {game, %{id: game.id, code: :games_over, summary: summary}}
@@ -326,11 +320,11 @@ defmodule Hangman.Game do
     {game, feedback}
   end
 
-  
+
   # Saves result from current game, loads next game
   
-  @spec save_and_load(t) :: t
-  defp save_and_load(%Game{} = game) do
+  @spec archive_and_update(t) :: t
+  defp archive_and_update(%Game{} = game) do
     '''
     First, do game archival steps
     '''
@@ -365,11 +359,20 @@ defmodule Hangman.Game do
        state: :game_start}
   end
   
+  @spec build_feedback(t, code) :: feedback
+  defp build_feedback(%Game{} = game, state_code) when state_code in @states do
+    {code, text, score} = @status_codes[state_code]
+    score = if score < 0 do score(game) else score end
+    augmented_text = "#{game.pattern}; score=#{score}; status=#{text}"
+
+    %{id: game.id, code: code, text: augmented_text, summary: []}
+  end
+  
   
   # Returns games summary status for when all games are over
   
-  @spec final_summary(t) :: summary
-  defp final_summary(%Game{} = game) do
+  @spec build_summary(t) :: summary
+  defp build_summary(%Game{} = game) do
     total_score = Enum.reduce(game.scores, 0, &(&1 + &2))
     games_played = game.current + 1
     average_score = total_score / games_played
