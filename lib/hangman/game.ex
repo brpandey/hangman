@@ -56,12 +56,10 @@ defmodule Hangman.Game do
   @typedoc "returned `Game` feedback data"
 
   @type feedback :: %{id: String.t, code: code, summary: summary} 
-#                      optional(String.t) => String.t, 
+#                      optional(:text) => String.t, 
 #                      optional(:pattern) => String.t,
 #                      optional(:result) => :atom}
 
-  @typedoc "Game result tuple returned to `Game.Server`"
-  @type result :: {t, feedback}
 
   @status_codes  %{
     game_won: {:game_won, 'GAME_WON', -2}, 
@@ -96,9 +94,10 @@ defmodule Hangman.Game do
   def new(id_key, secrets, max_wrong) when is_list(secrets) do
     #initialize the list of secrets to be uppercase 
     #initialize the list of patterns to fit the secrets length
-    secrets = Enum.map(secrets, &String.upcase(&1))    
-    patterns = Enum.map(secrets, &String.duplicate(@mystery_letter, 
-                                                   String.length(&1)))
+    secrets = secrets |> Enum.map(&String.upcase(&1))    
+
+    patterns = secrets 
+    |> Enum.map(&String.duplicate(@mystery_letter, String.length(&1)))
     
     %Game{id: id_key, secret: List.first(secrets), 
           pattern: List.first(patterns), secrets: secrets, 
@@ -143,7 +142,7 @@ defmodule Hangman.Game do
     If incorrect, returns the :incorrect_word data tuple with `game` data    
   """
 
-  @spec guess(t, guess :: Guess.t) :: result
+  @spec guess(t, guess :: Guess.t) :: {t, feedback}
   def guess(%Game{} = game, {:guess_letter, letter}) do
 
 
@@ -243,14 +242,12 @@ defmodule Hangman.Game do
         :next_game ->
           # This returns a tuple with a map 
           # containing either GAME START or GAMES OVER
-          next(game) 
-        
-          _ ->
+          next(game)
+        _ ->
           game = Kernel.put_in(game.state, new_code)
           map = build_feedback(game, new_code)
           {game, map}
-      end
-    
+      end    
 
     {game, map}
   end
@@ -325,26 +322,21 @@ defmodule Hangman.Game do
   
   @spec archive_and_update(t) :: t
   defp archive_and_update(%Game{} = game) do
-    '''
-    First, do game archival steps
-    '''
+
+    ### GAME ARCHIVAL - STEPS ###
     
     #Store the game finishing pattern into the game.patterns list - replace
-    patterns = List.replace_at(game.patterns, 
-                               game.current, game.pattern)
+    patterns = List.replace_at(game.patterns, game.current, game.pattern)
     
     #Store the current score in the game.scores list - insert
     scores = List.insert_at(game.scores, game.current, score(game))
     
-    #Increment the current game index
-    
+    #Increment the current game index    
     #Update game
     game = %{ game | patterns: patterns, 
               scores: scores, current: game.current + 1 }
     
-    '''
-    Second, do refresh of current game
-    '''
+    ### REFRESH UPDATE OF CURRENT GAME - STEPS ###
     
     #Replace the current pattern with new game's pattern
     #Replace the current secret with new game's secret

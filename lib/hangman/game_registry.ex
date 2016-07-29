@@ -17,6 +17,7 @@ defmodule Hangman.Game.Registry do
 
   # CREATE
 
+  @spec new :: t
   def new, do: %Registry{}
 
   # adds a new player key to registry recordkeeping
@@ -155,7 +156,7 @@ defmodule Hangman.Game.Registry do
   # remove player pid from active pid list
 
   @spec remove(t, Player.key, atom) :: t
-  def remove(%Registry{} = registry, {player_id, player_pid} = _key, :actives)
+  def remove(%Registry{} = registry, :actives, {player_id, player_pid} = _key)
   when is_binary(player_id) and is_pid(player_pid) do
 
     Logger.debug("About to remove player pid from active list")
@@ -184,7 +185,7 @@ defmodule Hangman.Game.Registry do
     registry
   end
 
-  def remove(%Registry{} = registry, {player_id, _player_pid} = _key, :games)
+  def remove(%Registry{} = registry, :games, {player_id, _player_pid} = _key)
   when is_binary(player_id) do
 
     Logger.debug("About to remove player state from games")

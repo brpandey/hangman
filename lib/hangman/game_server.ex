@@ -234,9 +234,12 @@ defmodule Hangman.Game.Server do
 
     # Retrieve client game
     game = Registry.game(state, key)
+
+    {game, map} = Game.status(game)
+
     state = Registry.update(state, key, game)
 
-    { :reply, Game.status(game), state }
+    { :reply, map, state }
   end
   
   @docp """
@@ -254,6 +257,7 @@ defmodule Hangman.Game.Server do
 
     # Game.status is read only
     %{text: status_text} = Game.status(game)
+
     length = String.length(game.secret)
     
     # Let's piggyback the round status text with the secret length value

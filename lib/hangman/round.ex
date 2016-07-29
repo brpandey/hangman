@@ -31,8 +31,7 @@ defmodule Hangman.Round do
   pid: nil, game_pid: nil, event_pid: nil
   
   @type t :: %__MODULE__{}
-  @type code :: :correct_letter | :incorrect_letter | :incorrect_word
-  @type result :: {code, status :: String.t}
+  @type result_code :: :correct_letter | :incorrect_letter | :incorrect_word
   @type key :: {id :: String.t, client_pid :: pid} # Used as game key
 
   @typedoc """
@@ -81,7 +80,7 @@ defmodule Hangman.Round do
   Returns `round` status tuple
   """
 
-  @spec status(t) :: result
+  @spec status(t) :: {Game.code, String.t}
   def status(%Round{} = round) do
     {round.status_code, round.status_text}
   end
@@ -178,23 +177,23 @@ defmodule Hangman.Round do
       Round.game_context_key(round)
     
 
-    %{id: ^id, result: result, code: code, 
-      pattern: pattern, text: text, summary: []} =
+    %{id: ^id, result: result, code: status_code, 
+      pattern: pattern, text: status_text, summary: []} =
       Game.Server.guess(game_pid, player_key, guess)
     
     Player.Events.notify_guess(event_pid, guess,
                                {id, game_no})
     
     Player.Events.notify_status(event_pid,
-                                {id, game_no, round_num, text})
+                                {id, game_no, round_num, status_text})
     
     round = %Round{num: round_num,
                    guess: guess, result_code: result, 
-                   status_code: code, pattern: pattern, 
-                   status_text: text}
+                   status_code: status_code, pattern: pattern, 
+                   status_text: status_text}
 
     # Compute round context for the next round
-    round = Kernel.put_in(round.context, context(round))
+    round = Kernel.put_in(round.context, build_context(round))
 
     round
 
@@ -211,10 +210,11 @@ defmodule Hangman.Round do
     {id, player_key, _, _, game_pid, _} = 
       Round.game_context_key(round)
 
-    %{id: ^id, code: status_code, summary: summary_code} = 
+    %{id: ^id, code: status_code, text: status_text, summary: summary_code} = 
       Game.Server.status(game_pid, player_key)
 
     round = Kernel.put_in(round.status_code, status_code)
+    round = Kernel.put_in(round.status_text, status_text)
 
     if status_code == :games_over do
       process_summary(round, summary_code) 
@@ -237,7 +237,7 @@ defmodule Hangman.Round do
     if (summary_code != "" and summary_code != [] and
         List.first(summary_code) == {:status, :games_over}) do
       
-      summary = text_summary(summary_code)
+      summary = build_summary(summary_code)
       Player.Events.notify_games_over(round.event_pid, round.id, summary)
       
       Kernel.put_in(round.status_text, summary)
@@ -252,8 +252,8 @@ defmodule Hangman.Round do
   score per game, per game `score`.
   """
 
-  @spec text_summary(Game.summary) :: String.t
-  defp text_summary(args) when is_list(args) and is_tuple(Kernel.hd(args)) do
+  @spec build_summary(Game.summary) :: String.t
+  defp build_summary(args) when is_list(args) and is_tuple(Kernel.hd(args)) do
     
     {:ok, avg} = Keyword.fetch(args, :average_score)
     {:ok, games} = Keyword.fetch(args, :games)
@@ -273,8 +273,8 @@ defmodule Hangman.Round do
   Returns round `context` based on results of `last guess`
   """
 
-  @spec context(t) :: context | no_return
-  defp context(%Round{} = round) do
+  @spec build_context(t) :: context | no_return
+  defp build_context(%Round{} = round) do
     case round.result_code do
       :correct_letter -> 
         {:guess_letter, letter} = round.guess
