@@ -1,11 +1,11 @@
-defmodule Game.Test do
+defmodule Hangman.Game.Test do
   use ExUnit.Case, async: true
 
-# alias Hangman.{Game}
+  alias Hangman.{Game}
 
   test "fred - game w/o server" do
 
-      game = Game.load("fred", "exotic", 5)
+      game = Game.new("fred", "exotic", 5)
 
       # correct letter x 1
       {game, _result} = Game.guess(game, {:guess_letter, "x"})
@@ -33,15 +33,16 @@ defmodule Game.Test do
 
       assert game_text == "#{inspect game}"
 
-      assert {{"fred", :incorrect_word, :game_keep_guessing, "EXOT--",
-               "EXOT--; score=7; status=KEEP_GUESSING"}, []} = result
+      assert %{id: "fred", result: :incorrect_word, code: :game_keep_guessing, 
+               pattern: "EXOT--", text: "EXOT--; score=7; status=KEEP_GUESSING",
+               summary: []} = result
                                                                     
       {game, result} = Game.guess(game, {:guess_word, "exotic"})
-
-      assert {"fred", :correct_word, :game_won, "EXOTIC",
-              "EXOTIC; score=7; status=GAME_WON"} == result
       
-      assert {nil, :game_reset, 'GAME_RESET'} == Game.status(game)                                
+      assert %{id: "fred", result: :correct_word, code: :game_won, 
+               pattern: "EXOTIC", text: "EXOTIC; score=7; status=GAME_WON"} == result
+      
+      assert %{id: nil, code: :game_reset, text: 'GAME_RESET'} == Game.status(game)                                
   end
 
 end

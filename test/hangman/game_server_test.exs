@@ -1,7 +1,7 @@
-defmodule Game.Server.Test do
+defmodule Hangman.Game.Server.Test do
   use ExUnit.Case, async: true
 
-# alias Hangman.{Game}
+  alias Hangman.{Game}
 
   setup_all do
     IO.puts "Game Test"
@@ -60,60 +60,70 @@ defmodule Game.Server.Test do
     game_pid = context[:params] |> Map.get(:current_game_pid)
     player_key = context[:params] |> Map.get(:current_player_key)
 
-    Game.Server.initiate_and_length(game_pid, player_key)
+    Game.Server.register(game_pid, player_key)
     
-    assert {"stanley", :game_keep_guessing, 
-            "-------; score=0; status=KEEP_GUESSING"} = 
+    assert %{id: "stanley", code: :game_keep_guessing, 
+             text: "-------; score=0; status=KEEP_GUESSING", summary: []} = 
       Game.Server.status(game_pid, player_key)
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "--C----",
-      "--C----; score=1; status=KEEP_GUESSING"}, []} = 
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "--C----", text: "--C----; score=1; status=KEEP_GUESSING",
+             summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "c"})
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "--C-U--",
-      "--C-U--; score=2; status=KEEP_GUESSING"}, []} = 
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "--C-U--", text: "--C-U--; score=2; status=KEEP_GUESSING", 
+             summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "u"})
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "-AC-UA-",
-      "-AC-UA-; score=3; status=KEEP_GUESSING"}, []} = 
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "-AC-UA-", text: "-AC-UA-; score=3; status=KEEP_GUESSING", 
+             summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "a"})
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "FAC-UA-",
-      "FAC-UA-; score=4; status=KEEP_GUESSING"}, []} =
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "FAC-UA-", text: "FAC-UA-; score=4; status=KEEP_GUESSING", 
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "f"})
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "FACTUA-",
-      "FACTUA-; score=5; status=KEEP_GUESSING"}, []} =
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "FACTUA-", text: "FACTUA-; score=5; status=KEEP_GUESSING", 
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "t"})
 
-    assert {{"stanley", :correct_letter, :game_won, "FACTUAL", 
-             "FACTUAL; score=6; status=GAME_WON"},
-      []} = Game.Server.guess(game_pid, player_key, {:guess_letter, "l"})
+    assert %{id: "stanley", result: :correct_letter, code: :game_won, 
+             pattern: "FACTUAL", text: "FACTUAL; score=6; status=GAME_WON",
+             summary: []} = 
+      Game.Server.guess(game_pid, player_key, {:guess_letter, "l"})
 
-    assert {"stanley", :game_keep_guessing, 
-            "--------; score=0; status=KEEP_GUESSING"} =
-      Game.Server.status(game_pid, player_key) 
+    assert %{id: "stanley", code: :game_keep_guessing, 
+             text: "--------; score=0; status=KEEP_GUESSING", summary: []} = 
+      Game.Server.status(game_pid, player_key)
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "--C---C-",
-      "--C---C-; score=1; status=KEEP_GUESSING"}, []} = 
+
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+            pattern: "--C---C-", text: "--C---C-; score=1; status=KEEP_GUESSING", 
+            summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "c"})
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "-AC--AC-",
-      "-AC--AC-; score=2; status=KEEP_GUESSING"}, []} = 
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+            pattern: "-AC--AC-", text: "-AC--AC-; score=2; status=KEEP_GUESSING",
+            summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "a"})
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "-ACK-ACK",
-      "-ACK-ACK; score=3; status=KEEP_GUESSING"}, []} = 
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+            pattern: "-ACK-ACK", text: "-ACK-ACK; score=3; status=KEEP_GUESSING"
+            summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "k"})
 
-    assert {{"stanley", :correct_word, :game_won, "BACKPACK", 
-             "BACKPACK; score=3; status=GAME_WON"},
-      [status: :games_over, average_score: 4.5, games: 2,
-      results: [{"FACTUAL", 6}, {"BACKPACK", 3}]]} = 
+    assert %{id: "stanley", result: :correct_word, code: :game_won, 
+            pattern: "BACKPACK", text: "BACKPACK; score=3; status=GAME_WON",
+            summary: [status: :games_over, average_score: 4.5, games: 2,
+                      results: [{"FACTUAL", 6}, {"BACKPACK", 3}]]} = 
       Game.Server.guess(game_pid, player_key, {:guess_word, "backpack"}) 
 
     #assert {nil, :game_reset, 'GAME_RESET'} =
-    assert {"stanley", :game_won, "BACKPACK; score=3; status=GAME_WON"} = 
+    assert %{id: "stanley", code: :game_won, text: "BACKPACK; score=3; status=GAME_WON"} = 
       Game.Server.status(game_pid, player_key)
 
   end
@@ -127,65 +137,81 @@ defmodule Game.Server.Test do
     game_pid = context[:params] |> Map.get(:current_game_pid)
     player_key = context[:params] |> Map.get(:current_player_key)
 
-    Game.Server.initiate_and_length(game_pid, player_key)
+    Game.Server.register(game_pid, player_key)
 
-    assert {"hugo", :game_keep_guessing, 
-            "-----; score=0; status=KEEP_GUESSING"} =
-      Game.Server.status(game_pid, player_key)                             
+    assert %{id: "hugo", code: :game_keep_guessing, 
+             text: "-----; score=0; status=KEEP_GUESSING", summary: []} = 
+      Game.Server.status(game_pid, player_key)
 
-    assert {{"hugo", :correct_letter, :game_keep_guessing, "H----",
-      "H----; score=1; status=KEEP_GUESSING"}, []} = 
+    assert %{id: "hugo", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "H----", text: "H----; score=1; status=KEEP_GUESSING", 
+             summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "h"})
 
-    assert {{"hugo", :incorrect_letter, :game_keep_guessing, "H----",
-      "H----; score=2; status=KEEP_GUESSING"}, []} =
+    assert %{id: "hugo", result: :incorrect_letter, code: :game_keep_guessing, 
+             pattern: "H----", text: "H----; score=2; status=KEEP_GUESSING", 
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "l"})
 
-    assert {{"hugo", :incorrect_letter, :game_keep_guessing, "H----",
-      "H----; score=3; status=KEEP_GUESSING"}, []} =
+    assert %{id: "hugo", result: :incorrect_letter, code: :game_keep_guessing, 
+             pattern: "H----", text: "H----; score=3; status=KEEP_GUESSING", 
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "g"})
 
-    assert {{"hugo", :correct_letter, :game_keep_guessing, "H-A--",
-      "H-A--; score=4; status=KEEP_GUESSING"}, []} =
+    assert %{id: "hugo", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "H-A--", text: "H-A--; score=4; status=KEEP_GUESSING", 
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "a"})
 
-    assert {{"hugo", :correct_letter, :game_keep_guessing, "H-AR-",
-      "H-AR-; score=5; status=KEEP_GUESSING"}, []} =
+    assert %{id: "hugo", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "H-AR-", text: "H-AR-; score=5; status=KEEP_GUESSING", 
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "r"})
 
-    assert {{"hugo", :correct_word, :game_won, "HEART", 
-             "HEART; score=5; status=GAME_WON"}, []} =
+    assert %{id: "hugo", result: :correct_word, code: :game_won, 
+             pattern: "HEART", text: "HEART; score=5; status=GAME_WON", 
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_word, "heart"})  
 
-    assert {"hugo", :game_keep_guessing, 
-            "-------; score=0; status=KEEP_GUESSING"} = 
-      Game.Server.status(game_pid, player_key)        
+    assert %{id: "hugo", code: :game_keep_guessing, 
+             text: "-------; score=0; status=KEEP_GUESSING", summary: []} = 
+      Game.Server.status(game_pid, player_key)
 
-    assert {{"hugo", :correct_letter, :game_keep_guessing, "----A--",
-      "----A--; score=1; status=KEEP_GUESSING"}, []} = 
+    assert %{id: "hugo", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "----A--", text: "----A--; score=1; status=KEEP_GUESSING", 
+             summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "a"})  
 
-    assert {{"hugo", :correct_letter, :game_keep_guessing, "----A-Y",
-      "----A-Y; score=2; status=KEEP_GUESSING"}, []} =
+    assert %{id: "hugo", result: :correct_letter, code: :game_keep_guessing, 
+            pattern: "----A-Y", text: "----A-Y; score=2; status=KEEP_GUESSING", 
+            summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "y"})
 
-    assert {{"hugo", :incorrect_letter, :game_keep_guessing, "----A-Y",
-      "----A-Y; score=3; status=KEEP_GUESSING"}, []} =
+    assert %{id: "hugo", result: :incorrect_letter, code: :game_keep_guessing, 
+            pattern: "----A-Y", text: "----A-Y; score=3; status=KEEP_GUESSING", 
+            summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "s"})
 
-    assert {{"hugo", :correct_letter, :game_keep_guessing, "L-LLA-Y",
-      "L-LLA-Y; score=4; status=KEEP_GUESSING"}, []} =
+    assert %{id: "hugo", result: :correct_letter, code: :game_keep_guessing, 
+            pattern: "L-LLA-Y", text: "L-LLA-Y; score=4; status=KEEP_GUESSING", 
+            summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "l"})
 
-    assert {{"hugo", :correct_word, :game_won, "LULLABY", 
-             "LULLABY; score=4; status=GAME_WON"},
-     [status: :games_over, average_score: 4.5, games: 2,
-      results: [{"HEART", 5}, {"LULLABY", 4}]]} =
+    assert %{id: "hugo", result: :correct_word, code: :game_won, 
+             pattern: "LULLABY", text: "LULLABY; score=4; status=GAME_WON",
+             summary: [status: :games_over, average_score: 4.5, games: 2,
+                       results: [{"HEART", 5}, {"LULLABY", 4}]]} =
       Game.Server.guess(game_pid, player_key, {:guess_word, "lullaby"})  
 
     #assert {nil, :game_reset, 'GAME_RESET'} =
-    assert {"hugo", :game_won, "LULLABY; score=4; status=GAME_WON"} = 
-      Game.Server.status(game_pid, player_key)    
+    #assert {"hugo", :game_won, "LULLABY; score=4; status=GAME_WON"} = 
+    #  Game.Server.status(game_pid, player_key)    
+
+    # THIS SHOULD FAIL
+
+    assert %{id: "hugo", code: :game_keep_guessing, 
+             text: "-------; score=0; status=KEEP_GUESSING", summary: []} = 
+      Game.Server.status(game_pid, player_key)
 
   end
 
@@ -197,25 +223,28 @@ defmodule Game.Server.Test do
     game_pid = context[:params] |> Map.get(:current_game_pid)
     player_key = context[:params] |> Map.get(:current_player_key)
 
-    assert {"stanley", :secret_length, 6, _} = 
-      Game.Server.initiate_and_length(game_pid, player_key)
+    assert {"stanley", 6, _} = 
+      Game.Server.register(game_pid, player_key)
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "-----L",
-      "-----L; score=1; status=KEEP_GUESSING"}, []} =
-       Game.Server.guess(game_pid, player_key, {:guess_letter, "l"})                 
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "-----L", text: "-----L; score=1; status=KEEP_GUESSING", 
+             summary: []} =
+      Game.Server.guess(game_pid, player_key, {:guess_letter, "l"})                 
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "----AL",
-      "----AL; score=2; status=KEEP_GUESSING"}, []} =
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "----AL", text: "----AL; score=2; status=KEEP_GUESSING",
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "a"})
 
-    assert {{"stanley", :correct_letter, :game_keep_guessing, "J---AL",
-      "J---AL; score=3; status=KEEP_GUESSING"}, []} =
+    assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
+             pattern: "J---AL", text: "J---AL; score=3; status=KEEP_GUESSING",
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_letter, "j"})
 
-    assert {{"stanley", :correct_word, :game_won, "JOVIAL", 
-             "JOVIAL; score=3; status=GAME_WON"},
-            [status: :games_over, average_score: 3.0, games: 1, 
-             results: [{"JOVIAL", 3}]]} =
+    assert %{id: "stanley", result: :correct_word, code: :game_won, 
+             pattern: "JOVIAL", text: "JOVIAL; score=3; status=GAME_WON",
+             summary: [status: :games_over, average_score: 3.0, games: 1, 
+                       results: [{"JOVIAL", 3}]]} =
      Game.Server.guess(game_pid, player_key, {:guess_word, "jovial"})
 
 
