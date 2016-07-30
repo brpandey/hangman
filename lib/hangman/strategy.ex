@@ -85,9 +85,9 @@ defmodule Hangman.Letter.Strategy do
   Returns a list of guessed letters up to this point
   """
 
-  @spec guessed(t) :: MapSet.t
+  @spec guessed(t) :: list
   def guessed(%Strategy{} = strategy) do
-    strategy.guessed_letters
+    strategy.guessed_letters |> Enum.to_list
   end
 
   # Helpers

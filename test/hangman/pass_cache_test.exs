@@ -53,7 +53,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     guessed = ["e"]
 
-    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
+    assert guessed == Strategy.guessed(strategy)
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -82,7 +82,7 @@ defmodule Hangman.Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e"]
 
-    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
+    assert guessed == Strategy.guessed(strategy)
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -111,7 +111,7 @@ defmodule Hangman.Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "t"]
 
-    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
+    assert guessed == Strategy.guessed(strategy)
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -140,7 +140,7 @@ defmodule Hangman.Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
+    assert guessed == Strategy.guessed(strategy)
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -173,7 +173,7 @@ defmodule Hangman.Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "i", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
+    assert guessed == Strategy.guessed(strategy)
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -205,7 +205,7 @@ defmodule Hangman.Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "e", "i", "l", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy) |> Enum.to_list
+    assert guessed == Strategy.guessed(strategy)
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -238,7 +238,7 @@ defmodule Hangman.Pass.Cache.Test do
     pass_key = {id, game_no, round_no = round_no + 1}
     guessed = ["a", "c", "e", "i", "l", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy) |> Enum.to_list     
+    assert guessed == Strategy.guessed(strategy)     
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
@@ -268,7 +268,7 @@ defmodule Hangman.Pass.Cache.Test do
     pass_key = {id, game_no, round_no + 1}
     guessed = ["a", "c", "e", "i", "l", "m", "o", "t"]
 
-    assert guessed == Strategy.guessed(strategy) |> Enum.to_list 
+    assert guessed == Strategy.guessed(strategy) 
 
     reduce_key = Reduction.Options.reduce_key(context, guessed)
 
