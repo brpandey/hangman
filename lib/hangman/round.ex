@@ -32,7 +32,7 @@ defmodule Hangman.Round do
   
   @type t :: %__MODULE__{}
   @type result_code :: :correct_letter | :incorrect_letter | :incorrect_word
-  @type key :: {id :: String.t, client_pid :: pid} # Used as game key
+  @type key :: {id :: String.t, player_pid :: pid} # Used as game key
 
   @typedoc """
   Sum type used to understand prior `guess` result

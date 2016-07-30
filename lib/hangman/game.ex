@@ -31,7 +31,7 @@ defmodule Hangman.Game do
 
   alias Hangman.{Game, Guess, Pattern}
   
-  defstruct id: nil, client_pid: nil,
+  defstruct id: nil, player_pid: nil,
   current: 0, #Current game index
   secret: "", pattern: "", score: 0, state: :games_reset,
   secrets: [],  patterns: [], scores: [],
@@ -64,19 +64,15 @@ defmodule Hangman.Game do
   @status_codes  %{
     game_won: {:game_won, 'GAME_WON', -2}, 
     game_lost: {:game_lost, 'GAME_LOST', 25}, 
-    game_keep_guessing: {:game_keep_guessing, 'GAME_KEEP_GUESSING', -1},
-    games_reset: {:games_reset, 'GAME_RESET', 0}
+    game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1},
+    games_reset: {:games_reset, 'GAMES_RESET', 0}
   }
   
   @mystery_letter "-"
 
   @states [:games_reset, :game_start, :game_keep_guessing, 
            :game_won, :game_lost, :games_over]
-  
-  # Returns module attribute constant
-  @spec mystery_letter :: String.t
-  def mystery_letter, do: @mystery_letter
-  
+    
   
   @doc """
   Creates a new `Game` state given new `secret(s)`
@@ -126,6 +122,17 @@ defmodule Hangman.Game do
   end
 
 
+  # Returns module attribute constant
+  @spec mystery_letter :: String.t
+  def mystery_letter, do: @mystery_letter
+
+  
+  # Returns length of the current game secret
+  @spec secret_length(t) :: integer
+  def secret_length(%Game{} = game) do
+    true = is_binary(game.secret)
+    String.length(game.secret)
+  end
   
   @doc """
   Runs `guess` against `Game` `secret`. Updates `Hangman` pattern, status, and
@@ -145,16 +152,8 @@ defmodule Hangman.Game do
   @spec guess(t, guess :: Guess.t) :: {t, feedback}
   def guess(%Game{} = game, {:guess_letter, letter}) do
 
-
-    IO.puts "guess game : #{inspect game}"
-    
-    # assert we can guess :)
-    foo = status(game)
-
-    IO.puts "guess foo : #{inspect foo}"
-
     {_, %{code: :game_keep_guessing}} = status(game) # Assert
-    
+
     letter = letter |> String.upcase
 
     {game, result} = 
@@ -173,7 +172,7 @@ defmodule Hangman.Game do
                                  MapSet.put(game.incorrect_letters, letter))        
           {game, :incorrect_letter}
       end
-    
+
     #return updated game status
     {game, feedback} = status(game)
     
@@ -220,7 +219,7 @@ defmodule Hangman.Game do
     new_code = cond do
       # GAMES_RESET, GAMES_OVER -> GAMES_RESET
       game.state in [:games_reset, :games_over] -> :games_reset
-      
+        
       # GAME_KEEP_GUESSING -> GAME_WON
       game.state == :game_keep_guessing and 
       game.secret == game.pattern -> :game_won
@@ -237,27 +236,28 @@ defmodule Hangman.Game do
       game.state in [:game_won, :game_lost] -> :next_game
     end
 
-    {game, map} = 
-      case new_code do
-        :next_game ->
-          # This returns a tuple with a map 
-          # containing either GAME START or GAMES OVER
-          next(game)
-        _ ->
-          game = Kernel.put_in(game.state, new_code)
-          map = build_feedback(game, new_code)
-          {game, map}
-      end    
+    case new_code do
+      :next_game -> 
+        next(game)  #state_code either GAME_START or GAMES_OVER
+      _ ->
+        game = Kernel.put_in(game.state, new_code)
+        map = build_feedback(game, new_code)
+        {game, map}
+    end    
+    
 
-    {game, map}
   end
     
   # Helper function to return current game score
   
-  @spec score(t) :: integer
-  defp score(%Game{} = game) do
-
-    {_, %{code: code}} = status(game)
+  @spec score(t, code) :: integer
+  defp score(%Game{} = game, state_code \\ nil)  do
+    code = 
+      case state_code do
+        nil -> game.state
+        code when code in @states -> code
+        _ -> raise "Invalid state code in function score"
+      end
     
     case code do
       # compute score if not lost and not reset
@@ -269,6 +269,8 @@ defmodule Hangman.Game do
         # return default lost score if game lost
         {_, _, score} = @status_codes[:game_lost]
         score
+      _ -> 
+        raise "Shouldn't be asking for score in this state"
     end    
   end  
 
@@ -353,11 +355,18 @@ defmodule Hangman.Game do
   
   @spec build_feedback(t, code) :: feedback
   defp build_feedback(%Game{} = game, state_code) when state_code in @states do
-    {code, text, score} = @status_codes[state_code]
-    score = if score < 0 do score(game) else score end
-    augmented_text = "#{game.pattern}; score=#{score}; status=#{text}"
 
-    %{id: game.id, code: code, text: augmented_text, summary: []}
+    {_code, text, score} = @status_codes[state_code]
+
+    score = if score < 0 do score(game, state_code) else score end
+
+    augmented_text = 
+      case state_code do
+        :games_reset -> "status=#{text}"
+        _ -> "#{game.pattern}; score=#{score}; status=#{text}"
+      end
+    
+    %{id: game.id, code: state_code, text: augmented_text, summary: []}
   end
   
   
@@ -392,7 +401,7 @@ defmodule Hangman.Game do
     
     info = [
       id: g.id,
-      client_pid: g.client_pid,
+      player_pid: g.player_pid,
       current_game_index: g.current,
       secret: g.secret,
       pattern: g.pattern,

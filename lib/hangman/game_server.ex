@@ -41,11 +41,9 @@ defmodule Hangman.Game.Server do
 
     game = Game.new(id_key, secret, max_wrong)
 
-    # Store newly loaded, first player client game for this server process
-    # into registry
+    # Store newly loaded, game into the game server registry
 
-    registry = Registry.new 
-    |> Registry.update(id_key, game)
+    registry = Registry.new |> Registry.update(id_key, game)
 
     options = [name: via_tuple(id_key)] #,  debug: [:trace]]
     
@@ -256,9 +254,9 @@ defmodule Hangman.Game.Server do
     game = Registry.game(state, key)
 
     # Game.status is read only
-    %{text: status_text} = Game.status(game)
+    {_game, %{text: status_text}} = Game.status(game)
 
-    length = String.length(game.secret)
+    length = Game.secret_length(game)
     
     # Let's piggyback the round status text with the secret length value
     
