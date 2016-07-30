@@ -52,6 +52,7 @@ defmodule Hangman.Game.Server.Test do
     {:ok, params: map}
   end
 
+
   @tag case_key: :stanley2
   test "stanley - double games", context do 
 
@@ -96,8 +97,7 @@ defmodule Hangman.Game.Server.Test do
              summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "l"})
 
-    assert %{id: "stanley", code: :game_keep_guessing, 
-             text: "--------; score=0; status=KEEP_GUESSING", summary: []} = 
+    assert %{id: "stanley", code: :game_start, summary: []} = 
       Game.Server.status(game_pid, player_key)
 
 
@@ -112,22 +112,26 @@ defmodule Hangman.Game.Server.Test do
       Game.Server.guess(game_pid, player_key, {:guess_letter, "a"})
 
     assert %{id: "stanley", result: :correct_letter, code: :game_keep_guessing, 
-            pattern: "-ACK-ACK", text: "-ACK-ACK; score=3; status=KEEP_GUESSING"
+            pattern: "-ACK-ACK", text: "-ACK-ACK; score=3; status=KEEP_GUESSING",
             summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_letter, "k"})
 
     assert %{id: "stanley", result: :correct_word, code: :game_won, 
             pattern: "BACKPACK", text: "BACKPACK; score=3; status=GAME_WON",
-            summary: [status: :games_over, average_score: 4.5, games: 2,
-                      results: [{"FACTUAL", 6}, {"BACKPACK", 3}]]} = 
+            summary: []} = 
       Game.Server.guess(game_pid, player_key, {:guess_word, "backpack"}) 
 
-    #assert {nil, :game_reset, 'GAME_RESET'} =
-    assert %{id: "stanley", code: :game_won, text: "BACKPACK; score=3; status=GAME_WON"} = 
+    assert %{code: :games_over, id: "stanley",
+             summary: [status: :games_over, average_score: 4.5, games: 2,
+              results: [{"FACTUAL", 6}, {"BACKPACK", 3}]]} = 
+      Game.Server.status(game_pid, player_key)
+
+    assert %{id: "stanley", code: :games_reset, summary: []} =
       Game.Server.status(game_pid, player_key)
 
   end
 
+  
 
   @tag case_key: :hugo2  
   test "hugo - double games", context do
@@ -173,8 +177,7 @@ defmodule Hangman.Game.Server.Test do
              summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_word, "heart"})  
 
-    assert %{id: "hugo", code: :game_keep_guessing, 
-             text: "-------; score=0; status=KEEP_GUESSING", summary: []} = 
+    assert %{id: "hugo", code: :game_start, summary: []} = 
       Game.Server.status(game_pid, player_key)
 
     assert %{id: "hugo", result: :correct_letter, code: :game_keep_guessing, 
@@ -199,18 +202,19 @@ defmodule Hangman.Game.Server.Test do
 
     assert %{id: "hugo", result: :correct_word, code: :game_won, 
              pattern: "LULLABY", text: "LULLABY; score=4; status=GAME_WON",
-             summary: [status: :games_over, average_score: 4.5, games: 2,
-                       results: [{"HEART", 5}, {"LULLABY", 4}]]} =
+             summary: []} =
       Game.Server.guess(game_pid, player_key, {:guess_word, "lullaby"})  
 
-    #assert {nil, :game_reset, 'GAME_RESET'} =
-    #assert {"hugo", :game_won, "LULLABY; score=4; status=GAME_WON"} = 
-    #  Game.Server.status(game_pid, player_key)    
+    assert %{id: "hugo", code: :games_over, 
+             summary: [status: :games_over, average_score: 4.5, games: 2,
+              results: [{"HEART", 5}, {"LULLABY", 4}]]} = 
+      Game.Server.status(game_pid, player_key)
 
-    # THIS SHOULD FAIL
 
-    assert %{id: "hugo", code: :game_keep_guessing, 
-             text: "-------; score=0; status=KEEP_GUESSING", summary: []} = 
+    assert %{id: "hugo", code: :games_reset, summary: []} = 
+      Game.Server.status(game_pid, player_key)
+
+    assert %{id: "hugo", code: :games_reset, summary: []} = 
       Game.Server.status(game_pid, player_key)
 
   end
@@ -243,11 +247,16 @@ defmodule Hangman.Game.Server.Test do
 
     assert %{id: "stanley", result: :correct_word, code: :game_won, 
              pattern: "JOVIAL", text: "JOVIAL; score=3; status=GAME_WON",
-             summary: [status: :games_over, average_score: 3.0, games: 1, 
-                       results: [{"JOVIAL", 3}]]} =
+             summary: []} =
      Game.Server.guess(game_pid, player_key, {:guess_word, "jovial"})
 
 
+    assert %{id: "stanley", code: :games_over, 
+             summary: [status: :games_over, average_score: 3.0, games: 1,
+              results: [{"JOVIAL", 3}]]} = 
+      Game.Server.status(game_pid, player_key)
+
   end
+
 
 end

@@ -62,6 +62,7 @@ defmodule Hangman.Game do
 
 
   @status_codes  %{
+    game_start: {:game_start, 'GAME_START', 0},
     game_won: {:game_won, 'GAME_WON', -2}, 
     game_lost: {:game_lost, 'GAME_LOST', 25}, 
     game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1},
@@ -360,13 +361,13 @@ defmodule Hangman.Game do
 
     score = if score < 0 do score(game, state_code) else score end
 
-    augmented_text = 
-      case state_code do
-        :games_reset -> "status=#{text}"
-        _ -> "#{game.pattern}; score=#{score}; status=#{text}"
-      end
-    
-    %{id: game.id, code: state_code, text: augmented_text, summary: []}
+    case state_code do
+      :games_reset -> %{id: game.id, code: state_code, summary: []}
+      _ -> 
+        str = "#{game.pattern}; score=#{score}; status=#{text}"
+        %{id: game.id, code: state_code, text: str, summary: []}
+    end
+
   end
   
   
