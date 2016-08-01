@@ -234,12 +234,11 @@ defmodule Hangman.Game do
       game.secret != game.pattern -> :game_keep_guessing
 
       # GAME_WON, GAME_LOST -> GAME_START, GAMES_OVER (check if games left)
-      game.state in [:game_won, :game_lost] -> :next_game
+      game.state in [:game_won, :game_lost] -> :game_next
     end
 
     case new_code do
-      :next_game -> 
-        next(game)  #state_code either GAME_START or GAMES_OVER
+      :game_next -> game |> next  #state_code either GAME_START or GAMES_OVER
       _ ->
         game = Kernel.put_in(game.state, new_code)
         map = build_feedback(game, new_code)

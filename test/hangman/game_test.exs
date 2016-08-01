@@ -11,7 +11,11 @@ defmodule Hangman.Game.Test do
       {game, _result} = Game.guess(game, {:guess_letter, "x"})
 
       # correct letter o 2
-      {game, _result} = Game.guess(game, {:guess_letter, "o"})
+      {game, result} = Game.guess(game, {:guess_letter, "o"})
+
+      assert %{id: "fred", code: :game_keep_guessing, pattern: "-XO---",
+             result: :correct_letter, 
+             text: "-XO---; score=2; status=KEEP_GUESSING", summary: []} = result
 
       # correct letter t 3
       {game, _result} = Game.guess(game, {:guess_letter, "t"})
@@ -19,6 +23,12 @@ defmodule Hangman.Game.Test do
       # incorrect letter u 4
       {game, _result} = Game.guess(game, {:guess_letter, "u"})
 
+      {game, status} = Game.status(game)
+
+      assert %{id: "fred", code: :game_keep_guessing,
+               text: "-XOT--; score=4; status=KEEP_GUESSING", 
+               summary: []} = status
+      
       # incorrect letter s 5
       {game, _result} = Game.guess(game, {:guess_letter, "s"})
 
