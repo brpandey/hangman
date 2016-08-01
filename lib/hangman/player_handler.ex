@@ -31,8 +31,6 @@ defmodule Hangman.Player.Handler do
 
     args = {name, type, secrets, log, display}
     args |> setup |> start |> play
-
-    #System.halt(0)
   end
 
 
@@ -79,21 +77,10 @@ defmodule Hangman.Player.Handler do
       feedback = handle_setup(ppid, feedback)
 
       case feedback do
-
-        {:start, status} -> 
-          IO.puts "START status: #{status}, acc: #{acc}"
-          {:cont, acc + 1}
-
-        {:action, status} -> 
-          IO.puts "ACTION status: #{status}, acc: #{acc}"
-          {:cont, acc + 1}
-
-        {:stop, status} -> 
-          IO.puts "STOP status: #{status}, acc: #{acc}"
+        {code, _status} when code in [:start, :action, :stop] ->
           {:cont, acc + 1}
 
         {:exit, status} -> 
-          IO.puts "EXIT status: #{status}, acc: #{acc}"
           Player.stop(ppid)
           Player.Events.stop(notify_pid)
           {:halt, acc}
@@ -113,8 +100,6 @@ defmodule Hangman.Player.Handler do
 
         {:ok, display} = Keyword.fetch(kw, :display)
         {:ok, choices} = Keyword.fetch(kw, :status)
-
-        IO.puts "SETUP status: display = #{display}, choices = #{inspect choices}"
 
         selection = ui(display, choices)
         ppid |> Player.guess(selection)
