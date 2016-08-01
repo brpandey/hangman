@@ -19,4 +19,12 @@ defmodule Hangman.Player.Handler.Test do
     Player.Handler.run("jedi_test", :human, secrets, true, false)
 
   end
+
+  test "test running 2 human games" do 
+
+    secrets = ["porcupine", "eel"]
+    Player.Handler.run("jedi_test", :human, secrets, true, false)
+
+  end
+
 end

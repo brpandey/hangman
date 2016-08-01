@@ -32,7 +32,7 @@ defmodule Hangman.Player.Handler do
     args = {name, type, secrets, log, display}
     args |> setup |> start |> play
 
-    System.halt(0)
+    #System.halt(0)
   end
 
 
