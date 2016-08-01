@@ -5,7 +5,7 @@ defmodule Hangman.Player do
 
   The module represents the highest player abstraction, 
   and could be thought of as a producer-consumer. 
-  It sits in conjunction with other components between the Game and
+  It sits in conjunction with other player components, between the Game and
   Reduction engines and the Player.handler - a consumer.
 
   Behind this GenServer lies the intermediary player components which 
@@ -17,6 +17,8 @@ defmodule Hangman.Player do
 
   The module is abstracted away from the specific type of player to focus mainly on
   feeding the Player FSM and returning the appropriate response to the `Player.Handler`.
+
+  The player interface is very simple: proceed and guess
   """
 
   use ExActor.GenServer

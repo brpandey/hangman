@@ -71,7 +71,7 @@ defmodule Hangman.Player.Test do
 
     #:sys.trace(ppid, true)
 
-    {:start, reply} = ppid |> Player.proceed
+    {:start, _reply} = ppid |> Player.proceed
     {:action, reply} = ppid |> Player.proceed
 
     assert "-------E; score=1; status=KEEP_GUESSING" = reply
