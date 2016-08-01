@@ -108,4 +108,7 @@ defmodule Hangman.Player.FSM do
     end
   end
 
+  # called for undefined state/event mapping when inside any state
+  defevent _, do: raise "Player FSM doesn't support requested state:event mapping."
+
 end
