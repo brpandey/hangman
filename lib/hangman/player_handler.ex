@@ -80,7 +80,7 @@ defmodule Hangman.Player.Handler do
         {code, _status} when code in [:start, :action, :stop] ->
           {:cont, acc + 1}
 
-        {:exit, status} -> 
+        {:exit, _status} -> 
           Player.stop(ppid)
           Player.Events.stop(notify_pid)
           {:halt, acc}
