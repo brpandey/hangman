@@ -40,7 +40,7 @@ defmodule Hangman.Player.Supervisor do
   def start_child(player_name, player_type, display, game_pid, event_pid) do 
 
     Supervisor.start_child(:hangman_player_supervisor, 
-      [player_name, player_type, display, game_pid, event_pid])
+      [{player_name, player_type, display, game_pid, event_pid}])
   end
 
   @doc """

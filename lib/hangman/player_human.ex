@@ -34,12 +34,13 @@ defmodule Hangman.Player.Human do
 
     # Set up the game play round
     # Retrieve the reduction pass info from the engine
+
     {round, strategy} = Round.setup(round, exclusion, mode, fn_updater)
     
     # Retrieve top letter strategy options,
     # and then updating options with round specific information
     choices = Strategy.choices(strategy)
-    choices = augment_choices(round, choices)
+    choices = update_choices(round, choices)
 
     human = Kernel.put_in(human.round, round)
     human = Kernel.put_in(human.strategy, strategy)
@@ -64,7 +65,7 @@ defmodule Hangman.Player.Human do
     round = Round.guess(human.round, guess)
     strategy = Strategy.update(human.strategy, guess)
     status = Round.status(round)
-    
+
     human = Kernel.put_in(human.round, round)
     human = Kernel.put_in(human.strategy, strategy)
     
@@ -76,20 +77,29 @@ defmodule Hangman.Player.Human do
   Interjects specific parameters into `choices text`.
   """
 
-  @spec augment_choices(Round.t, Guess.option) :: Guess.option
-  def augment_choices(%Round{} = round, {code, choices_text})
-  when is_binary(choices_text) do
-    
-    {name, _, seq_no} = Round.reduce_context_key(round)
+  @spec update_choices(Round.t, tuple) :: tuple
 
+  def update_choices(%Round{} = round, {:guess_letter, choices_text})
+  when is_binary(choices_text) do
+    text = do_update_choices(round, choices_text)
+    {:guess_letter, text}
+  end
+
+  def update_choices(%Round{} = round, {:guess_word, last, choices_text})
+  when is_binary(choices_text) do
+    text = do_update_choices(round, choices_text)
+    {:guess_word, last, text}
+  end
+
+  defp do_update_choices(%Round{} = round, text) when is_binary(text) do
+    {name, _, round_no} = Round.reduce_context_key(round)
     {_, status_text} = Round.status(round)
 
-    text = choices_text 
+    text 
     |> String.replace("{name}", "#{name}")
-    |> String.replace("{round_no}", "#{seq_no}")
+    |> String.replace("{round_no}", "#{round_no}")
     |> String.replace("{status}", "#{status_text}")
-    
-    {code, text}
+
   end
 
 
@@ -108,9 +118,8 @@ defmodule Hangman.Player.Human do
 
     def inspect(t, opts) do
       player_info = Inspect.List.inspect(Human.info(t), opts)
-      round_info = Inspect.List.inspect(Round.info(t), opts)
+      round_info = Inspect.List.inspect(Round.info(t.round), opts)
       concat ["#Player.Human<", player_info, round_info, ">"]
     end
   end
-
 end

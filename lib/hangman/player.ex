@@ -62,11 +62,21 @@ defmodule Hangman.Player do
   end
 
   
-  defcall guess(data), state: fsm do
+  defcall guess(data), when: is_tuple(data), state: fsm do
     {response, fsm} = fsm |> Player.FSM.guess(data)
     set_and_reply(fsm, response)
   end
 
+  defcall guess(data), when: is_binary(data), state: fsm do
+    {response, fsm} = 
+      case String.length(data) do
+        1 ->
+          fsm |> Player.FSM.guess({:guess_letter, data})
+        _ ->
+          fsm |> Player.FSM.guess({:guess_word, data})
+      end
+    set_and_reply(fsm, response)
+  end
 
   defcast stop, do: stop_server(:normal)
 

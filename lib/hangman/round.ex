@@ -51,17 +51,21 @@ defmodule Hangman.Round do
 
   def start(%Round{} = round) do
     
+    round =
     if round.game_num == 0 do
       # Notify the event server that we've started playing hangman
       Player.Events.notify_start(round.event_pid, round.id)
 
       # update the passed in round
-      %Round{ round | game_num: round.game_num + 1}
+      %Round{ round | game_num: round.game_num + 1, status_code: :game_start}
     else
       # create a new round with some leftover data from passed in round
-      %Round{ id: round.id, pid: round.pid, game_num: round.game_num + 1, 
+      %Round{ id: round.id, pid: round.pid, 
+              game_num: round.game_num + 1, status_code: :game_start,
               game_pid: round.game_pid, event_pid: round.event_pid }
     end
+
+    round
   end
   
   # READ
@@ -175,7 +179,6 @@ defmodule Hangman.Round do
     
     {id, player_key, game_no, round_num, game_pid, event_pid} = 
       Round.game_context_key(round)
-    
 
     %{id: ^id, result: result, code: status_code, 
       pattern: pattern, text: status_text, summary: []} =
@@ -187,7 +190,7 @@ defmodule Hangman.Round do
     Player.Events.notify_status(event_pid,
                                 {id, game_no, round_num, status_text})
     
-    round = %Round{num: round_num,
+    round = %Round{round | num: round_num,
                    guess: guess, result_code: result, 
                    status_code: status_code, pattern: pattern, 
                    status_text: status_text}
@@ -210,17 +213,20 @@ defmodule Hangman.Round do
     {id, player_key, _, _, game_pid, _} = 
       Round.game_context_key(round)
 
-    %{id: ^id, code: status_code, text: status_text, summary: summary_code} = 
+    %{id: ^id, code: status_code, summary: summary_code} = status =
       Game.Server.status(game_pid, player_key)
 
     round = Kernel.put_in(round.status_code, status_code)
+
+    # If text field not in map, return default value
+    status_text = Map.get(status, :text, "Game transition")
     round = Kernel.put_in(round.status_text, status_text)
 
-    if status_code == :games_over do
-      process_summary(round, summary_code) 
-    else
-      round
-    end
+    round =
+      case status_code do
+        :games_over -> process_summary(round, summary_code)
+        _ -> round
+      end
 
     round
   end
@@ -290,6 +296,11 @@ defmodule Hangman.Round do
       :incorrect_word ->
         {:game_keep_guessing, :incorrect_letter, " "}
 
+      :correct_word -> 
+        {:guess_word, word} = round.guess
+        {:game_won, :correct_word, word}
+      
+
       true ->
         raise HangmanError, "Unknown round result"
     end
@@ -307,17 +318,19 @@ defmodule Hangman.Round do
       end
     
     round_info = [
-        no: round.num,
-        guess: guess,
-        guess_result: round.result_code,
-        round_code: round.status_code,
-        round_status: round.status_text,
-        pattern: round.pattern
+      game_num: round.game_num,
+      round_num: round.num,
+      guess: guess,
+      guess_result: round.result_code,
+      round_code: round.status_code,
+      round_status: round.status_text,
+      pattern: round.pattern,
+      context: round.context
     ]
     
     _info = [
       id: round.id,
-      round_no: round.num,
+      pid: round.pid,
       game_pid: round.game_pid,
       event_pid: round.event_pid,
       round_data: round_info

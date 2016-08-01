@@ -75,7 +75,7 @@ defmodule Hangman.Player.Robot do
 
     def inspect(t, opts) do
       player_info = Inspect.List.inspect(Robot.info(t), opts)
-      round_info = Inspect.List.inspect(Round.info(t), opts)
+      round_info = Inspect.List.inspect(Round.info(t.round), opts)
       concat ["#Player.Robot<", player_info, round_info, ">"]
     end
   end
