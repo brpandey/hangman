@@ -1,6 +1,7 @@
-defmodule Player.Events.Test do
+defmodule Hangman.Player.Events.Test do
   use ExUnit.Case, async: false
 
+  alias Hangman.{Player}
 
   setup_all do
     IO.puts "Player Events Test"

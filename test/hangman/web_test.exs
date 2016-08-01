@@ -1,4 +1,4 @@
-defmodule Web.Test do
+defmodule Hangman.Web.Test do
   use ExUnit.Case, async: false
 
   setup do

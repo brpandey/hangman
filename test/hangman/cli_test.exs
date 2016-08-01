@@ -1,6 +1,7 @@
-defmodule CLI.Test do
+defmodule Hangman.CLI.Test do
   use ExUnit.Case, async: true
 
+  alias Hangman.{CLI}
 
   setup_all do
     IO.puts "CLI Test"
