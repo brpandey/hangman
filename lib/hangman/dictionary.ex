@@ -37,7 +37,7 @@ defmodule Hangman.Dictionary do
   @spec big :: kind
   def big, do:  :big
   
-  @root_path :code.priv_dir(:play)
+  @root_path :code.priv_dir(:hangman_game)
 
   @doc """
   Returns `Dictionary.File` `paths` map, arranged by types `regular` and `big`

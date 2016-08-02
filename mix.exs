@@ -3,7 +3,7 @@ defmodule Hangman.Mixfile do
 
   def project do
     [
-      app: :play,
+      app: :hangman_game,
       name: "Hangman",
       version: "0.9.1",
       elixir: "~> 1.3.0",
