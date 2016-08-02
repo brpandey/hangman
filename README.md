@@ -34,13 +34,13 @@ $  MIX_ENV=prod mix release
 
 $  rel/hangman/bin/hangman start
 
-$  curl "http://127.0.0.1:3737/play?name=julio&secret=woodpecker"
+$  curl "http://127.0.0.1:3737/hangman?name=julio&secret=woodpecker"
 (#) -----E--E-; score=1; status=KEEP_GUESSING (#) -----E--E-; score=2; status=KEEP_GUESSING (#) -----E--ER; score=3; status=KEEP_GUESSING (#) -----E--ER; score=4; status=KEEP_GUESSING (#) -----E--ER; score=5; status=KEEP_GUESSING (#) -----E--ER; score=6; status=KEEP_GUESSING (#) -----E--ER; score=7; status=KEEP_GUESSING (#) WOODPECKER; score=7; status=GAME_WON (#) Game Over! Average Score: 7.0, # Games: 1, Scores:  (WOODPECKER: 7) 
 
-$  curl "http://127.0.0.1:3737/play?name=julio&random=2"
+$  curl "http://127.0.0.1:3737/hangman?name=julio&random=2"
 (#) -E-E-----------; score=1; status=KEEP_GUESSING (#) -E-E------A----; score=2; status=KEEP_GUESSING (#) -ESE-S----A----; score=3; status=KEEP_GUESSING (#) DESENSITIZATION; score=3; status=GAME_WON (#) --E----E; score=1; status=KEEP_GUESSING (#) --ER---E; score=2; status=KEEP_GUESSING (#) --ER---E; score=3; status=KEEP_GUESSING (#) --ERT--E; score=4; status=KEEP_GUESSING (#) INERTIAE; score=4; status=GAME_WON (#) Game Over! Average Score: 3.5, # Games: 2, Scores:  (DESENSITIZATION: 3) (INERTIAE: 4)
 
-$  curl "http://127.0.0.1:3737/play?name=julio&random=2"
+$  curl "http://127.0.0.1:3737/hangman?name=julio&random=2"
 (#) -------; score=1; status=KEEP_GUESSING (#) --A----; score=2; status=KEEP_GUESSING (#) --A----; score=3; status=KEEP_GUESSING (#) --A--O-; score=4; status=KEEP_GUESSING (#) S-A--O-; score=5; status=KEEP_GUESSING (#) S-A--O-; score=6; status=KEEP_GUESSING (#) S-ALLO-; score=7; status=KEEP_GUESSING (#) SCALLO-; score=8; status=KEEP_GUESSING (#) SCALLOP; score=8; status=GAME_WON (#) ---------E; score=1; status=KEEP_GUESSING (#) A-----A--E; score=2; status=KEEP_GUESSING (#) A-----A--E; score=3; status=KEEP_GUESSING (#) A-----A--E; score=4; status=KEEP_GUESSING (#) AB---BA--E; score=5; status=KEEP_GUESSING (#) ABSORBANCE; score=5; status=GAME_WON (#) Game Over! Average Score: 6.5, # Games: 2, Scores:  (SCALLOP: 8) (ABSORBANCE: 5) 
 
 (NOTE --> Result will be different each time since we are specifying the random n words options)
