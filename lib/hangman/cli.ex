@@ -183,7 +183,7 @@ defmodule Hangman.CLI do
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
 
-    Player.Handler.run(name, type, secrets, log, display)
+    Player.Handler.run(:cli, name, type, secrets, log, display)
   end
 
 

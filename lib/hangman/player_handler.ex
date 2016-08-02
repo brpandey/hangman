@@ -24,23 +24,31 @@ defmodule Hangman.Player.Handler do
   and runs the player `game`
   """
 
-  @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def run(name, type, secrets, log, display) when is_binary(name)
+  @spec run(atom, String.t, Player.kind, [String.t], boolean, boolean) :: :ok
+  def run(:cli, name, type, secrets, log, display) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
 
     args = {name, type, secrets, log, display}
-    args |> setup |> start |> play
+    args |> setup |> start |> play(:cli)
   end
 
+  def run(:web, name, :robot, secrets, log, display = false) when is_binary(name)
+  and is_list(secrets) and is_binary(hd(secrets)) 
+  and is_boolean(log) and is_boolean(display) do
 
-  @doc """
+    args = {name, :robot, secrets, log, display}
+    args |> setup |> start |> play(:web) |> Enum.reverse 
+    # we reverse the prepended list of round status
+  end
+
+  @docp """
   Function setup loads the `player` specific `game` components.
   Setups the `game` server and per player `event` server.
   """
   
   @spec setup(tuple()) :: tuple
-  def setup({name, type, secrets, log, display}) when is_binary(name) and
+  defp setup({name, type, secrets, log, display}) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) and 
   is_boolean(log) and is_boolean(display) do
     
@@ -58,17 +66,17 @@ defmodule Hangman.Player.Handler do
   end
 
 
-  @doc "Start dynamic `player` child `worker`"
+  @docp "Start dynamic `player` child `worker`"
   
   @spec start(tuple()) :: Supervisor.on_start_child
-  def start({name, type, display, game_pid, notify_pid}) do
+  defp start({name, type, display, game_pid, notify_pid}) do
     {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, 
                                                       game_pid, notify_pid)
     {player_pid, notify_pid}
   end
   
 
-  def play({player_pid, notify_pid})
+  defp play({player_pid, notify_pid}, :cli) # atom tag on end for pipe ease
   when is_pid(player_pid) and is_pid(notify_pid) do
 
     Enum.reduce_while(Stream.cycle([player_pid]), 0, fn ppid, acc ->
@@ -90,6 +98,33 @@ defmodule Hangman.Player.Handler do
     end)
   end
 
+
+  defp play({player_pid, notify_pid}, :web) # atom tag on end for pipe ease
+  when is_pid(player_pid) and is_pid(notify_pid) do
+
+    Enum.reduce_while(Stream.cycle([player_pid]), [], fn ppid, acc ->
+      
+      feedback = ppid |> Player.proceed
+      feedback = handle_setup(ppid, feedback)
+
+      case feedback do
+        {code, _status} when code in [:start, :stop] ->
+          {:cont, acc}
+
+        {:action, status} -> 
+          acc = [status | acc] # prepend to list then later reverse -- O(1)
+          {:cont, acc}
+
+        {:exit, status} -> 
+          acc = [status | acc] # prepend to list then later reverse -- O(1)
+          Player.stop(ppid)
+          Player.Events.stop(notify_pid)
+          {:halt, acc}
+
+        _ -> raise "Unknown Player state"
+      end
+    end)
+  end
 
   # Helpers
 

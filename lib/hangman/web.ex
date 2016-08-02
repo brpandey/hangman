@@ -9,7 +9,7 @@ defmodule Hangman.Web do
   
   ## Example
 
-      iex> HTTPoison.get("http://127.0.0.1:3737/play?name=julio&secret=kiwi")
+      iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&secret=kiwi")
 
       {:ok,
       %HTTPoison.Response{body: "(#) ----; score=1; status=KEEP_GUESSING (#) ----; score=2; status=KEEP_GUESSING (#) ----; score=3; status=KEEP_GUESSING (#) -I-I; score=4; status=KEEP_GUESSING (#) -I-I; score=5; status=KEEP_GUESSING (#) -I-I; score=6; status=KEEP_GUESSING (#) -I-I; score=25; status=GAME_LOST (#) Game Over! Average Score: 25.0, # Games: 1, Scores:  (KIWI: 25) ",
@@ -18,7 +18,7 @@ defmodule Hangman.Web do
       {"cache-control", "max-age=0, private, must-revalidate"},
       {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
 
-      iex> HTTPoison.get("http://127.0.0.1:3737/play?name=julio&random=2")
+      iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&random=2")
 
       {:ok,
       %HTTPoison.Response{body: "(#) --E-----------; score=1; status=KEEP_GUESSING (#) --E--------O--; score=2; status=KEEP_GUESSING (#) --E--------O--; score=3; status=KEEP_GUESSING (#) --E----C---O--; score=4; status=KEEP_GUESSING (#) PREVARICATIONS; score=4; status=GAME_WON (#) ---------; score=1; status=KEEP_GUESSING (#) --A------; score=2; status=KEEP_GUESSING (#) -IA----I-; score=3; status=KEEP_GUESSING (#) -IA----I-; score=4; status=KEEP_GUESSING (#) -IAG---I-; score=5; status=KEEP_GUESSING (#) DIAGNOSIS; score=5; status=GAME_WON (#) Game Over! Average Score: 4.5, # Games: 2, Scores:  (PREVARICATIONS: 4) (DIAGNOSIS: 5) ",
@@ -39,8 +39,8 @@ defmodule Hangman.Web do
 
 
 
-  @docp "Get macro, matches GET request and /play"
-  get "/play" do
+  @docp "Get macro, matches GET request and /hangman"
+  get "/hangman" do
     conn
     |> Plug.Conn.fetch_query_params
     |> run_game
@@ -67,7 +67,7 @@ defmodule Hangman.Web do
     
     if secrets == nil, do: raise "Can't run hangman with no secrets"
 
-    rounds = Player.Handler.run(name, :robot, secrets, false, false)
+    rounds = Player.Handler.run(:web, name, :robot, secrets, false, false)
     value = format_rounds(rounds)
         
     Plug.Conn.assign(conn, :response, value)
