@@ -370,7 +370,7 @@ defmodule Hangman.Dictionary.Cache do
     # unpack the chunks then insert into ets
     
     Reader.new(Dictionary.chunked, path)
-    |> Reader.stream
+    |> Reader.proceed
     |> Stream.each(fn_ets_insert_chunks)
     |> Stream.each(&ets_put_random_words/1)
     |> Stream.run

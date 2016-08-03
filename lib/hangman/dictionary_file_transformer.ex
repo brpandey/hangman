@@ -59,7 +59,7 @@ defmodule Hangman.Dictionary.File.Sorter do
   # sort specific transform
   def transform(read_path, file_pid) when is_pid(file_pid) do
     Reader.new(Dictionary.original, read_path)
-    |> Reader.stream
+    |> Reader.proceed
     |> Enum.sort_by(&String.length/1, &<=/2)
     |> Enum.each(&write(&1, file_pid))
   end
@@ -85,7 +85,7 @@ defmodule Hangman.Dictionary.File.Grouper do
   # group specific transform
   def transform(read_path, file_pid) when is_pid(file_pid) do
     Reader.new(Dictionary.sorted, read_path)
-    |> Reader.stream
+    |> Reader.proceed
     |> Stream.each(&write(&1, file_pid))
     |> Stream.run
   end
@@ -115,7 +115,7 @@ defmodule Hangman.Dictionary.File.Chunker do
   # chunk specific transform
   def transform(read_path, file_pid) when is_pid(file_pid) do
     Reader.new(Dictionary.grouped, read_path) 
-    |> Reader.stream
+    |> Reader.proceed
     |> Chunks.Stream.transform(Dictionary.grouped, Dictionary.chunked)
     |> Stream.each(&write(&1, file_pid))
     |> Stream.run

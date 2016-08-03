@@ -13,13 +13,23 @@ defmodule Hangman.Dictionary.File.Reader do
 
   @opaque t :: %__MODULE__{}
 
-  # Dictionary attribute tokens
   @original Dictionary.original
   @sorted Dictionary.sorted
   @grouped Dictionary.grouped
   @chunked Dictionary.chunked
 
-  @chunks_file_delimiter Dictionary.chunks_file_delimiter
+  @type_handler_map %{
+    @original => &Dictionary.File.OriginalReader.handler/1,
+    @sorted => &Dictionary.File.SortedReader.handler/1,
+    @grouped => &Dictionary.File.GroupedReader.handler/1,
+    @chunked => &Dictionary.File.ChunkedReader.handler/1
+  }
+
+  @doc """
+  Handles file specific input `streams`, wrapping underlying file formats.
+  Returns file `enumerable`, closes file when finished.
+  """
+  @callback handler(io_device :: IO.device) :: Enumerable.t  
 
 
   # Create
@@ -28,22 +38,22 @@ defmodule Hangman.Dictionary.File.Reader do
   """
 
   @spec new(Dictionary.transform, String.t) :: t
-  def new(type = dict_file_type, path)
-  when dict_file_type in [@original, @sorted, @grouped, @chunked] do
-
+  def new(type, path) when type in 
+  [@original, @sorted, @grouped, @chunked] do
     file = File.open!(path)
-    %Reader{ file: file, type: type }
+    %Reader{ file: file, type: type}
   end
 
 
   # Read / Update
   @doc """
-  Returns input file `stream`
+  Proceed returns input file `enumerable`
   """
 
-  @spec stream(t) :: Enumerable.t
-  def stream(%Reader{} = reader) do
-    read_handler(reader, reader.type)
+  @spec proceed(t) :: Enumerable.t
+  def proceed(%Reader{} = reader) do
+    handler = Map.get(@type_handler_map, reader.type)
+    handler.(reader)
   end
 
   # Delete
@@ -57,20 +67,21 @@ defmodule Hangman.Dictionary.File.Reader do
     File.close(reader.file)
     %Reader{}
   end 
+end
 
 
-  # Private
 
-  # chunked file specific input stream, wrapping underlying file
+# chunked file specific input stream, wrapping underlying file
 
-  @doc """
-  Handles file specific input `streams`, wrapping underlying file formats.
-  Returns file `stream`, closes file when finished.  Normally accessed
-  through `stream/1`.
-  """
-  @spec read_handler(t, Dictionary.transform) :: Enumerable.t
+defmodule Hangman.Dictionary.File.ChunkedReader do
 
-  def read_handler(%Reader{} = reader, @chunked) do
+  alias Hangman.Dictionary.File.{Reader}
+
+  @behaviour Reader
+
+  @chunks_file_delimiter Hangman.Dictionary.chunks_file_delimiter
+
+  def handler(%Reader{} = reader) do
 
     # Given the chunks file, read it in raw binary mode all it once
     # split it based on the delimiter
@@ -90,14 +101,22 @@ defmodule Hangman.Dictionary.File.Reader do
     |> Enum.map(fn_unpack)
 
     # close the file
-    File.close(reader.file)
+    File.close(reader)
 
     chunks_enumerable
   end
-  
+end
+
+
+defmodule Hangman.Dictionary.File.GroupedReader do
+
+  alias Hangman.Dictionary.File.{Reader}
+
+  @behaviour Reader
+
   # grouped file specific input stream generator, wrapping underlying file
 
-  def read_handler(%Reader{} = reader, @grouped) do
+  def handler(%Reader{} = reader) do
     Stream.resource(
       fn -> reader end,
     
@@ -121,11 +140,19 @@ defmodule Hangman.Dictionary.File.Reader do
       # be a responsible file user upon stream end
       fn reader -> File.close(reader.file) end)
   end
+end
+
+
+defmodule Hangman.Dictionary.File.SortedReader do
+
+  alias Hangman.Dictionary.File.{Reader}
+
+  @behaviour Reader
 
   # sorted file specific input stream generator, wrapping underlying file
   # since we know the input is sorted, we can create a grouping output
 
-  def read_handler(%Reader{} = reader, @sorted) do
+  def handler(reader) do
     Stream.resource(
       fn -> reader end,
     
@@ -162,10 +189,18 @@ defmodule Hangman.Dictionary.File.Reader do
       # be a responsible file user upon stream end      
       fn reader -> File.close(reader.file) end)
   end
+end
+
+
+defmodule Hangman.Dictionary.File.OriginalReader do
+
+  alias Hangman.Dictionary.File.{Reader}
+
+  @behaviour Reader
 
   # handles original dictionary file
 
-  def read_handler(%Reader{} = reader, @original) do
+  def handler(%Reader{} = reader) do
     Stream.resource(
       fn -> reader end,
     

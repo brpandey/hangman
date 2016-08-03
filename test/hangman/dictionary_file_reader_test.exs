@@ -14,13 +14,13 @@ defmodule Hangman.Dictionary.File.Reader.Test do
     IO.puts "lines of unsorted dictionary"
 
 
-    root_path =  :code.priv_dir(:play)
+    root_path =  :code.priv_dir(:hangman_game)
     read_path = "#{root_path}/dictionary/data/words.txt"
 
     reader = Reader.new(Dictionary.original, read_path)
 
     reader
-    |> Reader.stream
+    |> Reader.proceed
     |> Stream.each(&IO.inspect/1)
     |> Enum.take(5)
 
@@ -32,13 +32,13 @@ defmodule Hangman.Dictionary.File.Reader.Test do
 
     IO.puts "sorted dictionary"
 
-    root_path =  :code.priv_dir(:play)
+    root_path =  :code.priv_dir(:hangman_game)
     read_path = "#{root_path}/dictionary/data/words_sorted.txt"
 
     reader = Reader.new(Dictionary.sorted, read_path)
 
     reader
-    |> Reader.stream
+    |> Reader.proceed
     |> Stream.each(&IO.inspect/1)
     |> Enum.take(5)
 
