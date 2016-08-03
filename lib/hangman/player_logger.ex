@@ -8,9 +8,13 @@ defmodule Hangman.Player.Logger.Handler do
 
   require Logger
 
+  @root_path   :code.priv_dir(:hangman_game)
+
 
   @callback init(term) :: tuple
-  def init(_), do: {:ok, []}
+  def init(_) do 
+    {:ok, []}
+  end
 
   @doc """
   The handle_event callback handles various events
@@ -39,7 +43,7 @@ defmodule Hangman.Player.Logger.Handler do
 
   def handle_event({:start, name}, _state) do
 
-    file_name = "./tmp/#{name}_hangman_games.txt"
+    file_name = "#{@root_path}/../../../../../#{name}_hangman_games.txt"
 
     {:ok, file_pid} = File.open(file_name, [:append])
 
@@ -70,6 +74,7 @@ defmodule Hangman.Player.Logger.Handler do
 
 
   def handle_event({{:guess_word, word}, _info}, file_pid) do
+
 
     msg = "# word --> #{word} "
 
