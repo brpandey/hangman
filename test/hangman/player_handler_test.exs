@@ -12,11 +12,11 @@ defmodule Hangman.Player.Handler.Test do
 
     secrets = ["asparagus", "voluptuous"]
 
-    Player.Handler.run("c3po_test", :robot, secrets, false, true)
+    Player.Handler.run(:cli, "c3po_test", :robot, secrets, false, true)
 
     secrets = ["mitochondria", "eject"]
 
-    Player.Handler.run("jedi_test", :human, secrets, true, false)
+    Player.Handler.run(:cli, "jedi_test", :human, secrets, true, false)
   end
 
   @tag timeout: 90_000 # 90 secs
@@ -24,7 +24,7 @@ defmodule Hangman.Player.Handler.Test do
 
     secrets = ["porcupine", "eel"]
 
-    Player.Handler.run("photographer_test", :human, secrets, true, true)
+    Player.Handler.run(:cli, "photographer_test", :human, secrets, true, true)
   end
 
 end
