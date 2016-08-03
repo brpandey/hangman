@@ -43,7 +43,7 @@ defmodule Hangman.Player.Logger.Handler do
 
   def handle_event({:start, name}, _state) do
 
-    file_name = "#{@root_path}/../../../../../#{name}_hangman_games.txt"
+    file_name = "#{@root_path}/#{name}_hangman_games.txt"
 
     {:ok, file_pid} = File.open(file_name, [:append])
 
