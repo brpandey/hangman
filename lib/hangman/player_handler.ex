@@ -38,8 +38,7 @@ defmodule Hangman.Player.Handler do
   and is_boolean(log) and is_boolean(display) do
 
     args = {name, :robot, secrets, log, display}
-    args |> setup |> start |> play(:web) |> Enum.reverse 
-    # we reverse the prepended list of round status
+    args |> setup |> start |> play(:web) 
   end
 
   @docp """
@@ -102,7 +101,7 @@ defmodule Hangman.Player.Handler do
   defp play({player_pid, notify_pid}, :web) # atom tag on end for pipe ease
   when is_pid(player_pid) and is_pid(notify_pid) do
 
-    Enum.reduce_while(Stream.cycle([player_pid]), [], fn ppid, acc ->
+    list = Enum.reduce_while(Stream.cycle([player_pid]), [], fn ppid, acc ->
       
       feedback = ppid |> Player.proceed
       feedback = handle_setup(ppid, feedback)
@@ -124,6 +123,10 @@ defmodule Hangman.Player.Handler do
         _ -> raise "Unknown Player state"
       end
     end)
+
+    # we reverse the prepended list of round statuses
+    list |> Enum.reverse 
+
   end
 
   # Helpers
