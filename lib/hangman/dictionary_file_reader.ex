@@ -152,7 +152,7 @@ defmodule Hangman.Dictionary.File.SortedReader do
   # sorted file specific input stream generator, wrapping underlying file
   # since we know the input is sorted, we can create a grouping output
 
-  def handler(reader) do
+  def handler(%Reader{} = reader) do
     Stream.resource(
       fn -> reader end,
     
