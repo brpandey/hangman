@@ -58,8 +58,10 @@ defmodule Hangman.Player.Handler do
 #   :sys.trace(game_pid, true)
     
     # Get event server pid next
-    {:ok, notify_pid} = 
-      Player.Events.Supervisor.start_child(log, display)
+#    {:ok, notify_pid} = 
+#     Player.Events.Supervisor.start_child(name, log, display)
+
+    notify_pid = nil
 
     {name, type, display, game_pid, notify_pid}
   end
@@ -89,7 +91,6 @@ defmodule Hangman.Player.Handler do
 
         {:exit, _status} -> 
           Player.stop(ppid)
-          Player.Events.stop(notify_pid)
           {:halt, acc}
 
         _ -> raise "Unknown Player state"
@@ -117,7 +118,6 @@ defmodule Hangman.Player.Handler do
         {:exit, status} -> 
           acc = [status | acc] # prepend to list then later reverse -- O(1)
           Player.stop(ppid)
-          Player.Events.stop(notify_pid)
           {:halt, acc}
 
         _ -> raise "Unknown Player state"

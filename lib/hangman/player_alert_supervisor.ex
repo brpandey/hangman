@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Events.Supervisor do
+defmodule Hangman.Player.Alert.Supervisor do
   use Supervisor
 
   alias Hangman.{Player}
@@ -24,21 +24,19 @@ defmodule Hangman.Player.Events.Supervisor do
   @spec start_link :: Supervisor.on_start
   def start_link do
     Logger.info "Starting Hangman Player Events Supervisor"
-    Supervisor.start_link(@name, {}, name: :player_events_supervisor)
+    Supervisor.start_link(@name, {}, name: :player_alert_supervisor)
   end
 
   @doc """
   Starts a player events worker dynamically
   """
 
-  @spec start_child(none | boolean, none | boolean) 
-  :: Supervisor.on_start_child
-  def start_child(log \\ false, display \\ false)
-  when is_boolean(log) and is_boolean(display) do
-    
-    options = [file_output: log, display_output: display]
-    Supervisor.start_child(:player_events_supervisor, [options])
+  @spec start_child(String.t, pid) :: Supervisor.on_start_child
+  def start_child(name, pid) when is_binary(name) do
+    options = [id: name, pid: pid]
+    Supervisor.start_child(:player_alert_supervisor, [options])
   end
+
   
   @doc """
   For each worker instantiated through start_child, 
@@ -53,11 +51,11 @@ defmodule Hangman.Player.Events.Supervisor do
     # since we are starting children dynamically
 
     children = [
-      worker(Player.Events, [], restart: :transient)
+      worker(Player.Alert.Handler, [], restart: :transient),
     ]
 
-    # :simple_one_for_one to indicate that 
-    # we're starting children dynamically
+    # :one_for_one to indicate that 
+    # we're starting children dynamically but children not of same type
 
     supervise( children, strategy: :simple_one_for_one )
   end

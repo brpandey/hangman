@@ -1,7 +1,7 @@
 defmodule Hangman.Player.Events.Test do
   use ExUnit.Case, async: false
 
-  alias Hangman.{Player}
+  alias Hangman.{Player, Event}
 
   setup_all do
     IO.puts "Player Events Test"
@@ -10,30 +10,55 @@ defmodule Hangman.Player.Events.Test do
 
   test "inital events server setup" do
 
-    {:ok, epid} = Player.Events.start_link([display_output: true])
+#    {:ok, _epid} = Event.Manager.start_link()
 
-    Player.Events.notify_start(epid, "rooster")
-    Player.Events.notify_length(epid, {"rooster", 1, 8})
+    key = "hermitcrab"
 
-    Player.Events.notify_guess(epid, {:guess_letter, "a"}, {"rooster", 1})
-    Player.Events.notify_status(epid, {"rooster", 1, 1, "status"})
+    # Get event server pid next
+    {:ok, _lpid} = Player.Logger.Supervisor.start_child(key)
+    {:ok, _apid} = Player.Alert.Supervisor.start_child(key, nil)
 
-    Player.Events.notify_guess(epid, {:guess_letter, "f"}, {"rooster", 1})
-    Player.Events.notify_status(epid, {"rooster", 1, 2, "status"})
+    Event.Manager.sync_notify({:start, key, nil})
+    Event.Manager.sync_notify({:register, key, {1, 8}})
 
-    Player.Events.notify_guess(epid, {:guess_letter, "e"}, {"rooster", 1})
-    Player.Events.notify_status(epid, {"rooster", 1, 3, "status"})
+    payload = {{:guess_letter, "a"}, 1}
+    Event.Manager.sync_notify({:guess, key, payload})
+                              
+    payload = {1, 1, "my head is warm"}
+    Event.Manager.sync_notify({:status, key, payload})
 
-    Player.Events.notify_guess(epid, {:guess_letter, "h"}, {"rooster", 1})
-    Player.Events.notify_status(epid, {"rooster", 1, 4, "status"})
+    payload = {{:guess_letter, "f"}, 1}
+    Event.Manager.sync_notify({:guess, key, payload})
 
-    Player.Events.notify_guess(epid, {:guess_letter, "l"}, {"rooster", 1})
-    Player.Events.notify_status(epid, {"rooster", 1, 5, "status"})
+    payload = {1, 2, "three blind mice"}
+    Event.Manager.sync_notify({:status, key, payload})
 
-    Player.Events.notify_guess(epid, {:guess_letter, "k"}, {"rooster", 1})
-    Player.Events.notify_status(epid, {"rooster", 1, 6, "status"})
+    payload = {{:guess_letter, "e"}, 1}
+    Event.Manager.sync_notify({:guess, key, payload})
 
-    Player.Events.notify_games_over(epid, "rooster", "game over summary")
+    payload = {1, 3, "geronimo it's snowing"}
+    Event.Manager.sync_notify({:status, key, payload})
+    
+    payload = {{:guess_letter, "h"}, 1}
+    Event.Manager.sync_notify({:guess, key, payload})
+
+    payload = {1, 4, "equidistant points"}
+    Event.Manager.sync_notify({:status, key, payload})
+    
+    payload = {{:guess_letter, "l"}, 1}
+    Event.Manager.sync_notify({:guess, key, payload})
+
+    payload = {1, 5, "invisible sun"}
+    Event.Manager.sync_notify({:status, key, payload})
+    
+    payload = {{:guess_letter, "k"}, 1}
+    Event.Manager.sync_notify({:guess, key, payload})
+
+    payload = {1, 6, "folk songs"}
+    Event.Manager.sync_notify({:status, key, payload})
+    
+    payload = "game over summary goes here"
+    Event.Manager.sync_notify({:games_over, key, payload})
   end
 
 end

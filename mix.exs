@@ -30,7 +30,7 @@ defmodule Hangman.Mixfile do
 
     [
       applications: [:logger, :gproc, :httpoison, :cowboy, 
-                     :plug, :exprof, :ex_doc, :runtime_tools],
+                     :plug, :exprof, :ex_doc, :runtime_tools, :gen_stage],
       mod: {Hangman.Application, args}
     ]
   end
@@ -56,7 +56,8 @@ defmodule Hangman.Mixfile do
       {:httpoison, "~> 0.9.0"}, # for hangman web
       {:exrm, "1.0.1"}, # for mix release
       {:fsm, "~> 0.2.0"}, # for state machine handling
-      {:exactor, "~> 2.2.0", warn_missing: false} # for simple GenServers
+      {:exactor, "~> 2.2.0", warn_missing: false}, # for simple GenServers
+      {:gen_stage, "~> 0.4"} # experimental module for distinct producers and consumers
     ] 
   end
 end

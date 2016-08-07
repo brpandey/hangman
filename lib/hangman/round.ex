@@ -24,7 +24,8 @@ defmodule Hangman.Round do
   to determine if we transition to a new game or games over.
   """
 
-  alias Hangman.{Round, Game, Guess, Pass, Player, Reduction, Letter.Strategy}
+  alias Hangman.{Round, Game, Guess, Pass, 
+                 Reduction, Letter.Strategy, Event}
 
   defstruct id: "", num: 0, game_num: 0, context: nil,
   guess: {}, result_code: nil, status_code: nil, status_text: "", pattern: "",
@@ -53,8 +54,8 @@ defmodule Hangman.Round do
     
     round =
     if round.game_num == 0 do
-      # Notify the event server that we've started playing hangman
-      Player.Events.notify_start(round.event_pid, round.id)
+      # Notify the event manager that we've started playing hangman
+      Event.Manager.sync_notify(round.event_pid, {:start, round.id, nil})
 
       # update the passed in round
       %Round{ round | game_num: round.game_num + 1, status_code: :game_start}
@@ -127,14 +128,15 @@ defmodule Hangman.Round do
   # private setup routines as arranged by the type of setup
 
   defp do_setup(%Round{} = round, :game_server) do
-    {name, key, game_no, _seq_no, game_pid, event_pid} = 
+    {id, key, game_no, _seq_no, game_pid, event_pid} = 
       Round.game_context_key(round)
 
     # Register the client with the game server and grab the secret length
-    {^name, secret_length, status_text} =
+    {^id, secret_length, status_text} =
       Game.Server.register(game_pid, key)
     
-    Player.Events.notify_length(event_pid, {name, game_no, secret_length})
+    Event.Manager.sync_notify(event_pid, 
+                              {:register, id, {game_no, secret_length}})
 
     # Quick assert
     true = is_number(secret_length) and secret_length > 0
@@ -184,11 +186,10 @@ defmodule Hangman.Round do
       pattern: pattern, text: status_text, summary: []} =
       Game.Server.guess(game_pid, player_key, guess)
     
-    Player.Events.notify_guess(event_pid, guess,
-                               {id, game_no})
+    Event.Manager.sync_notify(event_pid, {:guess, id, {guess, game_no}})
     
-    Player.Events.notify_status(event_pid,
-                                {id, game_no, round_num, status_text})
+    Event.Manager.sync_notify(event_pid,
+                              {:status, id, {game_no, round_num, status_text}})
     
     round = %Round{round | num: round_num,
                    guess: guess, result_code: result, 
@@ -244,7 +245,7 @@ defmodule Hangman.Round do
         List.first(summary_code) == {:status, :games_over}) do
       
       summary = build_summary(summary_code)
-      Player.Events.notify_games_over(round.event_pid, round.id, summary)
+      Event.Manager.sync_notify(round.event_pid, {:games_over, round.id, summary})
       
       Kernel.put_in(round.status_text, summary)
     end

@@ -1,122 +1,92 @@
-defmodule Hangman.Player.Logger.Handler do
-  use GenEvent
 
-  @moduledoc """
-  Module implements event logger handler for `Player.Events`.
-  Each `event` is logged to a file named after the player `id`.
-  """
+alias Experimental.GenStage
+
+defmodule Hangman.Player.Logger.Handler do
+  use GenStage
 
   require Logger
 
+  @moduledoc """
+  Module implements event logger handler for `Hangman.Events.Manager`.
+  Each `event` is logged to a file named after the player `id`.
+  """
+
   @root_path   :code.priv_dir(:hangman_game)
 
+  def start_link(options) do
+    GenStage.start_link(__MODULE__, options)
+  end
 
-  @callback init(term) :: tuple
-  def init(_) do 
-    {:ok, []}
+  # Callbacks
+
+  def init(options) do
+    # Starts a permanent subscription to the broadcaster
+    # which will automatically start requesting items.
+
+    with {:ok, key} <- Keyword.fetch(options, :id) do
+
+      file_name = "#{@root_path}/#{key}_hangman_games.txt"
+
+      {:ok, logger_pid} = File.open(file_name, [:append])
+
+      {:consumer, {key, logger_pid}, subscribe_to: [Hangman.Event.Manager]}
+
+    else 
+      ## ABORT if display output not true
+      _ -> {:stop, :normal}
+    end
+
   end
 
   @doc """
-  The handle_event callback handles various events
+  The handle_events callback handles various events
   which ultimately write to `player` logger file
+  """
 
-    * `:start` notification event.
-    Opens and writes to file
+  def handle_events(events, _from, {key, logger_pid}) do
 
-    * `:games_over` notification event.
-    Writes to file and then closes file
+    for event <- events,  key == Kernel.elem(event, 1) do
+      process_event(event, logger_pid)
+    end
 
-    * `:secret_length` notification event.
-    Writes to file
+    {:noreply, [], {key, logger_pid}}    
+  end
 
-    * `:guessed_word` notification event.
-    Writes to file
+  defp process_event(event, logger_pid) do
 
-    * `:guessed_letter` notification event.
-    Writes to file
+    msg = 
+      case event do
+        {:start, _, _} ->
+          "\n# new game started! \n"
+        {:register, _, {game_no, length}} -> 
+          "\n# new game #{game_no}! secret length --> #{length}\n"
+        {:guess, _, {{:guess_letter, letter}, _game_no}} ->
+          "# letter --> #{letter} "
+        {:guess, _, {{:guess_word, word}, _game_no}} ->
+          "# word --> #{word} "
+        {:status, _, {_game_no, round_no, text}} -> 
+          "# round #{round_no} status --> #{text}\n"
+        {:games_over, _, text} ->     
+          "\n# games over! --> #{text} \n"
+      end
 
-    * `:round_status` notification event.
-    Writes to file
-    """
-
-  @callback handle_event(tuple, term) :: tuple
-
-  def handle_event({:start, name}, _state) do
-
-    file_name = "#{@root_path}/#{name}_hangman_games.txt"
-
-    {:ok, file_pid} = File.open(file_name, [:append])
-
-    {:ok, file_pid}
+    IO.write(logger_pid, msg)
   end
 
 
-  def handle_event({:games_over, _name, text}, file_pid) do
-
-    msg = "\n# game over! --> #{text} \n"
-
-    write(file_pid, msg)
-
-    :ok = File.close(file_pid)
-
-    {:ok, []}
-  end
-
-
-  def handle_event({:secret_length, _name, game_no, length}, file_pid) do
-
-    msg = "\n# new game #{game_no}! secret length --> #{length}\n"
-
-    write(file_pid, msg)
-
-    {:ok, file_pid}
-  end
-
-
-  def handle_event({{:guess_word, word}, _info}, file_pid) do
-
-
-    msg = "# word --> #{word} "
-
-    write(file_pid, msg)
-
-    {:ok, file_pid}
-  end
-
-
-  def handle_event({{:guess_letter, letter}, _info}, file_pid) do
-
-    msg = "# letter --> #{letter} "
-
-    write(file_pid, msg)
-
-    {:ok, file_pid}
-  end
-
-
-  def handle_event({:round_status, _name, _game_no, round_no, text}, file_pid) do
-
-    msg = "# round #{round_no} status --> #{text}\n"
-
-    write(file_pid, msg)
-    
-    {:ok, file_pid}
-  end
-
-  # Write helper which writes out to player logger file using the IO module
-  @spec write(pid, String.t) :: :ok
-  defp write(file_pid, msg), do: IO.write(file_pid, msg)
-
-  
   @doc """
   Terminate callback. Closes player `logger` file
   """
   
-  @callback terminate(term, pid) :: :ok | tuple
-  def terminate(_reason, file_pid) when is_pid(file_pid) do
-    Logger.info "Terminating Player Logger Event Server"
-    File.close(file_pid)
+  @callback terminate(term, term) :: :ok
+  def terminate(_reason, state) do
+    Logger.info "Terminating Player Logger Handler"
+
+    if true == is_tuple(state) do
+      {_key, logger_pid} = state
+      File.close(logger_pid) 
+    end
+
     :ok
   end
-
 end
