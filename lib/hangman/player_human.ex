@@ -92,7 +92,7 @@ defmodule Hangman.Player.Human do
   end
 
   defp do_update_choices(%Round{} = round, text) when is_binary(text) do
-    {name, _, round_no} = Round.reduce_context_key(round)
+    {name, _, round_no} = Round.round_key(round)
     {_, status_text} = Round.status(round)
 
     text 
