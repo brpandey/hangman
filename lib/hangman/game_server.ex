@@ -3,7 +3,7 @@ defmodule Hangman.Game.Server do
     
   require Logger
 
-  alias Hangman.{Game, Game.Registry, Player, Guess}
+  alias Hangman.{Event, Game, Game.Registry, Player, Round, Guess}
   
   @moduledoc """
   Module handles `Hangman` `Game` serving to multiple clients.  
@@ -29,7 +29,7 @@ defmodule Hangman.Game.Server do
   #####
   # External API
   
-  
+
   @doc """
   Start public interface method with `secret(s)`
   """
@@ -100,33 +100,33 @@ defmodule Hangman.Game.Server do
     
   """
   
-  @spec guess(pid, Player.key, Guess.t) :: tuple
-  def guess(game_pid, key, guess = {:guess_letter, letter})
+  @spec guess(pid, Player.key, Round.key, Guess.t) :: tuple
+  def guess(game_pid, player_key, round_key, guess = {:guess_letter, letter})
   when is_binary(letter) do
-    GenServer.call game_pid, {guess, key}
+    GenServer.call game_pid, {guess, player_key, round_key}
   end
   
-  def guess(game_pid, key, guess = {:guess_word, word})
+  def guess(game_pid, player_key, round_key, guess = {:guess_word, word})
   when is_binary(word) do
-    GenServer.call game_pid, {guess, key}
+    GenServer.call game_pid, {guess, player_key, round_key}
   end
   
   @doc """
   Retrieves `Game` status data
   """
   
-  @spec status(pid, Player.key) :: tuple
-  def status(game_pid, key) do
-    GenServer.call game_pid, {:status, key}
+  @spec status(pid, Player.key, Round.key) :: tuple
+  def status(game_pid, player_key, round_key) do
+    GenServer.call game_pid, {:status, player_key, round_key}
   end
   
   @doc """
   Initiates link with client and returns `Game` secret length
   """
   
-  @spec register(pid, Player.key) :: tuple
-  def register(game_pid, key) do
-    GenServer.call game_pid, {:register, key}
+  @spec register(pid, Player.key, Round.key) :: tuple
+  def register(game_pid, player_key, round_key) do
+    GenServer.call game_pid, {:register, player_key, round_key}
   end
   
   '''
@@ -151,7 +151,7 @@ defmodule Hangman.Game.Server do
   GenServer callback to initalize server process
   """
   
-  #@callback init(t) :: tuple
+  #@callback init(Registry.t) :: tuple
   def init(state) do
     # Trap client exits
     Process.flag(:trap_exit, true)
@@ -163,7 +163,7 @@ defmodule Hangman.Game.Server do
   Loads a new `Game`
   """
   
-#  @callback handle_cast(tuple, t) :: tuple
+  @callback handle_cast(tuple, Registry.t) :: tuple
   def handle_cast({:setup, id_key, secret, max_wrong}, state) do
     game = Game.new(id_key, secret, max_wrong)
     state = Registry.update(state, id_key, game)
@@ -173,6 +173,32 @@ defmodule Hangman.Game.Server do
     {:noreply, state}
   end
   
+  @docp """
+  Registers pid and returns the hangman secret length
+  """
+  
+  @callback handle_call({:atom, Player.key, Round.key}, tuple, Registry.t) :: tuple
+  def handle_call({:register, player_key, round_key}, _from, state) do
+
+    # add the player key to the players state
+    state = Registry.add(state, player_key)
+
+    # Retrieve game
+    game = Registry.game(state, player_key)
+
+    # Game.status is read only
+    {_game, %{text: status_text}} = Game.status(game)
+
+    length = Game.secret_length(game)    
+    {id, game_num, _round_num} = round_key
+
+    Event.Manager.async_notify({:register, id, {game_num, length}})
+
+    # Let's piggyback the round status text with the secret length value
+    
+    { :reply, {round_key, length, status_text}, state }
+  end
+
   
   @docp """
   {:guess_letter, letter}
@@ -181,20 +207,30 @@ defmodule Hangman.Game.Server do
   Returns result data tuple
   """
   
-#  @callback handle_call({Guess.t, Player.key}, tuple, t) :: tuple
-  def handle_call({guess = {:guess_letter, _letter}, key}, _from, 
+  @callback handle_call({Guess.t, Player.key, Round.key}, tuple, Registry.t) 
+  :: tuple
+  def handle_call({guess = {:guess_letter, _letter}, player_key, round_key}, _from, 
                   state) do
 
     # Retrieve client game state
-    game = Registry.game(state, key)
+    game = Registry.game(state, player_key)
     
     {game, result} = Game.guess(game, guess)
 
+    {id, game_num, round_num} = round_key
+
+    %{text: status_text} = result
+
+    Event.Manager.async_notify({:guess, id, {guess, game_num}})
+    Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
+
     # Update server state with updated game state
-    state = Registry.update(state, key, game)
+    state = Registry.update(state, player_key, game)
 
     Logger.debug("guessed letter, Game.Server: #{inspect state}")
     
+    result = result |> Map.put(:key, round_key)
+
     { :reply, result, state }
   end
   
@@ -204,20 +240,30 @@ defmodule Hangman.Game.Server do
   
   Returns result data tuple
   """
-  
-#  @callback handle_call(Guess.t, tuple, t) :: tuple
-  def handle_call({guess = {:guess_word, _word}, key}, _from, 
+
+  @callback handle_call({Guess.t, Player.key, Round.key}, tuple, Registry.t) 
+  :: tuple  
+  def handle_call({guess = {:guess_word, _word}, player_key, round_key}, _from, 
                   state) do
     
     # Retrieve client game
-    game = Registry.game(state, key)
+    game = Registry.game(state, player_key)
 
     {game, result} = Game.guess(game, guess)
 
+    {id, game_num, round_num} = round_key
+
+    %{text: status_text} = result
+
     # Update server state with updated game state
-    state = Registry.update(state, key, game)
+    state = Registry.update(state, player_key, game)
+
+    Event.Manager.async_notify({:guess, id, {guess, game_num}})
+    Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
 
     Logger.debug("guessed word, Game.Server: #{inspect state}")
+
+    result = result |> Map.put(:key, round_key)
 
     { :reply, result, state }
   end
@@ -227,48 +273,39 @@ defmodule Hangman.Game.Server do
   Returns the game status text
   """
 
-#  @callback handle_call({atom(), Player.key}, tuple, t) :: tuple
-  def handle_call({:status, key}, _from, state) do
+  @callback handle_call({atom, Player.key, Round.key}, tuple, Registry.t) 
+  :: tuple
+  def handle_call({:status, player_key, round_key}, _from, state) do
 
     # Retrieve client game
-    game = Registry.game(state, key)
+    game = Registry.game(state, player_key)
 
-    {game, map} = Game.status(game)
+    {game, result} = Game.status(game)
 
-    state = Registry.update(state, key, game)
+    %{code: status_code, text: status_text} = result
+    {id, game_num, _} = round_key
 
-    { :reply, map, state }
+    # Notify event manager
+    case status_code do
+      :games_over -> Event.Manager.async_notify({:games_over, id, status_text})
+      :game_start -> Event.Manager.async_notify({:start, id, game_num})
+      _ -> ""
+    end
+
+    state = Registry.update(state, player_key, game)
+
+    result = result |> Map.put(:key, round_key)
+
+    { :reply, result, state }
   end
   
-  @docp """
-  Returns the hangman secret length
-  """
-  
-#  @callback handle_call({:atom, Player.key}, tuple, t) :: tuple
-  def handle_call({:register, key}, _from, state) do
-
-    # add the player key to the players state
-    state = Registry.add(state, key)
-
-    # Retrieve game
-    game = Registry.game(state, key)
-
-    # Game.status is read only
-    {_game, %{text: status_text}} = Game.status(game)
-
-    length = Game.secret_length(game)
-    
-    # Let's piggyback the round status text with the secret length value
-    
-    { :reply, {game.id, length, status_text}, state }
-  end
   
 
   @docp """
-  Stops the server is a normal graceful way
+  Stops the server in a normal graceful way
   """
   
-#  @callback handle_call(:atom, tuple, t) :: tuple
+#  @callback handle_call(:atom, tuple, Registry.t) :: tuple
   def handle_call(:stop, _from, state) do
     { :stop, :normal, {:ok, state.id}, state }
   end
@@ -283,7 +320,7 @@ defmodule Hangman.Game.Server do
   game state around to inspect and potentially for retry.
   """
 
-  #@callback handle_info(term, tuple, t) :: tuple
+  #@callback handle_info(term, tuple, Registry.t) :: tuple
 
   def handle_info({:EXIT, pid, :normal} = msg, state) do
     Logger.debug "In Game.Server handle info, received EXIT normal msg: #{inspect msg}"

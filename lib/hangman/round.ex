@@ -24,16 +24,18 @@ defmodule Hangman.Round do
   to determine if we transition to a new game or games over.
   """
 
-  alias Hangman.{Round, Game, Guess, Pass, 
-                 Reduction, Letter.Strategy, Event}
+  alias Hangman.{Round, Game, Guess, Pass, Reduction, Letter.Strategy}
 
   defstruct id: "", num: 0, game_num: 0, context: nil,
   guess: {}, result_code: nil, status_code: nil, status_text: "", pattern: "",
-  pid: nil, game_pid: nil, event_pid: nil
+  pid: nil, game_pid: nil
   
   @type t :: %__MODULE__{}
   @type result_code :: :correct_letter | :incorrect_letter | :incorrect_word
-  @type key :: {id :: String.t, player_pid :: pid} # Used as game key
+
+  @type key :: {id :: String.t, 
+                game_num :: integer,
+                round_num :: integer} # Used as round key
 
   @typedoc """
   Sum type used to understand prior `guess` result
@@ -48,38 +50,27 @@ defmodule Hangman.Round do
 
   # CREATE
 
-  # Start the new game round
+  # Start the new game, first round
 
   def start(%Round{} = round) do
     
-    round =
-    if round.game_num == 0 do
-      # Notify the event manager that we've started playing hangman
-      Event.Manager.sync_notify(round.event_pid, {:start, round.id, nil})
-
-      # update the passed in round
-      %Round{ round | game_num: round.game_num + 1, status_code: :game_start}
-    else
-      # create a new round with some leftover data from passed in round
-      %Round{ id: round.id, pid: round.pid, 
-              game_num: round.game_num + 1, status_code: :game_start,
-              game_pid: round.game_pid, event_pid: round.event_pid }
-    end
-
+    round = 
+      case round.game_num do
+        0 ->
+          # update the passed in round
+          %Round{ round | game_num: round.game_num + 1, num: 0,
+                  status_code: :game_start}
+        _ ->
+          # create a new round with some leftover data from passed in round
+          %Round{ id: round.id, pid: round.pid, num: 0,
+                  game_num: round.game_num + 1, status_code: :game_start,
+                  game_pid: round.game_pid }
+      end
+    
     round
   end
   
   # READ
-
-  def reduce_context_key(%Round{} = round) do
-    {round.id, round.game_num, round.num + 1}
-  end
-
-  def game_context_key(%Round{} = round) do
-    {round.id, {round.id, round.pid}, round.game_num, round.num + 1, 
-     round.game_pid, round.event_pid}
-  end
-
 
   @doc """
   Returns `round` status tuple
@@ -109,6 +100,10 @@ defmodule Hangman.Round do
   # setup routines as arranged by game status codes
 
   def setup(%Round{} = round, [], :game_start, fn_updater) do
+
+    # since we're at the start of a new round increment round num
+    round = Kernel.put_in(round.num, round.num + 1)
+
     {round, pass_info} = round 
     |> do_setup(:game_server) 
     |> do_setup([], :reduction_pass)
@@ -119,6 +114,10 @@ defmodule Hangman.Round do
   end
 
   def setup(%Round{} = round, exclusion, :game_keep_guessing, fn_updater) do
+
+    # since we're at the start of a new round increment round num
+    round = Kernel.put_in(round.num, round.num + 1)
+
     {round, pass_info} = do_setup(round, exclusion, :reduction_pass)
     updater_result = fn_updater.(pass_info)
 
@@ -128,16 +127,12 @@ defmodule Hangman.Round do
   # private setup routines as arranged by the type of setup
 
   defp do_setup(%Round{} = round, :game_server) do
-    {id, key, game_no, _seq_no, game_pid, event_pid} = 
-      Round.game_context_key(round)
+    {player_key, round_key, game_pid} = game_context_key(round)
 
     # Register the client with the game server and grab the secret length
-    {^id, secret_length, status_text} =
-      Game.Server.register(game_pid, key)
+    {^round_key, secret_length, status_text} =
+      Game.Server.register(game_pid, player_key, round_key)
     
-    Event.Manager.sync_notify(event_pid, 
-                              {:register, id, {game_no, secret_length}})
-
     # Quick assert
     true = is_number(secret_length) and secret_length > 0
     
@@ -157,7 +152,7 @@ defmodule Hangman.Round do
     reduce_key = ctx |> Reduction.Options.reduce_key(exclusion)
     match_key = ctx |> Kernel.elem(0)
 
-    pass_key = Round.reduce_context_key(round)
+    pass_key = round_key(round)
 
     # Filter the engine hangman word set
     {^pass_key, pass_info} = 
@@ -169,30 +164,21 @@ defmodule Hangman.Round do
 
   @doc """
   Issues a client `guess` (either `letter` or `word`) against `Game.Server`.
-  Notifies player `events` of guess `results`.
 
   Returns received `round` data
   """
 
   @spec guess(t, Guess.t) :: t
-  def guess(%Round{} = round, 
-            guess = {id, value}) 
+  def guess(%Round{} = round, guess = {id, value}) 
   when id in [:guess_letter, :guess_word] and is_binary(value) do
     
-    {id, player_key, game_no, round_num, game_pid, event_pid} = 
-      Round.game_context_key(round)
+    {player_key, round_key, game_pid} = game_context_key(round)
 
-    %{id: ^id, result: result, code: status_code, 
-      pattern: pattern, text: status_text, summary: []} =
-      Game.Server.guess(game_pid, player_key, guess)
+    %{key: ^round_key, result: result_code, code: status_code, 
+      pattern: pattern, text: status_text} =
+      Game.Server.guess(game_pid, player_key, round_key, guess)
     
-    Event.Manager.sync_notify(event_pid, {:guess, id, {guess, game_no}})
-    
-    Event.Manager.sync_notify(event_pid,
-                              {:status, id, {game_no, round_num, status_text}})
-    
-    round = %Round{round | num: round_num,
-                   guess: guess, result_code: result, 
+    round = %Round{round | guess: guess, result_code: result_code, 
                    status_code: status_code, pattern: pattern, 
                    status_text: status_text}
 
@@ -211,11 +197,10 @@ defmodule Hangman.Round do
 
     true = round.status_code in [:game_won, :game_lost]
 
-    {id, player_key, _, _, game_pid, _} = 
-      Round.game_context_key(round)
+    {player_key, round_key, game_pid} = game_context_key(round)
 
-    %{id: ^id, code: status_code, summary: summary_code} = status =
-      Game.Server.status(game_pid, player_key)
+    %{key: ^round_key, code: status_code} = status =
+      Game.Server.status(game_pid, player_key, round_key)
 
     round = Kernel.put_in(round.status_code, status_code)
 
@@ -223,54 +208,7 @@ defmodule Hangman.Round do
     status_text = Map.get(status, :text, "Game transition")
     round = Kernel.put_in(round.status_text, status_text)
 
-    round =
-      case status_code do
-        :games_over -> process_summary(round, summary_code)
-        _ -> round
-      end
-
     round
-  end
-
-  # Private
-  # Helpers
-
-  # If games are over, process games summary
-
-  defp process_summary(%Round{} = round, summary_code) 
-  when is_list(summary_code) do
-
-    round =
-    if (summary_code != "" and summary_code != [] and
-        List.first(summary_code) == {:status, :games_over}) do
-      
-      summary = build_summary(summary_code)
-      Event.Manager.sync_notify(round.event_pid, {:games_over, round.id, summary})
-      
-      Kernel.put_in(round.status_text, summary)
-    end
-    
-    round
-  end
-
-
-  @docp """
-  Returns `game` summary as a string.  Includes `number` of games played, `average` 
-  score per game, per game `score`.
-  """
-
-  @spec build_summary(Game.summary) :: String.t
-  defp build_summary(args) when is_list(args) and is_tuple(Kernel.hd(args)) do
-    
-    {:ok, avg} = Keyword.fetch(args, :average_score)
-    {:ok, games} = Keyword.fetch(args, :games)
-    {:ok, scores} = Keyword.fetch(args, :results)
-
-    results = Enum.reduce(scores, "",  fn {k,v}, acc -> 
-      acc <> " (#{k}: #{v})"  end)
-      
-    "Game Over! Average Score: #{avg}, " 
-    <> "# Games: #{games}, Scores: #{results}"
   end
 
 
@@ -307,6 +245,17 @@ defmodule Hangman.Round do
     end
   end
 
+
+  def round_key(%Round{} = round), do: {round.id, round.game_num, round.num}
+  defp player_key(%Round{} = round), do: {round.id, round.pid}
+
+  defp game_context_key(%Round{} = round) do
+    pkey = player_key(round)
+    rkey = round_key(round)
+    {pkey, rkey, round.game_pid}
+  end
+
+
   # EXTRA
   # Returns player information 
   @spec info(t) :: Keyword.t
@@ -333,7 +282,6 @@ defmodule Hangman.Round do
       id: round.id,
       pid: round.pid,
       game_pid: round.game_pid,
-      event_pid: round.event_pid,
       round_data: round_info
     ]
   end

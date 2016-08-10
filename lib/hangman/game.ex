@@ -47,15 +47,9 @@ defmodule Hangman.Game do
   @type code :: :games_reset | :game_start | :game_keep_guessing | 
   :game_won | :game_lost | :games_over
 
-  @typedoc """
-  `Game` summary values, either [] if we are still playing or [...] if game finished
-  """
-  @type summary :: [] | [status: :games_over, average_score: integer, 
-     games: pos_integer, results: [tuple]]
-
   @typedoc "returned `Game` feedback data"
 
-  @type feedback :: %{id: String.t, code: code, summary: summary} 
+  @type feedback :: %{id: String.t, code: code} 
 #                      optional(:text) => String.t, 
 #                      optional(:pattern) => String.t,
 #                      optional(:result) => :atom}
@@ -82,9 +76,11 @@ defmodule Hangman.Game do
   @spec new(id, String.t | [String.t], pos_integer) :: t
   def new(id_key, secret, max_wrong)
   when is_binary(id_key) and is_binary(secret) do
+
+    secret = String.upcase(secret)
     pattern = String.duplicate(@mystery_letter, String.length(secret))
-    
-    %Game{id: id_key, secret: String.upcase(secret), 
+
+    %Game{id: id_key, secret: secret, secrets: [secret],
           pattern: pattern, max_wrong: max_wrong, state: :game_start}
   end
   
@@ -259,19 +255,22 @@ defmodule Hangman.Game do
         _ -> raise "Invalid state code in function score"
       end
     
-    case code do
-      # compute score if not lost and not reset
-      code when code in [:game_keep_guessing, :game_won] ->
-        Set.size(game.incorrect_letters) + 
-        Set.size(game.incorrect_words) +
-        Set.size(game.correct_letters)
-      :game_lost ->
+    score = 
+      case code do
+        # compute score if not lost and not reset
+        code when code in [:game_keep_guessing, :game_won] ->
+          Set.size(game.incorrect_letters) + 
+          Set.size(game.incorrect_words) +
+          Set.size(game.correct_letters)
+        :game_lost ->
         # return default lost score if game lost
-        {_, _, score} = @status_codes[:game_lost]
-        score
-      _ -> 
-        raise "Shouldn't be asking for score in this state"
-    end    
+          {_, _, score} = @status_codes[:game_lost]
+          score
+        _ -> 
+          raise "Shouldn't be asking for score in this state"
+      end
+    
+    score
   end  
 
   # Helper function to return current number of wrong guesses
@@ -303,17 +302,21 @@ defmodule Hangman.Game do
           # New Game Start
           game = archive_and_update(game)
           
-          {game, %{id: game.id, code: :game_start, summary: []}}
+          {game, %{id: game.id, code: :game_start, text: ""}}
         false ->
           # Otherwise we have no more games left 
           # Store the current score in the game.scores list - insert
           # And update the game
-          scores = List.insert_at(game.scores, game.current, score(game))
+
+          score = score(game)
+          scores = List.insert_at(game.scores, game.current, score)
+          
           game = %{ game | state: :games_over, scores: scores }
+
           summary = build_summary(game)
           
           # Games Over
-          {game, %{id: game.id, code: :games_over, summary: summary}}
+          {game, %{id: game.id, code: :games_over, text: summary}}
       end
 
     {game, feedback}
@@ -361,28 +364,38 @@ defmodule Hangman.Game do
     score = if score < 0 do score(game, state_code) else score end
 
     case state_code do
-      :games_reset -> %{id: game.id, code: state_code, summary: []}
+      :games_reset -> 
+        %{id: game.id, code: state_code, text: "GAMES_RESET"}
       _ -> 
         str = "#{game.pattern}; score=#{score}; status=#{text}"
-        %{id: game.id, code: state_code, text: str, summary: []}
+        %{id: game.id, code: state_code, text: str}
     end
 
   end
   
   
-  # Returns games summary status for when all games are over
+  @docp """
+  Returns `game` summary as a string.  Includes `number` of games played, `average` 
+  score per game, per game `score`.
+  """
   
-  @spec build_summary(t) :: summary
+  @spec build_summary(t) :: String.t
   defp build_summary(%Game{} = game) do
+
     total_score = Enum.reduce(game.scores, 0, &(&1 + &2))
-    games_played = game.current + 1
-    average_score = total_score / games_played
-    
-    results = Enum.zip(game.secrets, game.scores)
-    
-    [status: :games_over, average_score: average_score, 
-     games: games_played, results: results]
+
+    games = game.current + 1
+    avg = total_score / games
+
+    zipped = Enum.zip(game.secrets, game.scores)
+    results = Enum.reduce(zipped, "",  fn {k,v}, acc -> 
+      acc <> " (#{k}: #{v})"  
+    end)
+
+    "Game Over! Average Score: #{avg}, " 
+    <> "# Games: #{games}, Scores: #{results}"
   end
+
 
 
   @doc """
