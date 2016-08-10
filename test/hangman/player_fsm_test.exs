@@ -39,16 +39,12 @@ defmodule Hangman.Player.FSM.Test do
     # Retrieve game server pid given test specific params
     game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
 
-    # Get event server pid next
-    {:ok, notify_pid} = Player.Events.Supervisor.start_child(false, false)
-
     # Update case context params map, for current test
-    args = {name, type, display, game_pid, notify_pid}
+    args = {name, type, display, game_pid}
 
     map = Map.put(map, :fsm_args, args)
 
     on_exit fn ->
-      Player.Events.stop(notify_pid)
       # Hangman.Game.Server.stop(game_pid)
       IO.puts "Player FSM Test finished"
     end
@@ -149,7 +145,7 @@ defmodule Hangman.Player.FSM.Test do
 
     {response, fsm} = Player.FSM.proceed(fsm)
 
-    assert(response == {:stop, "Game transition"})
+    assert(response == {:stop, ""})
 
     assert(Player.FSM.state(fsm) == :start)
 

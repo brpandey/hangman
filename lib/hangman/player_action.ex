@@ -56,10 +56,10 @@ end
 
 
 defimpl Hangman.Player.Action, for: Human do
-  def new(%Human{} = player, {name, display, game_pid, event_pid}) when is_binary(name) 
-      and is_boolean(display) and is_pid(game_pid) and is_pid(event_pid) do
+  def new(%Human{} = player, {name, display, game_pid}) when is_binary(name) 
+      and is_boolean(display) and is_pid(game_pid) do
 
-    round = Generic.init(name, game_pid, event_pid)
+    round = Generic.init(name, game_pid)
     %Human{player | display: display, round: round}
   end
 
@@ -88,11 +88,10 @@ end
 
 defimpl Hangman.Player.Action, for: Robot do
 
-  def new(%Robot{} = player, {name, display, game_pid, event_pid})
-  when is_binary(name) and is_boolean(display) and is_pid(game_pid)
-  and is_pid(event_pid) do
+  def new(%Robot{} = player, {name, display, game_pid})
+  when is_binary(name) and is_boolean(display) and is_pid(game_pid) do
 
-    round = Generic.init(name, game_pid, event_pid)    
+    round = Generic.init(name, game_pid)
     %Robot{player | display: display, round: round}
   end
 

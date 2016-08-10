@@ -40,17 +40,19 @@ defmodule Hangman.Player.Test do
     game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
 
     # Get event server pid next
-    {:ok, notify_pid} = Player.Events.Supervisor.start_child(false, false)
+    {:ok, lpid} = Player.Logger.Supervisor.start_child(name)
+    {:ok, apid} = Player.Alert.Supervisor.start_child(name, nil)
 
     # Retrieve player fsm pid through dynamic start
 
-    {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, 
-                                                      game_pid, notify_pid)
+    {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, game_pid)
 
     # Update case context params map, for current test
     map = Map.put(map, :current_player_pid, player_pid)
 
     on_exit fn ->
+      Player.Logger.Handler.stop(lpid)
+      Player.Alert.Handler.stop(apid)
       Player.stop(player_pid)
       # Hangman.Game.Server.stop(game_pid)
       IO.puts "Player Test finished"

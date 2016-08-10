@@ -20,7 +20,7 @@ defmodule Hangman.Player.FSM do
   use Fsm, initial_state: :init, initial_data: nil
 
   defstate init do
-    defevent initialize(args = {_name, type, _display, _game_pid, _event_pid}) do
+    defevent initialize(args = {_name, type, _display, _game_pid}) do
 
       action_type = Map.get(Types.mapping, type)
       args = args |> Tuple.delete_at(1)

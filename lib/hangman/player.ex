@@ -26,11 +26,13 @@ defmodule Hangman.Player do
 
   alias Hangman.{Player}
 
+  @type key :: {id :: String.t, player_pid :: pid} # Used as game key
+
   @name __MODULE__
 
-  defstart start_link(args = {player_name, player_type, display, game_pid, event_pid}), 
+  defstart start_link(args = {player_name, player_type, display, game_pid}), 
   when: is_binary(player_name) and is_atom(player_type) and is_boolean(display) 
-  and is_pid(game_pid) and is_pid(event_pid) and is_tuple(args) do
+  and is_pid(game_pid) and is_tuple(args) do
 
     Logger.info "Starting Hangman Player Server"
 
