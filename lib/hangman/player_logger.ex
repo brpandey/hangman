@@ -17,6 +17,11 @@ defmodule Hangman.Player.Logger.Handler do
     GenStage.start_link(__MODULE__, options)
   end
 
+  def stop(pid) when is_pid(pid) do
+    GenStage.call(pid, :stop)
+  end
+
+
   # Callbacks
 
   def init(options) do
@@ -38,6 +43,10 @@ defmodule Hangman.Player.Logger.Handler do
 
   end
 
+  def handle_call(:stop, _from, state) do
+    {:stop, :normal, :ok, state}
+  end
+
   @doc """
   The handle_events callback handles various events
   which ultimately write to `player` logger file
@@ -56,8 +65,8 @@ defmodule Hangman.Player.Logger.Handler do
 
     msg = 
       case event do
-        {:start, _, _} ->
-          "\n# new game started! \n"
+        {:start, _, game_no} ->
+          "\n# new game #{game_no} started! \n"
         {:register, _, {game_no, length}} -> 
           "\n# new game #{game_no}! secret length --> #{length}\n"
         {:guess, _, {{:guess_letter, letter}, _game_no}} ->

@@ -15,20 +15,27 @@ defmodule Hangman.Player.Alert.Handler do
     GenStage.start_link(__MODULE__, options)
   end
 
+  def stop(pid) when is_pid(pid) do
+    GenStage.call(pid, :stop)
+  end
+
   # Callbacks
 
   def init(options) do
     # Starts a permanent subscription to the broadcaster
     # which will automatically start requesting items.
 
-    with {:ok, write_pid} <- Keyword.fetch(options, :pid), 
-    {:ok, key} <- Keyword.fetch(options, :id) do
+    with {:ok, key} <- Keyword.fetch(options, :id), 
+    {:ok, write_pid} <- Keyword.fetch(options, :pid) do
       {:consumer, {key, write_pid}, subscribe_to: [Hangman.Event.Manager]}
     else 
       ## ABORT if display output not true
       _ -> {:stop, :normal}
     end
-    
+  end
+
+  def handle_call(:stop, _from, state) do
+    {:stop, :normal, :ok, state}
   end
 
   @doc """
@@ -50,8 +57,8 @@ defmodule Hangman.Player.Alert.Handler do
 
     msg = 
       case event do
-        {:start, name, _} ->
-          "##{name}_feed --> Hangman_Game has started"
+        {:start, name, game_no} ->
+          "##{name}_feed --> Game #{game_no} has started"
         {:register, name, {game_no, length}} ->
           "##{name}_feed Game #{game_no}, " <> 
             "secret length --> #{length}"
