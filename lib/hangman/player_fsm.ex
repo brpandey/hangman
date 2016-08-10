@@ -72,7 +72,7 @@ defmodule Hangman.Player.FSM do
       # check if we get game won or game lost
       case status do
         {code, text} when code in [:game_won, :game_lost] -> 
-          respond({:action, text}, :stop, player)
+          respond({:action, text}, :transit, player)
         {:game_keep_guessing, text} ->
           respond({:action, text}, :setup, player)
       end
@@ -80,18 +80,18 @@ defmodule Hangman.Player.FSM do
   end
 
   
-  defstate stop do
+  defstate transit do
     defevent proceed, data: player do
 
       {player, status} = player |> Action.transition
 
-      Logger.debug "FSM stop: player is #{inspect player}"
+      Logger.debug "FSM transit: player is #{inspect player}"
 
       case status do
         {:game_start, text} -> 
-          respond({:stop, text}, :start, player)
+          respond({:transit, text}, :start, player)
         {:games_over, text} -> 
-          respond({:stop, text}, :exit, player)
+          respond({:transit, text}, :exit, player)
       end
     end
   end

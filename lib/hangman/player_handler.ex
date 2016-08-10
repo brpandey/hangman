@@ -96,7 +96,7 @@ defmodule Hangman.Player.Handler do
       feedback = handle_setup(ppid, feedback)
 
       case feedback do
-        {code, _status} when code in [:start, :action, :stop] ->
+        {code, _status} when code in [:start, :action, :transit] ->
           {:cont, acc + 1}
 
         {:exit, _status} -> 
@@ -120,7 +120,7 @@ defmodule Hangman.Player.Handler do
       feedback = handle_setup(ppid, feedback)
 
       case feedback do
-        {code, _status} when code in [:start, :stop] ->
+        {code, _status} when code in [:start, :transit] ->
           {:cont, acc}
 
         {:action, status} -> 

@@ -141,11 +141,11 @@ defmodule Hangman.Player.FSM.Test do
 
     assert(response == {:action, "TULIP; score=5; status=GAME_WON"})
     
-    assert(Player.FSM.state(fsm) == :stop)
+    assert(Player.FSM.state(fsm) == :transit)
 
     {response, fsm} = Player.FSM.proceed(fsm)
 
-    assert(response == {:stop, ""})
+    assert(response == {:transit, ""})
 
     assert(Player.FSM.state(fsm) == :start)
 
@@ -222,7 +222,7 @@ defmodule Hangman.Player.FSM.Test do
 
     {_response, fsm} = Player.FSM.guess(fsm, {:guess_letter, ""})
 
-    assert(Player.FSM.state(fsm) == :stop)
+    assert(Player.FSM.state(fsm) == :transit)
 
     {_response, fsm} = Player.FSM.proceed(fsm)
 
@@ -290,11 +290,11 @@ defmodule Hangman.Player.FSM.Test do
 
     {response, fsm} = Player.FSM.guess(fsm, nil)
     assert(response == {:action, "IMMACULATE; score=4; status=GAME_WON"})
-    assert(Player.FSM.state(fsm) == :stop)
+    assert(Player.FSM.state(fsm) == :transit)
 
     {response, fsm} = Player.FSM.proceed(fsm)
     assert(response == 
-      {:stop, "Game Over! Average Score: 4.0, # Games: 1, Scores:  (IMMACULATE: 4)"})
+      {:transit, "Game Over! Average Score: 4.0, # Games: 1, Scores:  (IMMACULATE: 4)"})
     assert(Player.FSM.state(fsm) == :exit)
 
     {response, fsm} = Player.FSM.proceed(fsm)

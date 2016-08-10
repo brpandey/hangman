@@ -110,7 +110,7 @@ defmodule Hangman.Player.Test do
 
     assert "CUMULATE; score=8; status=GAME_WON" = reply
 
-    {:stop, reply} = ppid |> Player.proceed
+    {:transit, reply} = ppid |> Player.proceed
 
     assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
 
@@ -223,7 +223,7 @@ defmodule Hangman.Player.Test do
 
     assert "CUMULATE; score=8; status=GAME_WON" = reply
 
-    {:stop, reply} = ppid |> Player.proceed
+    {:transit, reply} = ppid |> Player.proceed
 
     IO.puts "\nGame 2a: #{inspect reply}"  # transition stop
 
@@ -293,7 +293,7 @@ defmodule Hangman.Player.Test do
 
     assert "AVOCADO; score=6; status=GAME_WON" = reply
 
-    {:stop, reply} = ppid |> Player.proceed
+    {:transit, reply} = ppid |> Player.proceed
 
     IO.puts "\nGame 2q: #{inspect reply}"
 
