@@ -3,7 +3,7 @@ defmodule Hangman.Game.Server do
     
   require Logger
 
-  alias Hangman.{Event, Game, Game.Registry, Player, Round, Guess}
+  alias Hangman.{Game, Game.Registry, Game.Event, Player, Round, Guess}
   
   @moduledoc """
   Module handles `Hangman` `Game` serving to multiple clients.  

@@ -23,7 +23,7 @@ defmodule Hangman.Player.Logger.Supervisor do
 
   @spec start_link :: Supervisor.on_start
   def start_link do
-    Logger.info "Starting Hangman Player Events Supervisor"
+    Logger.info "Starting Hangman Player Logger Supervisor"
     Supervisor.start_link(@name, {}, name: :player_logger_supervisor)
   end
 

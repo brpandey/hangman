@@ -1,16 +1,17 @@
-defmodule Hangman.Player.Events.Test do
+defmodule Hangman.Game.Event.Manager.Test do
   use ExUnit.Case, async: false
 
-  alias Hangman.{Player, Event}
+  alias Hangman.{Player, Game.Event}
 
   setup_all do
-    IO.puts "Player Events Test"
+    IO.puts "Game Event Manager Test"
+
+    # {:ok, _epid} = Event.Manager.start_link()
+
     :ok
   end
 
   test "inital events server setup" do
-
-#    {:ok, _epid} = Event.Manager.start_link()
 
     key = "polarbear"
 

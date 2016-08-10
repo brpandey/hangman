@@ -38,7 +38,8 @@ defmodule Hangman.Game.System.Supervisor do
 
     children = [
         supervisor(Game.Server.Supervisor, []),
-        worker(Game.Pid.Cache, [])
+        worker(Game.Pid.Cache, []),
+        worker(Game.Event.Manager, [])
     ]
 
     supervise(children, strategy: :one_for_one) 

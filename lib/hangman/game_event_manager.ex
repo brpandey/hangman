@@ -1,4 +1,4 @@
-defmodule Hangman.Event.Manager do
+defmodule Hangman.Game.Event.Manager do
   alias Experimental.GenStage
 
   use GenStage

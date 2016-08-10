@@ -11,7 +11,7 @@ defmodule Hangman.Player.Group.Supervisor do
   start workers, namely player supervisor and player events supervisor
   '''
 
-  alias Hangman.{Player, Event}
+  alias Hangman.Player
 
   require Logger
 
@@ -43,12 +43,11 @@ defmodule Hangman.Player.Group.Supervisor do
 
     children = [
       supervisor(Player.Supervisor, []),
-      supervisor(Event.Manager, []),  # not critical to game functioning thus after player.supervisor
       supervisor(Player.Alert.Supervisor, []),
       supervisor(Player.Logger.Supervisor, [])
     ]
 
-    supervise(children, strategy: :rest_for_one)
+    supervise(children, strategy: :one_for_one)
   end
 
 end
