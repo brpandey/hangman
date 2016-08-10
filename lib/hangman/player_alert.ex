@@ -27,7 +27,7 @@ defmodule Hangman.Player.Alert.Handler do
 
     with {:ok, key} <- Keyword.fetch(options, :id), 
     {:ok, write_pid} <- Keyword.fetch(options, :pid) do
-      {:consumer, {key, write_pid}, subscribe_to: [Hangman.Event.Manager]}
+      {:consumer, {key, write_pid}, subscribe_to: [Hangman.Game.Event.Manager]}
     else 
       ## ABORT if display output not true
       _ -> {:stop, :normal}
@@ -53,7 +53,7 @@ defmodule Hangman.Player.Alert.Handler do
     {:noreply, [], {key, write_pid}}    
   end
 
-  defp process_event(event, write_pid) do
+  defp process_event(event, _write_pid) do
 
     msg = 
       case event do
@@ -75,10 +75,9 @@ defmodule Hangman.Player.Alert.Handler do
           "##{name}_feed Game Over!! --> #{text}"
       end
 
-    case write_pid do
-      nil -> IO.puts(msg)
-      pid when is_pid(pid) -> IO.puts(pid, msg)
-    end
+
+    IO.puts(msg)
+
 
   end
 

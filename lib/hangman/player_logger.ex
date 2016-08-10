@@ -34,7 +34,7 @@ defmodule Hangman.Player.Logger.Handler do
 
       {:ok, logger_pid} = File.open(file_name, [:append])
 
-      {:consumer, {key, logger_pid}, subscribe_to: [Hangman.Event.Manager]}
+      {:consumer, {key, logger_pid}, subscribe_to: [Hangman.Game.Event.Manager]}
 
     else 
       ## ABORT if display output not true

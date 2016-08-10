@@ -8,7 +8,7 @@ defmodule Hangman.Game.Event.Manager do
   Starts the manager.
   """
   def start_link() do
-    Logger.info "Starting Hangman Event Manager"
+    Logger.info "Starting Hangman Game Event Manager"
     GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
   end
   
