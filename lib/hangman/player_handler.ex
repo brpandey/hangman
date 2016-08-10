@@ -56,29 +56,39 @@ defmodule Hangman.Player.Handler do
 
 #   # Let's setup a trace for debug
 #   :sys.trace(game_pid, true)
-    
-    # Get event server pid next
-#    {:ok, notify_pid} = 
-#     Player.Events.Supervisor.start_child(name, log, display)
 
-    notify_pid = nil
+    logger_pid = 
+      case log do
+        true ->
+          {:ok, pid} = Player.Logger.Supervisor.start_child(name)
+          pid
+        false -> nil
+      end
 
-    {name, type, display, game_pid, notify_pid}
+
+    alert_pid = 
+      case display do
+        true ->
+          {:ok, pid} = Player.Alert.Supervisor.start_child(name, self())
+          pid
+        false -> nil
+      end
+
+    {name, type, display, game_pid, alert_pid, logger_pid}
   end
 
 
   @docp "Start dynamic `player` child `worker`"
   
   @spec start(tuple()) :: Supervisor.on_start_child
-  defp start({name, type, display, game_pid, notify_pid}) do
-    {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, 
-                                                      game_pid, notify_pid)
-    {player_pid, notify_pid}
+  defp start({name, type, display, game_pid, alert_pid, logger_pid}) do
+    {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, game_pid)
+    {player_pid, alert_pid, logger_pid}
   end
   
 
-  defp play({player_pid, notify_pid}, :cli) # atom tag on end for pipe ease
-  when is_pid(player_pid) and is_pid(notify_pid) do
+  defp play({player_pid, alert_pid, logger_pid}, :cli) # atom tag on end for pipe ease
+  when is_pid(player_pid) do
 
     Enum.reduce_while(Stream.cycle([player_pid]), 0, fn ppid, acc ->
       
@@ -91,6 +101,8 @@ defmodule Hangman.Player.Handler do
 
         {:exit, _status} -> 
           Player.stop(ppid)
+          if true == is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
+          if true == is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
           {:halt, acc}
 
         _ -> raise "Unknown Player state"
@@ -99,8 +111,8 @@ defmodule Hangman.Player.Handler do
   end
 
 
-  defp play({player_pid, notify_pid}, :web) # atom tag on end for pipe ease
-  when is_pid(player_pid) and is_pid(notify_pid) do
+  defp play({player_pid, alert_pid, logger_pid}, :web) # atom tag on end for pipe ease
+  when is_pid(player_pid) do
 
     list = Enum.reduce_while(Stream.cycle([player_pid]), [], fn ppid, acc ->
       
@@ -118,6 +130,8 @@ defmodule Hangman.Player.Handler do
         {:exit, status} -> 
           acc = [status | acc] # prepend to list then later reverse -- O(1)
           Player.stop(ppid)
+          if true == is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
+          if true == is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
           {:halt, acc}
 
         _ -> raise "Unknown Player state"

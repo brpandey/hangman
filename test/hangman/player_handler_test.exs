@@ -5,6 +5,7 @@ defmodule Hangman.Player.Handler.Test do
 
   setup_all do
     IO.puts "Player Game Test"
+
     :ok
   end
 
@@ -12,10 +13,12 @@ defmodule Hangman.Player.Handler.Test do
 
     secrets = ["asparagus", "voluptuous"]
 
+    {:ok, _apid} = Player.Alert.Supervisor.start_child("c3po_test", nil)
     Player.Handler.run(:cli, "c3po_test", :robot, secrets, false, true)
 
     secrets = ["mitochondria", "eject"]
 
+    {:ok, _apid} = Player.Alert.Supervisor.start_child("jedi_test", nil)
     Player.Handler.run(:cli, "jedi_test", :human, secrets, true, false)
   end
 
