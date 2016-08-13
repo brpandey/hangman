@@ -2,11 +2,15 @@ defmodule Hangman.Pass.Cache.Writer do
   use GenServer
   
   @moduledoc """
-  Module is responsible for asynchronous chunk 
+  Module is responsible for synchronous chunk 
   `pass` writes into the `Pass.Cache` table. 
 
   Serves as a write operation specific process to isolate write 
   errors from Pass.Cache
+
+  NOTE: Could be a source of bottleneck as all reduce workers
+  are synchronously relying on this writer process.  As of current
+  load, no bottleneck for time being
 
   """
 

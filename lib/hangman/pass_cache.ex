@@ -154,7 +154,7 @@ defmodule Hangman.Pass.Cache do
   Get routine retrieves `pass` chunks cache data given pass key
   """
 
-  @spec cached_get(atom, Pass.key) :: Chunks.t | no_return
+  @spec get(Pass.Cache.key, Pass.key) :: Chunks.t | no_return
   def get(:chunks, {id, game_no, round_no} = pass_key)
   when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
@@ -176,7 +176,7 @@ defmodule Hangman.Pass.Cache do
   end
 
 
-  @spec cached_get(atom, Pass.key) :: Chunks.t | nil
+  @spec cached_get(Pass.Cache.key, Pass.key) :: Chunks.t | nil
   def cached_get(:chunks, {_id, _game_no, _round_no} = pass_key) do
     
     # Using match instead of lookup, to keep processing on the ets side
@@ -197,7 +197,7 @@ defmodule Hangman.Pass.Cache do
   end
   
 
-  @spec put(atom, Pass.key, Chunks.t) :: :ok | no_return
+  @spec put(Pass.Cache.key, Pass.key, Chunks.t) :: :ok | no_return
   def put(:chunks,  {_id, _game_no, _round_no} = pass_key, %Chunks{} = data) do
     :ok = Pass.Cache.Writer.put(pass_key, data)
   end
