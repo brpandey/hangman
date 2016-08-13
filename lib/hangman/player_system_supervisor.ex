@@ -13,7 +13,7 @@ defmodule Hangman.Player.System.Supervisor do
   first-line supervisors and 1 second-line supervisor.
   '''
 
-  alias Hangman.{Dictionary, Pass, Reduction, Player}
+  alias Hangman.{Dictionary, Pass, Reduction}
 
   require Logger
 
@@ -47,9 +47,8 @@ defmodule Hangman.Player.System.Supervisor do
     children = [
       worker(Dictionary.Cache, [args]),
       worker(Pass.Cache, []),
-      supervisor(Reduction.Engine, []),
-      supervisor(Player.Group.Supervisor, []),
-      worker(Pass.Cache.Writer, [])
+      worker(Pass.Cache.Writer, []),
+      supervisor(Reduction.Engine, [])
     ]
 
     supervise(children, strategy: :rest_for_one)

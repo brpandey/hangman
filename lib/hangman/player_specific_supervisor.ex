@@ -1,4 +1,4 @@
-defmodule Hangman.Player.Group.Supervisor do
+defmodule Hangman.Player.Specific.Supervisor do
   use Supervisor
 
   @moduledoc false
@@ -8,7 +8,7 @@ defmodule Hangman.Player.Group.Supervisor do
   two first-line supervisors.
 
   Module supervises those player supervisors which dynamically
-  start workers, namely player supervisor and player events supervisor
+  start workers, namely player supervisor and player events supervisors
   '''
 
   alias Hangman.Player
@@ -27,7 +27,7 @@ defmodule Hangman.Player.Group.Supervisor do
   def start_link do
     args = {}
 
-    Logger.info "Starting Hangman Player Group Supervisor," <> 
+    Logger.info "Starting Hangman Player Specific Supervisor," <> 
       " args: #{inspect args}"
 
     Supervisor.start_link(@name, args)

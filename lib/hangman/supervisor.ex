@@ -37,7 +37,8 @@ defmodule Hangman.Supervisor do
   def init(args) do
     children = [
       supervisor(Game.System.Supervisor, []),
-      supervisor(Player.System.Supervisor, [args])
+      supervisor(Player.System.Supervisor, [args]),
+      supervisor(Player.Specific.Supervisor, [])
     ]
 
     supervise(children, strategy: :rest_for_one)
