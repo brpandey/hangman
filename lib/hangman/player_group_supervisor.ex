@@ -35,7 +35,8 @@ defmodule Hangman.Player.Group.Supervisor do
 
   @doc """
   Specifies worker supervisor specifications.  
-  Deploys a strategy of rest for one
+  Deploys a strategy of one for one to isolate
+  process tree errors
   """
   
   @callback init(term) :: {:ok, tuple}

@@ -31,6 +31,8 @@ defmodule Hangman.Game.System.Supervisor do
 
   @doc """
   Supervisor callback to initialize server process
+
+  Isolate errors to their process trees
   """
 
   @callback init(term) :: {}

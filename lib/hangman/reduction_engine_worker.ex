@@ -49,7 +49,7 @@ defmodule Hangman.Reduction.Engine.Worker do
     l = [worker_id, pass_key, regex_key, exc]
 
     Logger.debug "reduction engine worker #{worker_id}, " <> 
-      "reduce and store arg list #{inspect l}"
+      "reduce and store, args #{inspect l}"
 
     GenServer.call(via_tuple(worker_id), 
                    {:reduce_and_store, pass_key, regex_key, exc})
@@ -151,8 +151,11 @@ defmodule Hangman.Reduction.Engine.Worker do
       true -> raise HangmanError, "Invalid pass_size value #{pass_size}"
     end
 
-    # serialize writes through Hangman Pass Writer
-    Pass.Writer.write(pass_key, new_data)
+    # Write to cache
+
+    next_pass_key = Pass.increment_key(pass_key)
+
+    Pass.Cache.put(:chunks, next_pass_key, new_data)
 
     %Pass{size: pass_size, tally: tally, 
            possible: possible_txt, last_word: last_word}    

@@ -12,4 +12,8 @@ defmodule Hangman.Pass do
   @type key  :: {id :: String.t, game_no :: pos_integer, round_no :: pos_integer}  
 
 
+  def increment_key({id, game_num, round_num} = key) do
+    {id, game_num, round_num + 1}
+  end
+
 end

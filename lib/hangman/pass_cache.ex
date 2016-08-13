@@ -26,7 +26,7 @@ defmodule Hangman.Pass.Cache do
   alias Hangman.{Pass, Reduction, Chunks, Counter}
   
   @name __MODULE__
-  @ets_table_name :engine_pass_table
+  @ets_table_name :hangman_pass_cache
 
   @type key :: :chunks | {:pass, :game_start} | {:pass, :game_keep_guessing}
 
@@ -40,7 +40,7 @@ defmodule Hangman.Pass.Cache do
   def start_link() do
     Logger.info "Starting Hangman Pass Cache GenServer"
     args = {}
-    options = []
+    options = [name: :hangman_pass_cache] # same name for table as process
     GenServer.start_link(@name, args, options)
   end
 
@@ -90,19 +90,17 @@ defmodule Hangman.Pass.Cache do
 
   @doc """
   Get routine retrieves the `pass` size, tally, possible words, 
-  and other data given these cache `keys`.
+  and other data given these cache `keys`. Relies on either the Dictionary
+  Cache or the Reduction Engine to compute new pass data
 
     * `{:pass, :game_start}` - this is the initial game start `pass`, so we 
     request the data from the `Dictionary.Cache`.  The data is stored into 
-    the `Pass.Cache` via `Pass.Writer.write/2`. Returns `pass` data type.
+    the `Pass.Cache` via `Pass.Cache.Writer.write/2`. Returns `pass` data type.
 
     * `{:pass, :game_keep_guessing}` - retrieves the pass data from the last 
     player round and relies on `Reduction.Engine.reduce/3` to reduce the possible
     `Hangman` words set with `reduce_key`.  When the reduction is finished, we 
     write the data back to the `Pass.Cache` and return the new `pass` data.
-
-  These get requests are not `serialized` through the server
-  process since we are doing `reads`
   """
 
 
@@ -129,7 +127,9 @@ defmodule Hangman.Pass.Cache do
 
     # Store pass info into ets table for round 2 (next pass)
     # Allow writer engine to execute (and distribute) as necessary
-    Pass.Writer.write(pass_key, chunks)
+
+    next_pass_key = Pass.increment_key(pass_key)
+    Pass.Cache.Writer.put(next_pass_key, chunks)
   
     {pass_key, pass_info}
   end
@@ -144,42 +144,62 @@ defmodule Hangman.Pass.Cache do
   
     # Send pass and reduce information off to Engine server
     # to execute (and distribute) as appropriate
+    # operation subsequently writes back to pass_cache
     pass_info = Reduction.Engine.reduce(pass_key, regex_key, exclusion_set)
 
     {pass_key, pass_info}
   end
 
-  @doc """
-  Get routine retrieves `pass` chunks cache data
-
-  We can obtain `chunks` data, for cache `keys` with the `:chunks` atom
-
-    * `:chunks` - retrieves chunks data for a given pass key
-
-  These get requests are not `serialized` through the 
-  server process since we are doing `reads`
+  @docp """
+  Get routine retrieves `pass` chunks cache data given pass key
   """
-  
-  @spec get(Pass.Cache.key, Pass.key) :: Chunks.t | no_return
-  def get(:chunks = _cache_key, {id, game_no, round_no} = pass_key)
+
+  @spec cached_get(atom, Pass.key) :: Chunks.t | no_return
+  def get(:chunks, {id, game_no, round_no} = pass_key)
   when is_binary(id) and is_number(game_no) and is_number(round_no) do
+
+    Logger.debug("pass cache get: pass_key is #{inspect pass_key}")
+
+    case cached_get(:chunks, pass_key) do
+      
+      nil ->
+        Logger.debug("Unable to retrieve chunks from rounds_pass_cache," 
+                     <> " given pass_key #{inspect pass_key}")
+        
+        snapshot_info = :ets.i(@ets_table_name)
+        Logger.debug("Table snapshot: #{inspect snapshot_info}")
+        
+        raise HangmanError, "chunks not found for key: #{inspect pass_key}"
+
+      data -> data
+    end
+  end
+
+
+  @spec cached_get(atom, Pass.key) :: Chunks.t | nil
+  def cached_get(:chunks, {_id, _game_no, _round_no} = pass_key) do
     
     # Using match instead of lookup, to keep processing on the ets side
     case :ets.match_object(@ets_table_name, {pass_key, :_}) do
-      [] -> 
-        raise HangmanError, 
-        "counter not found for key: #{inspect pass_key}"
+      [] -> nil
+      [{^pass_key, data}] ->
 
-      [{_key, chunks}] ->
-        %Chunks{} = chunks # quick assert
+        %Chunks{} = data # quick assert
 
         # delete this current pass in the table, 
         # since we only keep 1 pass for each user
         :ets.match_delete(@ets_table_name, {pass_key, :_})
     
         # return chunks :)
-        chunks
+        data
     end
 
   end
+  
+
+  @spec put(atom, Pass.key, Chunks.t) :: :ok | no_return
+  def put(:chunks,  {_id, _game_no, _round_no} = pass_key, %Chunks{} = data) do
+    :ok = Pass.Cache.Writer.put(pass_key, data)
+  end
+
 end

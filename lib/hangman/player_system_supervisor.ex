@@ -36,7 +36,9 @@ defmodule Hangman.Player.System.Supervisor do
   @doc """
   Specifies worker children specifications.  
   These consist of a mix of workers and supervisors.  
-  Deploys a strategy of rest for one
+  Deploys a strategy of rest for one as these
+  process trees are dependant on each other
+  and not mutually exclusive
   """
   
   @callback init(Keyword.t) :: {:ok, tuple}
@@ -46,8 +48,8 @@ defmodule Hangman.Player.System.Supervisor do
       worker(Dictionary.Cache, [args]),
       worker(Pass.Cache, []),
       supervisor(Reduction.Engine, []),
-      supervisor(Pass.Writer, []),
       supervisor(Player.Group.Supervisor, []),
+      worker(Pass.Cache.Writer, [])
     ]
 
     supervise(children, strategy: :rest_for_one)
