@@ -78,5 +78,15 @@ defmodule Hangman.Player do
 
   defcast stop, do: stop_server(:normal)
 
+  @doc """
+  Terminate callback.
+  """
+  
+  @callback terminate(term, term) :: :ok
+  def terminate(_reason, _state) do
+    Logger.info "Terminating Player"
+    :ok
+  end
+
 end
 

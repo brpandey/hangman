@@ -29,13 +29,12 @@ defmodule Hangman.Player.Human do
         Strategy.update(strategy, word_pass)
     end
 
-    {mode, _} = Round.status(round)
     exclusion = Strategy.guessed(strategy)
 
     # Set up the game play round
     # Retrieve the reduction pass info from the engine
 
-    {round, strategy} = Round.setup(round, exclusion, mode, fn_updater)
+    {round, strategy} = Round.setup(round, exclusion, fn_updater)
     
     # Retrieve top letter strategy options,
     # and then updating options with round specific information

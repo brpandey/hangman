@@ -44,12 +44,12 @@ defmodule Hangman.Game.Server do
     # Store newly loaded, game into the game server registry
 
     registry = Registry.new |> Registry.update(id_key, game)
-
     options = [name: via_tuple(id_key)] #,  debug: [:trace]]
     
     GenServer.start_link(@name, registry, options)
   end
   
+
   @doc """
   Routine returns game server `pid` from process registry using `gproc`
   If not found, returns `:undefined`
@@ -180,6 +180,7 @@ defmodule Hangman.Game.Server do
   @callback handle_call({:atom, Player.key, Round.key}, tuple, Registry.t) :: tuple
   def handle_call({:register, player_key, round_key}, _from, state) do
 
+
     # add the player key to the players state
     state = Registry.add(state, player_key)
 
@@ -187,16 +188,27 @@ defmodule Hangman.Game.Server do
     game = Registry.game(state, player_key)
 
     # Game.status is read only
-    {_game, %{text: status_text}} = Game.status(game)
+    {_game, %{code: status_code, text: status_text}} = status = Game.status(game)
 
-    length = Game.secret_length(game)    
+    IO.puts "in handle_call register, status: #{inspect status}"
+
     {id, game_num, _round_num} = round_key
 
-    Event.Manager.async_notify({:register, id, {game_num, length}})
+    data = 
+      case status_code do
+        :game_start ->
+          data = Game.secret_length(game)    
+          Event.Manager.async_notify({:register, id, {game_num, data}})
+          data
+        :games_over ->
+          data = 0
+          Event.Manager.async_notify({:register, id, {game_num, data}})
+          data
+      end
 
     # Let's piggyback the round status text with the secret length value
     
-    { :reply, {round_key, length, status_text}, state }
+    { :reply, %{key: round_key, code: status_code, data: data, text: status_text}, state }
   end
 
   
@@ -347,8 +359,15 @@ defmodule Hangman.Game.Server do
     # it was an abnormal exit
 
     # generate player key
-    key = Registry.key(state, pid)
-    state = Registry.remove(state, :actives, key)
+    player_key = Registry.key(state, pid)
+    state = Registry.remove(state, :actives, player_key)
+
+    # grab the game and tag it as aborted
+    game = Registry.game(state, player_key)
+
+    game = Game.abort(game)
+
+    state = Registry.update(state, player_key, game)
 
     Logger.debug("{:EXIT, _, abnormal}, #{inspect state}")
     { :noreply, state }

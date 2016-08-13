@@ -67,7 +67,22 @@ defmodule Hangman.Round do
                   game_pid: round.game_pid }
       end
     
-    round
+    {player_key, round_key, game_pid} = game_context_key(round)
+    
+    # Register the client with the game server and set the context
+    %{key: ^round_key, code: status_code, data: data, text: status_text} =
+      Game.Server.register(game_pid, player_key, round_key)
+    
+    context = 
+      case status_code do
+        :game_start -> {:game_start, data}
+        :games_over -> nil
+      end
+
+    %Round{ round | status_code: status_code, # was :game_start previously
+            status_text: status_text, 
+            context: context}
+    
   end
   
   # READ
@@ -95,63 +110,25 @@ defmodule Hangman.Round do
   last guess to filter possible `Hangman` words from `Pass.Cache` server
   """
 
-  @spec setup(Round.t, List.t, Game.code, (Map.t -> Strategy.t) ) :: Round.t
+  @spec setup(Round.t, List.t, (Map.t -> Strategy.t) ) :: Round.t
 
-  # setup routines as arranged by game status codes
-
-  def setup(%Round{} = round, [], :game_start, fn_updater) do
+  def setup(%Round{} = round, exclusion, fn_updater) do
 
     # since we're at the start of a new round increment round num
     round = Kernel.put_in(round.num, round.num + 1)
 
-    {round, pass_info} = round 
-    |> do_setup(:game_server) 
-    |> do_setup([], :reduction_pass)
-
+    {round, pass_info} = round |> do_reduction_setup(exclusion)
     updater_result = fn_updater.(pass_info)
 
     {round, updater_result}
   end
 
-  def setup(%Round{} = round, exclusion, :game_keep_guessing, fn_updater) do
 
-    # since we're at the start of a new round increment round num
-    round = Kernel.put_in(round.num, round.num + 1)
-
-    {round, pass_info} = do_setup(round, exclusion, :reduction_pass)
-    updater_result = fn_updater.(pass_info)
-
-    {round, updater_result}
-  end
-
-  # private setup routines as arranged by the type of setup
-
-  defp do_setup(%Round{} = round, :game_server) do
-    {player_key, round_key, game_pid} = game_context_key(round)
-
-    # Register the client with the game server and grab the secret length
-    {^round_key, secret_length, status_text} =
-      Game.Server.register(game_pid, player_key, round_key)
-    
-    # Quick assert
-    true = is_number(secret_length) and secret_length > 0
-    
-    round = %Round{ round | status_code: :game_start, 
-                   status_text: status_text, 
-                   context: {:game_start, secret_length}}
-
-    round
-  end
-
-
-  defp do_setup(%Round{} = round, exclusion, :reduction_pass) do
+  defp do_reduction_setup(%Round{} = round, exclusion) do
     
     # Generate the word filter options for the words reduction engine
-    ctx = round.context
-
-    reduce_key = ctx |> Reduction.Options.reduce_key(exclusion)
-    match_key = ctx |> Kernel.elem(0)
-
+    reduce_key = round.context |> Reduction.Options.reduce_key(exclusion)
+    match_key = round.context |> Kernel.elem(0)
     pass_key = round_key(round)
 
     # Filter the engine hangman word set

@@ -25,59 +25,57 @@ defmodule Hangman.Game.Registry do
   @spec add(t, Player.key) :: t
   def add(%Registry{} = registry, key) do
 
+    registry = do_add(:actives, registry, key)
+
+    {player_id, _} = key # Destructuring bind
+        
+    # the first add game is done via Registry.update, so nothing to do
+    # other than error check
+
+    if nil == Map.get(registry.games, player_id) do
+      # We should have player game state, so error
+      raise HangmanError, "Expecting to find player game, not found"
+    end
+
+    registry
+  end
+
+
+  @spec do_add(atom, t, Player.key) :: t
+  defp do_add(:actives, %Registry{} = registry, key) do
+
     # Destructuring bind
     {player_id, player_pid} = key
 
     # Check if this player_pid is already added 
     # (e.g. from a previous game in a multiple game set)
 
-    registry = 
-      case Map.has_key?(registry.active_pids, player_pid) do
-        true ->
-          # Ensure the player id matches the pid -- sanity check
-          ^player_id = Map.get(registry.active_pids, player_pid)
-          registry
-        false -> 
-          # Add
+    case Map.has_key?(registry.active_pids, player_pid) do
+      true ->
+        # Ensure the player id matches the pid -- sanity check
+        ^player_id = Map.get(registry.active_pids, player_pid)
 
-          # Establish the link to the player pid in case we get a player crash    
-          Process.link(player_pid)
+        registry
+      false -> 
+        # Add
         
-          # Let's preserve the player pid to player id mapping
-          
-          # if we want to remove the player by pid
-          # its easy to find the player id, so we can also remove the 
-          # player game state if desired
-          
-          active_pids = Map.put(registry.active_pids, player_pid, player_id)
-          
-          # Update registry
-          registry = Kernel.put_in(registry.active_pids, active_pids)
-          
-          # retrieve already loaded game state 
-          # update player_pid field with pid
-          registry = 
-            case Map.get(registry.games, player_id) do
-              nil -> 
-                # We should have player game state, so error
-                raise HangmanError, "Expecting to find player game, not found"
-              game ->
-                # First put pid value in player game state
-                game = Kernel.put_in(game.player_pid, player_pid)
-                
-                # Put single game back into registry
-                games = Map.put(registry.games, player_id, game)
-                
-                # Lastly, update registry
-                Kernel.put_in(registry.games, games)
-            end
-      end
+        # Establish the link to the player pid in case we get a player crash    
+        Process.link(player_pid)
+        
+        # Let's preserve the player pid to player id mapping
+        
+        # if we want to remove the player by pid
+        # its easy to find the player id, so we can also remove the 
+        # player game state if desired
+        
+        active_pids = Map.put(registry.active_pids, player_pid, player_id)
+        
+        # Update registry
+        registry = Kernel.put_in(registry.active_pids, active_pids)
 
-    registry
+        registry
+    end
   end
-
-  # READ
-
 
   # Helper to retrieve the player key given pid
   
@@ -89,17 +87,17 @@ defmodule Hangman.Game.Registry do
     end
   end
   
-  # Helper to retrieve the player player's game state
+  # Helper to retrieve the player's game state
 
   @spec game(t, Player.key) :: Game.t
-  def game(%Registry{} = registry, key) do
+  def game(%Registry{} = registry, key) when is_tuple(key) do
 
     # Retrieve player game state
 
     # De-bind
     {player_id, player_pid} = key
 
-    # Ensure this player player is active
+    # Ensure this player is active
     game = 
       case Map.get(registry.active_pids, player_pid) do
         ^player_id ->
@@ -110,7 +108,7 @@ defmodule Hangman.Game.Registry do
         
         _ -> 
           # Player id not active, return empty game
-          %Game{}
+          nil
       end
     
     game

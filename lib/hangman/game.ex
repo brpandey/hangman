@@ -31,8 +31,7 @@ defmodule Hangman.Game do
 
   alias Hangman.{Game, Guess, Pattern}
   
-  defstruct id: nil, player_pid: nil,
-  current: 0, #Current game index
+  defstruct id: nil, current: 0, #Current game index
   secret: "", pattern: "", score: 0, state: :games_reset,
   secrets: [],  patterns: [], scores: [],
   max_wrong: 0, correct_letters: MapSet.new, 
@@ -60,7 +59,8 @@ defmodule Hangman.Game do
     game_won: {:game_won, 'GAME_WON', -2}, 
     game_lost: {:game_lost, 'GAME_LOST', 25}, 
     game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1},
-    games_reset: {:games_reset, 'GAMES_RESET', 0}
+    games_reset: {:games_reset, 'GAMES_RESET', 0},
+    game_abort: {:game_abort, 'GAME_ABORT', 0}
   }
   
   @mystery_letter "-"
@@ -130,7 +130,13 @@ defmodule Hangman.Game do
     true = is_binary(game.secret)
     String.length(game.secret)
   end
+
+  # Change game status to abort
+  def abort(%Game{} = game) do
+    Kernel.put_in(game.state, :game_abort)
+  end
   
+
   @doc """
   Runs `guess` against `Game` `secret`. Updates `Hangman` pattern, status, and
   other `game` recordkeeping structures.
@@ -230,7 +236,7 @@ defmodule Hangman.Game do
       game.secret != game.pattern -> :game_keep_guessing
 
       # GAME_WON, GAME_LOST -> GAME_START, GAMES_OVER (check if games left)
-      game.state in [:game_won, :game_lost] -> :game_next
+      game.state in [:game_won, :game_lost, :game_abort] -> :game_next
     end
 
     case new_code do
@@ -240,45 +246,7 @@ defmodule Hangman.Game do
         map = build_feedback(game, new_code)
         {game, map}
     end    
-    
 
-  end
-    
-  # Helper function to return current game score
-  
-  @spec score(t, code) :: integer
-  defp score(%Game{} = game, state_code \\ nil)  do
-    code = 
-      case state_code do
-        nil -> game.state
-        code when code in @states -> code
-        _ -> raise "Invalid state code in function score"
-      end
-    
-    score = 
-      case code do
-        # compute score if not lost and not reset
-        code when code in [:game_keep_guessing, :game_won] ->
-          Set.size(game.incorrect_letters) + 
-          Set.size(game.incorrect_words) +
-          Set.size(game.correct_letters)
-        :game_lost ->
-        # return default lost score if game lost
-          {_, _, score} = @status_codes[:game_lost]
-          score
-        _ -> 
-          raise "Shouldn't be asking for score in this state"
-      end
-    
-    score
-  end  
-
-  # Helper function to return current number of wrong guesses
-  
-  @spec incorrect(t) :: non_neg_integer
-  defp incorrect(%Game{} = game) do
-    Set.size(game.incorrect_letters) + 
-    Set.size(game.incorrect_words)
   end
 
 
@@ -289,7 +257,7 @@ defmodule Hangman.Game do
   updates state and transitions to next game 
   """
   @spec next(t) :: {t, term}  
-  defp next(%Game{} = game) do
+  def next(%Game{} = game) do
 
     games_played = game.current + 1
     
@@ -356,6 +324,44 @@ defmodule Hangman.Game do
        state: :game_start}
   end
   
+  # Helper function to return current game score
+  
+  @spec score(t, code) :: integer
+  defp score(%Game{} = game, state_code \\ nil)  do
+    code = 
+      case state_code do
+        nil -> game.state
+        code when code in @states -> code
+        _ -> raise "Invalid state code in function score"
+      end
+    
+    score = 
+      case code do
+        # compute score if not lost and not reset
+        code when code in [:game_keep_guessing, :game_won] ->
+          Set.size(game.incorrect_letters) + 
+          Set.size(game.incorrect_words) +
+          Set.size(game.correct_letters)
+        code when code in [:game_lost, :game_abort] ->
+        # return default score if game lost or game_abort
+          {_, _, score} = @status_codes[code]
+          score
+        _ -> 
+          raise "Shouldn't be asking for score in this state"
+      end
+    
+    score
+  end  
+
+  # Helper function to return current number of wrong guesses
+  
+  @spec incorrect(t) :: non_neg_integer
+  defp incorrect(%Game{} = game) do
+    Set.size(game.incorrect_letters) + 
+    Set.size(game.incorrect_words)
+  end
+
+
   @spec build_feedback(t, code) :: feedback
   defp build_feedback(%Game{} = game, state_code) when state_code in @states do
 
@@ -384,7 +390,15 @@ defmodule Hangman.Game do
 
     total_score = Enum.reduce(game.scores, 0, &(&1 + &2))
 
-    games = game.current + 1
+    # count the number of game scores that have 0 e.g. game abort
+    # so that we don't count them in the games played total
+
+    {_, _, abort_score} = @status_codes[:game_abort]
+
+    aborted = Enum.count(game.scores, fn x -> x == abort_score end)
+
+    games = (game.current + 1) - aborted
+
     avg = total_score / games
 
     zipped = Enum.zip(game.secrets, game.scores)

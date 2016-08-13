@@ -64,8 +64,9 @@ defimpl Hangman.Player.Action, for: Human do
   end
 
   def start(%Human{} = player) do
-    {round, strategy} = Generic.start(player.round, player.type)
-    %Human{ player | round: round, strategy: strategy }
+    {round, strategy, code} = Generic.start(player.round, player.type)
+    player = %Human{ player | round: round, strategy: strategy }
+    {player, code}
   end
 
   def setup(%Human{} = player) do
@@ -96,8 +97,9 @@ defimpl Hangman.Player.Action, for: Robot do
   end
 
   def start(%Robot{} = player) do
-    {round, strategy} = Generic.start(player.round, player.type)
-    %Robot{player | round: round, strategy: strategy}
+    {round, strategy, code} = Generic.start(player.round, player.type)
+    player = %Robot{ player | round: round, strategy: strategy }
+    {player, code}
   end
 
   def setup(%Robot{} = player) do

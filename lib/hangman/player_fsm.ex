@@ -36,12 +36,15 @@ defmodule Hangman.Player.FSM do
   defstate start do
     defevent proceed, data: player do
 
-      player = player |> Action.start 
+      {player, code} = player |> Action.start 
 
       Logger.debug "FSM start: player is #{inspect player}"
 
-      respond({:start, "fsm start"}, :setup, player)
-    end    
+      case code do
+        :game_start -> respond({:start, "fsm start"}, :setup, player)
+        :games_over -> respond({:start, "going to fsm exit"}, :exit, player)
+      end
+    end
   end
 
   

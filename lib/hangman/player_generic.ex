@@ -15,7 +15,11 @@ defmodule Hangman.Player.Generic do
     round = Round.start(round)
     strategy = Strategy.new(type)
 
-    {round, strategy}
+    case Round.status(round) do
+      {:game_start, _text} -> {round, strategy, :game_start}
+      {:games_over, _text} -> {round, strategy, :games_over}
+    end
+
   end
 
   def transition(%Round{} = round) do

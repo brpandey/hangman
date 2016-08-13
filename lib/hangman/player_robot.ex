@@ -25,8 +25,6 @@ defmodule Hangman.Player.Robot do
     round = robot.round
     strategy = robot.strategy
 
-    {mode, _} = Round.status(round)
-    
     fn_updater = fn
       %Pass{} = word_pass ->
         # Update the strategy with the round, with the latest reduced word set data
@@ -36,7 +34,7 @@ defmodule Hangman.Player.Robot do
     exclusion = Strategy.guessed(strategy)
     
     # Setup game start round
-    {round, strategy} = Round.setup(round, exclusion, mode, fn_updater)
+    {round, strategy} = Round.setup(round, exclusion, fn_updater)
 
     robot = Kernel.put_in(robot.round, round)
     robot = Kernel.put_in(robot.strategy, strategy)

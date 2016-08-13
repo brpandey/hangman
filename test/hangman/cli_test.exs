@@ -85,15 +85,16 @@ defmodule Hangman.CLI.Test do
 
 # NEED TO HANDLE SEPARATELY
 
-"""
+
   test "word not in dictionary, pass size zero" do
 
-    command = "-n barthalemu_test -t robot -s azerbaijian"
-    argv = String.split(command)
+    argv = ["-n", "barthalemu_test", "-t", "robot", "-s", "azerbaijan masterful", "-d", "-l"]
+
     CLI.main(argv)
 
   end
 
+"""
   test "robot, word not in dictionary - exhausted all words" do
 
     command = "-n harrison_test -t robot -s azerbaijan"
