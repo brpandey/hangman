@@ -83,7 +83,7 @@ defmodule Hangman.Player.Alert.Handler do
 
 
   @doc """
-  Terminate callback. Closes player `logger` file
+  Terminate callback.
   """
   
   @callback terminate(term, term) :: :ok | tuple

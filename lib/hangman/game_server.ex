@@ -188,15 +188,13 @@ defmodule Hangman.Game.Server do
     game = Registry.game(state, player_key)
 
     # Game.status is read only
-    {_game, %{code: status_code, text: status_text}} = status = Game.status(game)
-
-    IO.puts "in handle_call register, status: #{inspect status}"
+    {_game, %{code: status_code, text: status_text}} = Game.status(game)
 
     {id, game_num, _round_num} = round_key
 
     data = 
       case status_code do
-        :game_start ->
+        code when code in [:game_start, :game_keep_guessing] ->
           data = Game.secret_length(game)    
           Event.Manager.async_notify({:register, id, {game_num, data}})
           data
@@ -360,11 +358,13 @@ defmodule Hangman.Game.Server do
 
     # generate player key
     player_key = Registry.key(state, pid)
+
+    game = Registry.game(state, player_key)
+
     state = Registry.remove(state, :actives, player_key)
 
     # grab the game and tag it as aborted
-    game = Registry.game(state, player_key)
-
+    
     game = Game.abort(game)
 
     state = Registry.update(state, player_key, game)

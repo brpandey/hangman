@@ -73,11 +73,8 @@ defmodule Hangman.Round do
     %{key: ^round_key, code: status_code, data: data, text: status_text} =
       Game.Server.register(game_pid, player_key, round_key)
     
-    context = 
-      case status_code do
-        :game_start -> {:game_start, data}
-        :games_over -> nil
-      end
+
+    context = if status_code == :games_over do nil else {:game_start, data} end
 
     %Round{ round | status_code: status_code, # was :game_start previously
             status_text: status_text, 

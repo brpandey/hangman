@@ -428,7 +428,7 @@ defmodule Hangman.Game do
     
     info = [
       id: g.id,
-      player_pid: g.player_pid,
+      state: g.state,
       current_game_index: g.current,
       secret: g.secret,
       pattern: g.pattern,

@@ -25,6 +25,7 @@ defmodule Hangman.Game.Registry do
   @spec add(t, Player.key) :: t
   def add(%Registry{} = registry, key) do
 
+
     registry = do_add(:actives, registry, key)
 
     {player_id, _} = key # Destructuring bind
@@ -90,12 +91,12 @@ defmodule Hangman.Game.Registry do
   # Helper to retrieve the player's game state
 
   @spec game(t, Player.key) :: Game.t
-  def game(%Registry{} = registry, key) when is_tuple(key) do
+  def game(%Registry{} = registry, player_key) when is_tuple(player_key) do
 
     # Retrieve player game state
 
     # De-bind
-    {player_id, player_pid} = key
+    {player_id, player_pid} = player_key
 
     # Ensure this player is active
     game = 
@@ -103,8 +104,8 @@ defmodule Hangman.Game.Registry do
         ^player_id ->
           # We have an active match
           # Retrieve game state from registry
-          # Pattern match that we are returning a Game.t
-          %Game{} = Map.get(registry.games, player_id)
+
+          game = Map.get(registry.games, player_id)
         
         _ -> 
           # Player id not active, return empty game
