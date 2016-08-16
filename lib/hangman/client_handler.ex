@@ -1,8 +1,8 @@
-defmodule Hangman.Player.Handler do
+defmodule Hangman.Client.Handler do
   @moduledoc """
 
   Module drives `Player` server behaviour, while
-  setting up the proper `Game` and `Event` state.
+  setting up the proper `Game` server and `Event` server states.
 
   Simply stated it politely nudges the player to proceed to the next 
   course of action or make the next guess.  The handler also collects 
@@ -30,7 +30,7 @@ defmodule Hangman.Player.Handler do
   and is_boolean(log) and is_boolean(display) do
 
     args = {name, type, secrets, log, display}
-    args |> setup |> start |> play(:cli)
+    args |> setup |> play(:cli)
   end
 
   def run(:web, name, :robot, secrets, log, display = false) when is_binary(name)
@@ -38,7 +38,7 @@ defmodule Hangman.Player.Handler do
   and is_boolean(log) and is_boolean(display) do
 
     args = {name, :robot, secrets, log, display}
-    args |> setup |> start |> play(:web) 
+    args |> setup |> play(:web) 
   end
 
   @docp """
@@ -54,8 +54,7 @@ defmodule Hangman.Player.Handler do
     # Grab game pid first from game pid cache
     game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
 
-#   # Let's setup a trace for debug
-#   :sys.trace(game_pid, true)
+    Player.Controller.start_worker(name, type, display, game_pid)
 
     logger_pid = 
       case log do
@@ -74,33 +73,24 @@ defmodule Hangman.Player.Handler do
         false -> nil
       end
 
-    {name, type, display, game_pid, alert_pid, logger_pid}
+    {name, alert_pid, logger_pid}
   end
 
 
-  @docp "Start dynamic `player` child `worker`"
-  
-  @spec start(tuple()) :: Supervisor.on_start_child
-  defp start({name, type, display, game_pid, alert_pid, logger_pid}) do
-    {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, game_pid)
-    {player_pid, alert_pid, logger_pid}
-  end
-  
+  defp play({player_handler_key, alert_pid, logger_pid}, :cli) do 
+    # atom tag on end for pipe ease
 
-  defp play({player_pid, alert_pid, logger_pid}, :cli) # atom tag on end for pipe ease
-  when is_pid(player_pid) do
-
-    Enum.reduce_while(Stream.cycle([player_pid]), 0, fn ppid, acc ->
+    Enum.reduce_while(Stream.cycle([player_handler_key]), 0, fn key, acc ->
       
-      feedback = ppid |> Player.proceed
-      feedback = handle_setup(ppid, feedback)
+      feedback = key |> Player.Controller.proceed
+      feedback = handle_setup(key, feedback)
 
       case feedback do
         {code, _status} when code in [:start, :action, :transit] ->
           {:cont, acc + 1}
 
         {:exit, _status} -> 
-          Player.stop(ppid)
+          Player.Controller.stop_worker(key)
           if true == is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
           if true == is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
           {:halt, acc}
@@ -111,13 +101,13 @@ defmodule Hangman.Player.Handler do
   end
 
 
-  defp play({player_pid, alert_pid, logger_pid}, :web) # atom tag on end for pipe ease
-  when is_pid(player_pid) do
+  defp play({player_handler_key, alert_pid, logger_pid}, :web) do
+    # atom tag on end for pipe ease
 
-    list = Enum.reduce_while(Stream.cycle([player_pid]), [], fn ppid, acc ->
+    list = Enum.reduce_while(Stream.cycle([player_handler_key]), [], fn key, acc ->
       
-      feedback = ppid |> Player.proceed
-      feedback = handle_setup(ppid, feedback)
+      feedback = key |> Player.Controller.proceed
+      feedback = handle_setup(key, feedback)
 
       case feedback do
         {code, _status} when code in [:start, :transit] ->
@@ -129,7 +119,7 @@ defmodule Hangman.Player.Handler do
 
         {:exit, status} -> 
           acc = [status | acc] # prepend to list then later reverse -- O(1)
-          Player.stop(ppid)
+          Player.Controller.stop_worker(key)
           if true == is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
           if true == is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
           {:halt, acc}
@@ -145,7 +135,7 @@ defmodule Hangman.Player.Handler do
 
   # Helpers
 
-  defp handle_setup(ppid, feedback) do
+  defp handle_setup(key, feedback) do
     # Handle feedback where the response code is :setup
     case feedback do
       {:setup, kw} ->
@@ -154,7 +144,7 @@ defmodule Hangman.Player.Handler do
         {:ok, choices} = Keyword.fetch(kw, :status)
 
         selection = ui(display, choices)
-        ppid |> Player.guess(selection)
+        key |> Player.Controller.guess(selection)
 
       _ -> feedback # Pass back the passed in feedback
     end

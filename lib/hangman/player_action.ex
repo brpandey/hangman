@@ -91,22 +91,29 @@ defimpl Hangman.Player.Action, for: Robot do
 
   def new(%Robot{} = player, {name, display, game_pid})
   when is_binary(name) and is_boolean(display) and is_pid(game_pid) do
+    IO.puts "in action new for type robot"
 
     round = Generic.init(name, game_pid)
     %Robot{player | display: display, round: round}
   end
 
   def start(%Robot{} = player) do
+    IO.puts "in action start for type robot"
+
     {round, strategy, code} = Generic.start(player.round, player.type)
     player = %Robot{ player | round: round, strategy: strategy }
     {player, code}
   end
 
   def setup(%Robot{} = player) do
+    IO.puts "in action setup for type robot"
+
     Robot.setup(player) # returns {player, []} tuple
   end
   
   def guess(%Robot{} = player, _guess) do
+    IO.puts "in action guess for type robot"
+
     Robot.guess(player, nil) # returns {player, status} tuple
   end
 

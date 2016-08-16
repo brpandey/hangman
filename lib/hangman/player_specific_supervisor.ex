@@ -43,12 +43,13 @@ defmodule Hangman.Player.Specific.Supervisor do
   def init(_) do
 
     children = [
-      supervisor(Player.Supervisor, []),
-      supervisor(Player.Alert.Supervisor, []),
-      supervisor(Player.Logger.Supervisor, [])
+      worker(Player.Controller, []),
+      supervisor(Player.Worker.Supervisor, []),
+      supervisor(Player.Logger.Supervisor, []),
+      supervisor(Player.Alert.Supervisor, [])
     ]
 
-    supervise(children, strategy: :one_for_one)
+    supervise(children, strategy: :rest_for_one)
   end
 
 end

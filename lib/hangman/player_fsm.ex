@@ -36,6 +36,8 @@ defmodule Hangman.Player.FSM do
   defstate start do
     defevent proceed, data: player do
 
+      Logger.info "FSM start"
+
       {player, code} = player |> Action.start 
 
       Logger.debug "FSM start: player is #{inspect player}"
@@ -50,6 +52,8 @@ defmodule Hangman.Player.FSM do
   
   defstate setup do
     defevent proceed, data: player do
+
+      Logger.info "FSM setup"
 
       {player, status} = player |> Action.setup
 

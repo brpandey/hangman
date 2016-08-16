@@ -1,10 +1,10 @@
-defmodule Hangman.Player.Test do
+defmodule Hangman.Player.Worker.Test do
   use ExUnit.Case, async: true
 
   alias Hangman.{Player, Game}
 
   setup_all do
-    IO.puts "Player Test"
+    IO.puts "Player Worker Test"
 
     # initialize params map for test cases
     # each test just needs to grab the current player pid
@@ -45,7 +45,8 @@ defmodule Hangman.Player.Test do
 
     # Retrieve player fsm pid through dynamic start
 
-    {:ok, player_pid} = Player.Supervisor.start_child(name, type, display, game_pid)
+    {:ok, player_pid} = 
+      Player.Worker.Supervisor.start_child(name, type, display, game_pid)
 
     # Update case context params map, for current test
     map = Map.put(map, :current_player_pid, player_pid)
@@ -53,7 +54,7 @@ defmodule Hangman.Player.Test do
     on_exit fn ->
       Player.Logger.Handler.stop(lpid)
       Player.Alert.Handler.stop(apid)
-      Player.stop(player_pid)
+      Player.Worker.stop(player_pid)
       # Hangman.Game.Server.stop(game_pid)
       IO.puts "Player Test finished"
     end
@@ -73,50 +74,50 @@ defmodule Hangman.Player.Test do
 
     #:sys.trace(ppid, true)
 
-    {:start, _reply} = ppid |> Player.proceed
-    {:action, reply} = ppid |> Player.proceed
+    {:start, _reply} = ppid |> Player.Worker.proceed
+    {:action, reply} = ppid |> Player.Worker.proceed
 
     assert "-------E; score=1; status=KEEP_GUESSING" = reply
 
-    {:action, reply} = ppid |> Player.proceed 
+    {:action, reply} = ppid |> Player.Worker.proceed 
 
     assert "-----A-E; score=2; status=KEEP_GUESSING" = reply
 
-    {:action, reply} = ppid |> Player.proceed      
+    {:action, reply} = ppid |> Player.Worker.proceed      
 
     assert "-----ATE; score=3; status=KEEP_GUESSING" = reply
 
-    {:action, reply} = ppid |> Player.proceed
+    {:action, reply} = ppid |> Player.Worker.proceed
     
     assert "-----ATE; score=4; status=KEEP_GUESSING" = reply
 
-    {:action, reply} = ppid |> Player.proceed
+    {:action, reply} = ppid |> Player.Worker.proceed
 
     assert "-----ATE; score=5; status=KEEP_GUESSING" = reply
 
-    {:action, reply} = ppid |> Player.proceed
+    {:action, reply} = ppid |> Player.Worker.proceed
 
     assert "----LATE; score=6; status=KEEP_GUESSING" = reply
 
-    {:action, reply} = ppid |> Player.proceed
+    {:action, reply} = ppid |> Player.Worker.proceed
 
     assert "C---LATE; score=7; status=KEEP_GUESSING" = reply
 
-    {:action, reply} = ppid |> Player.proceed
+    {:action, reply} = ppid |> Player.Worker.proceed
 
     assert "C-M-LATE; score=8; status=KEEP_GUESSING" = reply
 
-    {:action, reply} = ppid |> Player.proceed
+    {:action, reply} = ppid |> Player.Worker.proceed
 
     assert "CUMULATE; score=8; status=GAME_WON" = reply
 
-    {:transit, reply} = ppid |> Player.proceed
+    {:transit, reply} = ppid |> Player.Worker.proceed
 
     assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
 
     IO.puts reply
 
-    {:exit, reply} = ppid |> Player.proceed
+    {:exit, reply} = ppid |> Player.Worker.proceed
 
     assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
 
@@ -136,134 +137,134 @@ defmodule Hangman.Player.Test do
 
     #:sys.trace(ppid, true)
 
-    {:start, reply} = ppid |> Player.proceed
+    {:start, reply} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1a: #{inspect reply}"      
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1b: #{inspect setup}"  
 
-    {:action, reply} = ppid |> Player.guess("e")
+    {:action, reply} = ppid |> Player.Worker.guess("e")
 
     IO.puts "\nGame 1c: #{inspect reply}"  
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1d: #{inspect setup}"  
 
-    {:action, reply} = ppid |> Player.guess("a")
+    {:action, reply} = ppid |> Player.Worker.guess("a")
 
     IO.puts "\nGame 1e: #{inspect reply}"
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1f: #{inspect setup}"  
 
-    {:action, reply} = ppid |> Player.guess("t")
+    {:action, reply} = ppid |> Player.Worker.guess("t")
 
     IO.puts "\nGame 1g: #{inspect reply}"
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1h: #{inspect setup}"  
 
-    {:action, reply} = ppid |> Player.guess("o")
+    {:action, reply} = ppid |> Player.Worker.guess("o")
 
     IO.puts "\nGame 1i: #{inspect reply}"
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1j: #{inspect setup}"  
 
-    {:action, reply} = ppid |> Player.guess("i")
+    {:action, reply} = ppid |> Player.Worker.guess("i")
 
     IO.puts "\nGame 1k: #{inspect reply}"
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1l: #{inspect setup}"  
 
-    {:action, reply} = ppid |> Player.guess("l")
+    {:action, reply} = ppid |> Player.Worker.guess("l")
 
     IO.puts "\nGame 1m: #{inspect reply}"
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     assert [display: true, status: {:guess_letter, "Possible hangman words left, 7 words: [\"cumulate\", \"cupulate\", \"jugulate\", \"subulate\", \"sufflate\", \"undulate\", \"ungulate\"]\n\nPlayer socrates_test, Round 7, ----LATE; score=6; status=KEEP_GUESSING.\n5 weighted letter choices :  u:7 c*:2 g:2 n:2 s:2 (* robot choice)"}] = setup
 
     IO.puts "\nGame 1n: #{inspect setup}"  
 
-    {:action, reply} = ppid |> Player.guess("c")
+    {:action, reply} = ppid |> Player.Worker.guess("c")
 
     IO.puts "\nGame 1o: #{inspect reply}"
 
     assert "C---LATE; score=7; status=KEEP_GUESSING" = reply
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1p: #{inspect setup}"  
 
     assert [display: true, status: {:guess_letter, "Possible hangman words left, 2 words: [\"cumulate\", \"cupulate\"]\n\nPlayer socrates_test, Round 8, C---LATE; score=7; status=KEEP_GUESSING.\n3 weighted letter choices :  u:2 m*:1 p:1 (* robot choice)"}] = setup
 
-    {:action, reply} = ppid |> Player.guess("m")
+    {:action, reply} = ppid |> Player.Worker.guess("m")
 
     assert "C-M-LATE; score=8; status=KEEP_GUESSING" = reply
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1q: #{inspect setup}\n"
 
     assert [display: true, status: {:guess_word, "cumulate",
              "Player socrates_test, Round 9, C-M-LATE; score=8; status=KEEP_GUESSING.\nLast word left: cumulate"}] = setup
 
-    {:action, reply} = ppid |> Player.guess("cumulate")
+    {:action, reply} = ppid |> Player.Worker.guess("cumulate")
 
     IO.puts "\nGame 1r: #{inspect reply}\n"
 
     assert "CUMULATE; score=8; status=GAME_WON" = reply
 
-    {:transit, reply} = ppid |> Player.proceed
+    {:transit, reply} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2a: #{inspect reply}"  # transition stop
 
-    {:start, reply} = ppid |> Player.proceed
+    {:start, reply} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2b: #{inspect reply}"  # start
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2c: #{inspect setup}"    # setup
 
-    {:action, reply} = ppid |> Player.guess("e")
+    {:action, reply} = ppid |> Player.Worker.guess("e")
 
     IO.puts "\nGame 2d: #{inspect reply}"  
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2e: #{inspect setup}"    
 
-    {:action, reply} = ppid |> Player.guess("a")
+    {:action, reply} = ppid |> Player.Worker.guess("a")
 
     IO.puts "\nGame 2f: #{inspect reply}"  
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2g: #{inspect setup}"
 
-    {:action, reply} = ppid |> Player.guess("s")
+    {:action, reply} = ppid |> Player.Worker.guess("s")
 
     IO.puts "\nGame 2h: #{inspect reply}"  
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2i: #{inspect setup}"
 
-    {:action, reply} = ppid |> Player.guess("r")
+    {:action, reply} = ppid |> Player.Worker.guess("r")
 
     IO.puts "\nGame 2j: #{inspect reply}"  
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2k: #{inspect setup}"
 
@@ -271,35 +272,35 @@ defmodule Hangman.Player.Test do
             status: {:guess_letter,
              "Possible hangman words left, 10 words: [\"abigail\", \"acclaim\", \"affiant\", \"afghani\", \"agitato\", \"animato\", \"anomaly\", \"apogamy\", \"applaud\", \"avocado\"]\n\nPlayer socrates_test, Round 5, A---A--; score=4; status=KEEP_GUESSING.\n5 weighted letter choices :  i*:6 o:5 g:4 l:4 m:4 (* robot choice)"}] = setup
 
-    {:action, reply} = ppid |> Player.guess("i")
+    {:action, reply} = ppid |> Player.Worker.guess("i")
 
     IO.puts "\nGame 2l: #{inspect reply}"  
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2m: #{inspect setup}"
 
-    {:action, reply} = ppid |> Player.guess("d")
+    {:action, reply} = ppid |> Player.Worker.guess("d")
 
     IO.puts "\nGame 2n: #{inspect reply}"
 
-    {:setup, setup} = ppid |> Player.proceed
+    {:setup, setup} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2o: #{inspect setup}"
 
-    {:action, reply} = ppid |> Player.guess("avocado")
+    {:action, reply} = ppid |> Player.Worker.guess("avocado")
 
     IO.puts "\nGame 2p: #{inspect reply}"
 
     assert "AVOCADO; score=6; status=GAME_WON" = reply
 
-    {:transit, reply} = ppid |> Player.proceed
+    {:transit, reply} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2q: #{inspect reply}"
 
     assert "Game Over! Average Score: 7.0, # Games: 2, Scores:  (CUMULATE: 8) (AVOCADO: 6)" = reply
 
-    {:exit, reply} = ppid |> Player.proceed
+    {:exit, reply} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2r: #{inspect reply}"
 
