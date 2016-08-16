@@ -37,7 +37,7 @@ defmodule Hangman.Game.Server do
   @spec start_link(id, (String.t | [String.t]), 
                    pos_integer) :: {:ok, pid}
   def start_link(id_key, secret, max_wrong \\ @max_wrong) do
-    Logger.info "Starting Hangman Game Server"
+    Logger.info "Starting Hangman Game Server #{inspect self}"
 
     game = Game.new(id_key, secret, max_wrong)
 
@@ -387,8 +387,8 @@ defmodule Hangman.Game.Server do
   """
   
 #  @callback terminate(term, term) :: :ok
-  def terminate(_reason, _state) do
-    Logger.info "Terminating Hangman Game Server"
+  def terminate(reason, _state) do
+    Logger.info "Terminating Hangman Game Server reason: #{reason}, #{inspect self}"
     :ok
   end
   

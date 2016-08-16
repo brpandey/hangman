@@ -32,7 +32,7 @@ defmodule Hangman.Player.Worker do
   when is_binary(player_name) and is_atom(player_type) and is_boolean(display) 
   and is_pid(game_pid) and is_tuple(args) do
 
-    Logger.info "Starting Hangman Player Server"
+    Logger.info "Starting Hangman Player Worker #{inspect self}"
 
     # create the FSM abstraction and then initalize it
     fsm = Player.FSM.new |> Player.FSM.initialize(args) 
@@ -87,6 +87,7 @@ defmodule Hangman.Player.Worker do
     set_and_reply(fsm, response)
   end
 
+
   defcall guess(data), when: is_binary(data), state: fsm do
     {response, fsm} = 
       case String.length(data) do
@@ -100,13 +101,15 @@ defmodule Hangman.Player.Worker do
 
   defcast stop, do: stop_server(:normal)
 
+
+
   @doc """
   Terminate callback.
   """
   
   @callback terminate(term, term) :: :ok
   def terminate(_reason, _state) do
-    Logger.info "Terminating Player Worker"
+    Logger.info "Terminating Player Worker #{inspect self}"
 #   Logger.info "Terminating Player Worker, reason: #{inspect reason}, state: #{inspect state}"
     :ok
   end

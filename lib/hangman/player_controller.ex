@@ -21,7 +21,7 @@ defmodule Hangman.Player.Controller do
   """
   
   defstart start_link do 
-    Logger.info "Starting Hangman Player Controller Server"
+    Logger.info "Starting Hangman Player Controller Server #{inspect self}"
     initial_state(nil)
   end
 
@@ -31,8 +31,12 @@ defmodule Hangman.Player.Controller do
   defcast start_worker(name, type, display, game_pid), 
   when: is_binary(name) and is_atom(type) and is_boolean(display) 
   and is_pid(game_pid), state: _state do
-    {:ok, _player_pid} = 
+    {:ok, player_pid} = 
       Player.Worker.Supervisor.start_child(name, type, display, game_pid)
+
+    #link to player process
+    Process.link(player_pid)
+
     noreply()
   end
 
@@ -65,11 +69,16 @@ defmodule Hangman.Player.Controller do
   
   @spec get_worker_pid(Player.id) :: pid
   defp get_worker_pid(player_name) do    
-    case Player.Worker.whereis(player_name) do
-      :undefined ->
-        GenServer.call(:hangman_player_controller, {:get_worker, player_name})
-      pid -> pid
-    end
+    pid = 
+      case Player.Worker.whereis(player_name) do
+        :undefined ->
+          GenServer.call(:hangman_player_controller, {:get_worker, player_name})
+        pid -> pid
+      end
+
+    Process.link(pid)
+
+    pid
   end
   
   @docp """
@@ -77,7 +86,13 @@ defmodule Hangman.Player.Controller do
   """
 
   #@callback init(term) :: {}
-  def init(_), do:  {:ok, nil}
+  def init(_) do
+  
+    # Trap client exits
+    Process.flag(:trap_exit, true)
+    {:ok, nil} 
+
+  end
   
   @docp """
   GenServer callback to retrieve worker pid
@@ -97,14 +112,30 @@ defmodule Hangman.Player.Controller do
   end
 
 
+  def handle_info({:EXIT, pid, :normal} = msg, state) do
+    Logger.debug "In Process.Controller handle info, received EXIT normal msg: #{inspect msg}, from #{pid}"
+
+    Logger.debug("{:EXIT, _, :normal}, #{inspect state}")
+
+    { :noreply, state }
+  end
+
+
+  def handle_info({:EXIT, pid, _reason} = msg, state) do
+    Logger.debug "In Process.Controller handle info, received EXIT abnormal msg: #{inspect msg}, from #{pid}"
+    
+    Logger.debug("{:EXIT, _, abnormal}, #{inspect state}")
+    { :noreply, state }
+  end
+
+
   @doc """
   Terminate callback.
   """
   
   @callback terminate(term, term) :: :ok
-  def terminate(_reason, _state) do
-    Logger.info "Terminating Player Controller"
-#    Logger.info "Terminating Player, reason: #{inspect reason}, state: #{inspect state}"
+  def terminate(reason, _state) do
+    Logger.info "Terminating Player Controller, #{inspect self}, reason: #{inspect reason}"
     :ok
   end
 

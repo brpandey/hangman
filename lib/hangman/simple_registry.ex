@@ -35,16 +35,12 @@ defmodule Hangman.Simple.Registry do
 
   @spec add_key(t, key) :: t
   def add_key(%Registry{} = registry, key) do
-
-    registry = add(:active_pids, registry, key)
-    registry = add(:active_ids, registry, key)
-
-    registry
+    registry |> add(:active_pids, key) |> add(:active_ids, key)
   end
 
 
   @spec add(atom, t, key) :: t
-  defp add(:active_pids, %Registry{} = registry, key) do
+  defp add(%Registry{} = registry, :active_pids, key) do
 
     # Destructuring bind
     {id_key, pid_key} = key
@@ -79,7 +75,7 @@ defmodule Hangman.Simple.Registry do
   end
 
   @spec add(atom, t, key) :: t
-  defp add(:active_ids, %Registry{} = registry, key) do
+  defp add(%Registry{} = registry, :active_ids, key) do
 
     # Destructuring bind
     {id_key, pid_key} = key
