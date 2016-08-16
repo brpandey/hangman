@@ -3,7 +3,7 @@ defmodule Hangman.Game.Server do
     
   require Logger
 
-  alias Hangman.{Game, Game.Registry, Game.Event, Player, Round, Guess}
+  alias Hangman.{Game, Game.Event, Guess, Player, Round, Simple.Registry}
   
   @moduledoc """
   Module handles `Hangman` `Game` serving to multiple clients.  
@@ -181,11 +181,11 @@ defmodule Hangman.Game.Server do
   def handle_call({:register, player_key, round_key}, _from, state) do
 
 
-    # add the player key to the players state
-    state = Registry.add(state, player_key)
+    # add the player key to the registry
+    state = Registry.add_key(state, player_key)
 
     # Retrieve game
-    game = Registry.game(state, player_key)
+    game = Registry.value(state, player_key)
 
     # Game.status is read only
     {_game, %{code: status_code, text: status_text}} = Game.status(game)
@@ -223,7 +223,7 @@ defmodule Hangman.Game.Server do
                   state) do
 
     # Retrieve client game state
-    game = Registry.game(state, player_key)
+    game = Registry.value(state, player_key)
     
     {game, result} = Game.guess(game, guess)
 
@@ -257,7 +257,7 @@ defmodule Hangman.Game.Server do
                   state) do
     
     # Retrieve client game
-    game = Registry.game(state, player_key)
+    game = Registry.value(state, player_key)
 
     {game, result} = Game.guess(game, guess)
 
@@ -288,7 +288,7 @@ defmodule Hangman.Game.Server do
   def handle_call({:status, player_key, round_key}, _from, state) do
 
     # Retrieve client game
-    game = Registry.game(state, player_key)
+    game = Registry.value(state, player_key)
 
     {game, result} = Game.status(game)
 
@@ -336,12 +336,13 @@ defmodule Hangman.Game.Server do
     Logger.debug "In Game.Server handle info, received EXIT normal msg: #{inspect msg}"
 
     # generate player key
-    key = Registry.key(state, pid)
+    player_key = Registry.key(state, pid)
 
-    # remove player from actives and games
+    # remove player from active keys and games
     # it was a normal exit, clean the state
-    state = Registry.remove(state, :actives, key)
-    state = Registry.remove(state, :games, key)
+    state = state 
+    |> Registry.remove(:active, player_key)
+    |> Registry.remove(:value, player_key)
 
     Logger.debug("{:EXIT, _, :normal}, #{inspect state}")
 
@@ -352,22 +353,21 @@ defmodule Hangman.Game.Server do
   def handle_info({:EXIT, pid, _reason} = msg, state) do
     Logger.debug "In Game.Server handle info, received EXIT abnormal msg: #{inspect msg}"
     
-    # remove player from actives
+    # remove player key from active keys
     # keep the player state if we want to look at it, since
     # it was an abnormal exit
 
     # generate player key
     player_key = Registry.key(state, pid)
+    game = Registry.value(state, player_key)
 
-    game = Registry.game(state, player_key)
-
-    state = Registry.remove(state, :actives, player_key)
+    state = state |> Registry.remove(:active, player_key)
 
     # grab the game and tag it as aborted
     
     game = Game.abort(game)
 
-    state = Registry.update(state, player_key, game)
+    state = state |> Registry.update(player_key, game)
 
     Logger.debug("{:EXIT, _, abnormal}, #{inspect state}")
     { :noreply, state }
