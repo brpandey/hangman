@@ -22,7 +22,6 @@ defmodule Hangman.Game.Server do
   @type id :: String.t
 
   @vsn "0"
-  @name __MODULE__
 
   @max_wrong 5
   
@@ -37,7 +36,7 @@ defmodule Hangman.Game.Server do
   @spec start_link(id, (String.t | [String.t]), 
                    pos_integer) :: {:ok, pid}
   def start_link(id_key, secret, max_wrong \\ @max_wrong) do
-    Logger.info "Starting Hangman Game Server #{inspect self}"
+
 
     game = Game.new(id_key, secret, max_wrong)
 
@@ -46,7 +45,7 @@ defmodule Hangman.Game.Server do
     registry = Registry.new |> Registry.update(id_key, game)
     options = [name: via_tuple(id_key)] #,  debug: [:trace]]
     
-    GenServer.start_link(@name, registry, options)
+    GenServer.start_link(__MODULE__, registry, options)
   end
   
 
@@ -153,9 +152,7 @@ defmodule Hangman.Game.Server do
   
   #@callback init(Registry.t) :: tuple
   def init(state) do
-    # Trap client exits
-    Process.flag(:trap_exit, true)
-
+    Logger.info "Starting Hangman Game Server #{inspect self}"
     {:ok, state}
   end
   
@@ -178,11 +175,15 @@ defmodule Hangman.Game.Server do
   """
   
   @callback handle_call({:atom, Player.key, Round.key}, tuple, Registry.t) :: tuple
-  def handle_call({:register, player_key, round_key}, _from, state) do
+  def handle_call({:register, {_, pid_key} = player_key, round_key}, _from, state) do
 
+    Logger.debug "In Game.Server handle call, registry begin, state: #{inspect state}, self: #{inspect self}, player_key: #{inspect player_key}"
 
     # add the player key to the registry
     state = Registry.add_key(state, player_key)
+
+    # Monitor process
+    Process.monitor(pid_key)
 
     # Retrieve game
     game = Registry.value(state, player_key)
@@ -203,6 +204,12 @@ defmodule Hangman.Game.Server do
           Event.Manager.async_notify({:register, id, {game_num, data}})
           data
       end
+
+    Logger.debug "In Game.Server handle call, registry, game: #{inspect game}"
+
+
+    Logger.debug "In Game.Server handle call, registry end, state: #{inspect state}"
+
 
     # Let's piggyback the round status text with the secret length value
     
@@ -237,7 +244,7 @@ defmodule Hangman.Game.Server do
     # Update server state with updated game state
     state = Registry.update(state, player_key, game)
 
-    Logger.debug("guessed letter, Game.Server: #{inspect state}")
+    Logger.debug("guessed letter, Game.Server: #{inspect state}, self: #{inspect self}")
     
     result = result |> Map.put(:key, round_key)
 
@@ -271,7 +278,7 @@ defmodule Hangman.Game.Server do
     Event.Manager.async_notify({:guess, id, {guess, game_num}})
     Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
 
-    Logger.debug("guessed word, Game.Server: #{inspect state}")
+    Logger.debug("guessed word, Game.Server: #{inspect state}, self: #{inspect self}")
 
     result = result |> Map.put(:key, round_key)
 
@@ -332,44 +339,64 @@ defmodule Hangman.Game.Server do
 
   #@callback handle_info(term, tuple, Registry.t) :: tuple
 
-  def handle_info({:EXIT, pid, :normal} = msg, state) do
-    Logger.debug "In Game.Server handle info, received EXIT normal msg: #{inspect msg}"
+  def handle_info({:DOWN, ref, :process, pid, :normal}, state) do
+
+
+    Logger.debug "In Game.Server handle info, received :DOWN normal msg, self: #{inspect self}"
+
+    Process.demonitor(ref)
 
     # generate player key
-    player_key = Registry.key(state, pid)
 
-    # remove player from active keys and games
-    # it was a normal exit, clean the state
-    state = state 
-    |> Registry.remove(:active, player_key)
-    |> Registry.remove(:value, player_key)
+    state =
+      case Registry.key(state, pid) do
+        nil -> state
 
-    Logger.debug("{:EXIT, _, :normal}, #{inspect state}")
+        player_key ->
+          # remove player from active keys and games
+          # it was a normal exit, clean the state
+          state = state 
+          |> Registry.remove(:active, player_key)
+          |> Registry.remove(:value, player_key)
+      end
+      
+
+    Logger.debug("{:DOWN, _, :normal}, #{inspect state}")
 
     { :noreply, state }
   end
 
+  def handle_info({:DOWN, ref, :process, pid, _reason}, state) do
 
-  def handle_info({:EXIT, pid, _reason} = msg, state) do
-    Logger.debug "In Game.Server handle info, received EXIT abnormal msg: #{inspect msg}"
+    Logger.debug "In Game.Server handle info, received :DOWN abnormal msg, self: #{inspect self}"
+
+    Process.demonitor(ref)
     
     # remove player key from active keys
     # keep the player state if we want to look at it, since
     # it was an abnormal exit
 
-    # generate player key
-    player_key = Registry.key(state, pid)
-    game = Registry.value(state, player_key)
+    state =
+      # generate player key
+      case Registry.key(state, pid) do
+        nil -> state
 
-    state = state |> Registry.remove(:active, player_key)
+        player_key ->
+          game = Registry.value(state, player_key)
 
-    # grab the game and tag it as aborted
-    
-    game = Game.abort(game)
+          # remove player from active keys and games
+          # it was a normal exit, clean the state
+          state = state |> Registry.remove(:active, player_key)
 
-    state = state |> Registry.update(player_key, game)
+          # grab the game and tag it as aborted
+          
+          game = Game.abort(game)
 
-    Logger.debug("{:EXIT, _, abnormal}, #{inspect state}")
+          state = state |> Registry.update(player_key, game)
+      end
+
+
+    Logger.debug("{:DOWN, _, abnormal}, #{inspect state}")
     { :noreply, state }
   end
 
@@ -388,7 +415,7 @@ defmodule Hangman.Game.Server do
   
 #  @callback terminate(term, term) :: :ok
   def terminate(reason, _state) do
-    Logger.info "Terminating Hangman Game Server reason: #{reason}, #{inspect self}"
+    Logger.info "Terminating Hangman Game Server reason: #{inspect reason}, #{inspect self}"
     :ok
   end
   

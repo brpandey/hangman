@@ -32,16 +32,9 @@ defmodule Hangman.Player.Worker do
   when is_binary(player_name) and is_atom(player_type) and is_boolean(display) 
   and is_pid(game_pid) and is_tuple(args) do
 
-    Logger.info "Starting Hangman Player Worker #{inspect self}"
-
-    # create the FSM abstraction and then initalize it
-    fsm = Player.FSM.new |> Player.FSM.initialize(args) 
-
-    Logger.info "Started Hangman Player Worker, fsm is #{inspect fsm}"
-
     options = [name: via_tuple(player_name)] #,  debug: [:trace]]
     
-    GenServer.start_link(__MODULE__, fsm, options)
+    GenServer.start_link(__MODULE__, args, options)
   end
 
 
@@ -102,6 +95,24 @@ defmodule Hangman.Player.Worker do
   defcast stop, do: stop_server(:normal)
 
 
+  #@callback init(Registry.t) :: tuple
+  def init(args) do
+
+
+    Player.Controller.register(self)
+
+    controller_pid = Process.whereis(:hangman_player_controller)
+
+    Logger.info "Registered self: #{inspect self} with controller: #{inspect controller_pid}"
+
+    # create the FSM abstraction and then initalize it
+    fsm = Player.FSM.new |> Player.FSM.initialize(args) 
+
+    Logger.info "Started Player Worker #{inspect self}"
+    Logger.info "Started Player Worker, fsm is #{inspect fsm}"
+
+    {:ok, fsm}
+  end
 
   @doc """
   Terminate callback.

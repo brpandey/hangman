@@ -1,4 +1,5 @@
 defmodule Hangman.Player.Controller do
+  use GenServer
 
   @moduledoc """
   Serves as External API into Player functionality.  
@@ -11,75 +12,34 @@ defmodule Hangman.Player.Controller do
   responses back to `Client.Handler`.
   """
 
-  use ExActor.GenServer, export: :hangman_player_controller
   require Logger
 
   alias Hangman.Player
+
+  @name :hangman_player_controller
 
   @doc """
   GenServer start link wrapper function
   """
   
-  defstart start_link do 
-    Logger.info "Starting Hangman Player Controller Server #{inspect self}"
-    initial_state(nil)
+  def start_link(), do: GenServer.start_link(__MODULE__, nil, [name: @name])
+
+  def register(pid), do: GenServer.cast(@name, {:register, pid})
+
+  def start_worker(name, type, display, game_pid) when is_binary(name) and 
+      is_atom(type) and is_boolean(display) and is_pid(game_pid) do
+    GenServer.cast(@name, {:start_worker, name, type, display, game_pid})
   end
 
+  def proceed(id), do: GenServer.call(@name, {:proceed, id})
 
-  @docp "Start dynamic `player` child `worker`"
-  
-  defcast start_worker(name, type, display, game_pid), 
-  when: is_binary(name) and is_atom(type) and is_boolean(display) 
-  and is_pid(game_pid), state: _state do
-    {:ok, player_pid} = 
-      Player.Worker.Supervisor.start_child(name, type, display, game_pid)
-
-    #link to player process
-    Process.link(player_pid)
-
-    noreply()
+  def guess(id, data) when is_tuple(data) or is_binary(data) do    
+    GenServer.call(@name, {:guess, id, data})
   end
 
-  defcall proceed(id), state: _state do
-    player_pid =  get_worker_pid(id)
-    response = player_pid |> Player.Worker.proceed
-
-    reply(response)
-  end
-
-  defcall guess(id, data), when: is_tuple(data) or is_binary(data), state: _state do
-    player_pid =  get_worker_pid(id)
-    response = player_pid |> Player.Worker.guess(data)
-    
-    reply(response)
-  end
-
-  defcast stop_worker(id), state: _state do
-    player_pid =  get_worker_pid(id)
-    player_pid |> Player.Worker.stop
-
-    noreply()
-  end
+  def stop_worker(id), do: GenServer.cast(@name, {:stop_worker, id})
 
   
-  @docp """
-  Checks registry cache for `Player.Worker` pid given unique id, returns cached `pid` or
-  if not found checks again. Handles race conditions
-  """
-  
-  @spec get_worker_pid(Player.id) :: pid
-  defp get_worker_pid(player_name) do    
-    pid = 
-      case Player.Worker.whereis(player_name) do
-        :undefined ->
-          GenServer.call(:hangman_player_controller, {:get_worker, player_name})
-        pid -> pid
-      end
-
-    Process.link(pid)
-
-    pid
-  end
   
   @docp """
   GenServer callback to initialize server process
@@ -87,42 +47,56 @@ defmodule Hangman.Player.Controller do
 
   #@callback init(term) :: {}
   def init(_) do
-  
-    # Trap client exits
-    Process.flag(:trap_exit, true)
+    Logger.info "Starting Hangman Player Controller Server #{inspect self}"
     {:ok, nil} 
-
   end
-  
-  @docp """
-  GenServer callback to retrieve worker pid
-  """
-  
-  #@callback handle_call({:atom, Player.id}, {}, term) :: {}
-  def handle_call({:get_worker, player_name}, _from, state) do
-    
-    #Check the registry again for the pid -- safeguard against race condition
-    pid = 
-      case Player.Worker.whereis(player_name) do
-        :undefined -> raise "Player Controller, no player worker found"
-        pid -> pid
-      end
-    
-    {:reply, pid, state}
+
+  def handle_cast({:start_worker, name, type, display, game_pid}, state) do
+    {:ok, _player_pid} = 
+      Player.Worker.Supervisor.start_child(name, type, display, game_pid)
+
+    {:noreply, state}
+  end
+
+  def handle_cast({:register, pid}, state) when is_pid(pid) do
+    Process.monitor(pid)
+    {:noreply, state}
   end
 
 
-  def handle_info({:EXIT, pid, :normal} = msg, state) do
-    Logger.debug "In Process.Controller handle info, received EXIT normal msg: #{inspect msg}, from #{pid}"
+  def handle_cast({:stop_worker, id}, state) do
+    player_pid =  get_worker_pid(id)
+    player_pid |> Player.Worker.stop
+
+    {:noreply, state}
+  end
+
+  def handle_call({:proceed, id}, _from, state) do
+    player_pid =  get_worker_pid(id)
+    response = player_pid |> Player.Worker.proceed
+
+    {:reply, response, state}
+  end
+
+  
+  def handle_call({:guess, id, data}, _from, state) do
+    player_pid =  get_worker_pid(id)
+    response = player_pid |> Player.Worker.guess(data)
+    
+    {:reply, response, state}
+  end
+
+
+  def handle_info({:DOWN, _ref, :process, pid, :normal}, state) do
+    Logger.debug "In Process.Controller handle info, received DOWN normal msg, from #{inspect pid}"
 
     Logger.debug("{:EXIT, _, :normal}, #{inspect state}")
 
     { :noreply, state }
   end
 
-
-  def handle_info({:EXIT, pid, _reason} = msg, state) do
-    Logger.debug "In Process.Controller handle info, received EXIT abnormal msg: #{inspect msg}, from #{pid}"
+  def handle_info({:DOWN, _ref, :process, pid, _}, state) do
+    Logger.debug "In Process.Controller handle info, received DOWN abnormal msg, from #{inspect pid}"
     
     Logger.debug("{:EXIT, _, abnormal}, #{inspect state}")
     { :noreply, state }
@@ -137,6 +111,23 @@ defmodule Hangman.Player.Controller do
   def terminate(reason, _state) do
     Logger.info "Terminating Player Controller, #{inspect self}, reason: #{inspect reason}"
     :ok
+  end
+
+
+  @docp """
+  Checks registry cache for `Player.Worker` pid given unique id, returns cached `pid`
+  """
+  
+  @spec get_worker_pid(Player.id) :: pid
+  defp get_worker_pid(player_name) do    
+
+    pid =
+    case Player.Worker.whereis(player_name) do
+      :undefined -> raise "Unable to find worker pid"
+      pid -> pid
+    end
+
+    pid
   end
 
 

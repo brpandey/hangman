@@ -55,10 +55,7 @@ defmodule Hangman.Simple.Registry do
         registry
       false -> 
         # Add
-        
-        # Establish the link to the pid in case we get a crash    
-        Process.link(pid_key)
-        
+       
         # Let's preserve the pid to id mapping
         
         # if we want to remove the key by pid
@@ -69,6 +66,8 @@ defmodule Hangman.Simple.Registry do
         
         # Update registry
         registry = Kernel.put_in(registry.active_pids, active_pids)
+
+        Logger.debug("Simple registry, add :active_pids, just added pid_key: #{inspect pid_key}, registry: #{inspect registry}, self: #{inspect self}")
 
         registry
     end
@@ -108,7 +107,7 @@ defmodule Hangman.Simple.Registry do
   @spec key(t, pid) :: key
   def key(%Registry{} = registry, pid) when is_pid(pid) do
     case Map.get(registry.active_pids, pid) do
-      nil -> raise HangmanError, "Unable to retrieve key, pid not found"
+      nil -> nil
       id_key -> {id_key, pid}
     end
   end
@@ -116,7 +115,7 @@ defmodule Hangman.Simple.Registry do
   @spec key(t, id) :: key
   def key(%Registry{} = registry, id) when is_binary(id) do
     case Map.get(registry.active_ids, id) do
-      nil -> raise HangmanError, "Unable to retrieve key, id not found"
+      nil -> nil
       pid_key -> {id, pid_key}
     end
   end
@@ -236,9 +235,6 @@ defmodule Hangman.Simple.Registry do
           
       end
     
-    # unlink last, now that we've removed from recordkeeping
-    Process.unlink pid_key
-
     registry
   end
 

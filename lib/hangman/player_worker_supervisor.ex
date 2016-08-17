@@ -38,7 +38,6 @@ defmodule Hangman.Player.Worker.Supervisor do
 
   @spec start_child(String.t, :atom, boolean, pid) :: Supervisor.on_start_child
   def start_child(player_name, player_type, display, game_pid) do 
-
     Supervisor.start_child(:hangman_player_worker_supervisor, 
       [{player_name, player_type, display, game_pid}])
   end

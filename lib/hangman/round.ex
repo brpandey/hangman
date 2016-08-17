@@ -26,6 +26,8 @@ defmodule Hangman.Round do
 
   alias Hangman.{Round, Game, Guess, Pass, Reduction, Letter.Strategy}
 
+  require Logger
+
   defstruct id: "", num: 0, game_num: 0, context: nil,
   guess: {}, result_code: nil, status_code: nil, status_text: "", pattern: "",
   pid: nil, game_pid: nil
@@ -58,7 +60,7 @@ defmodule Hangman.Round do
       case round.game_num do
         0 ->
           # update the passed in round
-          %Round{ round | game_num: round.game_num + 1, num: 0,
+          %Round{ round | game_num: round.game_num + 1, num: 0, pid: self(),
                   status_code: :game_start}
         _ ->
           # create a new round with some leftover data from passed in round
@@ -68,6 +70,8 @@ defmodule Hangman.Round do
       end
     
     {player_key, round_key, game_pid} = game_context_key(round)
+
+    Logger.info "About to register with game server, player_key is #{inspect player_key}"
     
     # Register the client with the game server and set the context
     %{key: ^round_key, code: status_code, data: data, text: status_text} =

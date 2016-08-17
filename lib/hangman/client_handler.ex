@@ -17,6 +17,8 @@ defmodule Hangman.Client.Handler do
 
   alias Hangman.{Player, Game, Dictionary}
 
+  require Logger
+
   @max_random_words_request 10
 
   @doc """
@@ -81,7 +83,7 @@ defmodule Hangman.Client.Handler do
     # atom tag on end for pipe ease
 
     Enum.reduce_while(Stream.cycle([player_handler_key]), 0, fn key, acc ->
-      
+ 
       feedback = key |> Player.Controller.proceed
       feedback = handle_setup(key, feedback)
 
@@ -145,7 +147,7 @@ defmodule Hangman.Client.Handler do
 
         selection = ui(display, choices)
         key |> Player.Controller.guess(selection)
-
+      
       _ -> feedback # Pass back the passed in feedback
     end
   end
