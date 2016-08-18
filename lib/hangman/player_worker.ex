@@ -22,11 +22,13 @@ defmodule Hangman.Player.Worker do
   The player interface is very simple: proceed and guess
   """
 
-  use ExActor.GenServer
+  use GenServer
   require Logger
 
   alias Hangman.{Player}
 
+
+  # CLIENT API #
 
   def start_link(args = {player_name, player_type, display, game_pid})
   when is_binary(player_name) and is_atom(player_type) and is_boolean(display) 
@@ -55,44 +57,21 @@ defmodule Hangman.Player.Worker do
     {:via, :gproc, {:n, :l, {:player_worker, id_key}}}
   end
 
-
   # The heart of the player server, the proceed request
-  defcall proceed, state: fsm do
+  def proceed(pid), do: GenServer.call(pid, :proceed)
 
-    Logger.info "Player proceed, state fsm is : #{inspect fsm}"
-
-    # request the next state transition :proceed to player fsm
-    {response, fsm} = fsm |> Player.FSM.proceed
-
-    {response, fsm} = case response do
-      # if there is no setup data required for the user e.g. [], 
-      # as marked during robot guess setup, skip to guess
-      {:setup, []} -> fsm |> Player.FSM.guess(nil)
-      _ -> {response, fsm}
-    end
-
-    set_and_reply(fsm, response)
+  def guess(pid, data) when is_tuple(data) do
+    GenServer.call(pid, {:guess, data})
   end
 
+  def guess(pid, data) when is_binary(data) do
+    GenServer.call(pid, {:guess, data})
+  end
   
-  defcall guess(data), when: is_tuple(data), state: fsm do
-    {response, fsm} = fsm |> Player.FSM.guess(data)
-    set_and_reply(fsm, response)
+  def stop(pid) do
+    GenServer.call(pid, :stop)
   end
 
-
-  defcall guess(data), when: is_binary(data), state: fsm do
-    {response, fsm} = 
-      case String.length(data) do
-        1 ->
-          fsm |> Player.FSM.guess({:guess_letter, data})
-        _ ->
-          fsm |> Player.FSM.guess({:guess_word, data})
-      end
-    set_and_reply(fsm, response)
-  end
-
-  defcast stop, do: stop_server(:normal)
 
 
   #@callback init(Registry.t) :: tuple
@@ -113,6 +92,51 @@ defmodule Hangman.Player.Worker do
 
     {:ok, fsm}
   end
+
+
+  def handle_call(:proceed, _from, fsm) do
+
+    Logger.info "Player proceed, state fsm is : #{inspect fsm}"
+
+    # request the next state transition :proceed to player fsm
+    {response, fsm} = fsm |> Player.FSM.proceed
+
+    {response, fsm} = case response do
+      # if there is no setup data required for the user e.g. [], 
+      # as marked during robot guess setup, skip to guess
+      {:setup, []} -> fsm |> Player.FSM.guess(nil)
+      _ -> {response, fsm}
+    end
+
+    {:reply, response, fsm}
+  end
+
+
+  def handle_call({:guess, data}, _from, fsm) when is_binary(data) do
+    {response, fsm} = 
+      case String.length(data) do
+        1 ->
+          fsm |> Player.FSM.guess({:guess_letter, data})
+        _ ->
+          fsm |> Player.FSM.guess({:guess_word, data})
+      end
+    
+    {:reply, response, fsm}
+  end
+
+  
+  def handle_call({:guess, data}, _from, fsm) when is_tuple(data) do
+    {response, fsm} = fsm |> Player.FSM.guess(data)
+    {:reply, response, fsm}
+  end
+
+  @docp """
+  Stops the server in a normal graceful way
+  """
+  
+#  @callback handle_call(:atom, tuple, any) :: tuple
+  def handle_call(:stop, _from, state), do: { :stop, :normal, :ok, state }
+
 
   @doc """
   Terminate callback.
