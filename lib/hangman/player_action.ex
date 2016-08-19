@@ -1,4 +1,6 @@
-alias Hangman.Player.{Human, Robot, Generic}
+alias Hangman.Player.Generic
+alias Hangman.Action.{Human, Robot}
+
 
 defmodule Hangman.Player.Types do
 
@@ -7,8 +9,8 @@ defmodule Hangman.Player.Types do
 
   def mapping do
     %{
-      :human => %Hangman.Player.Human{}, 
-      :robot => %Hangman.Player.Robot{}
+      :human => %Hangman.Action.Human{}, 
+      :robot => %Hangman.Action.Robot{}
     }
   end
   

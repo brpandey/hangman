@@ -1,18 +1,18 @@
-defmodule Hangman.Player.Human do
+defmodule Hangman.Action.Human do
 
   @moduledoc """
-  Implements human player specific functionality
+  Implements human action specific functionality
 
   In `Hangman` we have two players.  One explict - the one guessing, the other
   implicit, 'the game', 'the user tracking the penalties', or 'the stumper
-  stumping the guesser with hard words'.  In this instance, the `Player` is
+  stumping the guesser with hard words'.  In this instance, the `Action` is
   merely the user making and choosing the guess selections.  
 
-  The `human` player is given the choice of the top letter choices to choose
+  The `human` action is given the choice of the top letter choices to choose
   from and is able to make an interactive guess.  
   """
 
-  alias Hangman.{Player.Human, Round, Letter.Strategy, Pass}
+  alias Hangman.{Action.Human, Round, Letter.Strategy, Pass}
 
   @opaque t :: %__MODULE__{}
 
@@ -116,9 +116,9 @@ defmodule Hangman.Player.Human do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      player_info = Inspect.List.inspect(Human.info(t), opts)
+      human_info = Inspect.List.inspect(Human.info(t), opts)
       round_info = Inspect.List.inspect(Round.info(t.round), opts)
-      concat ["#Player.Human<", player_info, round_info, ">"]
+      concat ["#Action.Human<", human_info, round_info, ">"]
     end
   end
 end

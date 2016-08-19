@@ -1,21 +1,21 @@
-defmodule Hangman.Player.Robot do
+defmodule Hangman.Action.Robot do
 
   @moduledoc """
-  Implements robot player specific functionality
+  Implements robot action specific functionality
 
   In `Hangman` we have two players.  One explict - the one guessing, the other
   implicit, 'the game', 'the user tracking the penalties', or 'the stumper
-  stumping the guesser with hard words'.  In this instance, the `Player` is
+  stumping the guesser with hard words'.  In this instance, the `Action` is
   merely the user making and choosing the guess selections.  
 
-  The `robot` player is reliant on the game strategy to automatically 
+  The `robot` action is reliant on the game strategy to automatically 
   self select the best guess.
   """
 
   @opaque t :: %__MODULE__{}
 
 
-  alias Hangman.{Player.Robot, Round, Letter.Strategy, Pass}
+  alias Hangman.{Action.Robot, Round, Letter.Strategy, Pass}
 
   defstruct type: :robot, display: false, round: nil, strategy: nil
 
@@ -72,9 +72,9 @@ defmodule Hangman.Player.Robot do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      player_info = Inspect.List.inspect(Robot.info(t), opts)
+      robot_info = Inspect.List.inspect(Robot.info(t), opts)
       round_info = Inspect.List.inspect(Round.info(t.round), opts)
-      concat ["#Player.Robot<", player_info, round_info, ">"]
+      concat ["#Action.Robot<", robot_info, round_info, ">"]
     end
   end
 

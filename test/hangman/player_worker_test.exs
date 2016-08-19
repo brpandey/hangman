@@ -230,7 +230,7 @@ defmodule Hangman.Player.Worker.Test do
 
     {:begin, reply} = ppid |> Player.Worker.proceed
 
-    IO.puts "\nGame 2b: #{inspect reply}"  # start
+    IO.puts "\nGame 2b: #{inspect reply}"  # begin
 
     {:setup, setup} = ppid |> Player.Worker.proceed
 
