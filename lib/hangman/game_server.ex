@@ -364,14 +364,14 @@ defmodule Hangman.Game.Server do
       end
       
 
-    Logger.debug("{:DOWN, _, :normal}, #{inspect state}")
+    Logger.debug(":DOWN :normal, #{inspect state}")
 
     { :noreply, state }
   end
 
-  def handle_info({:DOWN, ref, :process, pid, _reason}, state) do
+  def handle_info({:DOWN, ref, :process, pid, reason}, state) do
 
-    Logger.debug "In Game.Server handle info, received :DOWN abnormal msg, self: #{inspect self}"
+    Logger.debug "In Game.Server handle info, received :DOWN msg, self: #{inspect self}, reason: #{inspect reason}"
 
     Process.demonitor(ref)
     
@@ -399,7 +399,7 @@ defmodule Hangman.Game.Server do
       end
 
 
-    Logger.debug("{:DOWN, _, abnormal}, #{inspect state}")
+    Logger.debug(":DOWN, #{inspect state}")
     { :noreply, state }
   end
 

@@ -37,7 +37,7 @@ defmodule Hangman.Game.Test do
       # incorrect word exotly 7
       {game, result} = Game.guess(game, {:guess_word, "exotly"})
 
-      game_text = "#Game<[id: \"fred\", player_pid: nil, current_game_index: 0, secret: \"EXOTIC\", pattern: \"EXOT--\", score: 0, secrets: [\"EXOTIC\"], patterns: [], scores: [], max_wrong_guesses: 5, guessed_letters: [correct: [\"E\", \"O\", \"T\", \"X\"], incorrect: [\"S\", \"U\"]], guessed_words: [incorrect: [\"EXOTLY\"]]]>"
+      game_text = "#Game<[id: \"fred\", state: :game_keep_guessing, current_game_index: 0, secret: \"EXOTIC\", pattern: \"EXOT--\", score: 0, secrets: [\"EXOTIC\"], patterns: [], scores: [], max_wrong_guesses: 5, guessed_letters: [correct: [\"E\", \"O\", \"T\", \"X\"], incorrect: [\"S\", \"U\"]], guessed_words: [incorrect: [\"EXOTLY\"]]]>"
 
       assert game_text == "#{inspect game}"
 

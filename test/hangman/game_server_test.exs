@@ -212,9 +212,10 @@ defmodule Hangman.Game.Server.Test do
     player_key = context[:params] |> Map.get(:current_player_key)
     round_key = context[:params] |> Map.get(:current_round_key)
 
-    assert {^round_key, 6, _} = 
+    assert %{code: :game_keep_guessing, data: 6, key: ^round_key,
+             text: "------; score=0; status=KEEP_GUESSING"} = 
       Game.Server.register(game_pid, player_key, round_key)
-
+    
     assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
              pattern: "-----L", text: "-----L; score=1; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "l"})                 
