@@ -19,10 +19,10 @@ end
 defprotocol Hangman.Player.Action do
 
   @moduledoc """
-  Module implements player functionality 
+  Module implements player action functionality 
   for various player types via protocol mechanism
   
-  The Action protocol is implemented for the Human and Robot types, with
+  The Player Action protocol is implemented for the Human and Robot types, with
   Generic Player handling overlaps in functionality.  The Action protocol
   could be thought of as a sort of virtual player as it defers implementation
   to a combination of type specific functionality and generic type functionality.
@@ -30,9 +30,9 @@ defprotocol Hangman.Player.Action do
   The goal of a player is to maximize our winning chances in conjunction
   with a letter strategy against the 'implicit' other player, the `game server`.
   
-  Player functionality handles choosing letters, guessing letters and words.
+  Player action functionality handles choosing letters, guessing letters and words.
   
-  Player encapsulates the data used along with Strategy data. `Round` functionality
+  Player action encapsulates the data used along with Strategy data. `Round` functionality
   extends the scope of the player to handle the actual game round details.
   
   NOTE: Should a player submit a secret hangman word that does not actually

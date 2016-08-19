@@ -1,7 +1,7 @@
 defmodule Hangman.Action.Human do
 
   @moduledoc """
-  Implements human action specific functionality
+  Implements human action player specific functionality
 
   In `Hangman` we have two players.  One explict - the one guessing, the other
   implicit, 'the game', 'the user tracking the penalties', or 'the stumper
