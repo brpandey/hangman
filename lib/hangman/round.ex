@@ -71,8 +71,6 @@ defmodule Hangman.Round do
     
     {player_key, round_key, game_pid} = game_context_key(round)
 
-    Logger.info "About to register with game server, player_key is #{inspect player_key}"
-    
     # Register the client with the game server and set the context
     %{key: ^round_key, code: status_code, data: data, text: status_text} =
       Game.Server.register(game_pid, player_key, round_key)
@@ -132,9 +130,9 @@ defmodule Hangman.Round do
     match_key = round.context |> Kernel.elem(0)
     pass_key = round_key(round)
 
-    # Filter the engine hangman word set
+    # Filter the engine hangman word set, grab the result of the pass
     {^pass_key, pass_info} = 
-      Pass.Cache.get({:pass, match_key}, pass_key, reduce_key)
+      Pass.result(match_key, pass_key, reduce_key)
 
     {round, pass_info}
   end

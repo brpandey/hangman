@@ -102,7 +102,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   defp do_reduce_and_store(pass_key, regex_key, %MapSet{} = exclusion) do
 
     # Request chunks data from Pass Cache
-    data = %Chunks{} = Pass.Cache.get(:chunks, pass_key)
+    data = %Chunks{} = Pass.Cache.get(pass_key)
 
     length_key = Chunks.key(data)
 
@@ -155,7 +155,7 @@ defmodule Hangman.Reduction.Engine.Worker do
 
     next_pass_key = Pass.increment_key(pass_key)
 
-    Pass.Cache.put(:chunks, next_pass_key, new_data)
+    Pass.Cache.put(next_pass_key, new_data)
 
     %Pass{size: pass_size, tally: tally, 
            possible: possible_txt, last_word: last_word}    

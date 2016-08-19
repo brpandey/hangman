@@ -1,10 +1,10 @@
-defmodule Hangman.Pass.Cache.Stub do 
+defmodule Hangman.Pass.Stub do 
   @moduledoc false
 
   alias Hangman.{Pass, Reduction, Counter}
 
   '''
-  Stub module to mimic `Pass.Cache` functionality
+  Stub module to mimic `Pass` functionality
 
   Provides a scaffold implementation 
   to provide simple, predictable behavior
@@ -14,9 +14,8 @@ defmodule Hangman.Pass.Cache.Stub do
   Stub Routine retrieves stub pass tally given game start pass key
   """
 
-  @spec get(Pass.Cache.key, Pass.key, Reduction.key) :: tuple
-  def get({:pass ,:game_start}, 
-    {id, game_no, 1} = pass_key, reduce_key) 
+  @spec result(atom, Pass.key, Reduction.key) :: tuple
+  def result(:game_start, {id, game_no, 1} = pass_key, reduce_key) 
     when is_binary(id) and is_number(game_no) do
 
     {:ok, true} = Keyword.fetch(reduce_key, :game_start)
@@ -29,9 +28,8 @@ defmodule Hangman.Pass.Cache.Stub do
   Stub Routine retrieves stub pass tally given pass key
   """
 
-  @spec get(Pass.Cache.key, Pass.key, Reduction.key) :: tuple
-  def get({:pass, :game_keep_guessing}, 
-    {id, game_no, round_no} = pass_key, reduce_key)
+  @spec result(atom, Pass.key, Reduction.key) :: tuple
+  def result(:game_keep_guessing, {id, game_no, round_no} = pass_key, reduce_key)
     when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
 

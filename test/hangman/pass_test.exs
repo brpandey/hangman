@@ -1,4 +1,4 @@
-defmodule Hangman.Pass.Cache.Test do
+defmodule Hangman.Pass.Test do
   use ExUnit.Case, async: true
 
   alias Hangman.{Pass, Reduction, Letter.Strategy, Counter}
@@ -6,7 +6,7 @@ defmodule Hangman.Pass.Cache.Test do
   @robot :robot
 
   setup_all do
-    IO.puts "Pass Cache Test"
+    IO.puts "Pass Test"
     :ok
   end
 
@@ -53,7 +53,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_start}, pass_key, reduce_key)
+      Pass.result(:game_start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -85,7 +85,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -115,7 +115,7 @@ defmodule Hangman.Pass.Cache.Test do
  
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -147,7 +147,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -178,7 +178,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -209,7 +209,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -238,7 +238,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_start}, pass_key, reduce_key)
+      Pass.result(:game_start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -270,7 +270,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -300,7 +300,7 @@ defmodule Hangman.Pass.Cache.Test do
  
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -332,7 +332,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -363,7 +363,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -394,7 +394,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -425,7 +425,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_start}, pass_key, reduce_key)
+      Pass.result(:game_start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -457,7 +457,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -488,7 +488,7 @@ defmodule Hangman.Pass.Cache.Test do
  
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -517,7 +517,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -550,7 +550,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -583,7 +583,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -614,7 +614,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -647,7 +647,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -676,7 +676,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_start}, pass_key, reduce_key)
+      Pass.result(:game_start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -708,7 +708,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -739,7 +739,7 @@ defmodule Hangman.Pass.Cache.Test do
  
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -768,7 +768,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -801,7 +801,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -834,7 +834,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -865,7 +865,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -898,7 +898,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -926,7 +926,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_start}, pass_key, reduce_key)
+      Pass.result(:game_start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -960,7 +960,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -989,7 +989,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1018,7 +1018,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1049,7 +1049,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1083,7 +1083,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1114,7 +1114,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1147,7 +1147,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1175,7 +1175,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1205,7 +1205,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_start}, pass_key, reduce_key)
+      Pass.result(:game_start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -1239,7 +1239,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1268,7 +1268,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1297,7 +1297,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1328,7 +1328,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1362,7 +1362,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1393,7 +1393,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1426,7 +1426,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1454,7 +1454,7 @@ defmodule Hangman.Pass.Cache.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.Cache.get({:pass, :game_keep_guessing}, pass_key, reduce_key)
+      Pass.result(:game_keep_guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
