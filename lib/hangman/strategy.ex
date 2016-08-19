@@ -34,6 +34,8 @@ defmodule Hangman.Letter.Strategy do
   choices to be presented to `human` to manually choose.
   """
 
+  require Logger
+
   alias Hangman.{Counter, Guess, Pass, Letter.Strategy}
 
   defstruct type: nil, guessed_letters: MapSet.new, pass: %Pass{}, 
@@ -131,6 +133,8 @@ defmodule Hangman.Letter.Strategy do
   @spec choices(t, pos_integer) :: Guess.option
   def choices(%Strategy{} = strategy, n \\ @letter_choices)
   when is_number(n) and n > 0 do
+
+    if strategy.pass.size == 0, do: raise HangmanError, "Word not in dictionary"
     
     case last_word?(strategy) do        
       {false, _} ->

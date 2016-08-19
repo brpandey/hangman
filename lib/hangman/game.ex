@@ -399,7 +399,11 @@ defmodule Hangman.Game do
 
     games = (game.current + 1) - aborted
 
-    avg = total_score / games
+    avg = 
+      case games do
+        games when games <= 0 -> 0
+        _ -> total_score / games
+      end
 
     zipped = Enum.zip(game.secrets, game.scores)
     results = Enum.reduce(zipped, "",  fn {k,v}, acc -> 

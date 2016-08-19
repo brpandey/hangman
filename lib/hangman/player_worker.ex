@@ -76,28 +76,16 @@ defmodule Hangman.Player.Worker do
 
   #@callback init(Registry.t) :: tuple
   def init(args) do
-
-
-    Player.Controller.register(self)
-
-    controller_pid = Process.whereis(:hangman_player_controller)
-
-    Logger.info "Registered self: #{inspect self} with controller: #{inspect controller_pid}"
-
     # create the FSM abstraction and then initalize it
     fsm = Player.FSM.new |> Player.FSM.initialize(args) 
 
     Logger.info "Started Player Worker #{inspect self}"
-    Logger.info "Started Player Worker, fsm is #{inspect fsm}"
 
     {:ok, fsm}
   end
 
 
   def handle_call(:proceed, _from, fsm) do
-
-    Logger.info "Player proceed, state fsm is : #{inspect fsm}"
-
     # request the next state transition :proceed to player fsm
     {response, fsm} = fsm |> Player.FSM.proceed
 
@@ -130,6 +118,7 @@ defmodule Hangman.Player.Worker do
     {:reply, response, fsm}
   end
 
+
   @docp """
   Stops the server in a normal graceful way
   """
@@ -143,9 +132,8 @@ defmodule Hangman.Player.Worker do
   """
   
   @callback terminate(term, term) :: :ok
-  def terminate(_reason, _state) do
-    Logger.info "Terminating Player Worker #{inspect self}"
-#   Logger.info "Terminating Player Worker, reason: #{inspect reason}, state: #{inspect state}"
+  def terminate(reason, _state) do
+    Logger.info "Terminating Player Worker #{inspect self}, reason: #{inspect reason}"
     :ok
   end
 

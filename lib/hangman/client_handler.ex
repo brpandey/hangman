@@ -1,7 +1,7 @@
 defmodule Hangman.Client.Handler do
   @moduledoc """
 
-  Module drives `Player` server behaviour, while
+  Module drives `Player.Controller` server behaviour, while
   setting up the proper `Game` server and `Event` server states.
 
   Simply stated it politely nudges the player to proceed to the next 
@@ -11,7 +11,7 @@ defmodule Hangman.Client.Handler do
 
   When the game is finished it politely ends the game playing.
 
-  `Player.Handler` is the goto destination after all the arguments
+  `Client.Handler` is the goto destination after all the arguments
   have been collected in `Player.CLI`
   """
 
@@ -88,7 +88,7 @@ defmodule Hangman.Client.Handler do
       feedback = handle_setup(key, feedback)
 
       case feedback do
-        {code, _status} when code in [:start, :action, :transit] ->
+        {code, _status} when code in [:start, :action, :transit, :retry] ->
           {:cont, acc + 1}
 
         {:exit, _status} -> 
@@ -112,7 +112,7 @@ defmodule Hangman.Client.Handler do
       feedback = handle_setup(key, feedback)
 
       case feedback do
-        {code, _status} when code in [:start, :transit] ->
+        {code, _status} when code in [:start, :transit, :retry] ->
           {:cont, acc}
 
         {:action, status} -> 

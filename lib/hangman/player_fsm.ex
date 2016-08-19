@@ -23,10 +23,8 @@ defmodule Hangman.Player.FSM do
     defevent initialize(args = {_name, type, _display, _game_pid}) do
 
       action_type = Map.get(Types.mapping, type)
-      args = args |> Tuple.delete_at(1)
+      args = args |> Tuple.delete_at(1) # remove the type field
       player = Action.new(action_type, args)
-
-      Logger.debug "FSM init: player is #{inspect player}"
 
       next_state(:start, player)
     end
@@ -36,11 +34,7 @@ defmodule Hangman.Player.FSM do
   defstate start do
     defevent proceed, data: player do
 
-      Logger.info "FSM start"
-
       {player, code} = player |> Action.start 
-
-      Logger.debug "FSM start: player is #{inspect player}"
 
       case code do
         :game_start -> respond({:start, "fsm start"}, :setup, player)
@@ -52,8 +46,6 @@ defmodule Hangman.Player.FSM do
   
   defstate setup do
     defevent proceed, data: player do
-
-      Logger.info "FSM setup"
 
       {player, status} = player |> Action.setup
 

@@ -188,8 +188,12 @@ defmodule Hangman.Game.Server do
     # Retrieve game
     game = Registry.value(state, player_key)
 
-    # Game.status is read only
-    {_game, %{code: status_code, text: status_text}} = Game.status(game)
+    {game, %{code: status_code, text: status_text}} = status = Game.status(game)
+
+    Logger.debug "In Game.Server handle call, registry middle, status: #{inspect status}"
+
+    # Update server state with updated game state
+    state = Registry.update(state, player_key, game)
 
     {id, game_num, _round_num} = round_key
 
@@ -201,14 +205,12 @@ defmodule Hangman.Game.Server do
           data
         :games_over ->
           data = 0
-          Event.Manager.async_notify({:register, id, {game_num, data}})
+          Event.Manager.async_notify({:games_over, id, status_text})
           data
       end
 
-    Logger.debug "In Game.Server handle call, registry, game: #{inspect game}"
-
-
-    Logger.debug "In Game.Server handle call, registry end, state: #{inspect state}"
+#    Logger.debug "In Game.Server handle call, registry, game: #{inspect game}"
+#    Logger.debug "In Game.Server handle call, registry end, state: #{inspect state}"
 
 
     # Let's piggyback the round status text with the secret length value
@@ -234,15 +236,15 @@ defmodule Hangman.Game.Server do
     
     {game, result} = Game.guess(game, guess)
 
+    # Update server state with updated game state
+    state = Registry.update(state, player_key, game)
+
     {id, game_num, round_num} = round_key
 
     %{text: status_text} = result
 
     Event.Manager.async_notify({:guess, id, {guess, game_num}})
     Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
-
-    # Update server state with updated game state
-    state = Registry.update(state, player_key, game)
 
     Logger.debug("guessed letter, Game.Server: #{inspect state}, self: #{inspect self}")
     
@@ -268,12 +270,13 @@ defmodule Hangman.Game.Server do
 
     {game, result} = Game.guess(game, guess)
 
+    # Update server state with updated game state
+    state = Registry.update(state, player_key, game)
+
+
     {id, game_num, round_num} = round_key
 
     %{text: status_text} = result
-
-    # Update server state with updated game state
-    state = Registry.update(state, player_key, game)
 
     Event.Manager.async_notify({:guess, id, {guess, game_num}})
     Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
@@ -299,6 +302,8 @@ defmodule Hangman.Game.Server do
 
     {game, result} = Game.status(game)
 
+    state = Registry.update(state, player_key, game)
+
     %{code: status_code, text: status_text} = result
     {id, game_num, _} = round_key
 
@@ -308,8 +313,6 @@ defmodule Hangman.Game.Server do
       :game_start -> Event.Manager.async_notify({:start, id, game_num})
       _ -> ""
     end
-
-    state = Registry.update(state, player_key, game)
 
     result = result |> Map.put(:key, round_key)
 

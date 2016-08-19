@@ -50,6 +50,20 @@ defmodule Hangman.Reduction.Options do
   end
   
 
+  def reduce_key({_, :incorrect_word, guess} = context, letters) do
+
+    letters = letters |> Enum.into(MapSet.new)
+
+    # generate regex match key given context to be used to reduce words set    
+    regex = regex_match_key(context, letters)
+    
+    Keyword.new([
+      {:incorrect_word, guess},
+      {:guessed_letters, letters},
+      {:regex_match_key, regex}
+    ])
+  end
+
   @doc """
   Generates `regex` key to match and filter against possible `Hangman` words
 
@@ -76,7 +90,7 @@ defmodule Hangman.Reduction.Options do
     Regex.compile!("^" <> updated_pattern <> "$")
   end
 
-  def regex_match_key({_, :incorrect_letter, incorrect_letter}, _guessed) do    
+  def regex_match_key({_, :incorrect_letter, incorrect_letter}, _guessed_letters) do    
     # If "E" was the incorrect letter, the pattern would be "^[^E]*$"
     # Starting from the beginning of the string to the end, any string that 
     # contains an "E" will fail false-> Regex.match?(regex, "HELLO") 
@@ -85,4 +99,12 @@ defmodule Hangman.Reduction.Options do
     Regex.compile!(pattern)
   end
   
+  def regex_match_key({_, :incorrect_word, incorrect_word}, _guessed_letters) do    
+    # If "overflight" was the incorrect word, the pattern would be "^(overflight)$"
+    # Starting from the beginning of the string to the end, any string that 
+    # contains an "E" will fail false-> Regex.match?(regex, "HELLO") 
+    
+    pattern = "^(?!" <> incorrect_word <> "$)"
+    Regex.compile!(pattern)
+  end
 end

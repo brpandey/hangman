@@ -23,7 +23,6 @@ defmodule Hangman.Player.Controller do
   """
   
   def start_link(), do: GenServer.start_link(__MODULE__, nil, [name: @name])
-  def register(pid), do: GenServer.cast(@name, {:register, pid})
 
   def start_worker(name, type, display, game_pid) when is_binary(name) and 
       is_atom(type) and is_boolean(display) and is_pid(game_pid) do
@@ -50,22 +49,11 @@ defmodule Hangman.Player.Controller do
     {:ok, nil} 
   end
 
-  def handle_cast({:register, pid}, state) when is_pid(pid) do
-    monitor_ref = Process.monitor(pid)
-
-    Logger.debug("player controller handle_call register: ref: #{inspect monitor_ref}")
-
-    {:noreply, state}
-  end
-
-
   def handle_cast({:stop_worker, id}, state) do
-    player_pid = get_worker_pid(id)
-    player_pid |> Player.Worker.stop
+    get_worker_pid(id) |> Player.Worker.stop
 
     {:noreply, state}
   end
-
 
   def handle_call({:start_worker, name, type, display, game_pid}, _from, state) do
     {:ok, player_pid} = 
@@ -74,47 +62,21 @@ defmodule Hangman.Player.Controller do
     {:reply, player_pid, state}
   end
 
-
   def handle_call({:proceed, id}, _from, state) do
-    player_pid = get_worker_pid(id)
-    response = player_pid |> Player.Worker.proceed
+    
+    response = 
+      case do_proceed(id) do
+        nil -> do_proceed(id) # call again
+        data -> data
+      end
 
     {:reply, response, state}
   end
-
   
   def handle_call({:guess, id, data}, _from, state) do
-    player_pid = get_worker_pid(id)
-    response = player_pid |> Player.Worker.guess(data)
-    
+    response = get_worker_pid(id) |> Player.Worker.guess(data)
+  
     {:reply, response, state}
-  end
-
-
-  def handle_info({:DOWN, ref, :process, pid, :normal}, state) do
-    Logger.debug "In Player.Controller handle info, received DOWN normal msg, from #{inspect pid}"
-
-    Process.demonitor(ref)
-
-    Logger.debug("{:EXIT, _, :normal}, #{inspect state}")
-
-    { :noreply, state }
-  end
-
-  def handle_info({:DOWN, ref, :process, pid, _}, state) do
-    Logger.debug "In Player.Controller handle info, received DOWN abnormal msg, from #{inspect pid}"
-
-    Process.demonitor(ref)
-    
-    Logger.debug("{:EXIT, _, abnormal}, #{inspect state}")
-    { :noreply, state }
-  end
-
-
-  # Generic
-  def handle_info(msg, state) do
-    Logger.debug "In  handle info, msg is #{inspect msg}"
-    { :noreply, state }
   end
 
 
@@ -129,6 +91,16 @@ defmodule Hangman.Player.Controller do
   end
 
 
+  defp do_proceed(id) do
+    try do
+      get_worker_pid(id) |> Player.Worker.proceed
+    catch :exit, reason ->
+      Logger.info "Caught exit in player controller, reason is #{inspect reason}"
+      {:retry, reason}
+    end
+  end
+
+
   @docp """
   Checks registry cache for `Player.Worker` pid given unique id, returns cached `pid`
   """
@@ -137,12 +109,10 @@ defmodule Hangman.Player.Controller do
   defp get_worker_pid(player_name) do    
 
     pid =
-    case Player.Worker.whereis(player_name) do
-      :undefined -> raise "Unable to find worker pid"
-      pid -> 
-        true = Process.alive?(pid)
-        pid
-    end
+      case Player.Worker.whereis(player_name) do
+        :undefined -> raise "Couldn't find player worker pid"
+        pid -> pid
+      end
 
     pid
   end

@@ -94,24 +94,31 @@ defmodule Hangman.CLI.Test do
 
   end
 
-"""
+  test "word not in dictionary, pass size zero -- rearranged order of secrets" do
+
+    argv = ["-n", "barthalemu_test", "-t", "robot", "-s", "masterful azerbaijan", "-d", "-l"]
+
+    CLI.main(argv)
+
+  end
+
+  # ERRORS!!
+  # get player controller error, can't find pid sometimes -- race condition
   test "robot, word not in dictionary - exhausted all words" do
 
-    command = "-n harrison_test -t robot -s azerbaijan"
+    command = "-n harrison_test -t robot -s azerbaijan -d"
     argv = String.split(command)
     CLI.main(argv)
    
   end
 
-
+  # ERRORS!!
+  #loops indefinately
   test "human, word not in dictionary - exhausted all words" do
 
-    command = "-n oscar_test -t human -s azerbaijan"
+    command = "-n oscar_test -t human -s azerbaijan -d"
     argv = String.split(command)
     CLI.main(argv)
-   
   end
-
-"""
 
 end
