@@ -15,10 +15,10 @@ defmodule Hangman.Pass.Stub do
   """
 
   @spec result(atom, Pass.key, Reduction.key) :: tuple
-  def result(:game_start, {id, game_no, 1} = pass_key, reduce_key) 
+  def result(:start, {id, game_no, 1} = pass_key, reduce_key) 
     when is_binary(id) and is_number(game_no) do
 
-    {:ok, true} = Keyword.fetch(reduce_key, :game_start)
+    {:ok, true} = Keyword.fetch(reduce_key, :start)
     {:ok, _length_filter_key}  = Keyword.fetch(reduce_key, :secret_length)
     
     simulate_reduce_sequence(pass_key)
@@ -29,7 +29,7 @@ defmodule Hangman.Pass.Stub do
   """
 
   @spec result(atom, Pass.key, Reduction.key) :: tuple
-  def result(:game_keep_guessing, {id, game_no, round_no} = pass_key, reduce_key)
+  def result(:guessing, {id, game_no, round_no} = pass_key, reduce_key)
     when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
 

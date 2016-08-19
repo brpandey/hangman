@@ -74,7 +74,7 @@ defmodule Hangman.Player.Worker.Test do
 
     #:sys.trace(ppid, true)
 
-    {:start, _reply} = ppid |> Player.Worker.proceed
+    {:begin, _reply} = ppid |> Player.Worker.proceed
     {:action, reply} = ppid |> Player.Worker.proceed
 
     assert "-------E; score=1; status=KEEP_GUESSING" = reply
@@ -137,7 +137,7 @@ defmodule Hangman.Player.Worker.Test do
 
     #:sys.trace(ppid, true)
 
-    {:start, reply} = ppid |> Player.Worker.proceed
+    {:begin, reply} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 1a: #{inspect reply}"      
 
@@ -228,7 +228,7 @@ defmodule Hangman.Player.Worker.Test do
 
     IO.puts "\nGame 2a: #{inspect reply}"  # transition stop
 
-    {:start, reply} = ppid |> Player.Worker.proceed
+    {:begin, reply} = ppid |> Player.Worker.proceed
 
     IO.puts "\nGame 2b: #{inspect reply}"  # start
 

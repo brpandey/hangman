@@ -68,59 +68,59 @@ defmodule Hangman.Game.Server.Test do
 
     Game.Server.register(game_pid, player_key, round_key)
     
-    assert %{key: ^round_key, code: :game_keep_guessing, 
+    assert %{key: ^round_key, code: :guessing, 
              text: "-------; score=0; status=KEEP_GUESSING"} = 
       Game.Server.status(game_pid, player_key, round_key)
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "--C----", text: "--C----; score=1; status=KEEP_GUESSING"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "c"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "--C-U--", text: "--C-U--; score=2; status=KEEP_GUESSING"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "u"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "-AC-UA-", text: "-AC-UA-; score=3; status=KEEP_GUESSING"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "a"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "FAC-UA-", text: "FAC-UA-; score=4; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "f"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "FACTUA-", text: "FACTUA-; score=5; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "t"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_won, 
+    assert %{key: ^round_key, result: :correct_letter, code: :won, 
              pattern: "FACTUAL", text: "FACTUAL; score=6; status=GAME_WON"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "l"})
 
-    assert %{key: ^round_key, code: :game_start} = 
+    assert %{key: ^round_key, code: :start} = 
       Game.Server.status(game_pid, player_key, round_key)
 
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
             pattern: "--C---C-", text: "--C---C-; score=1; status=KEEP_GUESSING"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "c"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
             pattern: "-AC--AC-", text: "-AC--AC-; score=2; status=KEEP_GUESSING"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "a"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
             pattern: "-ACK-ACK", text: "-ACK-ACK; score=3; status=KEEP_GUESSING"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "k"})
 
-    assert %{key: ^round_key, result: :correct_word, code: :game_won, 
+    assert %{key: ^round_key, result: :correct_word, code: :won, 
             pattern: "BACKPACK", text: "BACKPACK; score=3; status=GAME_WON"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_word, "backpack"}) 
 
-    assert %{key: ^round_key, code: :games_over,
+    assert %{key: ^round_key, code: :finished,
              text: "Game Over! Average Score: 4.5, # Games: 2, Scores:  (FACTUAL: 6) (BACKPACK: 3)"} =
       Game.Server.status(game_pid, player_key, round_key)
 
-    assert %{key: ^round_key, code: :games_reset} = 
+    assert %{key: ^round_key, code: :reset} = 
       Game.Server.status(game_pid, player_key, round_key)
 
   end
@@ -138,66 +138,66 @@ defmodule Hangman.Game.Server.Test do
 
     Game.Server.register(game_pid, player_key, round_key)
 
-    assert %{key: ^round_key, code: :game_keep_guessing, 
+    assert %{key: ^round_key, code: :guessing, 
              text: "-----; score=0; status=KEEP_GUESSING"} = 
       Game.Server.status(game_pid, player_key, round_key)
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "H----", text: "H----; score=1; status=KEEP_GUESSING"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "h"})
 
-    assert %{key: ^round_key, result: :incorrect_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :incorrect_letter, code: :guessing, 
              pattern: "H----", text: "H----; score=2; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "l"})
 
-    assert %{key: ^round_key, result: :incorrect_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :incorrect_letter, code: :guessing, 
              pattern: "H----", text: "H----; score=3; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "g"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "H-A--", text: "H-A--; score=4; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "a"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "H-AR-", text: "H-AR-; score=5; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "r"})
 
-    assert %{key: ^round_key, result: :correct_word, code: :game_won, 
+    assert %{key: ^round_key, result: :correct_word, code: :won, 
              pattern: "HEART", text: "HEART; score=5; status=GAME_WON"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_word, "heart"})  
 
-    assert %{key: ^round_key, code: :game_start} = 
+    assert %{key: ^round_key, code: :start} = 
       Game.Server.status(game_pid, player_key, round_key)
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "----A--", text: "----A--; score=1; status=KEEP_GUESSING"} = 
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "a"})  
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
             pattern: "----A-Y", text: "----A-Y; score=2; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "y"})
 
-    assert %{key: ^round_key, result: :incorrect_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :incorrect_letter, code: :guessing, 
             pattern: "----A-Y", text: "----A-Y; score=3; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "s"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
             pattern: "L-LLA-Y", text: "L-LLA-Y; score=4; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "l"})
 
-    assert %{key: ^round_key, result: :correct_word, code: :game_won, 
+    assert %{key: ^round_key, result: :correct_word, code: :won, 
              pattern: "LULLABY", text: "LULLABY; score=4; status=GAME_WON"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_word, "lullaby"})  
 
-    assert %{key: ^round_key, code: :games_over, 
+    assert %{key: ^round_key, code: :finished, 
              text: "Game Over! Average Score: 4.5, # Games: 2, Scores:  (HEART: 5) (LULLABY: 4)"} =
       Game.Server.status(game_pid, player_key, round_key)
 
 
-    assert %{key: ^round_key, code: :games_reset} = 
+    assert %{key: ^round_key, code: :reset} = 
       Game.Server.status(game_pid, player_key, round_key)
 
-    assert %{key: ^round_key, code: :games_reset} = 
+    assert %{key: ^round_key, code: :reset} = 
       Game.Server.status(game_pid, player_key, round_key)
 
   end
@@ -212,28 +212,28 @@ defmodule Hangman.Game.Server.Test do
     player_key = context[:params] |> Map.get(:current_player_key)
     round_key = context[:params] |> Map.get(:current_round_key)
 
-    assert %{code: :game_keep_guessing, data: 6, key: ^round_key,
+    assert %{code: :guessing, data: 6, key: ^round_key,
              text: "------; score=0; status=KEEP_GUESSING"} = 
       Game.Server.register(game_pid, player_key, round_key)
     
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "-----L", text: "-----L; score=1; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "l"})                 
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "----AL", text: "----AL; score=2; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "a"})
 
-    assert %{key: ^round_key, result: :correct_letter, code: :game_keep_guessing, 
+    assert %{key: ^round_key, result: :correct_letter, code: :guessing, 
              pattern: "J---AL", text: "J---AL; score=3; status=KEEP_GUESSING"} =
       Game.Server.guess(game_pid, player_key, round_key, {:guess_letter, "j"})
 
-    assert %{key: ^round_key, result: :correct_word, code: :game_won, 
+    assert %{key: ^round_key, result: :correct_word, code: :won, 
              pattern: "JOVIAL", text: "JOVIAL; score=3; status=GAME_WON"} =
      Game.Server.guess(game_pid, player_key, round_key, {:guess_word, "jovial"})
 
 
-    assert %{key: ^round_key, code: :games_over, 
+    assert %{key: ^round_key, code: :finished, 
              text: "Game Over! Average Score: 3.0, # Games: 1, Scores:  (JOVIAL: 3)"} =
       Game.Server.status(game_pid, player_key, round_key)
 

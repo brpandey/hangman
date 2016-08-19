@@ -75,7 +75,7 @@ defmodule Hangman.Player.Logger.Handler do
           "# word --> #{word} "
         {:status, _, {_game_no, round_no, text}} -> 
           "# round #{round_no} status --> #{text}\n"
-        {:games_over, _, text} ->     
+        {:finished, _, text} ->     
           "\n# games over! --> #{text} \n"
       end
 

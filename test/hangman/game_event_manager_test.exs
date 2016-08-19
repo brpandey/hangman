@@ -59,7 +59,7 @@ defmodule Hangman.Game.Event.Manager.Test do
     Event.Manager.async_notify({:status, key, payload})
     
     payload = "game over summary goes here"
-    Event.Manager.async_notify({:games_over, key, payload})
+    Event.Manager.async_notify({:finished, key, payload})
   end
 
 end

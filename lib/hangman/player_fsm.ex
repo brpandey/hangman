@@ -11,34 +11,36 @@ defmodule Hangman.Player.FSM do
   design of the Fsm module code.
 
   Works for all supported player types
+
+  States are `initial`, `begin`, `setup`, `action`, `transit`, `exit`
   """
 
   alias Hangman.Player.{Action, Types}
 
   require Logger
 
-  use Fsm, initial_state: :init, initial_data: nil
+  use Fsm, initial_state: :initial, initial_data: nil
 
-  defstate init do
+  defstate initial do
     defevent initialize(args = {_name, type, _display, _game_pid}) do
 
       action_type = Map.get(Types.mapping, type)
       args = args |> Tuple.delete_at(1) # remove the type field
       player = Action.new(action_type, args)
 
-      next_state(:start, player)
+      next_state(:begin, player)
     end
   end
 
 
-  defstate start do
+  defstate begin do
     defevent proceed, data: player do
 
-      {player, code} = player |> Action.start 
+      {player, code} = player |> Action.begin 
 
       case code do
-        :game_start -> respond({:start, "fsm start"}, :setup, player)
-        :games_over -> respond({:start, "going to fsm exit"}, :exit, player)
+        :start -> respond({:begin, "fsm begin"}, :setup, player)
+        :finished -> respond({:begin, "going to fsm exit"}, :exit, player)
       end
     end
   end
@@ -70,9 +72,9 @@ defmodule Hangman.Player.FSM do
 
       # check if we get game won or game lost
       case status do
-        {code, text} when code in [:game_won, :game_lost] -> 
+        {code, text} when code in [:won, :lost] -> 
           respond({:action, text}, :transit, player)
-        {:game_keep_guessing, text} ->
+        {:guessing, text} ->
           respond({:action, text}, :setup, player)
       end
     end
@@ -87,9 +89,9 @@ defmodule Hangman.Player.FSM do
       Logger.debug "FSM transit: player is #{inspect player}"
 
       case status do
-        {:game_start, text} -> 
-          respond({:transit, text}, :start, player)
-        {:games_over, text} -> 
+        {:start, text} -> 
+          respond({:transit, text}, :begin, player)
+        {:finished, text} -> 
           respond({:transit, text}, :exit, player)
       end
     end

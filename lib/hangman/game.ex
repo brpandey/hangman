@@ -32,7 +32,7 @@ defmodule Hangman.Game do
   alias Hangman.{Game, Guess, Pattern}
   
   defstruct id: nil, current: 0, #Current game index
-  secret: "", pattern: "", score: 0, state: :games_reset,
+  secret: "", pattern: "", score: 0, state: :reset,
   secrets: [],  patterns: [], scores: [],
   max_wrong: 0, correct_letters: MapSet.new, 
   incorrect_letters: MapSet.new, incorrect_words: MapSet.new
@@ -43,8 +43,7 @@ defmodule Hangman.Game do
   @type id :: String.t
   
   @typedoc "`Game` status code values"
-  @type code :: :games_reset | :game_start | :game_keep_guessing | 
-  :game_won | :game_lost | :games_over
+  @type code :: :reset | :start | :guessing | :won | :lost | :done | :abort
 
   @typedoc "returned `Game` feedback data"
 
@@ -55,18 +54,18 @@ defmodule Hangman.Game do
 
 
   @status_codes  %{
-    game_start: {:game_start, 'GAME_START', 0},
-    game_won: {:game_won, 'GAME_WON', -2}, 
-    game_lost: {:game_lost, 'GAME_LOST', 25}, 
-    game_keep_guessing: {:game_keep_guessing, 'KEEP_GUESSING', -1},
-    games_reset: {:games_reset, 'GAMES_RESET', 0},
-    game_abort: {:game_abort, 'GAME_ABORT', 0}
+    start: {:start, 'GAME_START', 0},
+    won: {:won, 'GAME_WON', -2}, 
+    lost: {:lost, 'GAME_LOST', 25}, 
+    guessing: {:guessing, 'KEEP_GUESSING', -1},
+    reset: {:reset, 'GAME_RESET', 0},
+    abort: {:abort, 'GAME_ABORT', 0}
   }
   
   @mystery_letter "-"
 
-  @states [:games_reset, :game_start, :game_keep_guessing, 
-           :game_won, :game_lost, :games_over]
+  @states [:reset, :start, :guessing, 
+           :won, :lost, :finished]
     
   
   @doc """
@@ -81,7 +80,7 @@ defmodule Hangman.Game do
     pattern = String.duplicate(@mystery_letter, String.length(secret))
 
     %Game{id: id_key, secret: secret, secrets: [secret],
-          pattern: pattern, max_wrong: max_wrong, state: :game_start}
+          pattern: pattern, max_wrong: max_wrong, state: :start}
   end
   
   def new(id_key, secrets, max_wrong) when is_list(secrets) do
@@ -94,7 +93,7 @@ defmodule Hangman.Game do
     
     %Game{id: id_key, secret: List.first(secrets), 
           pattern: List.first(patterns), secrets: secrets, 
-          patterns: patterns, max_wrong: max_wrong, state: :game_start}
+          patterns: patterns, max_wrong: max_wrong, state: :start}
   end
 
   @doc """
@@ -133,7 +132,7 @@ defmodule Hangman.Game do
 
   # Change game status to abort
   def abort(%Game{} = game) do
-    Kernel.put_in(game.state, :game_abort)
+    Kernel.put_in(game.state, :abort)
   end
   
 
@@ -155,7 +154,7 @@ defmodule Hangman.Game do
   @spec guess(t, guess :: Guess.t) :: {t, feedback}
   def guess(%Game{} = game, {:guess_letter, letter}) do
 
-    {_, %{code: :game_keep_guessing}} = status(game) # Assert
+    {_, %{code: :guessing}} = status(game) # Assert
 
     letter = letter |> String.upcase
 
@@ -188,7 +187,7 @@ defmodule Hangman.Game do
   
   
   def guess(%Game{} = game, {:guess_word, word}) do
-    {_, %{code: :game_keep_guessing}} = status(game) # Assert
+    {_, %{code: :guessing}} = status(game) # Assert
     
     word = String.upcase(word)
     
@@ -221,26 +220,26 @@ defmodule Hangman.Game do
 
     new_code = cond do
       # GAMES_RESET, GAMES_OVER -> GAMES_RESET
-      game.state in [:games_reset, :games_over] -> :games_reset
+      game.state in [:reset, :finished] -> :reset
         
       # GAME_KEEP_GUESSING -> GAME_WON
-      game.state == :game_keep_guessing and 
-      game.secret == game.pattern -> :game_won
+      game.state == :guessing and 
+      game.secret == game.pattern -> :won
 
       # GAME_KEEP_GUESSING -> GAME_LOST
-      game.state == :game_keep_guessing and 
-      incorrect(game) > game.max_wrong -> :game_lost
+      game.state == :guessing and 
+      incorrect(game) > game.max_wrong -> :lost
 
       # GAME_START, GAME_KEEP_GUESSING -> GAME_KEEP_GUESSING
-      game.state in [:game_start, :game_keep_guessing] and 
-      game.secret != game.pattern -> :game_keep_guessing
+      game.state in [:start, :guessing] and 
+      game.secret != game.pattern -> :guessing
 
       # GAME_WON, GAME_LOST -> GAME_START, GAMES_OVER (check if games left)
-      game.state in [:game_won, :game_lost, :game_abort] -> :game_next
+      game.state in [:won, :lost, :abort] -> :next
     end
 
     case new_code do
-      :game_next -> game |> next  #state_code either GAME_START or GAMES_OVER
+      :next -> game |> next  #state_code either GAME_START or GAMES_OVER
       _ ->
         game = Kernel.put_in(game.state, new_code)
         map = build_feedback(game, new_code)
@@ -270,7 +269,7 @@ defmodule Hangman.Game do
           # New Game Start
           game = archive_and_update(game)
           
-          {game, %{id: game.id, code: :game_start, text: ""}}
+          {game, %{id: game.id, code: :start, text: ""}}
         false ->
           # Otherwise we have no more games left 
           # Store the current score in the game.scores list - insert
@@ -279,12 +278,12 @@ defmodule Hangman.Game do
           score = score(game)
           scores = List.insert_at(game.scores, game.current, score)
           
-          game = %{ game | state: :games_over, scores: scores }
+          game = %{ game | state: :finished, scores: scores }
 
           summary = build_summary(game)
           
           # Games Over
-          {game, %{id: game.id, code: :games_over, text: summary}}
+          {game, %{id: game.id, code: :finished, text: summary}}
       end
 
     {game, feedback}
@@ -321,7 +320,7 @@ defmodule Hangman.Game do
        correct_letters: MapSet.new, 
        incorrect_letters: MapSet.new, 
        incorrect_words: MapSet.new,
-       state: :game_start}
+       state: :start}
   end
   
   # Helper function to return current game score
@@ -338,11 +337,11 @@ defmodule Hangman.Game do
     score = 
       case code do
         # compute score if not lost and not reset
-        code when code in [:game_keep_guessing, :game_won] ->
+        code when code in [:guessing, :won] ->
           Set.size(game.incorrect_letters) + 
           Set.size(game.incorrect_words) +
           Set.size(game.correct_letters)
-        code when code in [:game_lost, :game_abort] ->
+        code when code in [:lost, :abort] ->
         # return default score if game lost or game_abort
           {_, _, score} = @status_codes[code]
           score
@@ -370,7 +369,7 @@ defmodule Hangman.Game do
     score = if score < 0 do score(game, state_code) else score end
 
     case state_code do
-      :games_reset -> 
+      :reset -> 
         %{id: game.id, code: state_code, text: "GAMES_RESET"}
       _ -> 
         str = "#{game.pattern}; score=#{score}; status=#{text}"
@@ -393,7 +392,7 @@ defmodule Hangman.Game do
     # count the number of game scores that have 0 e.g. game abort
     # so that we don't count them in the games played total
 
-    {_, _, abort_score} = @status_codes[:game_abort]
+    {_, _, abort_score} = @status_codes[:abort]
 
     aborted = Enum.count(game.scores, fn x -> x == abort_score end)
 

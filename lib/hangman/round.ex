@@ -44,28 +44,28 @@ defmodule Hangman.Round do
   """
 
   @type context ::  
-  ({:game_start, secret_length :: pos_integer}) |
-  ({:game_keep_guessing, :correct_letter, letter :: String.t, 
+  ({:start, secret_length :: pos_integer}) |
+  ({:guessing, :correct_letter, letter :: String.t, 
     pattern :: String.t, mystery_letter :: String.t}) |
-  ({:game_keep_guessing, :incorrect_letter, letter :: String.t})
+  ({:guessing, :incorrect_letter, letter :: String.t})
   
 
   # CREATE
 
-  # Start the new game, first round
+  # Start the new game, init round
 
-  def start(%Round{} = round) do
+  def init(%Round{} = round) do
     
     round = 
       case round.game_num do
         0 ->
           # update the passed in round
           %Round{ round | game_num: round.game_num + 1, num: 0, pid: self(),
-                  status_code: :game_start}
+                  status_code: :start}
         _ ->
           # create a new round with some leftover data from passed in round
           %Round{ id: round.id, pid: round.pid, num: 0,
-                  game_num: round.game_num + 1, status_code: :game_start,
+                  game_num: round.game_num + 1, status_code: :start,
                   game_pid: round.game_pid }
       end
     
@@ -76,9 +76,9 @@ defmodule Hangman.Round do
       Game.Server.register(game_pid, player_key, round_key)
     
 
-    context = if status_code == :games_over do nil else {:game_start, data} end
+    context = if status_code == :finished do nil else {:start, data} end
 
-    %Round{ round | status_code: status_code, # was :game_start previously
+    %Round{ round | status_code: status_code, # was :start previously
             status_text: status_text, 
             context: context}
     
@@ -166,12 +166,12 @@ defmodule Hangman.Round do
   end
 
   # Specifies steps for end of single game round 
-  # transitions to either a :game_start or :games_over
+  # transitions to either a :start or :finished
 
   @spec transition(t) :: Map.t
   def transition(%Round{} = round) do
 
-    true = round.status_code in [:game_won, :game_lost]
+    true = round.status_code in [:won, :lost]
 
     {player_key, round_key, game_pid} = game_context_key(round)
 
@@ -199,22 +199,19 @@ defmodule Hangman.Round do
     case round.result_code do
       :correct_letter -> 
         {:guess_letter, letter} = round.guess
-
-        {:game_keep_guessing, :correct_letter, letter, 
-            round.pattern, Game.mystery_letter}
+        {:guessing, :correct_letter, letter, round.pattern, Game.mystery_letter}
 
       :incorrect_letter -> 
         {:guess_letter, letter} = round.guess
-
-        {:game_keep_guessing, :incorrect_letter, letter}
+        {:guessing, :incorrect_letter, letter}
 
       :incorrect_word ->
         {:guess_word, word} = round.guess
-        {:game_keep_guessing, :incorrect_word, word}
+        {:guessing, :incorrect_word, word}
 
       :correct_word -> 
         {:guess_word, word} = round.guess
-        {:game_won, :correct_word, word}
+        {:won, :correct_word, word}
       
       true ->
         raise HangmanError, "Unknown round result"

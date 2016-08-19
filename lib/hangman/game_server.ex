@@ -199,13 +199,13 @@ defmodule Hangman.Game.Server do
 
     data = 
       case status_code do
-        code when code in [:game_start, :game_keep_guessing] ->
+        code when code in [:start, :guessing] ->
           data = Game.secret_length(game)    
           Event.Manager.async_notify({:register, id, {game_num, data}})
           data
-        :games_over ->
+        :finished ->
           data = 0
-          Event.Manager.async_notify({:games_over, id, status_text})
+          Event.Manager.async_notify({:finished, id, status_text})
           data
       end
 
@@ -309,8 +309,8 @@ defmodule Hangman.Game.Server do
 
     # Notify event manager
     case status_code do
-      :games_over -> Event.Manager.async_notify({:games_over, id, status_text})
-      :game_start -> Event.Manager.async_notify({:start, id, game_num})
+      :finished -> Event.Manager.async_notify({:finished, id, status_text})
+      :start -> Event.Manager.async_notify({:start, id, game_num})
       _ -> ""
     end
 

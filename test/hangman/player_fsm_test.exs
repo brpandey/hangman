@@ -59,14 +59,14 @@ defmodule Hangman.Player.FSM.Test do
 
     # create the FSM abstraction and then initalize it
     fsm = Player.FSM.new
-    assert(Player.FSM.state(fsm) == :init)
+    assert(Player.FSM.state(fsm) == :initial)
     assert(Player.FSM.data(fsm) == nil)
 
     fsm = Player.FSM.initialize(fsm, args) 
-    assert(Player.FSM.state(fsm) == :start)
+    assert(Player.FSM.state(fsm) == :begin)
 
     {response, fsm} = Player.FSM.proceed(fsm)
-    assert(response == {:start, "fsm start"})
+    assert(response == {:begin, "fsm begin"})
     assert(Player.FSM.state(fsm) == :setup)
 
     {response, fsm} = Player.FSM.proceed(fsm)
@@ -147,12 +147,12 @@ defmodule Hangman.Player.FSM.Test do
 
     assert(response == {:transit, ""})
 
-    assert(Player.FSM.state(fsm) == :start)
+    assert(Player.FSM.state(fsm) == :begin)
 
 
     {response, fsm} = Player.FSM.proceed(fsm)
 
-    assert(response == {:start, "fsm start"})
+    assert(response == {:begin, "fsm begin"})
 
     assert(Player.FSM.state(fsm) == :setup)
 
@@ -242,14 +242,14 @@ defmodule Hangman.Player.FSM.Test do
 
     # create the FSM abstraction and then initalize it
     fsm = Player.FSM.new
-    assert(Player.FSM.state(fsm) == :init)
+    assert(Player.FSM.state(fsm) == :initial)
     assert(Player.FSM.data(fsm) == nil)
 
     fsm = Player.FSM.initialize(fsm, args) 
-    assert(Player.FSM.state(fsm) == :start)
+    assert(Player.FSM.state(fsm) == :begin)
 
     {response, fsm} = Player.FSM.proceed(fsm)
-    assert(response == {:start, "fsm start"})
+    assert(response == {:begin, "fsm begin"})
     assert(Player.FSM.state(fsm) == :setup)
 
     {response, fsm} = Player.FSM.proceed(fsm)

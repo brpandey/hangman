@@ -7,17 +7,17 @@ defmodule Hangman.Player.Generic do
   
   alias Hangman.{Round, Letter.Strategy}
 
-  def init(name, game_pid) when is_binary(name) and is_pid(game_pid) do
+  def new(name, game_pid) when is_binary(name) and is_pid(game_pid) do
     %Round{ id: name, pid: nil, game_pid: game_pid }
   end
 
-  def start(%Round{} = round, type) do
-    round = Round.start(round)
+  def begin(%Round{} = round, type) do
+    round = Round.init(round)
     strategy = Strategy.new(type)
 
     case Round.status(round) do
-      {:games_over, _text} -> {round, strategy, :games_over}
-      _ -> {round, strategy, :game_start}
+      {:finished, _text} -> {round, strategy, :finished}
+      _ -> {round, strategy, :start}
     end
   end
 

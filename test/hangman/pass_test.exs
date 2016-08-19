@@ -41,7 +41,7 @@ defmodule Hangman.Pass.Test do
 
     pass_key = {id, game_no, round_no} = {"julio", 3, 1}
 
-    context = {:game_start, 9} 
+    context = {:start, 9} 
 
     guessed = Strategy.guessed(strategy)
 
@@ -53,7 +53,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_start, pass_key, reduce_key)
+      Pass.result(:start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -65,7 +65,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy 1a is: #{inspect strategy}\n"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "e"}
+    context = {:guessing, :incorrect_letter, "e"}
     
     #### ROUND 2
     pass_key = {id, game_no, round_no = round_no + 1}
@@ -85,7 +85,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -93,7 +93,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "a", "A--A-A---", "-"}
+    context = {:guessing, :correct_letter, "a", "A--A-A---", "-"}
     
   # ROUND 3
 
@@ -115,7 +115,7 @@ defmodule Hangman.Pass.Test do
  
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -123,7 +123,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "n"}
+    context = {:guessing, :incorrect_letter, "n"}
 
 
     # ROUND 4
@@ -147,7 +147,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -155,7 +155,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "b"}
+    context = {:guessing, :incorrect_letter, "b"}
 
 
     # ROUND 5
@@ -178,7 +178,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -186,7 +186,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "g", "A--A-AG--", "-"}
+    context = {:guessing, :correct_letter, "g", "A--A-AG--", "-"}
 
 
 
@@ -209,7 +209,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -226,7 +226,7 @@ defmodule Hangman.Pass.Test do
 
     pass_key = {id, game_no, round_no} = {"yoko", 3, 1}
 
-    context = {:game_start, 9} 
+    context = {:start, 9} 
 
     guessed = Strategy.guessed(strategy)
 
@@ -238,7 +238,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_start, pass_key, reduce_key)
+      Pass.result(:start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -250,7 +250,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy 1a is: #{inspect strategy}\n"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "e"}
+    context = {:guessing, :incorrect_letter, "e"}
     
     #### ROUND 2
     pass_key = {id, game_no, round_no = round_no + 1}
@@ -270,7 +270,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -278,7 +278,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "a", "A--A-A---", "-"}
+    context = {:guessing, :correct_letter, "a", "A--A-A---", "-"}
     
   # ROUND 3
 
@@ -300,7 +300,7 @@ defmodule Hangman.Pass.Test do
  
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -308,7 +308,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "n"}
+    context = {:guessing, :incorrect_letter, "n"}
 
 
     # ROUND 4
@@ -332,7 +332,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -340,7 +340,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "b"}
+    context = {:guessing, :incorrect_letter, "b"}
 
 
     # ROUND 5
@@ -363,7 +363,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -371,7 +371,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "g", "A--A-AG--", "-"}
+    context = {:guessing, :correct_letter, "g", "A--A-AG--", "-"}
 
 
 
@@ -394,7 +394,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -413,7 +413,7 @@ defmodule Hangman.Pass.Test do
 
     pass_key = {id, game_no, round_no} = {"julio", 2, 1}
 
-    context = {:game_start, 10} 
+    context = {:start, 10} 
 
     guessed = Strategy.guessed(strategy)
 
@@ -425,7 +425,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_start, pass_key, reduce_key)
+      Pass.result(:start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -437,7 +437,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy 1a is: #{inspect strategy}\n"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "e"}
+    context = {:guessing, :incorrect_letter, "e"}
     
     #### ROUND 2
     pass_key = {id, game_no, round_no = round_no + 1}
@@ -457,7 +457,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -465,7 +465,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "i"}
+    context = {:guessing, :incorrect_letter, "i"}
     
 
     # ROUND 3
@@ -488,7 +488,7 @@ defmodule Hangman.Pass.Test do
  
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -496,7 +496,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "a"}
+    context = {:guessing, :incorrect_letter, "a"}
 
 
     # ROUND 4
@@ -517,7 +517,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -525,7 +525,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "o", "-O-----O--", "-"}
+    context = {:guessing, :correct_letter, "o", "-O-----O--", "-"}
 
 
     # ROUND 5
@@ -550,7 +550,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -558,7 +558,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "s", "-O-----O-S", "-"}
+    context = {:guessing, :correct_letter, "s", "-O-----O-S", "-"}
 
 
 
@@ -583,7 +583,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -591,7 +591,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "c"}
+    context = {:guessing, :incorrect_letter, "c"}
 
 
     # ROUND 7
@@ -614,7 +614,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -623,7 +623,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy round 7 is: #{inspect strategy}"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "g"}
+    context = {:guessing, :incorrect_letter, "g"}
 
 
 
@@ -647,7 +647,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -664,7 +664,7 @@ defmodule Hangman.Pass.Test do
 
     pass_key = {id, game_no, round_no} = {"yoko", 2, 1}
 
-    context = {:game_start, 10} 
+    context = {:start, 10} 
 
     guessed = Strategy.guessed(strategy)
 
@@ -676,7 +676,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_start, pass_key, reduce_key)
+      Pass.result(:start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -688,7 +688,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy 1a is: #{inspect strategy}\n"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "e"}
+    context = {:guessing, :incorrect_letter, "e"}
     
     #### ROUND 2
     pass_key = {id, game_no, round_no = round_no + 1}
@@ -708,7 +708,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -716,7 +716,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "i"}
+    context = {:guessing, :incorrect_letter, "i"}
     
 
     # ROUND 3
@@ -739,7 +739,7 @@ defmodule Hangman.Pass.Test do
  
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -747,7 +747,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "a"}
+    context = {:guessing, :incorrect_letter, "a"}
 
 
     # ROUND 4
@@ -768,7 +768,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -776,7 +776,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "o", "-O-----O--", "-"}
+    context = {:guessing, :correct_letter, "o", "-O-----O--", "-"}
 
 
     # ROUND 5
@@ -801,7 +801,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -809,7 +809,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "s", "-O-----O-S", "-"}
+    context = {:guessing, :correct_letter, "s", "-O-----O-S", "-"}
 
 
 
@@ -834,7 +834,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -842,7 +842,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "c"}
+    context = {:guessing, :incorrect_letter, "c"}
 
 
     # ROUND 7
@@ -865,7 +865,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -874,7 +874,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy round 7 is: #{inspect strategy}"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "g"}
+    context = {:guessing, :incorrect_letter, "g"}
 
 
 
@@ -898,7 +898,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -914,7 +914,7 @@ defmodule Hangman.Pass.Test do
 
     pass_key = {id, game_no, round_no} = {"julio" <> tag, 1, 1}
 
-    context = {:game_start, 8} 
+    context = {:start, 8} 
 
     guessed = Strategy.guessed(strategy)
 
@@ -926,7 +926,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_start, pass_key, reduce_key)
+      Pass.result(:start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -939,7 +939,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy 1c is: #{inspect strategy}\n"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "e", "-------E", "-"}
+    context = {:guessing, :correct_letter, "e", "-------E", "-"}
     
 
     #### ROUND 2
@@ -960,7 +960,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -968,7 +968,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "a", "-----A-E", "-"}
+    context = {:guessing, :correct_letter, "a", "-----A-E", "-"}
     
 
     # ROUND 3
@@ -989,7 +989,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -997,7 +997,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "t", "-----ATE", "-"}
+    context = {:guessing, :correct_letter, "t", "-----ATE", "-"}
 
 
     # ROUND 4
@@ -1018,7 +1018,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1026,7 +1026,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "o"}
+    context = {:guessing, :incorrect_letter, "o"}
 
 
     # ROUND 5
@@ -1049,7 +1049,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1057,7 +1057,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "i"}
+    context = {:guessing, :incorrect_letter, "i"}
 
 
 
@@ -1083,7 +1083,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1091,7 +1091,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "l", "----LATE", "-"}
+    context = {:guessing, :correct_letter, "l", "----LATE", "-"}
 
 
     # ROUND 7
@@ -1114,7 +1114,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1123,7 +1123,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy round 7 is: #{inspect strategy}"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "c", "C---LATE", "-"}
+    context = {:guessing, :correct_letter, "c", "C---LATE", "-"}
 
 
 
@@ -1147,7 +1147,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1155,7 +1155,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "m", "C-M-LATE", "-"}
+    context = {:guessing, :correct_letter, "m", "C-M-LATE", "-"}
 
     # ROUND 9
 
@@ -1175,7 +1175,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1193,7 +1193,7 @@ defmodule Hangman.Pass.Test do
 
     pass_key = {id, game_no, round_no} = {"yoko" <> tag, 1, 1}
 
-    context = {:game_start, 8} 
+    context = {:start, 8} 
 
     guessed = Strategy.guessed(strategy)
 
@@ -1205,7 +1205,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert pass reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_start, pass_key, reduce_key)
+      Pass.result(:start, pass_key, reduce_key)
 
     IO.puts "Passed initial game start reduce"
 
@@ -1218,7 +1218,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy 1c is: #{inspect strategy}\n"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "e", "-------E", "-"}
+    context = {:guessing, :correct_letter, "e", "-------E", "-"}
     
 
     #### ROUND 2
@@ -1239,7 +1239,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1247,7 +1247,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "a", "-----A-E", "-"}
+    context = {:guessing, :correct_letter, "a", "-----A-E", "-"}
     
 
     # ROUND 3
@@ -1268,7 +1268,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1276,7 +1276,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "t", "-----ATE", "-"}
+    context = {:guessing, :correct_letter, "t", "-----ATE", "-"}
 
 
     # ROUND 4
@@ -1297,7 +1297,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1305,7 +1305,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "o"}
+    context = {:guessing, :incorrect_letter, "o"}
 
 
     # ROUND 5
@@ -1328,7 +1328,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1336,7 +1336,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :incorrect_letter, "i"}
+    context = {:guessing, :incorrect_letter, "i"}
 
 
 
@@ -1362,7 +1362,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1370,7 +1370,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "l", "----LATE", "-"}
+    context = {:guessing, :correct_letter, "l", "----LATE", "-"}
 
 
     # ROUND 7
@@ -1393,7 +1393,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1402,7 +1402,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "strategy round 7 is: #{inspect strategy}"
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "c", "C---LATE", "-"}
+    context = {:guessing, :correct_letter, "c", "C---LATE", "-"}
 
 
 
@@ -1426,7 +1426,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)
@@ -1434,7 +1434,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Game Server Guess results
-    context = {:game_keep_guessing, :correct_letter, "m", "C-M-LATE", "-"}
+    context = {:guessing, :correct_letter, "m", "C-M-LATE", "-"}
 
     # ROUND 9
 
@@ -1454,7 +1454,7 @@ defmodule Hangman.Pass.Test do
 
     # Assert reduce results!!!
     {^pass_key, ^pass_info} = 
-      Pass.result(:game_keep_guessing, pass_key, reduce_key)
+      Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
     strategy = Strategy.update(strategy, pass_info)

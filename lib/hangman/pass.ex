@@ -3,7 +3,7 @@ defmodule Hangman.Pass do
   Module defines types `Pass.key` and `Pass.t`
 
   Returns result of pass runs as distinguished by initial
-  `:game_start` or subsequent `:game_keep_guessing` modes.
+  `:start` or subsequent `:guessing` modes.
 
   Pass data is a group of the pass size, the letter frequency tally, 
   and relevant data on final word information.
@@ -41,11 +41,11 @@ defmodule Hangman.Pass do
   and other data given these cache `keys`. Relies on either the Dictionary
   Cache or the Reduction Engine to compute new pass data
 
-    * `:game_start` - this is the initial game start `pass`, so we 
+    * `:start` - this is the initial game start `pass`, so we 
     request the data from the `Dictionary.Cache`.  The data is stored into 
     the `Pass.Cache` via `Pass.Cache.Writer.write/2`. Returns `pass` data type.
 
-    * `:game_keep_guessing` - retrieves the pass data from the last 
+    * `:guessing` - retrieves the pass data from the last 
     player round and relies on `Reduction.Engine.reduce/3` to reduce the possible
     `Hangman` words set with `reduce_key`.  When the reduction is finished, we 
     write the data back to the `Pass.Cache` and return the new `pass` data.
@@ -54,11 +54,11 @@ defmodule Hangman.Pass do
 
   @spec result(atom, pass_key :: Pass.key, reduce_key :: Reduction.key) 
   :: {Pass.key, Pass.t} | no_return
-  def result(:game_start, {id, game_no, round_no} = pass_key, reduce_key)
+  def result(:start, {id, game_no, round_no} = pass_key, reduce_key)
   when is_binary(id) and is_number(game_no) and is_number(round_no) do
 
     # Asserts
-    {:ok, true} = Keyword.fetch(reduce_key, :game_start)
+    {:ok, true} = Keyword.fetch(reduce_key, :start)
     {:ok, length_key}  = Keyword.fetch(reduce_key, :secret_length)
     
     # Since this is the first pass, grab the words and tally from
@@ -82,7 +82,7 @@ defmodule Hangman.Pass do
   end
 
 
-  def result(:game_keep_guessing, {id, game_no, round_no} = pass_key, reduce_key)
+  def result(:guessing, {id, game_no, round_no} = pass_key, reduce_key)
   when is_binary(id) and is_number(game_no) and is_number(round_no) do
     
     {:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)

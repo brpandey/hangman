@@ -11,10 +11,10 @@ defmodule Hangman.Reduction.Options do
   """
 
   @spec reduce_key(Guess.context, exclusion :: Enumerable.t) :: Reduction.key
-  def reduce_key({:game_start, secret_length} = _context, _letters) do
+  def reduce_key({:start, secret_length} = _context, _letters) do
     
     Keyword.new([
-      {:game_start, true},
+      {:start, true},
       {:secret_length, secret_length}
     ])
   end

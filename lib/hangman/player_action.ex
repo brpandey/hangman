@@ -36,13 +36,15 @@ defprotocol Hangman.Player.Action do
   NOTE: Should a player submit a secret hangman word that does not actually
   reside in the `Dictionary.Cache`, the game will currently be prematurely 
   aborted.
+
+  Function names are `new/2`, `begin/1`, `setup/1`, `guess`, `transition/1`
   """
 
   @doc "Create new player"
   def new(player, args)
 
-  @doc "Start new game player action"
-  def start(player)
+  @doc "Begin new game player action"
+  def begin(player)
 
   @doc "Sets up each action state"
   def setup(player)
@@ -59,12 +61,12 @@ defimpl Hangman.Player.Action, for: Human do
   def new(%Human{} = player, {name, display, game_pid}) when is_binary(name) 
       and is_boolean(display) and is_pid(game_pid) do
 
-    round = Generic.init(name, game_pid)
+    round = Generic.new(name, game_pid)
     %Human{player | display: display, round: round}
   end
 
-  def start(%Human{} = player) do
-    {round, strategy, code} = Generic.start(player.round, player.type)
+  def begin(%Human{} = player) do
+    {round, strategy, code} = Generic.begin(player.round, player.type)
     player = %Human{ player | round: round, strategy: strategy }
     {player, code}
   end
@@ -92,12 +94,12 @@ defimpl Hangman.Player.Action, for: Robot do
 
   def new(%Robot{} = player, {name, display, game_pid})
   when is_binary(name) and is_boolean(display) and is_pid(game_pid) do
-    round = Generic.init(name, game_pid)
+    round = Generic.new(name, game_pid)
     %Robot{player | display: display, round: round}
   end
 
-  def start(%Robot{} = player) do
-    {round, strategy, code} = Generic.start(player.round, player.type)
+  def begin(%Robot{} = player) do
+    {round, strategy, code} = Generic.begin(player.round, player.type)
     player = %Robot{ player | round: round, strategy: strategy }
     {player, code}
   end

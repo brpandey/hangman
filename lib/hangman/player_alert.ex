@@ -71,7 +71,7 @@ defmodule Hangman.Player.Alert.Handler do
         {:status, name, {game_no, round_no, text}} ->
           "##{name}_feed Game #{game_no}, " <> 
             "Round #{round_no}, status --> #{text}\n"
-        {:games_over, name, text} ->
+        {:finished, name, text} ->
           "##{name}_feed Game Over!! --> #{text}"
       end
 

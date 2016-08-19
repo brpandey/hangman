@@ -88,7 +88,7 @@ defmodule Hangman.Client.Handler do
       feedback = handle_setup(key, feedback)
 
       case feedback do
-        {code, _status} when code in [:start, :action, :transit, :retry] ->
+        {code, _status} when code in [:begin, :action, :transit, :retry] ->
           {:cont, acc + 1}
 
         {:exit, _status} -> 
@@ -112,7 +112,7 @@ defmodule Hangman.Client.Handler do
       feedback = handle_setup(key, feedback)
 
       case feedback do
-        {code, _status} when code in [:start, :transit, :retry] ->
+        {code, _status} when code in [:begin, :transit, :retry] ->
           {:cont, acc}
 
         {:action, status} -> 
