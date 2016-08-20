@@ -34,7 +34,7 @@ defmodule Hangman.Game.Server do
   """
   
   @spec start_link(id, (String.t | [String.t]), 
-                   pos_integer) :: {:ok, pid}
+                   pos_integer) :: GenServer.on_start
   def start_link(id_key, secret, max_wrong \\ @max_wrong) do
 
 
@@ -150,7 +150,7 @@ defmodule Hangman.Game.Server do
   GenServer callback to initalize server process
   """
   
-  #@callback init(Registry.t) :: tuple
+  @callback init(term) :: tuple
   def init(state) do
     Logger.info "Starting Hangman Game Server #{inspect self}"
     {:ok, state}

@@ -87,8 +87,8 @@ defmodule Hangman.Pass.Cache do
   end
 
 
-  @docp """
-  Get routine retrieves `pass` chunks cache data given pass key
+  @doc """
+  Get routine retrieves `pass` chunks cache data given the pass key
   """
 
   @spec get(Pass.key) :: Chunks.t | no_return
@@ -132,10 +132,16 @@ defmodule Hangman.Pass.Cache do
     end
 
   end
+
+  @doc """
+  Put routine stores new `pass` chunks data, provided the pass key
+  """
   
 
   @spec put(Pass.key, Chunks.t) :: :ok | no_return
   def put({_id, _game_no, _round_no} = pass_key, %Chunks{} = data) do
+
+    # Make call to Pass Cache Writer to handle synchronized buffered writes 
     :ok = Pass.Cache.Writer.put(pass_key, data)
   end
 

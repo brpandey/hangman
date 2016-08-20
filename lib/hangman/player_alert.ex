@@ -7,20 +7,26 @@ defmodule Hangman.Player.Alert.Handler do
   require Logger
 
   @moduledoc """
-  Module implements event logger handler for `Hangman.Events.Manager`.
-  Each `event` is logged to a file named after the player `id`.
+  Module implements alert event handler for `Hangman.Events.Manager`.
+  Each `event` is displayed to the user as an alert feed event.
+
+  Alert.Handler is setup per player key and consumes the producer events
+  of the events manager
   """
 
+  @spec start_link(Keyword.t) :: GenServer.on_start
   def start_link(options) do
     GenStage.start_link(__MODULE__, options)
   end
 
+  @spec stop(pid) :: tuple
   def stop(pid) when is_pid(pid) do
     GenStage.call(pid, :stop)
   end
 
   # Callbacks
 
+  @callback init(term) :: {GenStage.type, tuple, GenStage.options} | {:stop, :normal}
   def init(options) do
     # Starts a permanent subscription to the broadcaster
     # which will automatically start requesting items.
@@ -34,6 +40,7 @@ defmodule Hangman.Player.Alert.Handler do
     end
   end
 
+  @callback handle_call(atom, tuple, term) :: tuple
   def handle_call(:stop, _from, state) do
     {:stop, :normal, :ok, state}
   end
@@ -44,6 +51,7 @@ defmodule Hangman.Player.Alert.Handler do
 
   """
 
+  @callback handle_events(term, term, term) :: tuple
   def handle_events(events, _from, {key, write_pid}) do
 
     for event <- events, key == Kernel.elem(event, 1) do
@@ -53,6 +61,7 @@ defmodule Hangman.Player.Alert.Handler do
     {:noreply, [], {key, write_pid}}    
   end
 
+  @spec process_event(term, term) :: :ok
   defp process_event(event, _write_pid) do
 
     msg = 

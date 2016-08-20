@@ -43,18 +43,23 @@ defprotocol Hangman.Player.Action do
   """
 
   @doc "Create new player"
+  @spec new(Action.t, tuple) :: term
   def new(player, args)
 
   @doc "Begin new game player action"
+  @spec begin(Action.t) :: term
   def begin(player)
 
   @doc "Sets up each action state"
+  @spec setup(Action.t) :: term
   def setup(player)
   
   @doc "Returns player guess"
+  @spec guess(Action.t, term) :: term
   def guess(player, guess \\ nil)
 
   @doc "Returns the correct player transition at the game end"
+  @spec transition(Action.t) :: term
   def transition(player)
 end
 

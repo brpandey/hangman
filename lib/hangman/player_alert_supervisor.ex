@@ -7,10 +7,8 @@ defmodule Hangman.Player.Alert.Supervisor do
 
   '''
   Module implements supervisor functionality overseeing 
-  dynamically started player events servers
+  dynamically started player alert handler
 
-  Player events server processes are started with 
-  both log and display options off
   '''
 
   require Logger
@@ -28,7 +26,7 @@ defmodule Hangman.Player.Alert.Supervisor do
   end
 
   @doc """
-  Starts a player events worker dynamically
+  Starts a player alert handler dynamically
   """
 
   @spec start_child(String.t, pid) :: Supervisor.on_start_child
@@ -42,7 +40,7 @@ defmodule Hangman.Player.Alert.Supervisor do
   For each worker instantiated through start_child, 
   defines the worker specification to be supervised.
 
-  Supervises each player events server
+  Supervises each player alert handler
   """
   
   @callback init(term) :: {:ok, tuple}
@@ -54,8 +52,8 @@ defmodule Hangman.Player.Alert.Supervisor do
       worker(Player.Alert.Handler, [], restart: :transient),
     ]
 
-    # :one_for_one to indicate that 
-    # we're starting children dynamically but children not of same type
+    # :simple_one_for_one to indicate that 
+    # we're starting children dynamically and children are of same type
 
     supervise( children, strategy: :simple_one_for_one )
   end
