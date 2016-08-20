@@ -46,30 +46,32 @@ defmodule Hangman.Player.Worker do
   """
   
   @spec whereis(Player.id) :: pid | :atom
-  def whereis(id_key) do
-    :gproc.whereis_name({:n, :l, {:player_worker, id_key}})
+  def whereis(worker_id) do
+    :gproc.whereis_name({:n, :l, {:player_worker, worker_id}})
   end
   
 
   # Used to register / lookup process in process registry via gproc
   @spec via_tuple(Player.id) :: tuple
-  defp via_tuple(id_key) do
-    {:via, :gproc, {:n, :l, {:player_worker, id_key}}}
+  defp via_tuple(worker_id) do
+    {:via, :gproc, {:n, :l, {:player_worker, worker_id}}}
   end
 
   # The heart of the player server, the proceed request
-  def proceed(pid), do: GenServer.call(pid, :proceed)
-
-  def guess(pid, data) when is_tuple(data) do
-    GenServer.call(pid, {:guess, data})
+  def proceed(worker_id) do
+    GenServer.call(via_tuple(worker_id), :proceed)
   end
 
-  def guess(pid, data) when is_binary(data) do
-    GenServer.call(pid, {:guess, data})
+  def guess(worker_id, data) when is_tuple(data) do
+    GenServer.call(via_tuple(worker_id), {:guess, data})
+  end
+
+  def guess(worker_id, data) when is_binary(data) do
+    GenServer.call(via_tuple(worker_id), {:guess, data})
   end
   
-  def stop(pid) do
-    GenServer.call(pid, :stop)
+  def stop(worker_id) do
+    GenServer.call(via_tuple(worker_id), :stop)
   end
 
 

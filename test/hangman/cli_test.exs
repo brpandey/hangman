@@ -59,7 +59,7 @@ defmodule Hangman.CLI.Test do
   @tag timeout: 180_000 # 180 seconds
   test "random words human" do
     
-    command = "-n lulu_test -t human -r 4"
+    command = "-n lulu_test1 -t human -r 4"
     argv = String.split(command)
     CLI.main(argv)
 
@@ -68,7 +68,7 @@ defmodule Hangman.CLI.Test do
 
   test "random words robot" do
     
-    command = "-n lulu_test -t robot -r 4"
+    command = "-n lulu_test2 -t robot -r 4"
     argv = String.split(command)
     CLI.main(argv)
 
@@ -88,7 +88,7 @@ defmodule Hangman.CLI.Test do
 
   test "word not in dictionary, pass size zero" do
 
-    argv = ["-n", "barthalemu_test", "-t", "robot", "-s", "azerbaijan masterful", "-d", "-l"]
+    argv = ["-n", "barthalemu_test1", "-t", "robot", "-s", "azerbaijan masterful", "-d", "-l"]
 
     CLI.main(argv)
 
@@ -96,7 +96,7 @@ defmodule Hangman.CLI.Test do
 
   test "word not in dictionary, pass size zero -- rearranged order of secrets" do
 
-    argv = ["-n", "barthalemu_test", "-t", "robot", "-s", "masterful azerbaijan", "-d", "-l"]
+    argv = ["-n", "barthalemu_test2", "-t", "robot", "-s", "masterful azerbaijan", "-d", "-l"]
 
     CLI.main(argv)
 

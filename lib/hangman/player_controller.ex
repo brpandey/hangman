@@ -10,6 +10,8 @@ defmodule Hangman.Player.Controller do
 
   Forwards player requests to `Player.Worker` and 
   responses back to `Client.Handler`.
+
+  NOTE: This doesn't need to be a GenServer process right now
   """
 
   require Logger
@@ -50,7 +52,7 @@ defmodule Hangman.Player.Controller do
   end
 
   def handle_cast({:stop_worker, id}, state) do
-    get_worker_pid(id) |> Player.Worker.stop
+    Player.Worker.stop(id)
 
     {:noreply, state}
   end
@@ -62,19 +64,13 @@ defmodule Hangman.Player.Controller do
     {:reply, player_pid, state}
   end
 
-  def handle_call({:proceed, id}, _from, state) do
-    
-    response = 
-      case do_proceed(id) do
-        nil -> do_proceed(id) # call again
-        data -> data
-      end
-
+  def handle_call({:proceed, id}, _from, state) do    
+    response = do_proceed(id)
     {:reply, response, state}
   end
   
   def handle_call({:guess, id, data}, _from, state) do
-    response = get_worker_pid(id) |> Player.Worker.guess(data)
+    response = Player.Worker.guess(id, data)
   
     {:reply, response, state}
   end
@@ -93,29 +89,11 @@ defmodule Hangman.Player.Controller do
 
   defp do_proceed(id) do
     try do
-      get_worker_pid(id) |> Player.Worker.proceed
+      Player.Worker.proceed(id)
     catch :exit, reason ->
       Logger.info "Caught exit in player controller, reason is #{inspect reason}"
       {:retry, reason}
     end
   end
-
-
-  @docp """
-  Checks registry cache for `Player.Worker` pid given unique id, returns cached `pid`
-  """
-  
-  @spec get_worker_pid(Player.id) :: pid
-  defp get_worker_pid(player_name) do    
-
-    pid =
-      case Player.Worker.whereis(player_name) do
-        :undefined -> raise "Couldn't find player worker pid"
-        pid -> pid
-      end
-
-    pid
-  end
-
 
 end
