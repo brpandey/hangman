@@ -92,6 +92,7 @@ defmodule Hangman.Player.Controller do
       Player.Worker.proceed(id)
     catch :exit, reason ->
       Logger.info "Caught exit in player controller, reason is #{inspect reason}"
+      Process.sleep(2000) # Stop gap for now for no proc error by gproc
       {:retry, reason}
     end
   end
