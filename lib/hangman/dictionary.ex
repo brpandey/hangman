@@ -4,10 +4,13 @@ defmodule Hangman.Dictionary do
   Module defines `Dictionary` common attributes and types. 
   Serves as a central point to access or update such attributes
 
+  Also provides access point to normalize the dictionary
+  
+
   Used in `Dictionary.Cache`, `Dictionary.Transformer`, `Dictionary.File.Reader`
   """
 
-  alias Hangman.{Dictionary}
+  alias Hangman.{Dictionary.Transformer}
 
   @type transform :: :original | :sorted | :grouped | :chunked
   @type kind :: :regular | :big
@@ -39,9 +42,8 @@ defmodule Hangman.Dictionary do
   
   @root_path :code.priv_dir(:hangman_game)
 
-  @doc """
-  Returns `Dictionary.File` `paths` map, arranged by types `regular` and `big`
-  """
+  @doc "Returns `Dictionary.File` `paths` map, arranged by types `regular` and `big`"
+  @spec paths :: %{}
   def paths do
   %{
     :regular => %{
@@ -65,9 +67,11 @@ defmodule Hangman.Dictionary do
 
   # UPDATE
 
-  #Ensure the dictionary file has been normalized in order to be
-  #loaded into the ets table.  Normalization is done through a series of
-  #transformations.  Returns path of final, transformed, chunked dictionary file
+  @doc """
+  Ensure the dictionary file has been normalized in order to be
+  loaded into the ets table.  Normalization is done through a series of
+  transformations.  Returns path of final, transformed, chunked dictionary file
+  """
 
   @spec normalize(Keyword.t) :: String.t
   def normalize(opts) do
@@ -82,8 +86,7 @@ defmodule Hangman.Dictionary do
           end
       end
     
-    Dictionary.Transformer.new(kind) 
-    |> Dictionary.Transformer.run
+    Transformer.new(kind) |> Transformer.run
     
   end
 end

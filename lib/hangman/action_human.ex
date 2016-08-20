@@ -18,6 +18,12 @@ defmodule Hangman.Action.Human do
 
   defstruct type: :human, display: false, round: nil, strategy: nil
 
+  @doc """
+  Sets up round by running a reduction pass.  Returns
+  top letter choices to be presented to human
+  """
+
+  @spec setup(t) :: tuple
   def setup(%Human{} = human) do
     
     round = human.round
@@ -47,8 +53,12 @@ defmodule Hangman.Action.Human do
     {human, choices}
   end
 
+  @doc """
+  Routine for `:human` player type. Performs validation of
+  human guess, executes guess and returns round `status`
+  """
 
-  @spec guess(t, Guess.t) :: tuple()
+  @spec guess(t, Guess.t) :: tuple
   def guess(%Human{} = human, guess) do
 
     guess = case guess do
@@ -77,7 +87,6 @@ defmodule Hangman.Action.Human do
   """
 
   @spec update_choices(Round.t, tuple) :: tuple
-
   def update_choices(%Round{} = round, {:guess_letter, choices_text})
   when is_binary(choices_text) do
     text = do_update_choices(round, choices_text)

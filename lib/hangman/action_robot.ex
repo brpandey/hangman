@@ -19,7 +19,12 @@ defmodule Hangman.Action.Robot do
 
   defstruct type: :robot, display: false, round: nil, strategy: nil
 
+  @doc """
+  Sets up round by running a reduction pass.  Informs Strategy
+  of reduction pass result to be later used in the guess method.
+  """
 
+  @spec setup(t) :: tuple
   def setup(%Robot{} = robot) do
 
     round = robot.round
@@ -33,7 +38,7 @@ defmodule Hangman.Action.Robot do
     
     exclusion = Strategy.guessed(strategy)
     
-    # Setup game start round
+    # Setup game round, passing in strategy update routine
     {round, strategy} = Round.setup(round, exclusion, fn_updater)
 
     robot = Kernel.put_in(robot.round, round)
@@ -43,8 +48,8 @@ defmodule Hangman.Action.Robot do
   end
 
   @doc """
-  Routine for `:robot` player type. Sets up new `round`, 
-  performs `auto-generated` guess, returns round `status`
+  Routine for `:robot` player type. Performs `auto-generated` guess, 
+  returns round `status`
   """
 
   @spec guess(t, Guess.t) :: tuple()

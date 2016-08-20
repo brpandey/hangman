@@ -23,8 +23,8 @@ defmodule Hangman.Dictionary.File.Transformer do
   @callback transform(String.t, pid) :: :ok
 
   # Run the transform
-  # transform from original to sorted
-#  @spec run(atom, term, tuple()) :: String.t
+
+  @spec run(atom, fun(), tuple) :: String.t
   def run(kind, fn_transform, {src, dest}) when is_atom(kind) do
 
     # assert 
@@ -57,6 +57,7 @@ defmodule Hangman.Dictionary.File.Sorter do
   def write(term, file_pid) when is_pid(file_pid), do: IO.write(file_pid, term)
   
   # sort specific transform
+  # do a greedy read, sort it in memory, and then write out
   def transform(read_path, file_pid) when is_pid(file_pid) do
     Reader.new(Dictionary.original, read_path)
     |> Reader.proceed
@@ -83,6 +84,9 @@ defmodule Hangman.Dictionary.File.Grouper do
   end
   
   # group specific transform
+
+  # the reader handler for the sorted type already groups
+  # the entries making output easy, just writing out the tuple
   def transform(read_path, file_pid) when is_pid(file_pid) do
     Reader.new(Dictionary.sorted, read_path)
     |> Reader.proceed
@@ -104,6 +108,7 @@ defmodule Hangman.Dictionary.File.Chunker do
 
   @behaviour Transformer
 
+  # convert to binary for speed and compactness
   def write(chunk, file_pid) when is_pid(file_pid) do
     bin_chunk = :erlang.term_to_binary(chunk)
     IO.binwrite(file_pid, bin_chunk)
@@ -113,6 +118,7 @@ defmodule Hangman.Dictionary.File.Chunker do
   end
 
   # chunk specific transform
+  # uses transform function to convert group stream to chunks stream
   def transform(read_path, file_pid) when is_pid(file_pid) do
     Reader.new(Dictionary.grouped, read_path) 
     |> Reader.proceed

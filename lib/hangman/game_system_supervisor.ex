@@ -8,7 +8,7 @@ defmodule Hangman.Game.System.Supervisor do
 
   Module is a second line supervisor
   as it supervises a first-line supervisor, Game.Server.Supervisor
-  along with the Game.Pid.Cache
+  along with the Game.Pid.Cache and Game.Event.Manager
   '''
   
   require Logger

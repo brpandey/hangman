@@ -1,10 +1,5 @@
 defmodule Hangman.Dictionary.Transformer do
 
-  alias Hangman.{Dictionary}
-  alias Hangman.Dictionary.{Transformer}
-
-  defstruct enumerable: %{}, kind: nil
-
   @moduledoc """
   The original `Dictionary` file is transformed into 
   intermediary representations. Given an original dictionary file f1, this 
@@ -18,10 +13,20 @@ defmodule Hangman.Dictionary.Transformer do
   which is optimized for `ETS` load.
   """
 
-  def new(kind) when is_atom(kind) do
+  alias Hangman.{Dictionary}
+  alias Hangman.Dictionary.{Transformer}
 
-    # Store the transform run functions by order
-    # First we sort, then group, then chunk
+  defstruct enumerable: %{}, kind: nil
+
+  @opaque t :: %__MODULE__{}
+
+  @doc """
+  Store the transform run functions by order
+  First we sort, then group, then chunk
+  """
+
+  @spec new(atom) :: t
+  def new(kind) when is_atom(kind) do
 
     transforms = %{}
     |> Map.put(1, &Dictionary.File.Sorter.run/1)
@@ -31,16 +36,21 @@ defmodule Hangman.Dictionary.Transformer do
     %Transformer{kind: kind, enumerable: transforms}
   end
 
+  @doc """
+  Runs all the file transform functions in a succinct way
 
-  # Delay the actual function invocation to this method
-  # We are making the assumption that the enumerable will be 
-  # processed from keys 1 to 3
-  # NOTE: Need stronger guarentee check
+  Delay the actual function invocation to this method
+  We are making the assumption that the enumerable will be 
+  processed from keys 1 to 3
+
+  NOTE: Need stronger guarentee check
+  """
+
+  @spec run(t) :: String.t
   def run(%Transformer{} = state) do
     Enum.reduce(state.enumerable, "", fn ({_key, func}, _acc) -> 
       func.(state.kind)
     end)
-
   end
 
 end

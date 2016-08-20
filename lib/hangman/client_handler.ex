@@ -2,7 +2,7 @@ defmodule Hangman.Client.Handler do
   @moduledoc """
 
   Module drives `Player.Controller` server behaviour, while
-  setting up the proper `Game` server and `Event` server states.
+  setting up the proper `Game` server and `Event` consumer states.
 
   Simply stated it politely nudges the player to proceed to the next 
   course of action or make the next guess.  The handler also collects 
@@ -33,6 +33,7 @@ defmodule Hangman.Client.Handler do
 
     args = {name, type, secrets, log, display}
     args |> setup |> play(:cli)
+
   end
 
   def run(:web, name, :robot, secrets, log, display = false) when is_binary(name)
@@ -78,13 +79,20 @@ defmodule Hangman.Client.Handler do
     {name, alert_pid, logger_pid}
   end
 
+  @docp """
+  Play handles client play loop
+  """
 
+  @spec play(tuple, atom) :: :ok
   defp play({player_handler_key, alert_pid, logger_pid}, :cli) do 
     # atom tag on end for pipe ease
 
+    # Loop until we have received an :exit value from the Player Controller
     Enum.reduce_while(Stream.cycle([player_handler_key]), 0, fn key, acc ->
  
       feedback = key |> Player.Controller.proceed
+
+      # specifically handle IO for guess setup -- e.g. selection of letters
       feedback = handle_setup(key, feedback)
 
       case feedback do
@@ -100,22 +108,27 @@ defmodule Hangman.Client.Handler do
         _ -> raise "Unknown Player state"
       end
     end)
+
+    :ok
   end
 
 
+  @spec play(tuple, atom) :: [...]
   defp play({player_handler_key, alert_pid, logger_pid}, :web) do
     # atom tag on end for pipe ease
 
+    # Loop until we have received an :exit value from the Player Controller
     list = Enum.reduce_while(Stream.cycle([player_handler_key]), [], fn key, acc ->
       
       feedback = key |> Player.Controller.proceed
+      # specifically handle IO for guess setup -- e.g. selection of letters
       feedback = handle_setup(key, feedback)
 
       case feedback do
         {code, _status} when code in [:begin, :transit, :retry] ->
           {:cont, acc}
 
-        {:action, status} -> 
+        {:action, status} -> # collect guess result status as given from action state
           acc = [status | acc] # prepend to list then later reverse -- O(1)
           {:cont, acc}
 
@@ -137,6 +150,7 @@ defmodule Hangman.Client.Handler do
 
   # Helpers
 
+  @spec handle_setup(Player.id, tuple) :: tuple
   defp handle_setup(key, feedback) do
     # Handle feedback where the response code is :setup
     case feedback do
@@ -153,6 +167,11 @@ defmodule Hangman.Client.Handler do
   end
 
 
+  @docp """
+  If display is valid, show letter choices and also collect letter input
+  """
+
+  @spec ui(boolean, tuple) :: tuple
   defp ui(display, {:guess_letter, text})
   when is_boolean(display) and is_binary(text) do
 

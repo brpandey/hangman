@@ -23,8 +23,8 @@ defmodule Hangman.CLI do
   [-s (hangman word(s)) -bl] [-l -d]`
 
   NOTE: Should a player submit a secret hangman word that does not actually
-  reside in the `Dictionary.Cache` the entire game will currently be 
-  prematurely aborted.
+  reside in the `Dictionary.Cache` the player will abort and then restart and the
+  game will continue on - marking a score of 0 for the word not found game.
   """
 
   @min_secret_length 3
@@ -178,7 +178,7 @@ defmodule Hangman.CLI do
     {name, type, secrets, log, display}
   end
 
-  @spec run({}) :: :ok
+  @spec run({}) :: :ok | [...]
   defp run({name, type, secrets, log, display}) when is_binary(name) 
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do

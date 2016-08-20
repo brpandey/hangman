@@ -43,7 +43,7 @@ defmodule Hangman.Game do
   @type id :: String.t
   
   @typedoc "`Game` status code values"
-  @type code :: :reset | :start | :guessing | :won | :lost | :done | :abort
+  @type code :: :reset | :start | :guessing | :won | :lost | :finished | :abort
 
   @typedoc "returned `Game` feedback data"
 
@@ -64,8 +64,7 @@ defmodule Hangman.Game do
   
   @mystery_letter "-"
 
-  @states [:reset, :start, :guessing, 
-           :won, :lost, :finished]
+  @states [:reset, :start, :guessing, :won, :lost, :finished]
     
   
   @doc """
