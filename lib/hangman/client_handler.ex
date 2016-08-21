@@ -19,7 +19,7 @@ defmodule Hangman.Client.Handler do
 
   require Logger
 
-  @max_random_words_request 10
+  @max_random_words_request 20
 
   @doc """
   Function run connects all the `player` specific components together 
