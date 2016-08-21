@@ -4,13 +4,13 @@ defmodule Hangman.Reduction.Options do
   possible `Hangman` words set. Used primarily during `Round` setup.
   """
 
-  alias Hangman.{Reduction, Guess}
+  alias Hangman.{Reduction, Round}
 
   @doc """
   Generates `Reduction.key` given round context
   """
 
-  @spec reduce_key(Guess.context, exclusion :: Enumerable.t) :: Reduction.key
+  @spec reduce_key(Round.context, exclusion :: Enumerable.t) :: Reduction.key
   def reduce_key({:start, secret_length} = _context, _letters) do
     
     Keyword.new([
@@ -75,12 +75,20 @@ defmodule Hangman.Reduction.Options do
   the incorrect letter `can not be found anywhere` in the
   possible `Hangman` words.
 
+  For `incorrect word` last guess, we create a regex which
+  does not match the incorrect word. 
+
+  This happens for a last word provided that is not the actual last word,
+  because the actual word is not found in the dictionary. This serves
+  to cleanly zero out the possible hangman words left in the reduction engine.
+
   We create a `regex` key to reflect this information.
   """
 
-  @spec regex_match_key(Guess.context, Enumerable.t) :: Regex.t
+  @spec regex_match_key(Round.context, Enumerable.t) :: Regex.t
 
-  def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
+  def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, 
+                      guessed_letters) do
     pattern = String.downcase(pattern)
     
     replacement = "[^" <> Enum.join(guessed_letters) <> "]"

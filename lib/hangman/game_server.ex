@@ -11,7 +11,10 @@ defmodule Hangman.Game.Server do
   process exits.
   
   In the event the player aborts abnormally, the player's game state
-  is maintained but removed from active status.
+  is maintained but removed from active status.  Subsequent player access
+  will find the game in the :abort state and the game will check if there
+  are any games left to play properly.  If so, game playing continues regularly,
+  else, the game is properly ended with the game over results.
 
   NOTE: The server runs each game one at a time and handles support for 
   multiple games concurrently but is currently not harnessed by the 

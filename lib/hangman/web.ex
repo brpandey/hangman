@@ -6,7 +6,14 @@ defmodule Hangman.Web do
   @moduledoc """
   Module provides access to a http web server for playing 
   `Hangman` games via a tool such as curl or HTTPoison.
+
+  Query params are specified after `/hangman?`
+
+  These are name=<String>, secret=<String>, random=<Positive Integer>
   
+  The random param specifies how many secret words to generate.  Hence,
+  random=5, will generate 5 secret game words for a total of 5 hangman games.
+
   ## Example
 
       iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&secret=kiwi")

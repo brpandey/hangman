@@ -18,6 +18,9 @@ defmodule Hangman.Pass.Cache do
   words `pass` data is stored into the `Pass.Cache` for access on the 
   subsequent round.  The expired `pass` data from stale rounds is subsequently 
   removed from the `cache`.
+
+  Serves as the unified point for the reduction logic when handling data around the 
+  `Pass.Cache`.
   """
 
   require Logger
@@ -136,7 +139,6 @@ defmodule Hangman.Pass.Cache do
   @doc """
   Put routine stores new `pass` chunks data, provided the pass key
   """
-  
 
   @spec put(Pass.key, Chunks.t) :: :ok | no_return
   def put({_id, _game_no, _round_no} = pass_key, %Chunks{} = data) do

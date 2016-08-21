@@ -1,13 +1,13 @@
 defmodule Hangman.Simple.Registry do
 
   @moduledoc """
-  Module implements a simple registry keeping track of active pids,
-  active ids, and their process state values e.g. Player.t or Game.t
+  Module implements a simple stash registry keeping track of active pids,
+  active ids, and their values e.g. Player.t or Game.t
 
   Registry key is of type {String.t, pid}
 
-  Host GenServers which call this module need to implement appropriate 
-  handle_info routines when pid value exits normally or abnormally
+  Host GenServers typically setup monitors for the pids under registry,
+  to trigger registry removal
   """
 
   alias Hangman.{Simple.Registry}
@@ -28,10 +28,12 @@ defmodule Hangman.Simple.Registry do
 
   # CREATE
 
+  @doc "Creates a new registry"
+
   @spec new :: t
   def new, do: %Registry{}
 
-  # adds a new key to registry recordkeeping
+  @doc "Adds a new key to registry recordkeeping"
 
   @spec add_key(t, key) :: t
   def add_key(%Registry{} = registry, key) do
@@ -101,8 +103,7 @@ defmodule Hangman.Simple.Registry do
     end
   end
 
-
-  # Helper to retrieve the key given pid or id
+  @doc "Helper to retrieve the key given pid or id"
   
   @spec key(t, pid) :: key
   def key(%Registry{} = registry, pid) when is_pid(pid) do
@@ -119,9 +120,8 @@ defmodule Hangman.Simple.Registry do
       pid_key -> {id, pid_key}
     end
   end
-
   
-  # Helper to retrieve the value state given the key
+  @doc "Helper to retrieve the value state given the key"
 
   @spec value(t, key) :: any
   def value(%Registry{} = registry, key) when is_tuple(key) do
@@ -151,12 +151,12 @@ defmodule Hangman.Simple.Registry do
 
   # UPDATE
 
-  # Update value state
-  # Returns updated registry
+  @doc """
+  Update the value state given the initial partial id key or full tuple key. 
+  Returns the updated registry
+  """
 
-
-  # Since we don't have the full key, 
-  # Just use String.t id instead
+  # Since we don't have the full key, using String.t id instead
 
   @spec update(t, id | key, any) :: t
   def update(%Registry{} = registry, key, value) when is_binary(key) do
@@ -184,11 +184,12 @@ defmodule Hangman.Simple.Registry do
 
   # DELETE
 
-  # remove pid from active pid list
+  @doc """
+  Removes the key from either the :value state or the :active list
+  Returns the updated registry
+  """
 
-  @spec remove(t, :atom, key) :: t
-
-
+  @spec remove(t, :atom, key) :: t | no_return
   def remove(%Registry{} = registry, :value, {id_key, _pid_key} = _key)
   when is_binary(id_key) do
 
@@ -211,7 +212,7 @@ defmodule Hangman.Simple.Registry do
     registry |> do_remove(:active_pids, key) |> do_remove(:active_ids, key)
   end
 
-
+  # Subroutine to handle removal from :active_pids map
   defp do_remove(%Registry{} = registry, :active_pids, {id_key, pid_key} = _key)
   when is_binary(id_key) and is_pid(pid_key) do
 
@@ -238,6 +239,7 @@ defmodule Hangman.Simple.Registry do
     registry
   end
 
+  # Subroutine to handle removal from :active_ids map
   defp do_remove(%Registry{} = registry, :active_ids, {id_key, pid_key} = _key)
   when is_binary(id_key) and is_pid(pid_key) do
 

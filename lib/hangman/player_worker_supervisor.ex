@@ -7,10 +7,11 @@ defmodule Hangman.Player.Worker.Supervisor do
   Module implements supervisor functionality, overseeing
   dynamically started player workers.
 
-  Player workers are dynamically started with event_pid,
-  game_pid, player_name, and player_type parameters
+  Player workers are dynamically started with player_id,
+  player_type, display, and game_pid parameters
 
-  Restart strategy is transient
+  Restart strategy is transient.  So unless the shutdown
+  is abnormal (E.g. word not in dictionary) the player is not restarted.
 
   Hangman.Player.Worker.Supervisor is a first line supervisor
   which will dynamically start its children

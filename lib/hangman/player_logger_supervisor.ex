@@ -7,10 +7,7 @@ defmodule Hangman.Player.Logger.Supervisor do
 
   '''
   Module implements supervisor functionality overseeing 
-  dynamically started player events servers
-
-  Player events server processes are started with 
-  both log and display options off
+  dynamically started player logger handlers
   '''
 
   require Logger
@@ -28,7 +25,7 @@ defmodule Hangman.Player.Logger.Supervisor do
   end
 
   @doc """
-  Starts a player events worker dynamically
+  Starts a player logger handler dynamically
   """
 
   @spec start_child(String.t) :: Supervisor.on_start_child
@@ -41,7 +38,7 @@ defmodule Hangman.Player.Logger.Supervisor do
   For each worker instantiated through start_child, 
   defines the worker specification to be supervised.
 
-  Supervises each player events server
+  Supervises each player logger handler
   """
   
   @callback init(term) :: {:ok, tuple}
@@ -53,8 +50,8 @@ defmodule Hangman.Player.Logger.Supervisor do
       worker(Player.Logger.Handler, [], restart: :transient)
     ]
 
-    # :one_for_one to indicate that 
-    # we're starting children dynamically but children not of same type
+    # :simple_one_for_one to indicate that 
+    # we're starting children dynamically and children are of same type
 
     supervise( children, strategy: :simple_one_for_one )
   end

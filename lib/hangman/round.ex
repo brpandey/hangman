@@ -3,24 +3,32 @@ defmodule Hangman.Round do
   Module provides access to game round functions.
 
   `Round` represents the time period in the `Hangman` game which 
-  consists of a repetitive sequence of word set reduction, guess assistance and
-  guess actions. It works in conjuction with `Strategy` and 
-  `Game.Server` to orchestrate actual `round` game play.
+  consists of setup steps: word set reduction, guess assistance. 
 
-  When playing a `Hangman` game, we first setup our round, which involves 
-  obtaining the secret word length from the game server.  Next, we
-  take steps to reduce the possible `Hangman` words set to narrow our 
-  word choices.  From there on we choose the best letter to guess given
+  It works in conjuction with `Strategy` and `Game.Server` to 
+  orchestrate actual `round` game play through guess actions.
+
+  A) When playing a `Hangman` game, we first init our round, which involves 
+  obtaining the secret word length from the game server.  
+
+  B) Next, we take steps to reduce the possible `Hangman` words set to narrow our 
+  word choices.  
+
+  From there on we choose the best letter to guess given
   the knowledge we have of our words data set.  If we are a `:human`, we
   are given letter choices to pick, and if we are a `:robot`, we trust our
-  friend `Strategy`. After a guess is made either by `:human` or `:robot` we
+  friend `Strategy`. 
+
+  C) After a guess is made either by `:human` or `:robot` we
   update our round recordkeeping structures with the guess results and proceed
   for the next round -- to do it all over again.
 
-  Basic `Round` functionality includes `setup/4`, `guess/2`, 
+  Basic `Round` functionality includes `init/1`, `setup/3`, `guess/2`, 
   `transition/1`, `status/1`.
 
-  We invoke setup before a guess.  Transition is used after a single game over 
+  We always invoke setup before a guess, to properly setup the new words state.  
+
+  Transition is used after a single game over 
   to determine if we transition to a new game or games over.
   """
 
@@ -47,13 +55,23 @@ defmodule Hangman.Round do
   ({:start, secret_length :: pos_integer}) |
   ({:guessing, :correct_letter, letter :: String.t, 
     pattern :: String.t, mystery_letter :: String.t}) |
-  ({:guessing, :incorrect_letter, letter :: String.t})
+  ({:guessing, :incorrect_word, word :: String.t}) |
+  ({:guessing, :incorrect_letter, letter :: String.t}) |
+  ({:won, :correct_word, word :: String.t})
   
 
   # CREATE
 
-  # Start the new game, init round
+  @doc """
+  Initialize the round with the start of a new game.  Retrieves the 
+  secret length from the game server and creates a process link to the 
+  game server via the register call.  
 
+  Eventually the secret length is used to filter possible `Hangman` words 
+  from `Pass.Cache` server on the next round setup.
+  """
+
+  @spec init(t) :: t
   def init(%Round{} = round) do
     
     round = 
@@ -102,11 +120,9 @@ defmodule Hangman.Round do
   @doc """
   Sets up game play `round`
 
-  For game start stage, retrieves secret length from game server
-  uses secret length to filter possible `Hangman` words from `Pass.Cache` server
-
-  On start and subsequent rounds, also generates a reduce key based on the result of the
-  last guess to filter possible `Hangman` words from `Pass.Cache` server
+  Generates a reduce key based on the result of the
+  last guess or secret length to filter possible 
+  `Hangman` words from `Pass.Cache` server
   """
 
   @spec setup(Round.t, List.t, (Map.t -> Strategy.t) ) :: Round.t
@@ -122,6 +138,10 @@ defmodule Hangman.Round do
     {round, updater_result}
   end
 
+  @docp """
+  Filters the word set via the reduction engine
+  Returns the pass data
+  """
 
   defp do_reduction_setup(%Round{} = round, exclusion) do
     
@@ -130,7 +150,7 @@ defmodule Hangman.Round do
     match_key = round.context |> Kernel.elem(0)
     pass_key = round_key(round)
 
-    # Filter the engine hangman word set, grab the result of the pass
+    # Filter the hangman word set, grab the result of the pass
     {^pass_key, pass_info} = 
       Pass.result(match_key, pass_key, reduce_key)
 
@@ -140,7 +160,6 @@ defmodule Hangman.Round do
 
   @doc """
   Issues a client `guess` (either `letter` or `word`) against `Game.Server`.
-
   Returns received `round` data
   """
 
@@ -165,10 +184,13 @@ defmodule Hangman.Round do
 
   end
 
-  # Specifies steps for end of single game round 
-  # transitions to either a :start or :finished
+  @doc """
+  Specifies steps for the end of a single game. 
+  Transitions to either a :start or :finished
+  depending on if there are games left to play
+  """
 
-  @spec transition(t) :: Map.t
+  @spec transition(t) :: t
   def transition(%Round{} = round) do
 
     true = round.status_code in [:won, :lost]
@@ -219,7 +241,12 @@ defmodule Hangman.Round do
   end
 
 
+  @doc "Returns round tuple key"
+
+  @spec round_key(t) :: tuple
   def round_key(%Round{} = round), do: {round.id, round.game_num, round.num}
+
+
   defp player_key(%Round{} = round), do: {round.id, round.pid}
 
   defp game_context_key(%Round{} = round) do

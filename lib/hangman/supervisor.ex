@@ -9,8 +9,9 @@ defmodule Hangman.Supervisor do
   Module is the root level supervisor.
 
   Serves as a nth line supervisor as
-  it supervises Hangman.Game.System.Supervisor and 
-  Hangman.Player.System.Supervisor, both of which
+  it supervises Hangman.Game.System.Supervisor, 
+  Hangman.Player.System.Supervisor, and 
+  Hangman.Player.Specific.Supervisor, all of which
   are multi-depth supervisors
   '''
 

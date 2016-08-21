@@ -4,7 +4,7 @@ defmodule Hangman.Letter.Strategy do
   Module provides access to a set of functions handling 
   letter guessing strategy.
 
-  From `Wikipedia`
+  (From `Wikipedia`)
 
   In the English language, the twelve most commonly occurring letters are, 
   in descending order: e-t-a-o-i-n-s-h-r-d-l-u. This and other letter-frequency 

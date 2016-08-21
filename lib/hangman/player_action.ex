@@ -32,7 +32,8 @@ defprotocol Hangman.Player.Action do
   
   Player action functionality handles choosing letters, guessing letters and words.
   
-  Player action encapsulates the data used along with Strategy data. `Round` functionality
+  Player action encapsulates via the action types, 
+  the data used along with Strategy data. `Round` functionality
   extends the scope of the player to handle the actual game round details.
   
   NOTE: Should a player submit a secret hangman word that does not actually
@@ -43,23 +44,23 @@ defprotocol Hangman.Player.Action do
   """
 
   @doc "Create new player"
-  @spec new(Action.t, tuple) :: term
+  @spec new(term, tuple) :: term
   def new(player, args)
 
   @doc "Begin new game player action"
-  @spec begin(Action.t) :: term
+  @spec begin(term) :: term
   def begin(player)
 
   @doc "Sets up each action state"
-  @spec setup(Action.t) :: term
+  @spec setup(term) :: term
   def setup(player)
   
   @doc "Returns player guess"
-  @spec guess(Action.t, term) :: term
+  @spec guess(term, term) :: term
   def guess(player, guess \\ nil)
 
   @doc "Returns the correct player transition at the game end"
-  @spec transition(Action.t) :: term
+  @spec transition(term) :: term
   def transition(player)
 end
 

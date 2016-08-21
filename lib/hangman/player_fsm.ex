@@ -5,6 +5,8 @@ defmodule Hangman.Player.FSM do
   which handles managing the state of types implemented
   through the Player Action protocol.  
 
+  FSM provides a state machine wrapper over the `Player.Action` protocol
+
   The FSM is not coupled at all to the
   specific player type but the Action Protocol, which
   provides for succinct code along with the already succinct
@@ -13,6 +15,33 @@ defmodule Hangman.Player.FSM do
   Works for all supported player types
 
   States are `initial`, `begin`, `setup`, `action`, `transit`, `exit`
+
+  Here are the state transition flows:
+
+  A) initial -> begin
+  B) begin -> setup | exit
+  C) setup -> action
+  D) action -> transit | setup
+  E) transit -> begin | exit
+  F) exit -> exit
+
+  Basically upon leaving the initial state, we transition to begin.
+  From there we make the determination whether we should proceed on to setup the guess
+  state or terminate early and exit, if the game was recently just aborted and 
+  we are done with playing any more games - hence exit.
+
+  Once we are in the setup state it is obvious that our next step is to action 
+  state, to try out our guess (either selected or auto-generated).
+
+  From action we either circle back to setup to regenerate the new word set state and 
+  therefore guess state and possibly collect the next user guess or we have either 
+  won or lost and move to the transit state.
+
+  The transit state indicates that we are in transition with a single game completion.
+  Either we proceed to start a new game and head to begin or have already finished 
+  all games and head to state exit.
+
+  Ultimately the `Client.Handler` when in the exit state terminates the fsm loop
   """
 
   alias Hangman.Player.{Action, Types}
@@ -20,6 +49,7 @@ defmodule Hangman.Player.FSM do
   require Logger
 
   use Fsm, initial_state: :initial, initial_data: nil
+
 
   defstate initial do
     defevent initialize(args = {_name, type, _display, _game_pid}) do

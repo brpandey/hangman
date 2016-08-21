@@ -9,8 +9,8 @@ defmodule Hangman.Player.System.Supervisor do
   word pass server, reduction engine, pass writer, 
   and player events and fsm supervisor
 
-  Module is a third line supervisor as it supervises two 
-  first-line supervisors and 1 second-line supervisor.
+  Module is a third line supervisor as it supervises a
+  second-line supervisor.
   '''
 
   alias Hangman.{Dictionary, Pass, Reduction}

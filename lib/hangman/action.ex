@@ -1,7 +1,7 @@
 defmodule Hangman.Action do
 
   @moduledoc """
-  Defines the `Action` typeused in Player.Action
+  Defines the `Action` type used in Player.Action
   """
 
   @type t :: %__MODULE__{}

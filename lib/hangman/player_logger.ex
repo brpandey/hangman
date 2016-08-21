@@ -13,10 +13,12 @@ defmodule Hangman.Player.Logger.Handler do
 
   @root_path   :code.priv_dir(:hangman_game)
 
+  @spec start_link(Keyword.t) :: GenServer.on_start
   def start_link(options) do
     GenStage.start_link(__MODULE__, options)
   end
 
+  @spec stop(pid) :: tuple
   def stop(pid) when is_pid(pid) do
     GenStage.call(pid, :stop)
   end
@@ -24,6 +26,7 @@ defmodule Hangman.Player.Logger.Handler do
 
   # Callbacks
 
+  @callback init(term) :: {GenStage.type, tuple, GenStage.options} | {:stop, :normal}
   def init(options) do
     # Starts a permanent subscription to the broadcaster
     # which will automatically start requesting items.
@@ -43,13 +46,16 @@ defmodule Hangman.Player.Logger.Handler do
 
   end
 
+  @callback handle_call(atom, tuple, term) :: tuple
   def handle_call(:stop, _from, state) do
     {:stop, :normal, :ok, state}
   end
 
+
   @doc """
   The handle_events callback handles various events
-  which ultimately write to `player` logger file
+  which ultimately write to `player` logger file.
+  Only those that match the player id key are selected
   """
 
   def handle_events(events, _from, {key, logger_pid}) do
@@ -61,6 +67,7 @@ defmodule Hangman.Player.Logger.Handler do
     {:noreply, [], {key, logger_pid}}    
   end
 
+  @spec process_event(term, term) :: :ok
   defp process_event(event, logger_pid) do
 
     msg = 

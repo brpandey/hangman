@@ -5,10 +5,13 @@ defmodule Hangman.Player.Specific.Supervisor do
 
   '''
   Module is a second line supervisor as it supervises
-  two first-line supervisors.
+  three first-line supervisors and a worker.
 
   Module supervises those player supervisors which dynamically
-  start workers, namely player supervisor and player events supervisors
+  start workers, namely player worker supervisor and 
+  the various player event handler supervisors.  As well
+  as the player controller worker.
+  
   '''
 
   alias Hangman.Player
@@ -35,8 +38,8 @@ defmodule Hangman.Player.Specific.Supervisor do
 
   @doc """
   Specifies worker supervisor specifications.  
-  Deploys a strategy of one for one to isolate
-  process tree errors
+  Deploys a strategy of rest for one to isolate
+  process tree errors without leaving dangling orphan processes
   """
   
   @callback init(term) :: {:ok, tuple}
@@ -49,7 +52,7 @@ defmodule Hangman.Player.Specific.Supervisor do
       supervisor(Player.Alert.Supervisor, [])
     ]
 
-    supervise(children, strategy: :one_for_one)
+    supervise(children, strategy: :rest_for_one)
   end
 
 end
