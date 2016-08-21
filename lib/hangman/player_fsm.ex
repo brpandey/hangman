@@ -16,6 +16,9 @@ defmodule Hangman.Player.FSM do
 
   States are `initial`, `begin`, `setup`, `action`, `transit`, `exit`
 
+  The event `proceed` transitions between states, when we are not issuing
+  a `guess` or `initialize` event.
+
   Here are the state transition flows:
 
   A) initial -> begin
@@ -26,20 +29,21 @@ defmodule Hangman.Player.FSM do
   F) exit -> exit
 
   Basically upon leaving the initial state, we transition to begin.
-  From there we make the determination whether we should proceed on to setup the guess
-  state or terminate early and exit, if the game was recently just aborted and 
-  we are done with playing any more games - hence exit.
+  From there we make the determination of  whether we should proceed on to setup the guess
+  state or terminate early and exit.
 
-  Once we are in the setup state it is obvious that our next step is to action 
-  state, to try out our guess (either selected or auto-generated).
+  If the game was recently just aborted and we are done with playing any more games -> we exit.
 
-  From action we either circle back to setup to regenerate the new word set state and 
-  therefore guess state and possibly collect the next user guess or we have either 
-  won or lost and move to the transit state.
+  Once we are in the setup state it is obvious that our next step is to the action state.
+  Here we can try out our new guess (either selected or auto-generated)
 
-  The transit state indicates that we are in transition with a single game completion.
-  Either we proceed to start a new game and head to begin or have already finished 
-  all games and head to state exit.
+  From action state we either circle back to setup state to generate the new word set state and 
+  overall guess state and possibly to collect the next user guess.  Else, we have either 
+  won or lost the game and can confidently move to the transit state.
+
+  The transit state indicates that we are in transition having a single game over.
+  Either we proceed to start a new game and head to begin or we've already finished 
+  all games and happily head to the exit state.
 
   Ultimately the `Client.Handler` when in the exit state terminates the fsm loop
   """
