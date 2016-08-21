@@ -33,7 +33,7 @@ defmodule Hangman.Simple.Registry do
   @spec new :: t
   def new, do: %Registry{}
 
-  @doc "Adds a new key to registry recordkeeping"
+  @doc "Adds a new key to the active registry list"
 
   @spec add_key(t, key) :: t
   def add_key(%Registry{} = registry, key) do
@@ -103,7 +103,7 @@ defmodule Hangman.Simple.Registry do
     end
   end
 
-  @doc "Helper to retrieve the key given pid or id"
+  @doc "Helper to retrieve the active key given pid or id"
   
   @spec key(t, pid) :: key
   def key(%Registry{} = registry, pid) when is_pid(pid) do
@@ -121,7 +121,7 @@ defmodule Hangman.Simple.Registry do
     end
   end
   
-  @doc "Helper to retrieve the value state given the key"
+  @doc "Helper to retrieve the value state given the active key"
 
   @spec value(t, key) :: any
   def value(%Registry{} = registry, key) when is_tuple(key) do
