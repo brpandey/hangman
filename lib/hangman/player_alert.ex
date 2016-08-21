@@ -47,13 +47,13 @@ defmodule Hangman.Player.Alert.Handler do
 
   @doc """
   The handle_events callback handles various events
-  which ultimately write to `player` logger file
+  which ultimately are displayed.
 
+  Only those that match the player id key are selected
   """
 
   @callback handle_events(term, term, term) :: tuple
   def handle_events(events, _from, {key, write_pid}) do
-
     for event <- events, key == Kernel.elem(event, 1) do
       process_event(event, write_pid)
     end
