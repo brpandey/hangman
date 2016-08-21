@@ -5,7 +5,8 @@ defmodule Hangman.Player.Controller do
   Serves as External API into Player functionality.  
   Serves to manage players.  
 
-  Responsible for starting a player worker, and via gproc, handles
+  Responsible for starting a player worker, and via 
+  the `Player.Worker.Supervisor` and `gproc`, it handles
   any worker crashes.  
 
   Forwards player requests to `Player.Worker` and 

@@ -36,10 +36,6 @@ defprotocol Hangman.Player.Action do
   the data used along with Strategy data. `Round` functionality
   extends the scope of the player to handle the actual game round details.
   
-  NOTE: Should a player submit a secret hangman word that does not actually
-  reside in the `Dictionary.Cache`, the game will currently be prematurely 
-  aborted.
-
   Function names are `new/2`, `begin/1`, `setup/1`, `guess`, `transition/1`
   """
 
