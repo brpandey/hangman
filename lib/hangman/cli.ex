@@ -30,7 +30,7 @@ defmodule Hangman.CLI do
   @min_secret_length 3
   @max_secret_length 28
 
-  alias Hangman.{Client}
+  alias Hangman.{CLI}
 
   @human Hangman.Player.Types.human
   @robot Hangman.Player.Types.robot
@@ -118,7 +118,8 @@ defmodule Hangman.CLI do
           secrets = 
           if secrets == nil do
             case Keyword.fetch(args, :random) do
-              {:ok, value} -> Client.Handler.random(value)
+              {:ok, value} -> 
+                Hangman.Dictionary.random(value) # ask dictionary for random words
               :error -> nil
             end
           else secrets end
@@ -183,10 +184,8 @@ defmodule Hangman.CLI do
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
 
-    Client.Handler.run(:cli, name, type, secrets, log, display)
+    CLI.Handler.run(name, type, secrets, log, display)
   end
-
-
 
 end
   

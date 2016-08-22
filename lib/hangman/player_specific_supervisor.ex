@@ -46,7 +46,7 @@ defmodule Hangman.Player.Specific.Supervisor do
   def init(_) do
 
     children = [
-      worker(Player.Controller, []),
+#      worker(Player.Controller, []),
       supervisor(Player.Worker.Supervisor, []),
       supervisor(Player.Logger.Supervisor, []),
       supervisor(Player.Alert.Supervisor, [])

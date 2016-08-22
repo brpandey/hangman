@@ -10,7 +10,7 @@ defmodule Hangman.Dictionary do
   Used in `Dictionary.Cache`, `Dictionary.Transformer`, `Dictionary.File.Reader`
   """
 
-  alias Hangman.{Dictionary.Transformer}
+  alias Hangman.{Dictionary.Cache, Dictionary.Transformer}
 
   @type transform :: :original | :sorted | :grouped | :chunked
   @type kind :: :regular | :big
@@ -41,6 +41,10 @@ defmodule Hangman.Dictionary do
   def big, do:  :big
   
   @root_path :code.priv_dir(:hangman_game)
+
+  @max_random_words_request 20
+
+
 
   @doc "Returns `Dictionary.File` `paths` map, arranged by types `regular` and `big`"
   @spec paths :: %{}
@@ -89,4 +93,21 @@ defmodule Hangman.Dictionary do
     Transformer.new(kind) |> Transformer.run
     
   end
+
+
+
+
+  @doc "Returns random word secrets given count"
+  @spec random(String.t) :: [String.t] | no_return
+  def random(count) do
+    # convert user input to integer value
+    value = String.to_integer(count)
+    cond do
+      value > 0 and value <= @max_random_words_request ->
+        Cache.lookup(:random, value)
+      true ->
+        raise HangmanError, "submitted random count value is not valid"
+    end
+  end
+
 end

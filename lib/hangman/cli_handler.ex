@@ -1,7 +1,7 @@
-defmodule Hangman.Client.Handler do
-  @moduledoc """
+defmodule Hangman.CLI.Handler do
 
-  Module drives `Player.Controller` server behaviour, while
+  @moduledoc """
+  Module drives `Player.CLI.Controller`, while
   setting up the proper `Game` server and `Event` consumer states.
 
   Simply stated it politely nudges the player to proceed to the next 
@@ -11,38 +11,28 @@ defmodule Hangman.Client.Handler do
 
   When the game is finished it politely ends the game playing.
 
-  `Client.Handler` is the goto destination after all the arguments
-  have been collected in `Player.CLI`
+  This module is the goto destination after all the arguments
+  have been collected in `Hangman.CLI`
   """
 
-  alias Hangman.{Player, Game, Dictionary}
+  alias Hangman.{Game.Pid.Cache, Player, Player.CLI.Controller}
 
   require Logger
 
-  @max_random_words_request 20
 
   @doc """
   Function run connects all the `player` specific components together 
   and runs the player `game`
   """
 
-  @spec run(atom, String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def run(:cli, name, type, secrets, log, display) when is_binary(name)
+  @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
+  def run(name, type, secrets, log, display) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) do
 
-    args = {name, type, secrets, log, display}
-    args |> setup |> play(:cli)
-
+    {name, type, secrets, log, display} |> setup |> play
   end
 
-  def run(:web, name, :robot, secrets, log, display = false) when is_binary(name)
-  and is_list(secrets) and is_binary(hd(secrets)) 
-  and is_boolean(log) and is_boolean(display) do
-
-    args = {name, :robot, secrets, log, display}
-    args |> setup |> play(:web) 
-  end
 
   @docp """
   Function setup loads the `player` specific `game` components.
@@ -55,9 +45,9 @@ defmodule Hangman.Client.Handler do
   is_boolean(log) and is_boolean(display) do
     
     # Grab game pid first from game pid cache
-    game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
+    game_pid = Cache.get_server_pid(name, secrets)
 
-    Player.Controller.start_worker(name, type, display, game_pid)
+    Controller.start_worker(name, type, display, game_pid)
 
     logger_pid = 
       case log do
@@ -83,24 +73,28 @@ defmodule Hangman.Client.Handler do
   Play handles client play loop
   """
 
-  @spec play(tuple, atom) :: :ok
-  defp play({player_handler_key, alert_pid, logger_pid}, :cli) do 
+  @spec play(tuple) :: :ok
+  defp play({player_handler_key, alert_pid, logger_pid}) do 
     # atom tag on end for pipe ease
 
     # Loop until we have received an :exit value from the Player Controller
     Enum.reduce_while(Stream.cycle([player_handler_key]), 0, fn key, acc ->
  
-      feedback = key |> Player.Controller.proceed
+      feedback = key |> Controller.proceed
 
       # specifically handle IO for guess setup -- e.g. selection of letters
       feedback = handle_setup(key, feedback)
 
       case feedback do
-        {code, _status} when code in [:begin, :action, :transit, :retry] ->
+        {code, _status} when code in [:begin, :action, :transit] ->
+          {:cont, acc + 1}
+
+        {:retry, _status} ->
+          Process.sleep(2000) # Stop gap for now for no proc error by gproc when word not in dict
           {:cont, acc + 1}
 
         {:exit, _status} -> 
-          Player.Controller.stop_worker(key)
+          Controller.stop_worker(key)
           if true == is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
           if true == is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
           {:halt, acc}
@@ -110,42 +104,6 @@ defmodule Hangman.Client.Handler do
     end)
 
     :ok
-  end
-
-
-  @spec play(tuple, atom) :: [...]
-  defp play({player_handler_key, alert_pid, logger_pid}, :web) do
-    # atom tag on end for pipe ease
-
-    # Loop until we have received an :exit value from the Player Controller
-    list = Enum.reduce_while(Stream.cycle([player_handler_key]), [], fn key, acc ->
-      
-      feedback = key |> Player.Controller.proceed
-      # specifically handle IO for guess setup -- e.g. selection of letters
-      feedback = handle_setup(key, feedback)
-
-      case feedback do
-        {code, _status} when code in [:begin, :transit, :retry] ->
-          {:cont, acc}
-
-        {:action, status} -> # collect guess result status as given from action state
-          acc = [status | acc] # prepend to list then later reverse -- O(1)
-          {:cont, acc}
-
-        {:exit, status} -> 
-          acc = [status | acc] # prepend to list then later reverse -- O(1)
-          Player.Controller.stop_worker(key)
-          if true == is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
-          if true == is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
-          {:halt, acc}
-
-        _ -> raise "Unknown Player state"
-      end
-    end)
-
-    # we reverse the prepended list of round statuses
-    list |> Enum.reverse 
-
   end
 
   # Helpers
@@ -160,7 +118,7 @@ defmodule Hangman.Client.Handler do
         {:ok, choices} = Keyword.fetch(kw, :status)
 
         selection = ui(display, choices)
-        key |> Player.Controller.guess(selection)
+        key |> Controller.guess(selection)
       
       _ -> feedback # Pass back the passed in feedback
     end
@@ -200,16 +158,4 @@ defmodule Hangman.Client.Handler do
     {:guess_word, last_word}
   end
 
-  @doc "Returns random word secrets given count"
-  @spec random(String.t) :: [String.t] | no_return
-  def random(count) do
-    # convert user input to integer value
-    value = String.to_integer(count)
-    cond do
-      value > 0 and value <= @max_random_words_request ->
-        Dictionary.Cache.lookup(:random, value)
-      true ->
-        raise HangmanError, "submitted random count value is not valid"
-    end
-  end
 end

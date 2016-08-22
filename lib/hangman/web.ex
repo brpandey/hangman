@@ -1,7 +1,7 @@
 defmodule Hangman.Web do
   use Plug.Router
 
-  alias Hangman.{Client}
+  alias Hangman.{Web}
 
   @moduledoc """
   Module provides access to a http web server for playing 
@@ -67,14 +67,14 @@ defmodule Hangman.Web do
     secrets = 
     if secrets == nil do
       count = conn.params["random"]
-      Client.Handler.random(count)
+      Hangman.Dictionary.random(count)
     else
       [secrets]
     end
     
     if secrets == nil, do: raise "Can't run hangman with no secrets"
 
-    rounds = Client.Handler.run(:web, name, :robot, secrets, false, false)
+    rounds = Web.Handler.run(name, :robot, secrets, false, false)
     value = format_rounds(rounds)
         
     Plug.Conn.assign(conn, :response, value)

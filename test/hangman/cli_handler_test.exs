@@ -1,7 +1,7 @@
-defmodule Hangman.Client.Handler.Test do
+defmodule Hangman.CLI.Handler.Test do
   use ExUnit.Case
 
-  alias Hangman.{Client, Player}
+  alias Hangman.{CLI, Player}
 
   setup_all do
     IO.puts "Player Handler Test"
@@ -13,13 +13,13 @@ defmodule Hangman.Client.Handler.Test do
 
     secrets = ["mitochondria", "eject"]
 
-    Client.Handler.run(:cli, "jedi_test", :human, secrets, true, false)
+    CLI.Handler.run("jedi_test", :human, secrets, true, false)
 
 
     secrets = ["asparagus", "voluptuous"]
 
     {:ok, apid} = Player.Alert.Supervisor.start_child("c3po_test", nil)
-    Client.Handler.run(:cli, "c3po_test", :robot, secrets, false, true)
+    CLI.Handler.run("c3po_test", :robot, secrets, false, true)
     Player.Alert.Handler.stop(apid)
 
   end
@@ -30,7 +30,7 @@ defmodule Hangman.Client.Handler.Test do
     secrets = ["porcupine", "eel"]
 
     {:ok, apid} = Player.Alert.Supervisor.start_child("photographer_test", nil)
-    Client.Handler.run(:cli, "photographer_test", :human, secrets, true, true)
+    CLI.Handler.run("photographer_test", :human, secrets, true, true)
     Player.Alert.Handler.stop(apid)
   end
 
