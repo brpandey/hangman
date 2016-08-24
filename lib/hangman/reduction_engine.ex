@@ -44,9 +44,14 @@ defmodule Hangman.Reduction.Engine do
 
   # Given key, returns erlang portable hash, mod size of the pool
   
-  @spec choose_worker(String.t) :: pos_integer
+  @spec choose_worker(String.t | tuple) :: pos_integer
   defp choose_worker(key) when is_binary(key) do
     :erlang.phash2(key, @pool_size) + 1
   end
+
+  defp choose_worker({shard_name, shard_number} = key) when is_tuple(key) do
+    :erlang.phash2(shard_name <> "#{shard_number}", @pool_size) + 1
+  end
+
 
 end

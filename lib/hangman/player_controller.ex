@@ -1,4 +1,4 @@
-defmodule Hangman.Player.CLI.Controller do
+defmodule Hangman.Player.Controller do
 
   @moduledoc """
   Serves as External API into Player functionality.  
@@ -8,7 +8,7 @@ defmodule Hangman.Player.CLI.Controller do
   the `Player.Worker.Supervisor` any worker crashes.  
 
   Forwards player requests to `Player.Worker` and 
-  responses back to `Client.Handler`.
+  responses back to the relevant `Handler`, either CLI or Web.
 
   """
 

@@ -4,7 +4,7 @@ defmodule Hangman.CLI.Handler.Test do
   alias Hangman.{CLI, Player}
 
   setup_all do
-    IO.puts "Player Handler Test"
+    IO.puts "CLI Handler Test"
 
     :ok
   end

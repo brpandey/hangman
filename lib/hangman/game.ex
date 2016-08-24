@@ -73,7 +73,7 @@ defmodule Hangman.Game do
   
   @spec new(id, String.t | [String.t], pos_integer) :: t
   def new(id_key, secret, max_wrong)
-  when is_binary(id_key) and is_binary(secret) do
+  when (is_binary(id_key) or is_tuple(id_key)) and is_binary(secret) do
 
     secret = String.upcase(secret)
     pattern = String.duplicate(@mystery_letter, String.length(secret))
@@ -82,7 +82,8 @@ defmodule Hangman.Game do
           pattern: pattern, max_wrong: max_wrong, state: :start}
   end
   
-  def new(id_key, secrets, max_wrong) when is_list(secrets) do
+  def new(id_key, secrets, max_wrong) when 
+  (is_binary(id_key) or is_tuple(id_key)) and is_list(secrets) do
     #initialize the list of secrets to be uppercase 
     #initialize the list of patterns to fit the secrets length
     secrets = secrets |> Enum.map(&String.upcase(&1))    

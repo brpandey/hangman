@@ -56,7 +56,8 @@ defmodule Hangman.Pass do
   @spec result(atom, pass_key :: Pass.key, reduce_key :: Reduction.key) 
   :: {Pass.key, Pass.t} | no_return
   def result(:start, {id, game_no, round_no} = pass_key, reduce_key)
-  when is_binary(id) and is_number(game_no) and is_number(round_no) do
+  when (is_binary(id) or is_tuple(id)) 
+  and is_number(game_no) and is_number(round_no) do
 
     # Asserts
     {:ok, true} = Keyword.fetch(reduce_key, :start)
@@ -84,7 +85,7 @@ defmodule Hangman.Pass do
 
 
   def result(:guessing, {id, game_no, round_no} = pass_key, reduce_key)
-  when is_binary(id) and is_number(game_no) and is_number(round_no) do
+  when (is_binary(id) or is_tuple(id)) and is_number(game_no) and is_number(round_no) do
     
     {:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
     {:ok, regex_key} = Keyword.fetch(reduce_key, :regex_match_key)

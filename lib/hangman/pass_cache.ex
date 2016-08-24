@@ -96,7 +96,8 @@ defmodule Hangman.Pass.Cache do
 
   @spec get(Pass.key) :: Chunks.t | no_return
   def get({id, game_no, round_no} = pass_key)
-  when is_binary(id) and is_number(game_no) and is_number(round_no) do
+  when (is_binary(id) or is_tuple(id)) 
+  and is_number(game_no) and is_number(round_no) do
 
     Logger.debug("pass cache get: pass_key is #{inspect pass_key}")
 

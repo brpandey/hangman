@@ -23,7 +23,7 @@ defmodule Hangman.Simple.Registry do
 
   @opaque t :: %__MODULE__{}  
   
-  @type id :: String.t
+  @type id :: String.t | {}
   @type key :: {id, pid}
 
   # CREATE
@@ -163,14 +163,28 @@ defmodule Hangman.Simple.Registry do
     do_update(registry, key, value)
   end
 
-  def update(%Registry{} = registry, key, value) when is_tuple(key) do
+  def update(%Registry{} = registry, {shard_key, shard_value} = key, value)
+  when is_binary(shard_key) and is_integer(shard_value) do
+    do_update(registry, key, value)
+  end
+
+  def update(%Registry{} = registry, {id_key, pid} = key, value)
+  when is_binary(id_key) and is_pid(pid) do
 
     # De-bind
     {id_key, _pid_key} = key
     do_update(registry, id_key, value)
   end
 
-  defp do_update(%Registry{} = registry, key, value) when is_binary(key) do
+  def update(%Registry{} = registry, {shard_key, pid} = key, value)
+  when is_tuple(shard_key) and is_pid(pid) do
+
+    # De-bind
+    {shard_key, _pid_key} = key
+    do_update(registry, shard_key, value)
+  end
+
+  defp do_update(%Registry{} = registry, key, value) do
 
     # Put value state into registry values map
     values = Map.put(registry.values, key, value)
@@ -191,7 +205,7 @@ defmodule Hangman.Simple.Registry do
 
   @spec remove(t, :atom, key) :: t | no_return
   def remove(%Registry{} = registry, :value, {id_key, _pid_key} = _key)
-  when is_binary(id_key) do
+  when (is_binary(id_key) or is_tuple(id_key)) do
 
     Logger.debug("About to remove state from values")
 
@@ -207,14 +221,14 @@ defmodule Hangman.Simple.Registry do
   end
 
   def remove(%Registry{} = registry, :active, {id_key, pid_key} = key)
-  when is_binary(id_key) and is_pid(pid_key) do
+  when (is_binary(id_key) or is_tuple(id_key)) and is_pid(pid_key) do
 
     registry |> do_remove(:active_pids, key) |> do_remove(:active_ids, key)
   end
 
   # Subroutine to handle removal from :active_pids map
   defp do_remove(%Registry{} = registry, :active_pids, {id_key, pid_key} = _key)
-  when is_binary(id_key) and is_pid(pid_key) do
+  when (is_binary(id_key) or is_tuple(id_key)) and is_pid(pid_key) do
 
     Logger.debug("About to remove pid from active list")
 
@@ -241,7 +255,7 @@ defmodule Hangman.Simple.Registry do
 
   # Subroutine to handle removal from :active_ids map
   defp do_remove(%Registry{} = registry, :active_ids, {id_key, pid_key} = _key)
-  when is_binary(id_key) and is_pid(pid_key) do
+  when (is_binary(id_key) or is_tuple(id_key)) and is_pid(pid_key) do
 
     Logger.debug("About to remove id from active list")
 

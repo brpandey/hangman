@@ -15,53 +15,34 @@ defmodule Hangman.Web.Handler do
   have been collected in `Hangman.Web`
   """
 
-  alias Hangman.{Game.Pid.Cache, Player, Player.Web.Controller}
+  alias Hangman.{Game.Pid.Cache, Player, Player.Controller}
 
   require Logger
 
   @doc """
-  Function run connects all the `player` specific components together 
-  and runs the player `game`
-  """
-
-  @spec run(Player.id, Player.kind, [String.t], boolean, boolean) :: :ok
-
-  def run(name, :robot, secrets, log, false) when is_list(secrets) 
-      and is_binary(hd(secrets)) and is_boolean(log) do
-    {name, :robot, secrets, log, false} |> setup |> play 
-  end
-
-  @docp """
-  Function setup loads the `player` specific `game` components.
-  Setups the `game` server and per player `event` server.
+  Sets up the `game` server and per player `event` server.
+  Used primarly by the `Web.Collator`
   """
   
   @spec setup(tuple()) :: tuple
-  defp setup({name, :robot, secrets, log, false}) when is_binary(name) 
-  and is_list(secrets) and is_binary(hd(secrets)) and is_boolean(log) do
-    
+  def setup({name, secrets}) when 
+  (is_binary(name) or is_tuple(name)) and is_list(secrets) do
+
     # Grab game pid first from game pid cache
     game_pid = Cache.get_server_pid(name, secrets)
 
-    Controller.start_worker(name, game_pid)
+    # Start Worker in Controller
+    Controller.start_worker(name, :robot, false, game_pid)
 
-    logger_pid = 
-      case log do
-        true ->
-          {:ok, pid} = Player.Logger.Supervisor.start_child(name)
-          pid
-        false -> nil
-      end
-
-    {name, logger_pid}
+    name
   end
 
-  @docp """
+  @doc """
   Play handles client play loop
   """
 
-  @spec play(tuple) :: []
-  defp play({player_handler_key, logger_pid}) do
+  @spec play(Player.id) :: tuple
+  def play(player_handler_key) do
     # atom tag on end for pipe ease
 
     # Loop until we have received an :exit value from the Player Controller
@@ -84,7 +65,7 @@ defmodule Hangman.Web.Handler do
         {:exit, status} -> 
           acc = [status | acc] # prepend to list then later reverse -- O(1)
           Controller.stop_worker(key)
-          if true == is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
+
           {:halt, acc}
 
         _ -> raise "Unknown Player state"
@@ -92,8 +73,10 @@ defmodule Hangman.Web.Handler do
     end)
 
     # we reverse the prepended list of round statuses
-    list |> Enum.reverse 
+    list = list |> Enum.reverse
 
+    {player_handler_key, list}
   end
+
 
 end

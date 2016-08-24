@@ -29,6 +29,7 @@ defmodule Hangman.Web.Test do
     
   end
 
+
   test "cowboy http server with single secret kiwi" do
     body2 = "(#) ----; score=1; status=KEEP_GUESSING (#) ----; score=2; status=KEEP_GUESSING (#) ----; score=3; status=KEEP_GUESSING (#) -I-I; score=4; status=KEEP_GUESSING (#) -I-I; score=5; status=KEEP_GUESSING (#) -I-I; score=6; status=KEEP_GUESSING (#) -I-I; score=25; status=GAME_LOST (#) Game Over! Average Score: 25.0, # Games: 1, Scores:  (KIWI: 25) "
     
@@ -36,7 +37,6 @@ defmodule Hangman.Web.Test do
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=carmen&secret=kiwi")
     
     assert response2.body == body2
-
   end
 
   test "cowboy http server with 20 random secrets" do
@@ -44,7 +44,7 @@ defmodule Hangman.Web.Test do
     {:ok, response3 = %HTTPoison.Response{}} =
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&random=20")
     
-    IO.puts "HTTPoison.get http://127.0.0.1:3737/hangman?name=julio&random=20 gives: #{inspect response3.body}\n\n"
+    IO.puts "HTTPoison.get http://127.0.0.1:3737/hangman?name=melvin&random=20 gives: #{inspect response3.body}\n\n"
   end
 
 
@@ -53,6 +53,6 @@ defmodule Hangman.Web.Test do
     {:ok, response3 = %HTTPoison.Response{}} =
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=orange&random=15")
     
-    IO.puts "HTTPoison.get http://127.0.0.1:3737/hangman?name=julio&random=15 gives: #{inspect response3.body}\n\n"
+    IO.puts "HTTPoison.get http://127.0.0.1:3737/hangman?name=orange&random=15 gives: #{inspect response3.body}\n\n"
   end
 end

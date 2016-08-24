@@ -46,7 +46,8 @@ defmodule Hangman.Pass.Cache.Writer do
   
   @spec put(Pass.key, Chunks.t) :: :ok
   def put({id, game_no, round_no} = pass_key, %Chunks{} = chunks)
-  when is_binary(id) and is_number(game_no) and is_number(round_no) do
+  when (is_binary(id) or is_tuple(id)) 
+  and is_number(game_no) and is_number(round_no) do
     GenServer.call(:pass_cache_writer, {:put, pass_key, chunks})
   end
 

@@ -33,7 +33,8 @@ defmodule Hangman.Player.Worker do
   # CLIENT API #
 
   def start_link(args = {player_name, player_type, display, game_pid})
-  when is_binary(player_name) and is_atom(player_type) and is_boolean(display) 
+  when (is_binary(player_name) or is_tuple(player_name)) 
+  and is_atom(player_type) and is_boolean(display) 
   and is_pid(game_pid) and is_tuple(args) do
 
     options = [name: via_tuple(player_name)] #,  debug: [:trace]]

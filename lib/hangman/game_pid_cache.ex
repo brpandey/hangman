@@ -16,7 +16,7 @@ defmodule Hangman.Game.Pid.Cache do
   
   require Logger
 
-  alias Hangman.{Game}
+  alias Hangman.{Game, Player}
   
   @name __MODULE__
   
@@ -39,7 +39,7 @@ defmodule Hangman.Game.Pid.Cache do
   if not found returns new game `pid`. Handles race conditions
   """
   
-  @spec get_server_pid(name :: String.t, args :: String.t) :: pid
+  @spec get_server_pid(Player.id, String.t | [String.t]) :: pid
   def get_server_pid(player_name, secret) do    
     case Game.Server.whereis(player_name) do
       :undefined ->
@@ -61,7 +61,7 @@ defmodule Hangman.Game.Pid.Cache do
   GenServer callback to retrieve game server pid
   """
   
-  #@callback handle_call({:atom, String.t, String.t}, {}, term) :: {}
+  #@callback handle_call({:atom, Player.id, String.t | [String.t]}, {}, term) :: {}
   def handle_call({:get_server, player_name, secret}, _from, state) do
     
     #Check the registry again for the pid -- safeguard against race condition

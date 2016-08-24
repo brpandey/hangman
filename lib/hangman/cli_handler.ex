@@ -15,7 +15,7 @@ defmodule Hangman.CLI.Handler do
   have been collected in `Hangman.CLI`
   """
 
-  alias Hangman.{Game.Pid.Cache, Player, Player.CLI.Controller}
+  alias Hangman.{Game.Pid.Cache, Player, Player.Controller}
 
   require Logger
 

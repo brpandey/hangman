@@ -33,10 +33,10 @@ defmodule Hangman.Game.Server.Supervisor do
   Starts game server dynamically
   """
   
-  @spec start_child(String.t, String.t) :: Supervisor.on_start_child
-  def start_child(player, secret) do
+  @spec start_child(Game.id, String.t) :: Supervisor.on_start_child
+  def start_child(id, secret) do
     Supervisor.start_child(:hangman_game_server_supervisor, 
-                           [player, secret])
+                           [id, secret])
   end
   
   @doc """

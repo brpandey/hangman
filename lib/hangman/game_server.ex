@@ -22,7 +22,7 @@ defmodule Hangman.Game.Server do
   not presently utilized.
   """
   
-  @type id :: String.t
+  @type id :: Player.id
 
   @vsn "0"
 
@@ -46,6 +46,7 @@ defmodule Hangman.Game.Server do
     # Store newly loaded, game into the game server registry
 
     registry = Registry.new |> Registry.update(id_key, game)
+
     options = [name: via_tuple(id_key)] #,  debug: [:trace]]
     
     GenServer.start_link(__MODULE__, registry, options)

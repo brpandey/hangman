@@ -3,6 +3,8 @@ defmodule Hangman.Web do
 
   alias Hangman.{Web}
 
+  require Logger
+
   @moduledoc """
   Module provides access to a http web server for playing 
   `Hangman` games via a tool such as curl or HTTPoison.
@@ -72,12 +74,19 @@ defmodule Hangman.Web do
       [secrets]
     end
     
-    if secrets == nil, do: raise "Can't run hangman with no secrets"
+    if secrets == nil do raise "Can't run hangman with no secrets" end
+    
+    Logger.info("web, secrets are: #{inspect secrets}")      
+       
+     results = Web.Collator.run(name, :robot, secrets, false, false)
 
-    rounds = Web.Handler.run(name, :robot, secrets, false, false)
-    value = format_rounds(rounds)
-        
-    Plug.Conn.assign(conn, :response, value)
+     results = 
+       case Enum.count(secrets) do 
+         1 -> format_rounds(results)
+         _ -> results
+       end
+     
+    Plug.Conn.assign(conn, :response, results)
   end
 
 '''
@@ -90,8 +99,7 @@ defmodule Hangman.Web do
   end
 '''
 
-  @spec format_rounds([String.t]) :: [String.t]
-  defp format_rounds(rounds) do
+  defp format_rounds(rounds) when is_list(rounds) do
     for round <- rounds do
       "(#) #{round} "
     end
