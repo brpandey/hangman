@@ -21,7 +21,27 @@ defmodule Hangman.Player.Worker do
   feeding the Player FSM and returning the appropriate response to the 
   `Player.Controller`.
 
-  The player interface constitutes of two methods: `proceed/1` and `guess/2`
+
+  The `Player` sandwich shows the ingredient layers of the player:
+
+  cli_handler | web_handler (the player clients) 
+  --------
+  player controller (a proxy module, providing a single player interface)
+  --------
+  player worker supervisor (dynamically starts children and handles abnormal crashes)
+  --------
+  player worker (issues requests to fsm)
+  --------
+  player fsm (fsm wrapper for action protocol)
+  --------
+  player action (handles dynamic dispatch based on player types)
+  --------
+  action human | action robot (specific types implemented)
+  --------
+  round | strategy (handles game playing specifics -- choosing best letter, 
+                    communicating with game server and reduction engine)
+
+  The player worker interface constitutes of two methods: `proceed/1` and `guess/2`
   """
 
   use GenServer

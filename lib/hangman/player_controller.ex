@@ -10,6 +10,25 @@ defmodule Hangman.Player.Controller do
   Forwards player requests to `Player.Worker` and 
   responses back to the relevant `Handler`, either CLI or Web.
 
+  The `Player` sandwich shows the ingredient layers of the player:
+
+  cli_handler | web_handler (the player clients) 
+  --------
+  player controller (a proxy module, providing a single player interface)
+  --------
+  player worker supervisor (dynamically starts children and handles abnormal crashes)
+  --------
+  player worker (issues requests to fsm)
+  --------
+  player fsm (fsm wrapper for action protocol)
+  --------
+  player action (handles dynamic dispatch based on player types)
+  --------
+  action human | action robot (specific types implemented)
+  --------
+  round | strategy (handles game playing specifics -- choosing best letter, 
+                    communicating with game server and reduction engine)
+
   """
 
   require Logger
