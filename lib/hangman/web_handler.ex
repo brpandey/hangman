@@ -1,7 +1,7 @@
 defmodule Hangman.Web.Handler do
 
   @moduledoc """
-  Module drives `Player.Web.Controller`, while
+  Module drives `Player.Controller`, while
   setting up the proper `Game` server and `Event` consumer states.
 
   Simply stated it politely nudges the player to proceed to the next 

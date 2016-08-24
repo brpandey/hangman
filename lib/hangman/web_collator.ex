@@ -80,7 +80,7 @@ defmodule Hangman.Web.Collator do
     summary = List.last(game_history)
     [_, scores] = String.split(summary, "Scores: ")
     
-    IO.puts "scores are #{inspect scores}"
+    IO.puts "game_key, scores are #{inspect game_key}, #{inspect scores}"
     
     # Store individual game summaries into shard_key and
     # Store score results into name key (e.g. non-sharded)

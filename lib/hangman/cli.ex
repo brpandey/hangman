@@ -12,6 +12,8 @@ defmodule Hangman.CLI do
 
   Player game archival can be captured through logging, e.g. --log option
 
+  The display and log options are exclusive to the CLI client.
+
   `Usage:
   --name (player id) --type ("human" or "robot") --random (num random secrets, max 10)
   [--secret (hangman word(s)) --baseline] [--log --display]`
