@@ -2,8 +2,8 @@ defmodule Hangman.Web.Collator do
 
 
   @moduledoc """
-  Module distributes web requests to
-  player workers and then collects information 
+  Module distributes the game requests to the
+  player workers and then collects the resultant game information 
   and combines it in the proper order.
   """
 
@@ -15,8 +15,8 @@ defmodule Hangman.Web.Collator do
   @shard_size 2   # 1 shard contains 2 secrets
 
   @doc """
-  Function run connects all the `player` specific components together 
-  and runs the player `game`
+  Function run is the entry point for the flow processing
+  and collation
   """
 
   @spec run(Player.id, Player.kind, [String.t], boolean, boolean) :: :ok
@@ -27,8 +27,17 @@ defmodule Hangman.Web.Collator do
   end
 
   @docp """
-  Function setup loads the `player` specific `game` components.
-  Setups the `game` server and per player `event` server.
+  Setups up flow engine.  For each game argument, sets up 
+  the game state and then plays the game shards
+
+  In terms of map-reduce frameworks, the collection vector
+  contains the game argument tokens
+
+  These game tokens are mapped to the Web.Handler setup and play
+  functions, which setup game play and carry it out.
+
+  Finally, the results of play are reduced and store into a map.
+  Whose entries are handed off back to the Web module
   """
   
   @spec flow(tuple()) :: tuple
@@ -72,6 +81,13 @@ defmodule Hangman.Web.Collator do
 
   end
 
+
+  @docp """
+  Collects game result information and stores into shard key
+  Combines game summaries and stores into name key
+  """
+
+  @spec collate(tuple, term) :: term
   defp collate({game_key, game_history}, acc) do
       
     # destructure shard key

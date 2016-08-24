@@ -2,7 +2,7 @@ defmodule Hangman.Web.Handler do
 
   @moduledoc """
   Module drives `Player.Controller`, while
-  setting up the proper `Game` server and `Event` consumer states.
+  setting up the proper `Game` server and `Event` consumer states beforehand.
 
   Simply stated it politely nudges the player to proceed to the next 
   course of action or make the next guess.  The handler also collects 
@@ -11,8 +11,6 @@ defmodule Hangman.Web.Handler do
 
   When the game is finished it politely ends the game playing.
 
-  This module is the goto destination after all the arguments
-  have been collected in `Hangman.Web`
   """
 
   alias Hangman.{Game.Pid.Cache, Player, Player.Controller}
@@ -43,7 +41,6 @@ defmodule Hangman.Web.Handler do
 
   @spec play(Player.id) :: tuple
   def play(player_handler_key) do
-    # atom tag on end for pipe ease
 
     # Loop until we have received an :exit value from the Player Controller
     list = Enum.reduce_while(Stream.cycle([player_handler_key]), [], fn key, acc ->

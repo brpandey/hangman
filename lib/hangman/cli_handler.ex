@@ -2,7 +2,7 @@ defmodule Hangman.CLI.Handler do
 
   @moduledoc """
   Module drives `Player.Controller`, while
-  setting up the proper `Game` server and `Event` consumer states.
+  setting up the proper `Game` server and `Event` consumer states beforehand.
 
   Simply stated it politely nudges the player to proceed to the next 
   course of action or make the next guess.  The handler also collects 
@@ -75,7 +75,6 @@ defmodule Hangman.CLI.Handler do
 
   @spec play(tuple) :: :ok
   defp play({player_handler_key, alert_pid, logger_pid}) do 
-    # atom tag on end for pipe ease
 
     # Loop until we have received an :exit value from the Player Controller
     Enum.reduce_while(Stream.cycle([player_handler_key]), 0, fn key, acc ->
