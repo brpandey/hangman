@@ -12,9 +12,9 @@ defmodule Hangman.Game.Server.Test do
       :current_player_key => nil,
       :current_game_pid => nil,
       :cases => %{
-        :stanley2 => [name: "stanley", secrets: ["factual", "backpack"]],
+        :stanley2 => [name: "stanley2", secrets: ["factual", "backpack"]],
         :hugo2 => [name: "hugo", secrets: ["heart", "lullaby"]],
-        :stanley1 => [name: "stanley", secrets: ["jovial"]]
+        :stanley1 => [name: "stanley1", secrets: ["jovial"]]
       }
     }
     
