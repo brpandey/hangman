@@ -152,7 +152,7 @@ defmodule Hangman.Round do
 
     # Filter the hangman word set, grab the result of the pass
     {^pass_key, pass_info} = 
-      Pass.result(match_key, pass_key, reduce_key)
+      Pass.Stub.result(match_key, pass_key, reduce_key)
 
     {round, pass_info}
   end

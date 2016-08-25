@@ -169,8 +169,6 @@ defmodule Hangman.Game.Server do
     game = Game.new(id_key, secret, max_wrong)
     state = Registry.update(state, id_key, game)
 
-    Logger.debug("load_game, Game.Server: #{inspect state}")
-    
     {:noreply, state}
   end
   
@@ -181,8 +179,6 @@ defmodule Hangman.Game.Server do
   @callback handle_call({:atom, Player.key, Round.key}, tuple, Registry.t) :: tuple
   def handle_call({:register, {_, pid_key} = player_key, round_key}, _from, state) do
 
-    Logger.debug "In Game.Server handle call, registry begin, state: #{inspect state}, self: #{inspect self}, player_key: #{inspect player_key}"
-
     # add the player key to the registry
     state = Registry.add_key(state, player_key)
 
@@ -192,9 +188,7 @@ defmodule Hangman.Game.Server do
     # Retrieve game
     game = Registry.value(state, player_key)
 
-    {game, %{code: status_code, text: status_text}} = status = Game.status(game)
-
-    Logger.debug "In Game.Server handle call, registry middle, status: #{inspect status}"
+    {game, %{code: status_code, text: status_text}}  = Game.status(game)
 
     # Update server state with updated game state
     state = Registry.update(state, player_key, game)
@@ -212,10 +206,6 @@ defmodule Hangman.Game.Server do
           Event.Manager.async_notify({:finished, id, status_text})
           data
       end
-
-#    Logger.debug "In Game.Server handle call, registry, game: #{inspect game}"
-#    Logger.debug "In Game.Server handle call, registry end, state: #{inspect state}"
-
 
     # Let's piggyback the round status text with the secret length value
     

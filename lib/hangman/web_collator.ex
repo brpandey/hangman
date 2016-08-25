@@ -19,11 +19,11 @@ defmodule Hangman.Web.Collator do
   and collation
   """
 
-  @spec run(Player.id, Player.kind, [String.t], boolean, boolean) :: :ok
+  @spec run(Player.id, [String.t]) :: :ok
 
-  def run(name, :robot, secrets, false, false)
-  when is_list(secrets) and is_binary(hd(secrets)) do
-    {name, :robot, secrets, false, false} |> flow
+  def run(name, secrets)
+  when is_binary(name) and is_list(secrets) and is_binary(hd(secrets)) do
+    {name, secrets} |> flow
   end
 
   @docp """
@@ -41,7 +41,7 @@ defmodule Hangman.Web.Collator do
   """
   
   @spec flow(tuple()) :: tuple
-  defp flow({name, :robot, secrets, false, false}) when 
+  defp flow({name, secrets}) when 
   is_binary(name) and is_list(secrets) and is_binary(hd(secrets)) do
 
     # e.g secrets
@@ -65,7 +65,7 @@ defmodule Hangman.Web.Collator do
       |> Web.Handler.setup 
       |> Web.Handler.play
     end)
-#    |> Flow.partition()
+    |> Flow.partition()
     |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
       collate({key, history}, acc)
     end)

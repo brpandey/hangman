@@ -85,7 +85,7 @@ defmodule Hangman.Player.FSM do
 
       {player, status} = player |> Action.setup
 
-      Logger.debug "FSM setup: player is #{inspect player}"
+  #    Logger.debug "FSM setup: player is #{inspect player}"
 
       case status do
         [] -> respond({:setup, []}, 
@@ -120,7 +120,7 @@ defmodule Hangman.Player.FSM do
 
       {player, status} = player |> Action.transition
 
-      Logger.debug "FSM transit: player is #{inspect player}"
+#      Logger.debug "FSM transit: player is #{inspect player}"
 
       case status do
         {:start, text} -> 

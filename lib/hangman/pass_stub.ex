@@ -16,7 +16,7 @@ defmodule Hangman.Pass.Stub do
 
   @spec result(atom, Pass.key, Reduction.key) :: tuple
   def result(:start, {id, game_no, 1} = pass_key, reduce_key) 
-    when is_binary(id) and is_number(game_no) do
+    when (is_binary(id) or is_tuple(id)) and is_number(game_no) do
 
     {:ok, true} = Keyword.fetch(reduce_key, :start)
     {:ok, _length_filter_key}  = Keyword.fetch(reduce_key, :secret_length)
@@ -30,7 +30,8 @@ defmodule Hangman.Pass.Stub do
 
   @spec result(atom, Pass.key, Reduction.key) :: tuple
   def result(:guessing, {id, game_no, round_no} = pass_key, reduce_key)
-    when is_binary(id) and is_number(game_no) and is_number(round_no) do
+    when (is_binary(id) or is_tuple(id)) and 
+    is_number(game_no) and is_number(round_no) do
 
 
     {:ok, _exclusion_filter_set} = Keyword.fetch(reduce_key, :guessed_letters)
@@ -38,6 +39,156 @@ defmodule Hangman.Pass.Stub do
   
     simulate_reduce_sequence(pass_key)  
   end
+
+
+
+
+  # Game 3, word is eruptive -- use {"rabbit", 2} for id, and mark as game 1
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 1}) do
+    
+    size = 28558
+
+    tally = Counter.new(%{"e" =>  19600, "s" =>  16560, "i" =>  15530, "a" =>  14490, "r" =>  14211,
+      "n" =>  12186, "t" =>  11870, "o" =>  11462, "l" =>  11026, "d" =>  8046, "c" =>  7815,
+      "u" =>  7377, "g" =>  6009, "m" =>  5793, "p" =>  5763, "h" =>  5111, "b" =>  4485, "y" =>  3395,
+      "f" =>  2897, "k" =>  2628, "w" =>  2313, "v" =>  2156, "z" =>  783, "x" =>  662,
+      "q" =>  422, "j" =>  384})
+
+    #_possible = Enum.map(_possible, &String.downcase(&1))
+
+    _guessed = []
+    _guess_letter = "e"
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: ""}
+
+    {{{"rabbit", 2}, 1, 1}, pass_info}
+  end
+
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 2}) do
+
+    size = 101
+
+    tally = Counter.new(%{"i" =>  61, "a" =>  56, "l" =>  50, "t" =>  42, "o" =>  34, "s" =>  34,
+      "n" =>  31, "c" =>  30, "r" =>  27, "u" =>  23, "p" =>  22, "v" =>  21, "d" =>  20, "g" =>  20,
+      "b" =>  18, "m" =>  14, "x" =>  14, "h" =>  12, "y" =>  5, "z" =>  5, "q" =>  4, "k" =>  3, 
+      "f" =>  2, "w" =>  1})
+
+    _guessed = ["e"]
+    _guess_letter = "a"
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: ""}
+
+    {{{"rabbit", 2}, 1, 2}, pass_info}
+  end
+
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 3}) do
+    
+    size = 45
+
+    tally = Counter.new(%{"i" =>  36, "o" =>  25, "l" =>  21, "s" =>  19, "c" =>  14,
+      "p" =>  14, "r" =>  14, "n" =>  11, "u" =>  11, "t" =>  11, "d" =>  8, "g" =>  8,
+      "x" =>  8, "m" =>  7, "v" =>  7, "b" =>  6, "h" =>  4, "y" =>  4, "z" =>  4, 
+      "k" =>  3, "f" =>  1, "q" =>  1})
+
+    _guessed = ["a", "e"]
+    _guess_letter = "i"
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: ""}
+
+    {{{"rabbit", 2}, 1, 3}, pass_info}
+  end
+
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 4}) do
+
+    size = 14
+
+    tally = Counter.new(%{"o" =>  9, "s" =>  7, "l" =>  6, "u" =>  6, "c" =>  5, "r" =>  5, 
+      "g" =>  4, "t" =>  4, "v" =>  4, "n" =>  3, "x" =>  3, "m" =>  2, "p" =>  2, "z" =>  2, 
+      "d" =>  1, "f" =>  1, "h" =>  1})
+
+    _guessed = ["a", "e", "i"]
+    _guess_letter = "o"
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: ""}
+
+    {{{"rabbit", 2}, 1, 4}, pass_info}
+  end
+
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 5}) do
+
+    size = 5
+
+    tally = Counter.new(%{"u" =>  4, "v" =>  4, "s" =>  3, "r" =>  2, "t" =>  2, "c" =>  1,
+     "d" =>  1, "f" =>  1, "h" =>  1, "m" =>  1, "l" =>  1, "n" =>  1, "p" =>  1})
+
+    _guessed = ["a", "e", "i", "r"]
+    _guess_letter = "r"
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: ""}
+
+    {{{"rabbit", 2}, 1, 5}, pass_info}
+  end
+
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 6}) do
+
+    size = 1
+
+    tally = Counter.new(%{"u" => 1, "p" => 1, "t" => 1, "v" => 1})
+
+    _guessed = []
+    _guess_letter = ""
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: "eruptive"}
+
+    {{{"rabbit", 2}, 1, 6}, pass_info}
+  end
+
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 7}) do
+
+    size = 0
+
+    tally = Counter.new
+
+    _guessed = []
+    _guess_letter = ""
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: ""}
+
+    {{{"rabbit", 2}, 1, 7}, pass_info}
+  end
+
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 8}) do
+
+    size = 0
+
+    tally = Counter.new
+
+    _guessed = []
+    _guess_letter = ""
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: ""}
+
+    {{{"rabbit", 2}, 1, 8}, pass_info}
+  end
+
+  defp simulate_reduce_sequence({{"rabbit", 2}, 1, 9}) do
+
+    size = 0
+
+    tally = Counter.new
+
+    _guessed = []
+    _guess_letter = ""
+
+    pass_info = %Pass{ size: size, tally: tally, last_word: ""}
+
+    {{{"rabbit", 2}, 1, 9}, pass_info}
+  end
+
+
+
+
+
 
 
   # Game 1 - word is: cumulate

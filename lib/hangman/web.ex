@@ -76,16 +76,14 @@ defmodule Hangman.Web do
     
     if secrets == nil do raise "Can't run hangman with no secrets" end
     
-    Logger.info("web, secrets are: #{inspect secrets}")      
-       
-     results = Web.Collator.run(name, :robot, secrets, false, false)
+    results = Web.Collator.run(name, secrets)
 
-     results = 
-       case Enum.count(secrets) do 
-         1 -> format_rounds(results)
-         _ -> results
-       end
-     
+    results = 
+      case Enum.count(secrets) do 
+        1 -> format_rounds(results)
+        _ -> results
+      end
+    
     Plug.Conn.assign(conn, :response, results)
   end
 
