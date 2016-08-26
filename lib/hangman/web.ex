@@ -101,7 +101,7 @@ defmodule Hangman.Web do
       
     else
       error -> 
-      IO.puts "error is #{inspect error}"
+      Logger.debug "error is #{inspect error}"
       raise HangmanError, "Can't run hangman without a name or either a secrets or a random option specified"
     end
     

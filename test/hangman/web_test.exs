@@ -129,5 +129,14 @@ defmodule Hangman.Web.Test do
 
   end
 
+  test "cowboy http server with secrets list and word azerbaijan not in dictionary" do
+
+    {:ok, response = %HTTPoison.Response{}} = 
+      HTTPoison.get("http://127.0.0.1:3737/hangman?name=gustav&secret[]=masterful&secret[]=azerbaijan&secret[]=eruptive")
+
+    assert response.body == " (MASTERFUL: 6) (AZERBAIJAN: 0) (ERUPTIVE: 5)"
+
+  end
+
 
 end
