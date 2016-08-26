@@ -24,14 +24,10 @@ defmodule Hangman.Mixfile do
 
   # Runtime dependencies
   def application do
-    dict_type = Hangman.Dictionary.regular
-    # dict_type = Hangman.Dictionary.big
-    args = [{dict_type, true}]
-
     [
       applications: [:logger, :gproc, :httpoison, :cowboy, 
                      :plug, :exprof, :ex_doc, :runtime_tools, :gen_stage],
-      mod: {Hangman.Application, args}
+      mod: {Hangman.Application, [{Hangman.Dictionary.regular, true}]}
     ]
   end
 
