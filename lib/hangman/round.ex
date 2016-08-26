@@ -89,9 +89,11 @@ defmodule Hangman.Round do
     
     {player_key, round_key, game_pid} = game_context_key(round)
 
+    IO.puts("round_key is : #{inspect round_key}")
+
     # Register the client with the game server and set the context
     %{key: ^round_key, code: status_code, data: data, text: status_text} =
-      Game.Server.register(game_pid, player_key, round_key)
+      Game.Server.Stub.register(game_pid, player_key, round_key)
     
 
     context = if status_code == :finished do nil else {:start, data} end
@@ -171,7 +173,7 @@ defmodule Hangman.Round do
 
     %{key: ^round_key, result: result_code, code: status_code, 
       pattern: pattern, text: status_text} =
-      Game.Server.guess(game_pid, player_key, round_key, guess)
+      Game.Server.Stub.guess(game_pid, player_key, round_key, guess)
     
     round = %Round{round | guess: guess, result_code: result_code, 
                    status_code: status_code, pattern: pattern, 
@@ -198,7 +200,7 @@ defmodule Hangman.Round do
     {player_key, round_key, game_pid} = game_context_key(round)
 
     %{key: ^round_key, code: status_code} = status =
-      Game.Server.status(game_pid, player_key, round_key)
+      Game.Server.Stub.status(game_pid, player_key, round_key)
 
     round = Kernel.put_in(round.status_code, status_code)
 

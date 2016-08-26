@@ -3,20 +3,20 @@ defmodule Hangman.Game.Server.Stub do
 
 
 
-      def register(_game_pid, _player_key, {{"rabbit", 1}, 1, 1}) do
-        %{key: {{"rabbit", 1}, 1, 1}, code: :guessing, data: 8,
+      def register(_game_pid, _player_key, {{"rabbit", 1}, 1, 0}) do
+        %{key: {{"rabbit", 1}, 1, 0}, code: :guessing, data: 8,
           text: "--------; score=0; status=KEEP_GUESSING"} 
       end
 
 
-      def register(_game_pid, _player_key, {{"rabbit", 1}, 2, 1}) do
-        %{key: {{"rabbit", 1}, 2, 1}, code: :guessing, data: 7,
+      def register(_game_pid, _player_key, {{"rabbit", 1}, 2, 0}) do
+        %{key: {{"rabbit", 1}, 2, 0}, code: :guessing, data: 7,
           text: "-------; score=0; status=KEEP_GUESSING"}
       end
 
 
-      def register(_game_pid, _player_key, {{"rabbit", 2}, 1, 1}) do
-        %{key: {{"rabbit", 2}, 1, 1}, code: :guessing, data: 8,
+      def register(_game_pid, _player_key, {{"rabbit", 2}, 1, 0}) do
+        %{key: {{"rabbit", 2}, 1, 0}, code: :guessing, data: 8,
           text: "--------; score=0; status=KEEP_GUESSING"} 
       end
     
