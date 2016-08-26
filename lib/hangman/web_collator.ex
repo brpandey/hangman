@@ -65,7 +65,7 @@ defmodule Hangman.Web.Collator do
       |> Web.Handler.setup 
       |> Web.Handler.play
     end)
-    |> Flow.partition()
+#    |> Flow.partition()
     |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
       collate({key, history}, acc)
     end)
@@ -96,7 +96,7 @@ defmodule Hangman.Web.Collator do
     summary = List.last(game_history)
     [_, scores] = String.split(summary, "Scores: ")
     
-    IO.puts "game_key, scores are #{inspect game_key}, #{inspect scores}"
+    #IO.puts "game_key, scores are #{inspect game_key}, #{inspect scores}"
     
     # Store individual game summaries into shard_key and
     # Store score results into name key (e.g. non-sharded)
@@ -105,7 +105,7 @@ defmodule Hangman.Web.Collator do
     |> Map.put(game_key, game_history) 
     |> Map.update(name, scores, &(&1 <> scores))
     
-    IO.puts "scores acc is #{inspect Map.get(acc, name)}"
+    #IO.puts "scores acc is #{inspect Map.get(acc, name)}"
     
     acc
 

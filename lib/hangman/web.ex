@@ -11,8 +11,11 @@ defmodule Hangman.Web do
 
   Query params are specified after `/hangman?`
 
-  These are name=<String>, secret=<String>, random=<Positive Integer>
+  These are name :: String.t, secret :: String.t | [String.t], random :: pos_integer
   
+  The name at all times must be specified along with either a secret value or random value:
+  true = name and (secret | random)
+
   The random param specifies how many secret words to generate.  Hence,
   random=5, will generate 5 secret game words for a total of 5 hangman games.
 
@@ -27,10 +30,10 @@ defmodule Hangman.Web do
       {"cache-control", "max-age=0, private, must-revalidate"},
       {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
 
-      iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&random=2")
+      iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&random=1")
 
       {:ok,
-      %HTTPoison.Response{body: "(#) --E-----------; score=1; status=KEEP_GUESSING (#) --E--------O--; score=2; status=KEEP_GUESSING (#) --E--------O--; score=3; status=KEEP_GUESSING (#) --E----C---O--; score=4; status=KEEP_GUESSING (#) PREVARICATIONS; score=4; status=GAME_WON (#) ---------; score=1; status=KEEP_GUESSING (#) --A------; score=2; status=KEEP_GUESSING (#) -IA----I-; score=3; status=KEEP_GUESSING (#) -IA----I-; score=4; status=KEEP_GUESSING (#) -IAG---I-; score=5; status=KEEP_GUESSING (#) DIAGNOSIS; score=5; status=GAME_WON (#) Game Over! Average Score: 4.5, # Games: 2, Scores:  (PREVARICATIONS: 4) (DIAGNOSIS: 5) ",
+      %HTTPoison.Response{body: "(#) --E-----------; score=1; status=KEEP_GUESSING (#) --E--------O--; score=2; status=KEEP_GUESSING (#) --E--------O--; score=3; status=KEEP_GUESSING (#) --E----C---O--; score=4; status=KEEP_GUESSING (#) PREVARICATIONS; score=4; status=GAME_WON (#) Game Over! Average Score: 4, # Games: 1, Scores:  (PREVARICATIONS: 4) ",
       headers: [{"server", "Cowboy"}, {"date", "Mon, 14 Mar 2016 04:29:05 GMT"},
       {"content-length", "601"},
       {"cache-control", "max-age=0, private, must-revalidate"},
@@ -52,7 +55,7 @@ defmodule Hangman.Web do
   get "/hangman" do
     conn
     |> Plug.Conn.fetch_query_params
-    |> run_game
+    |> run
     |> respond
   end
 
@@ -61,30 +64,48 @@ defmodule Hangman.Web do
   Runs web game. Returns complete game results in connection response body
   """
   
-  @spec run_game(Plug.Conn.t) :: Plug.Conn.t
-  def run_game(conn) do
-    name = conn.params["name"]
-    secrets = conn.params["secret"]
+  @spec run(Plug.Conn.t) :: Plug.Conn.t
+  def run(conn) do
 
-    secrets = 
-    if secrets == nil do
-      count = conn.params["random"]
-      Hangman.Dictionary.random(count)
+    # Let's catch most of the errors in the beginning using a "with" construct
+
+    # name must be provided
+    # and if provided, either the secrets is a string or a list of strings
+    # and lastly either a secrets value is provided or a random count is provided
+
+    # NOTE: random value is a string which will be error checked in Dictionary.random()
+
+    with name when not is_nil(name) and is_binary(name) <- conn.params["name"],
+    secrets when is_nil(secrets) or is_binary(secrets) or 
+    (is_list(secrets) and is_binary(hd(secrets))) <- conn.params["secret"],
+    count = conn.params["random"],
+    false <- (is_nil(secrets) and is_nil(count)) do
+      
+
+      secrets = 
+        case secrets do
+          nil -> Hangman.Dictionary.random(conn.params["random"])
+          secrets when is_binary(secrets) -> [secrets]
+          secrets when is_list(secrets) -> secrets
+        end
+
+      results = Web.Collator.run(name, secrets)
+      
+      results = 
+        case Enum.count(secrets) do 
+          1 -> format_rounds(results)
+          _ -> results
+        end
+      
+      Plug.Conn.assign(conn, :response, results)
+      
     else
-      [secrets]
+      error -> 
+      IO.puts "error is #{inspect error}"
+      raise HangmanError, "Can't run hangman without a name or either a secrets or a random option specified"
     end
     
-    if secrets == nil do raise "Can't run hangman with no secrets" end
-    
-    results = Web.Collator.run(name, secrets)
 
-    results = 
-      case Enum.count(secrets) do 
-        1 -> format_rounds(results)
-        _ -> results
-      end
-    
-    Plug.Conn.assign(conn, :response, results)
   end
 
 '''
