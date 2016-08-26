@@ -117,11 +117,6 @@ defmodule Hangman.Game do
     equal?(game, %Game{})
   end
 
-
-  # Returns module attribute constant
-  @spec mystery_letter :: String.t
-  def mystery_letter, do: @mystery_letter
-
   
   # Returns length of the current game secret
   @spec secret_length(t) :: integer

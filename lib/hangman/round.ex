@@ -32,7 +32,10 @@ defmodule Hangman.Round do
   to determine if we transition to a new game or games over.
   """
 
-  alias Hangman.{Round, Game, Guess, Pass, Reduction, Letter.Strategy}
+  alias Hangman.{Round, Guess, Reduction, Letter.Strategy}
+
+  alias Hangman.Game.Server, as: Game   # single place to switch to Game.Server.Stub
+  alias Hangman.Pass, as: Pass   # single place to switch to Pass.Stub
 
   require Logger
 
@@ -58,7 +61,10 @@ defmodule Hangman.Round do
   ({:guessing, :incorrect_word, word :: String.t}) |
   ({:guessing, :incorrect_letter, letter :: String.t}) |
   ({:won, :correct_word, word :: String.t})
-  
+
+
+  @mystery_letter "-"
+
 
   # CREATE
 
@@ -89,11 +95,9 @@ defmodule Hangman.Round do
     
     {player_key, round_key, game_pid} = game_context_key(round)
 
-    IO.puts("round_key is : #{inspect round_key}")
-
     # Register the client with the game server and set the context
     %{key: ^round_key, code: status_code, data: data, text: status_text} =
-      Game.Server.Stub.register(game_pid, player_key, round_key)
+      Game.register(game_pid, player_key, round_key)
     
 
     context = if status_code == :finished do nil else {:start, data} end
@@ -154,7 +158,7 @@ defmodule Hangman.Round do
 
     # Filter the hangman word set, grab the result of the pass
     {^pass_key, pass_info} = 
-      Pass.Stub.result(match_key, pass_key, reduce_key)
+      Pass.result(match_key, pass_key, reduce_key)
 
     {round, pass_info}
   end
@@ -173,7 +177,7 @@ defmodule Hangman.Round do
 
     %{key: ^round_key, result: result_code, code: status_code, 
       pattern: pattern, text: status_text} =
-      Game.Server.Stub.guess(game_pid, player_key, round_key, guess)
+      Game.guess(game_pid, player_key, round_key, guess)
     
     round = %Round{round | guess: guess, result_code: result_code, 
                    status_code: status_code, pattern: pattern, 
@@ -200,7 +204,7 @@ defmodule Hangman.Round do
     {player_key, round_key, game_pid} = game_context_key(round)
 
     %{key: ^round_key, code: status_code} = status =
-      Game.Server.Stub.status(game_pid, player_key, round_key)
+      Game.status(game_pid, player_key, round_key)
 
     round = Kernel.put_in(round.status_code, status_code)
 
@@ -223,7 +227,7 @@ defmodule Hangman.Round do
     case round.result_code do
       :correct_letter -> 
         {:guess_letter, letter} = round.guess
-        {:guessing, :correct_letter, letter, round.pattern, Game.mystery_letter}
+        {:guessing, :correct_letter, letter, round.pattern, @mystery_letter}
 
       :incorrect_letter -> 
         {:guess_letter, letter} = round.guess
