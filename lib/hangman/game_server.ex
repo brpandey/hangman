@@ -299,12 +299,11 @@ defmodule Hangman.Game.Server do
     state = Registry.update(state, player_key, game)
 
     %{code: status_code, text: status_text} = result
-    {id, game_num, _} = round_key
+    {id, _game_num, _} = round_key
 
     # Notify event manager
     case status_code do
       :finished -> Event.Manager.async_notify({:finished, id, status_text})
-      :start -> Event.Manager.async_notify({:start, id, game_num})
       _ -> ""
     end
 

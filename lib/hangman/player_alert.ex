@@ -66,9 +66,8 @@ defmodule Hangman.Player.Alert.Handler do
 
     msg = 
       case event do
-        {:start, name, game_no} ->
-          "##{name}_feed --> Game #{game_no} has started"
         {:register, name, {game_no, length}} ->
+          "##{name}_feed --> Game #{game_no} has started\n" <>
           "##{name}_feed Game #{game_no}, " <> 
             "secret length --> #{length}"
         {:guess, name, {{:guess_letter, letter}, game_no}} ->

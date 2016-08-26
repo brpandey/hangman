@@ -72,8 +72,6 @@ defmodule Hangman.Player.Logger.Handler do
 
     msg = 
       case event do
-        {:start, _, game_no} ->
-          "\n# new game #{game_no} started! \n"
         {:register, _, {game_no, length}} -> 
           "\n# new game #{game_no}! secret length --> #{length}\n"
         {:guess, _, {{:guess_letter, letter}, _game_no}} ->
