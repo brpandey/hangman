@@ -1,6 +1,10 @@
-defmodule Hangman.Web.Handler do
+defmodule Hangman.Web.Shard.Handler do
 
   @moduledoc """
+  Module runs game play for the given web shard of secrets
+  as determined by `Web.Flow`.  Basically, runs a chunk
+  of the overall original secrets vector.
+
   Module drives `Player.Controller`, while
   setting up the proper `Game` server and `Event` consumer states beforehand.
 

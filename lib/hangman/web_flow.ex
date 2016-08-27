@@ -8,7 +8,7 @@ defmodule Hangman.Web.Flow do
   """
 
   alias Experimental.Flow
-  alias Hangman.{Player, Web}
+  alias Hangman.{Player, Web.Shard}
 
   require Logger
 
@@ -53,9 +53,14 @@ defmodule Hangman.Web.Flow do
     result = game_args
     |> Flow.from_enumerable()
     |> Flow.map(fn {shard_key, shard_value} ->
+
+      IO.puts("in flow map self: #{inspect self}")
+
       {shard_key, shard_value} 
-      |> Web.Handler.setup 
-      |> Web.Handler.play
+      |> Shard.Handler.setup 
+      |> Shard.Handler.play
+
+
     end)
 #    |> Flow.partition()
     |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
