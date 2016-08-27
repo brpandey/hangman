@@ -24,7 +24,7 @@ $  cd elixir-hangman
 $  mix compile
 $  mix escript.build
 
-$  ./hangman -n fred -t robot -r 3
+$  ./hangman_game -n fred -t robot -r 3
 
 or you can run the release version for your environment
 
@@ -32,7 +32,7 @@ $  mix deps.get
 $  MIX_ENV=prod mix compile --no-debug-info
 $  MIX_ENV=prod mix release
 
-$  rel/hangman/bin/hangman start
+$  rel/hangman/bin/hangman_game start
 
 $  curl "http://127.0.0.1:3737/hangman?name=julio&secret=woodpecker"
 (#) -----E--E-; score=1; status=KEEP_GUESSING (#) -----E--E-; score=2; status=KEEP_GUESSING (#) -----E--ER; score=3; status=KEEP_GUESSING (#) -----E--ER; score=4; status=KEEP_GUESSING (#) -----E--ER; score=5; status=KEEP_GUESSING (#) -----E--ER; score=6; status=KEEP_GUESSING (#) -----E--ER; score=7; status=KEEP_GUESSING (#) WOODPECKER; score=7; status=GAME_WON (#) Game Over! Average Score: 7.0, # Games: 1, Scores:  (WOODPECKER: 7) 
@@ -45,12 +45,12 @@ $  curl "http://127.0.0.1:3737/hangman?name=julio&random=2"
 
 (NOTE --> Result will be different each time since we are specifying the random n words options)
 
-$  rel/hangman/bin/hangman stop
+$  rel/hangman/bin/hangman_game stop
 
 
 EXAMPLES:
 
-$ ./hangman -n stanley -t human -r 2
+$ ./hangman_game -n stanley -t human -r 2
 
 Player stanley, Round 1, -------; score=0; status=KEEP_GUESSING.
 5 weighted letter choices :  e*:15273 s:12338 i:11028 a:10830 r:10516 (* robot choice)
@@ -130,7 +130,7 @@ Game Over! Average Score: 7.0, # Games: 2, Scores:  (DEGLAZE: 7) (VILIFIERS: 7)
 
 
 
-$ ./hangman -n fred -t robot -s spectacle
+$ ./hangman_game -n fred -t robot -s spectacle
 
 --E-----E; score=1; status=KEEP_GUESSING
 
@@ -145,3 +145,11 @@ $ ./hangman -n fred -t robot -s spectacle
 SPECTACLE; score=5; status=GAME_WON
 
 Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
+
+
+NOTE: Unit tests are not fully complete but there are a handful in test/hangman. 
+      There is "some" truth here: Dave Thomas - Agile is Dead ->  https://www.youtube.com/watch?v=a-BOSpxYJ9M 
+
+NOTE: Also, the hangman file directory structure is flat in lib/hangman.  There should be
+      directories under lib/hangman technically following the modules names but for portfolio
+      simplicity purposes keeping all in the top level directory.
