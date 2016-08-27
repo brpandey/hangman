@@ -139,7 +139,7 @@ defmodule Hangman.Web.Test do
   end
 
 
-
+  @tag :wip
   test "cowboy http server with 200 random secrets" do
     
     {:ok, response3 = %HTTPoison.Response{}} =

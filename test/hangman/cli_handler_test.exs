@@ -9,23 +9,26 @@ defmodule Hangman.CLI.Handler.Test do
     :ok
   end
 
-  test "test running 2 robot games and 2 human games" do 
+  @tag :pending
+  test "test running 2 human games" do 
 
     secrets = ["mitochondria", "eject"]
 
     CLI.Handler.run("jedi_test", :human, secrets, true, false)
 
 
-    secrets = ["asparagus", "voluptuous"]
-
-    {:ok, apid} = Player.Alert.Supervisor.start_child("c3po_test", nil)
-    CLI.Handler.run("c3po_test", :robot, secrets, false, true)
-    Player.Alert.Handler.stop(apid)
-
   end
 
-  @tag timeout: 90_000 # 90 secs
-  test "test running 2 human games" do 
+  @tag :pending
+  test "test running 2 robot games" do 
+
+    secrets = ["asparagus", "voluptuous"]
+    CLI.Handler.run("c3po_test", :robot, secrets, false, true)
+  end
+
+#  @tag timeout: 90_000 # 90 secs
+  @tag :pending
+  test "test running 2 human games with player alert" do 
 
     secrets = ["porcupine", "eel"]
 

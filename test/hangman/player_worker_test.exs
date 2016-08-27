@@ -47,7 +47,7 @@ defmodule Hangman.Player.Worker.Test do
           {:ok, lpid} = Player.Logger.Supervisor.start_child(name)
           {:ok, apid} = Player.Alert.Supervisor.start_child(name, nil)
           {lpid, apid}
-        {shard_id, shard_value} when is_binary(shard_id) ->
+        {shard_id, _shard_value} when is_binary(shard_id) ->
           {:ok, lpid} = Player.Logger.Supervisor.start_child(shard_id)
           {:ok, apid} = Player.Alert.Supervisor.start_child(shard_id, nil)
           {lpid, apid}
