@@ -1,4 +1,4 @@
-defmodule Hangman.Web.Collator do
+defmodule Hangman.Web.Flow do
 
 
   @moduledoc """
@@ -12,21 +12,12 @@ defmodule Hangman.Web.Collator do
 
   require Logger
 
-  @shard_size 2   # 1 shard contains 2 secrets
+  @flow_shard_size 10   # 1 flow shard contains 10 secrets
+
 
   @doc """
-  Function run is the entry point for the flow processing
-  and collation
-  """
+  Entry point for map-reduce "flow" processing and collation.
 
-  @spec run(Player.id, [String.t]) :: :ok
-
-  def run(name, secrets)
-  when is_binary(name) and is_list(secrets) and is_binary(hd(secrets)) do
-    {name, secrets} |> flow
-  end
-
-  @docp """
   Setups up flow engine.  For each game argument, sets up 
   the game state and then plays the game shards
 
@@ -39,17 +30,18 @@ defmodule Hangman.Web.Collator do
   Finally, the results of play are reduced and store into a map.
   Whose entries are handed off back to the Web module
   """
-  
-  @spec flow(tuple()) :: tuple
-  defp flow({name, secrets}) when 
+
+  @spec run(Player.id, [String.t]) :: :ok  
+  def run(name, secrets) when
   is_binary(name) and is_list(secrets) and is_binary(hd(secrets)) do
 
     # e.g secrets
     # ["radical", "rabbit", "mushroom", "petunia"]    
     sharded_keys = Stream.cycle([name]) |> Stream.with_index(1)
 
-    # currently each shard has 2 secrets
-    sharded_secrets = secrets |> Stream.chunk(@shard_size, @shard_size, []) 
+    # each shard has @flow_shard_size secrets, 
+    # add empty list at end so we don't miss leftovers
+    sharded_secrets = secrets |> Stream.chunk(@flow_shard_size, @flow_shard_size, []) 
     
     # zips the two streams into a format like the following:
     # [{{"fred", 1}, ["radical", "rabbit"]}, {{"fred", 2}, ["mushroom", "petunia"]}]
@@ -85,28 +77,30 @@ defmodule Hangman.Web.Collator do
   @docp """
   Collects game result information and stores into shard key
   Combines game summaries and stores into name key
+
+  Each shard_key e.g. {"robin", 7} represents the 
+  seventh shard of the "robin" games, and is the result of (# secrets/shard) games played
   """
 
   @spec collate(tuple, term) :: term
-  defp collate({game_key, game_history}, acc) do
+  defp collate({key, snapshot}, acc) do
       
     # destructure shard key
-    {name, _} = game_key
+    {name, _shard_value} = key
     
-    summary = List.last(game_history)
-    [_, scores] = String.split(summary, "Scores: ")
+    [_, scores] =  snapshot |> List.last |> String.split("Scores: ")
     
-    #IO.puts "game_key, scores are #{inspect game_key}, #{inspect scores}"
+    #IO.puts "key: #{inspect key}, key scores #{inspect scores}"
     
-    # Store individual game summaries into shard_key and
+    # Store individual game snapshots into shard_key and
     # Store score results into name key (e.g. non-sharded)
     
     acc = acc 
-    |> Map.put(game_key, game_history) 
+    |> Map.put(key, snapshot) 
     |> Map.update(name, scores, &(&1 <> scores))
     
-    #IO.puts "scores acc is #{inspect Map.get(acc, name)}"
-    
+    #IO.puts "key: #{inspect key}, scores acc: #{inspect Map.get(acc, name)}"
+  
     acc
 
   end

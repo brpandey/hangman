@@ -42,7 +42,8 @@ defmodule Hangman.Dictionary do
   
   @root_path :code.priv_dir(:hangman_game)
 
-  @max_random_words_request 20
+  @spec max_random_words_request :: integer
+  def max_random_words_request, do: 200
 
 
 
@@ -103,7 +104,7 @@ defmodule Hangman.Dictionary do
     # convert user input to integer value
     value = String.to_integer(count)
     cond do
-      value > 0 and value <= @max_random_words_request ->
+      value > 0 and value <= max_random_words_request() ->
         Cache.lookup(:random, value)
       true ->
         raise HangmanError, "submitted random count value is not valid"

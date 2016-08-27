@@ -89,7 +89,7 @@ defmodule Hangman.Web do
           secrets when is_list(secrets) -> secrets
         end
 
-      results = Web.Collator.run(name, secrets)
+      results = Web.Flow.run(name, secrets)
       
       results = 
         case Enum.count(secrets) do 

@@ -29,7 +29,6 @@ defmodule Hangman.Dictionary.Cache do
   @random_words_per_chunk 20
   @min_random_word_length 5
   @max_random_word_length 15
-  @max_random_words_request 200
 
   @name __MODULE__
   # External API
@@ -227,7 +226,7 @@ defmodule Hangman.Dictionary.Cache do
   defp do_lookup(:random, count) 
   when is_integer(count) and count > 0 do
 
-    if count > @max_random_words_request do
+    if count > Dictionary.max_random_words_request do
       raise HangmanError, "requested random words exceeds limit"
     end
 

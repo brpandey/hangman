@@ -62,7 +62,7 @@ defmodule Hangman.Web.Test do
 
   test "cowboy http server with secrets list entries talented and hermetic" do
 
-    # testinug that 2 secrets don't give full game history just scores
+    # testing that 2 secrets don't give full game history just scores
 
     body2 = " (TALENTED: 6) (HERMETIC: 4)"
 
@@ -136,6 +136,18 @@ defmodule Hangman.Web.Test do
 
     assert response.body == " (MASTERFUL: 6) (AZERBAIJAN: 0) (ERUPTIVE: 5)"
 
+  end
+
+
+
+  test "cowboy http server with 200 random secrets" do
+    
+    {:ok, response3 = %HTTPoison.Response{}} =
+      HTTPoison.get("http://127.0.0.1:3737/hangman?name=typhoon&random=200", [],  [recv_timeout: :infinity])
+
+    assert response3.status_code == 200
+    
+    IO.puts "HTTPoison.get http://127.0.0.1:3737/hangman?name=typhoon&random=200 gives: #{inspect response3.body}\n\n"
   end
 
 
