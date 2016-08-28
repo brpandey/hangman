@@ -1,7 +1,7 @@
 defmodule Hangman.CLI.Handler.Test do
   use ExUnit.Case
 
-  alias Hangman.{CLI, Player}
+  alias Hangman.{CLI}
 
   setup_all do
     IO.puts "CLI Handler Test"
@@ -9,14 +9,12 @@ defmodule Hangman.CLI.Handler.Test do
     :ok
   end
 
-  @tag :pending
+#  @tag :pending
+  @tag timeout: 90_000 # 90 secs
   test "test running 2 human games" do 
 
     secrets = ["mitochondria", "eject"]
-
-    CLI.Handler.run("jedi_test", :human, secrets, true, false)
-
-
+    CLI.Handler.run("jedi_test", :human, secrets, true, true)
   end
 
   @tag :pending
@@ -31,10 +29,7 @@ defmodule Hangman.CLI.Handler.Test do
   test "test running 2 human games with player alert" do 
 
     secrets = ["porcupine", "eel"]
-
-    {:ok, apid} = Player.Alert.Supervisor.start_child("photographer_test", nil)
-    CLI.Handler.run("photographer_test", :human, secrets, true, true)
-    Player.Alert.Handler.stop(apid)
+    CLI.Handler.run("photographer_test", :human, secrets, false, true)
   end
 
 end

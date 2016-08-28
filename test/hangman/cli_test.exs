@@ -112,8 +112,7 @@ defmodule Hangman.CLI.Test do
    
   end
 
-  # ERRORS!!
-  #loops indefinately
+
   test "human, word not in dictionary - exhausted all words" do
 
     command = "-n oscar_test -t human -s azerbaijan -d"

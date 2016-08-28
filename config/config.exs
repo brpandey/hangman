@@ -22,7 +22,7 @@ use Mix.Config
 
 
 config :logger, :console,
-  level: :info,
+  level: :debug,
   format: "\n$time $metadata[$level] $levelpad$message\n",
   metadata: [:module]
 
