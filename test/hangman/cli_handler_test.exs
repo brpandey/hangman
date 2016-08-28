@@ -3,7 +3,7 @@ defmodule Hangman.CLI.Handler.Test do
 
   alias Hangman.{CLI}
 
-  @guess_timeout 100
+  @guess_timeout 10
 
   setup_all do
     IO.puts "CLI Handler Test"

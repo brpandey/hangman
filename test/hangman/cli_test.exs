@@ -47,7 +47,7 @@ defmodule Hangman.CLI.Test do
 #    command = "-n humphrey -t human -s \"fantastic embryo\" -d -l"
 #    argv = String.split(command)
 
-    argv = ["-n", "humphrey_test", "-t", "robot", "-s", "fantastic embryo", "-l", "-d", "-ti", "100"]
+    argv = ["-n", "humphrey_test", "-t", "robot", "-s", "fantastic embryo", "-l", "-d", "-ti", "10"]
 
     IO.puts "argv is #{inspect argv}"
 
@@ -58,7 +58,7 @@ defmodule Hangman.CLI.Test do
   @tag timeout: 180_000 # 180 seconds
   test "random words human" do
     
-    command = "-n lulu_test1 -t human -r 4 -d -ti 100"
+    command = "-n lulu_test1 -t human -r 4 -d -ti 10"
     argv = String.split(command)
     CLI.main(argv)
 
@@ -112,7 +112,7 @@ defmodule Hangman.CLI.Test do
 
   test "human, word not in dictionary - exhausted all words" do
 
-    command = "-n oscar_test -t human -s azerbaijan -d -ti 100"
+    command = "-n oscar_test -t human -s azerbaijan -d -ti 10"
     argv = String.split(command)
     CLI.main(argv)
   end
