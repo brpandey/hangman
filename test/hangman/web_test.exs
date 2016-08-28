@@ -140,14 +140,14 @@ defmodule Hangman.Web.Test do
 
 
   @tag timeout: 90000
-  test "cowboy http server with 100 random secrets" do
+  test "cowboy http server with 200 random secrets" do
     
-    {:ok, response3 = %HTTPoison.Response{}} =
-      HTTPoison.get("http://127.0.0.1:3737/hangman?name=typhoon&random=100", [],  [recv_timeout: :infinity])
+    {:ok, response = %HTTPoison.Response{}} =
+      HTTPoison.get("http://127.0.0.1:3737/hangman?name=typhoon&random=200", [],  [recv_timeout: :infinity])
 
-    assert response3.status_code == 200
+    assert response.status_code == 200
     
-    IO.puts "HTTPoison.get http://127.0.0.1:3737/hangman?name=typhoon&random=100 gives: #{inspect response3.body}\n\n"
+    IO.puts "HTTPoison.get http://127.0.0.1:3737/hangman?name=typhoon&random=200 gives: #{inspect response.body}\n\n"
   end
 
 

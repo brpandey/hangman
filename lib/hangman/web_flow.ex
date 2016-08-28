@@ -50,8 +50,8 @@ defmodule Hangman.Web.Flow do
 
     game_args = Stream.zip(sharded_keys, sharded_secrets)
     
-    result = game_args
-    |> Flow.from_enumerable()
+    result = Flow.new(max_demand: 2)
+    |> Flow.from_enumerable(game_args)
     |> Flow.map(fn {shard_key, shard_value} ->
 
       IO.puts("in flow map self: #{inspect self}")
@@ -95,7 +95,7 @@ defmodule Hangman.Web.Flow do
     
     [_, scores] =  snapshot |> List.last |> String.split("Scores: ")
     
-    #IO.puts "key: #{inspect key}, key scores #{inspect scores}"
+    IO.puts "key: #{inspect key}, key scores #{inspect scores}"
     
     # Store individual game snapshots into shard_key and
     # Store score results into name key (e.g. non-sharded)
@@ -104,7 +104,7 @@ defmodule Hangman.Web.Flow do
     |> Map.put(key, snapshot) 
     |> Map.update(name, scores, &(&1 <> scores))
     
-    #IO.puts "key: #{inspect key}, scores acc: #{inspect Map.get(acc, name)}"
+    IO.puts "key: #{inspect key}, scores acc: #{inspect Map.get(acc, name)}"
   
     acc
 
