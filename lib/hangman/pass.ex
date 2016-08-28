@@ -78,7 +78,7 @@ defmodule Hangman.Pass do
     # Allow writer engine to execute (and distribute) as necessary
 
     next_pass_key = Pass.increment_key(pass_key)
-    Pass.Cache.Writer.put(next_pass_key, chunks)
+    Pass.Cache.put(next_pass_key, chunks)
   
     {pass_key, pass_info}
   end
