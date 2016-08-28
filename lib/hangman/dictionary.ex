@@ -43,7 +43,7 @@ defmodule Hangman.Dictionary do
   @root_path :code.priv_dir(:hangman_game)
 
   @spec max_random_words_request :: integer
-  def max_random_words_request, do: 200
+  def max_random_words_request, do: 2000
 
 
 
