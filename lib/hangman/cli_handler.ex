@@ -26,11 +26,11 @@ defmodule Hangman.CLI.Handler do
   """
 
   @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def run(name, type, secrets, log, display) when is_binary(name)
+  def run(name, type, secrets, log, display, guess_timeout \\ 5000) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
-  and is_boolean(log) and is_boolean(display) do
+  and is_boolean(log) and is_boolean(display) and is_integer(guess_timeout) do
 
-    {name, type, secrets, log, display} |> setup |> play
+    {name, type, secrets, log, display, guess_timeout} |> setup |> play
   end
 
 
@@ -40,9 +40,9 @@ defmodule Hangman.CLI.Handler do
   """
   
   @spec setup(tuple()) :: tuple
-  defp setup({name, type, secrets, log, display}) when is_binary(name) and
+  defp setup({name, type, secrets, log, display, timeout}) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) and 
-  is_boolean(log) and is_boolean(display) do
+  is_boolean(log) and is_boolean(display) and is_integer(timeout) do
     
     # Grab game pid first from game pid cache
     game_pid = Cache.get_server_pid(name, secrets)
@@ -66,7 +66,7 @@ defmodule Hangman.CLI.Handler do
         false -> nil
       end
 
-    {name, alert_pid, logger_pid}
+    {name, alert_pid, logger_pid, timeout}
   end
 
   @docp """
@@ -74,7 +74,7 @@ defmodule Hangman.CLI.Handler do
   """
 
   @spec play(tuple) :: :ok
-  defp play({player_handler_key, alert_pid, logger_pid}) do 
+  defp play({player_handler_key, alert_pid, logger_pid, timeout}) do 
 
     # Loop until we have received an :exit value from the Player Controller
     Enum.reduce_while(Stream.cycle([player_handler_key]), 0, fn key, acc ->
@@ -82,7 +82,7 @@ defmodule Hangman.CLI.Handler do
       feedback = key |> Controller.proceed
 
       # specifically handle IO for guess setup -- e.g. selection of letters
-      feedback = handle_setup(key, feedback)
+      feedback = handle_setup(key, feedback, timeout)
 
       case feedback do
         {code, _status} when code in [:begin, :action, :transit] ->
@@ -107,8 +107,8 @@ defmodule Hangman.CLI.Handler do
 
   # Helpers
 
-  @spec handle_setup(Player.id, tuple) :: tuple
-  defp handle_setup(key, feedback) do
+  @spec handle_setup(Player.id, tuple, integer) :: tuple
+  defp handle_setup(key, feedback, timeout) do
     # Handle feedback where the response code is :setup
     case feedback do
       {:setup, kw} ->
@@ -116,7 +116,7 @@ defmodule Hangman.CLI.Handler do
         {:ok, display} = Keyword.fetch(kw, :display)
         {:ok, choices} = Keyword.fetch(kw, :status)
 
-        selection = ui(display, choices)
+        selection = ui(display, choices, timeout)
         key |> Controller.guess(selection)
       
       _ -> feedback # Pass back the passed in feedback
@@ -128,16 +128,16 @@ defmodule Hangman.CLI.Handler do
   If display is valid, show letter choices and also collect letter input
   """
 
-  @spec ui(boolean, tuple) :: tuple
-  defp ui(display, {:guess_letter, text})
+  @spec ui(boolean, tuple, integer) :: tuple
+  defp ui(display, {:guess_letter, text}, timeout)
   when is_boolean(display) and is_binary(text) do
 
     letter = 
       case display do
         true -> 
           IO.puts("\n#{text}")
-          choice = IO.gets("[Please input letter choice] ")
-          String.strip(choice)
+          gets(timeout)
+        
         false -> "" # If we aren't asking the user, the computer will select
       end
     
@@ -145,7 +145,7 @@ defmodule Hangman.CLI.Handler do
   end
 
 
-  defp ui(display, {:guess_word, last_word, text}) 
+  defp ui(display, {:guess_word, last_word, text}, _timeout) 
   when is_boolean(display) and is_binary(text) do
 
     case display do
@@ -155,6 +155,24 @@ defmodule Hangman.CLI.Handler do
     end
 
     {:guess_word, last_word}
+  end
+
+  @spec gets(integer) :: String.t
+  defp gets(timeout) when is_integer(timeout) do
+
+    task = 
+      Task.async(fn ->
+        {:ok, IO.gets("[Please input letter choice] ")}
+      end)
+    
+    try do
+      {:ok, choice} = Task.await(task, timeout)
+      String.strip(choice) # return choice without newline
+    catch
+      :exit, {:timeout, _} ->
+        " " # return space character
+    end
+    
   end
 
 end

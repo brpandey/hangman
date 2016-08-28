@@ -12,17 +12,19 @@ defmodule Hangman.CLI do
 
   Player game archival can be captured through logging, e.g. --log option
 
-  The display and log options are exclusive to the CLI client.
+  The display and log options are exclusive to the CLI client. As well as the
+  human guessing timeout option which allows values between 0 secs and 10 secs
+  to choose a letter.
 
   `Usage:
   --name (player id) --type ("human" or "robot") --random (num random secrets, max 10)
-  [--secret (hangman word(s)) --baseline] [--log --display]`
+  [--secret (hangman word(s)) --baseline] [--log --display --timeout]`
 
   or
 
   `Aliase Usage: 
   -n (player id) -t ("human" or "robot") -r (num random secrets, max 10)
-  [-s (hangman word(s)) -bl] [-l -d]`
+  [-s (hangman word(s)) -bl] [-l -d -ti]`
 
   NOTE: Should a player submit a secret hangman word that does not actually
   reside in the `Dictionary.Cache` the player will abort and then restart and the
@@ -31,6 +33,9 @@ defmodule Hangman.CLI do
 
   @min_secret_length 3
   @max_secret_length 28
+
+  @max_guess_timeout 10000 # 10 secs
+  @default_guess_timeout 5000 # 5 secs
 
   alias Hangman.{CLI}
 
@@ -59,11 +64,12 @@ defmodule Hangman.CLI do
           baseline: :boolean, # --baseline or alias -bl, boolean only
           log: :boolean, # -- log or alias -l, boolean only
           display: :boolean, # -- display or alias -d, boolean only
+          timeout: :integer, # -- timeout or alias -ti, integer only
           help: :boolean # --help or alias -h, boolean only
         ],
 
         aliases: [n: :name, t: :type, r: :random, s: :secret, 
-                  bl: :baseline, l: :log, d: :display, h: :help]
+                  bl: :baseline, l: :log, d: :display, ti: :timeout, h: :help]
       ])
 
     parsed
@@ -80,7 +86,8 @@ defmodule Hangman.CLI do
 
     case Keyword.fetch(parsed, :help) do
       # if no help supplied, resume normally and return parsed output
-      :error -> parsed
+      :error -> 
+        parsed
 
       {:ok, true} ->
         IO.puts "--name (player id) --type (\"human\" or \"robot\")" <> 
@@ -173,20 +180,32 @@ defmodule Hangman.CLI do
       case Keyword.fetch(args, :display) do
         {:ok, true} -> 
           # option only for robot guessing
-          if type == :robot do true else false end
+          # if type == :robot do true else false end
+          true
         :error -> false
       end
     
+    timeout = 
+      case Keyword.fetch(args, :timeout) do
+        {:ok, timeout} when is_integer(timeout) -> 
+          if timeout > 0 and timeout <= @max_guess_timeout do
+            timeout
+          else
+            @default_guess_timeout
+          end
+
+        :error -> @default_guess_timeout
+      end
     
-    {name, type, secrets, log, display}
+    {name, type, secrets, log, display, timeout}
   end
 
   @spec run({}) :: :ok | [...]
-  defp run({name, type, secrets, log, display}) when is_binary(name) 
+  defp run({name, type, secrets, log, display, timeout}) when is_binary(name) 
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
-  and is_boolean(log) and is_boolean(display) do
+  and is_boolean(log) and is_boolean(display) and is_integer(timeout) do
 
-    CLI.Handler.run(name, type, secrets, log, display)
+    CLI.Handler.run(name, type, secrets, log, display, timeout)
   end
 
 end

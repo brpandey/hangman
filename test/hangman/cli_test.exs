@@ -42,13 +42,12 @@ defmodule Hangman.CLI.Test do
     
   end
 
-  @tag timeout: 90_000 # 90 seconds
   test "human double words" do
 
 #    command = "-n humphrey -t human -s \"fantastic embryo\" -d -l"
 #    argv = String.split(command)
 
-    argv = ["-n", "humphrey_test", "-t", "human", "-s", "fantastic embryo", "-d", "-l"]
+    argv = ["-n", "humphrey_test", "-t", "robot", "-s", "fantastic embryo", "-l", "-d", "-ti", "100"]
 
     IO.puts "argv is #{inspect argv}"
 
@@ -59,7 +58,7 @@ defmodule Hangman.CLI.Test do
   @tag timeout: 180_000 # 180 seconds
   test "random words human" do
     
-    command = "-n lulu_test1 -t human -r 4"
+    command = "-n lulu_test1 -t human -r 4 -d -ti 100"
     argv = String.split(command)
     CLI.main(argv)
 
@@ -82,8 +81,6 @@ defmodule Hangman.CLI.Test do
       %HangmanError{message: "user must specify either --\"secret\" or --\"random\" option"}
 
   end
-
-# NEED TO HANDLE SEPARATELY
 
 
   test "word not in dictionary, pass size zero" do
@@ -115,7 +112,7 @@ defmodule Hangman.CLI.Test do
 
   test "human, word not in dictionary - exhausted all words" do
 
-    command = "-n oscar_test -t human -s azerbaijan -d"
+    command = "-n oscar_test -t human -s azerbaijan -d -ti 100"
     argv = String.split(command)
     CLI.main(argv)
   end
