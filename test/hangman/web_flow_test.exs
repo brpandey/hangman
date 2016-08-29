@@ -26,13 +26,30 @@ defmodule Hangman.Web.Flow.Test do
 
 
   
-  test "single test of 3 secrets for use with stub Pass, success when Flow.partition is commented out" do
+  test "single test of 3 secrets for use with stub Pass" do
 
     secrets = ["CUMULATE", "AVOCADO", "ERUPTIVE"]
 
     output = Hangman.Web.Flow.run("rabbit", secrets)
 
     assert output == " (CUMULATE: 8) (AVOCADO: 6) (ERUPTIVE: 5)"
+  end
+
+  test "single test of 1 secret, should see game history" do
+
+    secrets = ["AVOCADO"]
+
+    output = Hangman.Web.Flow.run("rabbit", secrets)
+
+    assert output == ["-------; score=1; status=KEEP_GUESSING",
+            "A---A--; score=2; status=KEEP_GUESSING",
+            "A---A--; score=3; status=KEEP_GUESSING",
+            "A---A--; score=4; status=KEEP_GUESSING",
+            "A---A--; score=5; status=KEEP_GUESSING",
+            "A---AD-; score=6; status=KEEP_GUESSING",
+            "AVOCADO; score=6; status=GAME_WON",
+            "Game Over! Average Score: 6.0, # Games: 1, Scores:  (AVOCADO: 6)"]
+
   end
 
 end

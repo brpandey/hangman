@@ -53,27 +53,29 @@ defmodule Hangman.Web.Flow do
     result = Flow.new(max_demand: 2)
     |> Flow.from_enumerable(game_args)
     |> Flow.map(fn {shard_key, shard_value} ->
-
-      IO.puts("in flow map self: #{inspect self}")
-
       {shard_key, shard_value} 
       |> Shard.Handler.setup 
       |> Shard.Handler.play
-
-
     end)
-#    |> Flow.partition()
+    |> Flow.partition()
     |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
       collate({key, history}, acc)
     end)
-    |> Enum.into(%{})
+    |> Enum.into([])
 
+    # Change from list to map
+    result = result |> Enum.reduce(%{}, fn {k,v}, acc -> 
+      Map.update(acc, k, v, &(&1 <> v))
+    end)
+    
+    # Based on the secrets count either return single game history or score results
     case Enum.count(secrets) do
       0 -> raise "No secrets provided"
-      # result of first shard, which is game history for 1 game
+      # result of first shard, which is game history for 1 game, key is e.g. {"typhoon", 1}
       1 -> Map.get(result, {name, 1})
-      # for multiple secrets return scores summary
+      # for multiple secrets return scores summary for unsharded key e.g. "typhoon"
       _ -> Map.get(result, name) 
+
     end
 
   end
@@ -95,8 +97,6 @@ defmodule Hangman.Web.Flow do
     
     [_, scores] =  snapshot |> List.last |> String.split("Scores: ")
     
-    IO.puts "key: #{inspect key}, key scores #{inspect scores}"
-    
     # Store individual game snapshots into shard_key and
     # Store score results into name key (e.g. non-sharded)
     
@@ -104,10 +104,7 @@ defmodule Hangman.Web.Flow do
     |> Map.put(key, snapshot) 
     |> Map.update(name, scores, &(&1 <> scores))
     
-    IO.puts "key: #{inspect key}, scores acc: #{inspect Map.get(acc, name)}"
-  
     acc
-
   end
 
 end
