@@ -145,7 +145,7 @@ defmodule Hangman.Player.FSM.Test do
 
     {response, fsm} = Player.FSM.proceed(fsm)
 
-    assert(response == {:transit, ""})
+    assert(response == {:transit, "TULIP; score=5; status=GAME_WON"})
 
     assert(Player.FSM.state(fsm) == :begin)
 

@@ -209,7 +209,15 @@ defmodule Hangman.Round do
     round = Kernel.put_in(round.status_code, status_code)
 
     # If text field not in map, return default value
-    status_text = Map.get(status, :text, "Game transition")
+
+    status_text = 
+      case status_code do
+        :start -> 
+          %{text: text} = Map.get(status, :previous)
+          text
+        _ -> Map.get(status, :text)
+      end
+    
     round = Kernel.put_in(round.status_text, status_text)
 
     round

@@ -238,6 +238,7 @@ defmodule Hangman.Game do
       _ ->
         game = Kernel.put_in(game.state, new_code)
         map = build_feedback(game, new_code)
+        
         {game, map}
     end    
 
@@ -260,11 +261,21 @@ defmodule Hangman.Game do
         true ->   
           # Have games left to play
           # Updates game
+
+          # stash previous result into a key previous in resultant map
+
+          previous =
+            case game.state do
+              :abort -> ""
+              _ -> build_feedback(game, game.state)
+            end
           
           # New Game Start
           game = archive_and_update(game)
+
+          {_, text, _} = @status_codes[:start]
           
-          {game, %{id: game.id, code: :start, text: ""}}
+          {game, %{id: game.id, code: :start, text: text, previous: previous}}
         false ->
           # Otherwise we have no more games left 
           # Store the current score in the game.scores list - insert
@@ -368,6 +379,7 @@ defmodule Hangman.Game do
         %{id: game.id, code: state_code, text: "GAMES_RESET"}
       _ -> 
         str = "#{game.pattern}; score=#{score}; status=#{text}"
+
         %{id: game.id, code: state_code, text: str}
     end
 

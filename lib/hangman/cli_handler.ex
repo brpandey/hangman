@@ -85,7 +85,11 @@ defmodule Hangman.CLI.Handler do
       feedback = handle_setup(key, feedback, timeout)
 
       case feedback do
-        {code, _status} when code in [:begin, :action, :transit] ->
+        {code, _status} when code in [:begin, :action] ->
+          {:cont, acc + 1}
+
+        {:transit, status} -> # display the single game overs and game summaries
+          IO.puts "\n#{status}"
           {:cont, acc + 1}
 
         {:retry, _status} ->
@@ -113,10 +117,8 @@ defmodule Hangman.CLI.Handler do
     case feedback do
       {:setup, kw} ->
 
-        {:ok, display} = Keyword.fetch(kw, :display)
         {:ok, choices} = Keyword.fetch(kw, :status)
-
-        selection = ui(display, choices, timeout)
+        selection = ui(choices, timeout)
         key |> Controller.guess(selection)
       
       _ -> feedback # Pass back the passed in feedback
@@ -128,34 +130,20 @@ defmodule Hangman.CLI.Handler do
   If display is valid, show letter choices and also collect letter input
   """
 
-  @spec ui(boolean, tuple, integer) :: tuple
-  defp ui(display, {:guess_letter, text}, timeout)
-  when is_boolean(display) and is_binary(text) do
-
-    letter = 
-      case display do
-        true -> 
-          IO.puts("\n#{text}")
-          gets(timeout)
-        
-        false -> "" # If we aren't asking the user, the computer will select
-      end
+  @spec ui(tuple, integer) :: tuple
+  defp ui({:guess_letter, text}, timeout) when is_binary(text) do
+    IO.puts("\n#{text}")
+    letter = gets(timeout)
     
     {:guess_letter, letter}
   end
 
-
-  defp ui(display, {:guess_word, last_word, text}, _timeout) 
-  when is_boolean(display) and is_binary(text) do
-
-    case display do
-      true ->
-        IO.puts("\n#{text}")
-      false -> ""
-    end
+  defp ui({:guess_word, last_word, text}, _timeout) when is_binary(text) do
+    IO.puts("\n#{text}")
 
     {:guess_word, last_word}
   end
+
 
   @spec gets(integer) :: String.t
   defp gets(timeout) when is_integer(timeout) do
