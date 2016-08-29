@@ -8,7 +8,9 @@ defmodule Hangman.CLI.Handler.Test do
   setup_all do
     IO.puts "CLI Handler Test"
 
-    :ok
+    Application.stop(:hangman_game)
+    :ok = Application.start(:hangman_game)
+
   end
 
 #  @tag :pending
