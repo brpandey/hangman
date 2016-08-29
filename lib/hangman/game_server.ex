@@ -156,7 +156,7 @@ defmodule Hangman.Game.Server do
   
   @callback init(term) :: tuple
   def init(state) do
-    Logger.info "Starting Hangman Game Server #{inspect self}"
+    Logger.debug "Starting Hangman Game Server #{inspect self}"
     {:ok, state}
   end
   
@@ -411,7 +411,7 @@ defmodule Hangman.Game.Server do
   
 #  @callback terminate(term, term) :: :ok
   def terminate(reason, _state) do
-    Logger.info "Terminating Hangman Game Server reason: #{inspect reason}, #{inspect self}"
+    Logger.debug "Terminating Hangman Game Server reason: #{inspect reason}, #{inspect self}"
     :ok
   end
   
