@@ -5,7 +5,7 @@ defmodule Hangman.Mixfile do
     [
       app: :hangman_game,
       name: "Hangman",
-      version: "0.9.1",
+      version: "0.9.5",
       elixir: "~> 1.3.0",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -46,7 +46,7 @@ defmodule Hangman.Mixfile do
     [
       {:gproc, "0.5.0"}, # for pid registry
       {:exprof, "~> 0.2.0"}, # to facilitate profiling
-      {:ex_doc, "~> 0.13"}, # for mix docs
+      {:ex_doc, "~> 0.13.0"}, # for mix docs
       {:cowboy, "1.0.4"}, # for hangman web
       {:plug, "1.1.6"},  # for hangman web
       {:httpoison, "~> 0.9.0"}, # for hangman web
