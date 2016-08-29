@@ -1,0 +1,717 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.13.0">
+    <title>Hangman.Counter – Hangman v0.9.5</title>
+    <link rel="stylesheet" href="dist/app-9c1e3d5aa2.css" />
+    
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Hangman
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.9.5
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">Hangman v0.9.5</small>
+        Hangman.Counter
+        
+        
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p>Module for creating and using letter frequency tallies. Contains a set of functions for tallies, such as adding letters, words, lists, and streams, and retrieving their most common letters.</p>
+<p>Conventional <code>Hangman</code> strategy deals exclusively with letter frequency data.</p>
+<p><code>Counter</code> is a key value store where a <code>key</code> is a letter string and a <code>value</code> is a positive integer.</p>
+<h2 id="module-examples" class="section-heading">
+  <a href="#module-examples" class="hover-link"><i class="icon-link"></i></a>
+  Examples
+</h2>
+
+<pre><code class="iex elixir">iex&gt; tally = Counter.new
+#Counter&lt;[]&gt;
+
+iex&gt; tally = Counter.add_unique_letters(tally, &quot;mississippi&quot;)
+#Counter&lt;[{&quot;i&quot;, 1}, {&quot;m&quot;, 1}, {&quot;p&quot;, 1}, {&quot;s&quot;, 1}]&gt;
+
+iex&gt; Counter.most_common(tally, 5)
+[{&quot;i&quot;, 1}, {&quot;m&quot;, 1}, {&quot;p&quot;, 1}, {&quot;s&quot;, 1}]
+
+iex&gt; tally = Counter.new                                     
+#Counter&lt;[]&gt;
+
+iex&gt; tally = Counter.add_letters(tally, &quot;mississippi&quot;)
+#Counter&lt;[{&quot;i&quot;, 4}, {&quot;m&quot;, 1}, {&quot;p&quot;, 2}, {&quot;s&quot;, 4}]&gt;
+
+iex&gt; Counter.most_common(tally, 5)
+[{&quot;i&quot;, 4}, {&quot;s&quot;, 4}, {&quot;p&quot;, 2}, {&quot;m&quot;, 1}]</code></pre>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:key/0">key()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t/0">t()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:value/0">value()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#add_letters/2">add_letters(counter, word)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Adds letters to <code>Counter</code> without checking for duplicate letters.<br />Returns an updated <code>Counter</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#add_unique_letters/2">add_unique_letters(counter, word)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Adds letters to <code>Counter</code>. Ensure letters are unique. Returns an updated <code>Counter</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#add_words/2">add_words(counter, words)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Adds words <code>list</code> to <code>Counter</code>. Converts words to char <code>list</code> and then letter counts <code>list</code>. List is then submitted to <code>map</code> for bulk value update. Faster than many tiny <code>map</code> updates</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#add_words/3">add_words(counter, words_stream, exclusion_set)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Routines adds word <code>stream</code> to <code>Counter</code>. Splits word <code>stream</code> into manageable <code>lists</code>, relies on <a href="#add_words/2"><code>add_words/2</code></a> to reduce into <code>Counter</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete/1">delete(counter)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete/2">delete(counter, letters)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns an updated <code>Counter</code> after deleting specified <code>keys</code> in letters</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#empty?/1">empty?(counter)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns <code>true</code> or <code>false</code> whether <code>Counter</code> is empty</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#equal?/2">equal?(c1, c2)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns true if <code>Counters</code> equal</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#inc_by/3">inc_by(counter, key, value \\ 1)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Increment <code>value</code> for a given <code>key</code> by the given <code>value</code>. Default increment <code>value</code> 1</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#items/1">items(counter)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns a <code>key-value</code> list of {<code>letter</code>, <code>count</code>} <code>tuples</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#most_common/2">most_common(counter, n)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns <code>list</code> of the most common <code>n</code> codepoint <code>keys</code> and codepoint <code>values</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#most_common_key/2">most_common_key(counter, n)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns <code>list</code> of the most common <code>n</code> codepoint <code>keys</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#new/0">new()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns new, empty <code>Counter</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#new/1">new(word)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns new <code>Counter</code> that reflects contents of either <code>String.t, [tuple], map</code></p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+
+        </section>
+      
+
+      
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:key/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:key/0">key</a> :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a></code></pre>
+  
+</div>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
+  
+</div>
+<div id="t:value/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:value/0">value</a> :: pos_integer</code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="add_letters/2">
+  <div class="detail-header">
+    <a href="#add_letters/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">add_letters(counter, word)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-143" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">add_letters(<a href="#t:t/0">t</a>, [] | <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Adds letters to <code>Counter</code> without checking for duplicate letters.<br />Returns an updated <code>Counter</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="add_unique_letters/2">
+  <div class="detail-header">
+    <a href="#add_unique_letters/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">add_unique_letters(counter, word)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-176" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">add_unique_letters(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Adds letters to <code>Counter</code>. Ensure letters are unique. Returns an updated <code>Counter</code></p>
+
+  </section>
+</div>
+<div class="detail" id="add_words/2">
+  <div class="detail-header">
+    <a href="#add_words/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">add_words(counter, words)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-194" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">add_words(<a href="#t:t/0">t</a>, words :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Adds words <code>list</code> to <code>Counter</code>. Converts words to char <code>list</code> and then letter counts <code>list</code>. List is then submitted to <code>map</code> for bulk value update. Faster than many tiny <code>map</code> updates</p>
+
+  </section>
+</div>
+<div class="detail" id="add_words/3">
+  <div class="detail-header">
+    <a href="#add_words/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">add_words(counter, words_stream, exclusion_set)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-250" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">add_words(<a href="#t:t/0">t</a>, stream :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a>, exclusion :: map) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Routines adds word <code>stream</code> to <code>Counter</code>. Splits word <code>stream</code> into manageable <code>lists</code>, relies on <a href="#add_words/2"><code>add_words/2</code></a> to reduce into <code>Counter</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="delete/1">
+  <div class="detail-header">
+    <a href="#delete/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">delete(counter)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-284" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="delete/2">
+  <div class="detail-header">
+    <a href="#delete/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">delete(counter, letters)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-275" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">delete(<a href="#t:t/0">t</a>, none | [] | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns an updated <code>Counter</code> after deleting specified <code>keys</code> in letters</p>
+
+  </section>
+</div>
+<div class="detail" id="empty?/1">
+  <div class="detail-header">
+    <a href="#empty?/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">empty?(counter)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-94" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">empty?(<a href="#t:t/0">t</a>) :: boolean</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns <code>true</code> or <code>false</code> whether <code>Counter</code> is empty</p>
+
+  </section>
+</div>
+<div class="detail" id="equal?/2">
+  <div class="detail-header">
+    <a href="#equal?/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">equal?(c1, c2)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-82" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">equal?(<a href="#t:t/0">t</a>, <a href="#t:t/0">t</a>) :: boolean</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns true if <code>Counters</code> equal</p>
+
+  </section>
+</div>
+<div class="detail" id="inc_by/3">
+  <div class="detail-header">
+    <a href="#inc_by/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">inc_by(counter, key, value \\ 1)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-130" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">inc_by(<a href="#t:t/0">t</a>, <a href="#t:key/0">key</a>, <a href="#t:value/0">value</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Increment <code>value</code> for a given <code>key</code> by the given <code>value</code>. Default increment <code>value</code> 1.</p>
+
+  </section>
+</div>
+<div class="detail" id="items/1">
+  <div class="detail-header">
+    <a href="#items/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">items(counter)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-88" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">items(<a href="#t:t/0">t</a>) :: [tuple]</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns a <code>key-value</code> list of {<code>letter</code>, <code>count</code>} <code>tuples</code></p>
+
+  </section>
+</div>
+<div class="detail" id="most_common/2">
+  <div class="detail-header">
+    <a href="#most_common/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">most_common(counter, n)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-100" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">most_common(<a href="#t:t/0">t</a>, pos_integer) :: [tuple]</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns <code>list</code> of the most common <code>n</code> codepoint <code>keys</code> and codepoint <code>values</code></p>
+
+  </section>
+</div>
+<div class="detail" id="most_common_key/2">
+  <div class="detail-header">
+    <a href="#most_common_key/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">most_common_key(counter, n)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-115" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">most_common_key(<a href="#t:t/0">t</a>, pos_integer) :: list</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns <code>list</code> of the most common <code>n</code> codepoint <code>keys</code></p>
+
+  </section>
+</div>
+<div class="detail" id="new/0">
+  <div class="detail-header">
+    <a href="#new/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">new()</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-55" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Returns new, empty <code>Counter</code></p>
+
+  </section>
+</div>
+<div class="detail" id="new/1">
+  <div class="detail-header">
+    <a href="#new/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">new(word)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-56" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">new(none | []) :: <a href="#t:t/0">t</a></code></pre>
+        
+          <pre><code class="elixir">new(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [tuple] | map) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns new <code>Counter</code> that reflects contents of either <code>String.t, [tuple], map</code></p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.0),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-21f1a20b9e.js"></script>
+  </body>
+</html>
+

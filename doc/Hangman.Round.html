@@ -1,0 +1,489 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.13.0">
+    <title>Hangman.Round – Hangman v0.9.5</title>
+    <link rel="stylesheet" href="dist/app-9c1e3d5aa2.css" />
+    
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Hangman
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.9.5
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">Hangman v0.9.5</small>
+        Hangman.Round
+        
+        
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p>Module provides access to game round functions.</p>
+<p><code>Round</code> represents the time period in the <code>Hangman</code> game which consists of setup steps: word set reduction, guess assistance.</p>
+<p>It works in conjuction with <code>Strategy</code> and <code>Game.Server</code> to orchestrate actual <code>round</code> game play through guess actions.</p>
+<ol style="list-style-type: upper-alpha">
+<li><p>When playing a <code>Hangman</code> game, we first init our round, which involves obtaining the secret word length from the game server.</p></li>
+<li><p>Next, we take steps to reduce the possible <code>Hangman</code> words set to narrow our word choices.</p></li>
+</ol>
+<p>From there on we choose the best letter to guess given the knowledge we have of our words data set. If we are a <code>:human</code>, we are given letter choices to pick, and if we are a <code>:robot</code>, we trust our friend <code>Strategy</code>.</p>
+<ol start="3" style="list-style-type: upper-alpha">
+<li>After a guess is made either by <code>:human</code> or <code>:robot</code> we update our round recordkeeping structures with the guess results and proceed for the next round -- to do it all over again.</li>
+</ol>
+<p>Basic <code>Round</code> functionality includes <a href="#init/1"><code>init/1</code></a>, <a href="#setup/3"><code>setup/3</code></a>, <a href="#guess/2"><code>guess/2</code></a>, <a href="#transition/1"><code>transition/1</code></a>, <a href="#status/1"><code>status/1</code></a>.</p>
+<p>We always invoke setup before a guess, to properly setup the new words state.</p>
+<p>Transition is used after a single game over to determine if we transition to a new game or games over.</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:context/0">context()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sum type used to understand prior <code>guess</code> result</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:key/0">key()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:result_code/0">result_code()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#guess/2">guess(round, arg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Issues a client <code>guess</code> (either <code>letter</code> or <code>word</code>) against <code>Game.Server</code>. Returns received <code>round</code> data</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#info/1">info(round)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#init/1">init(round)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Initialize the round with the start of a new game. Retrieves the secret length from the game server and creates a process link to the game server via the register call</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#round_key/1">round_key(round)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns round tuple key</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#setup/3">setup(round, exclusion, fn_updater)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sets up game play <code>round</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#status/1">status(round)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns <code>round</code> status tuple</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#transition/1">transition(round)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Specifies steps for the end of a single game. Transitions to either a :start or :finished depending on if there are games left to play</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+
+        </section>
+      
+
+      
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:context/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:context/0">context</a> ::
+  {:start, secret_length :: pos_integer} |
+  {:guessing, :correct_letter, letter :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, pattern :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, mystery_letter :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>} |
+  {:guessing, :incorrect_word, word :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>} |
+  {:guessing, :incorrect_letter, letter :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>} |
+  {:won, :correct_word, word :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}</code></pre>
+  
+    <div class="typespec-doc"><p>Sum type used to understand prior <code>guess</code> result</p>
+</div>
+  
+</div>
+<div id="t:key/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:key/0">key</a> :: {id :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, game_num :: integer, round_num :: integer}</code></pre>
+  
+</div>
+<div id="t:result_code/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:result_code/0">result_code</a> ::
+  :correct_letter |
+  :incorrect_letter |
+  :incorrect_word</code></pre>
+  
+</div>
+<div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Hangman.Round{context: term, game_num: term, game_pid: term, guess: term, id: term, num: term, pattern: term, pid: term, result_code: term, status_code: term, status_text: term}</code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="guess/2">
+  <div class="detail-header">
+    <a href="#guess/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">guess(round, arg)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-173" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Issues a client <code>guess</code> (either <code>letter</code> or <code>word</code>) against <code>Game.Server</code>. Returns received <code>round</code> data</p>
+
+  </section>
+</div>
+<div class="detail" id="info/1">
+  <div class="detail-header">
+    <a href="#info/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">info(round)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-268" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">info(<a href="#t:t/0">t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="init/1">
+  <div class="detail-header">
+    <a href="#init/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">init(round)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-81" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">init(<a href="#t:t/0">t</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Initialize the round with the start of a new game. Retrieves the secret length from the game server and creates a process link to the game server via the register call.</p>
+<p>Eventually the secret length is used to filter possible <code>Hangman</code> words from <code>Pass.Cache</code> server on the next round setup.</p>
+
+  </section>
+</div>
+<div class="detail" id="round_key/1">
+  <div class="detail-header">
+    <a href="#round_key/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">round_key(round)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-253" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">round_key(<a href="#t:t/0">t</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns round tuple key</p>
+
+  </section>
+</div>
+<div class="detail" id="setup/3">
+  <div class="detail-header">
+    <a href="#setup/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">setup(round, exclusion, fn_updater)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-136" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">setup(<a href="Hangman.Round.html#t:t/0">Hangman.Round.t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/List.html#t:t/0">List.t</a>, (<a href="http://elixir-lang.org/docs/stable/elixir/Map.html#t:t/0">Map.t</a> -> <a href="Hangman.Letter.Strategy.html#t:t/0">Hangman.Letter.Strategy.t</a>)) :: <a href="Hangman.Round.html#t:t/0">Hangman.Round.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Sets up game play <code>round</code></p>
+<p>Generates a reduce key based on the result of the last guess or secret length to filter possible <code>Hangman</code> words from <code>Pass.Cache</code> server</p>
+
+  </section>
+</div>
+<div class="detail" id="status/1">
+  <div class="detail-header">
+    <a href="#status/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">status(round)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-118" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">status(<a href="#t:t/0">t</a>) :: {<a href="Hangman.Game.Server.html#t:code/0">Hangman.Game.Server.code</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns <code>round</code> status tuple</p>
+
+  </section>
+</div>
+<div class="detail" id="transition/1">
+  <div class="detail-header">
+    <a href="#transition/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">transition(round)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/round.ex#cl-200" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">transition(<a href="#t:t/0">t</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Specifies steps for the end of a single game. Transitions to either a :start or :finished depending on if there are games left to play</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.0),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-21f1a20b9e.js"></script>
+  </body>
+</html>
+

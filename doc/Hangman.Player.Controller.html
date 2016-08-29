@@ -1,0 +1,333 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.13.0">
+    <title>Hangman.Player.Controller – Hangman v0.9.5</title>
+    <link rel="stylesheet" href="dist/app-9c1e3d5aa2.css" />
+    
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Hangman
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.9.5
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">Hangman v0.9.5</small>
+        Hangman.Player.Controller
+        
+        
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_controller.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p>Serves as External API into Player functionality.<br />Serves to manage players.</p>
+<p>Responsible for starting a player worker, and via the <code>Player.Worker.Supervisor</code> any worker crashes.</p>
+<p>Forwards player requests to <code>Player.Worker</code> and responses back to the relevant <code>Handler</code>, either CLI or Web.</p>
+<p>The <code>Player</code> sandwich shows the ingredient layers of the player:</p>
+<h2 id="module-cli_handler-web_handler-the-player-clients" class="section-heading">
+  <a href="#module-cli_handler-web_handler-the-player-clients" class="hover-link"><i class="icon-link"></i></a>
+  cli_handler | web_handler (the player clients)
+</h2>
+
+<h2 id="module-player-controller-a-proxy-module-providing-a-single-player-interface" class="section-heading">
+  <a href="#module-player-controller-a-proxy-module-providing-a-single-player-interface" class="hover-link"><i class="icon-link"></i></a>
+  player controller (a proxy module, providing a single player interface)
+</h2>
+
+<h2 id="module-player-worker-supervisor-dynamically-starts-children-and-handles-abnormal-crashes" class="section-heading">
+  <a href="#module-player-worker-supervisor-dynamically-starts-children-and-handles-abnormal-crashes" class="hover-link"><i class="icon-link"></i></a>
+  player worker supervisor (dynamically starts children and handles abnormal crashes)
+</h2>
+
+<h2 id="module-player-worker-issues-requests-to-fsm" class="section-heading">
+  <a href="#module-player-worker-issues-requests-to-fsm" class="hover-link"><i class="icon-link"></i></a>
+  player worker (issues requests to fsm)
+</h2>
+
+<h2 id="module-player-fsm-fsm-wrapper-for-action-protocol" class="section-heading">
+  <a href="#module-player-fsm-fsm-wrapper-for-action-protocol" class="hover-link"><i class="icon-link"></i></a>
+  player fsm (fsm wrapper for action protocol)
+</h2>
+
+<h2 id="module-player-action-handles-dynamic-dispatch-based-on-player-types" class="section-heading">
+  <a href="#module-player-action-handles-dynamic-dispatch-based-on-player-types" class="hover-link"><i class="icon-link"></i></a>
+  player action (handles dynamic dispatch based on player types)
+</h2>
+
+<h2 id="module-action-human-action-robot-specific-types-implemented" class="section-heading">
+  <a href="#module-action-human-action-robot-specific-types-implemented" class="hover-link"><i class="icon-link"></i></a>
+  action human | action robot (specific types implemented)
+</h2>
+
+<p>round | strategy (handles game playing specifics -- choosing best letter, communicating with game server and reduction engine)</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#guess/2">guess(id, data)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Issues guess request with guess data</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#proceed/1">proceed(id)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Issues proceed call to iterate player sequence</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_worker/4">start_worker(name, type, display, game_pid)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Dynamically start a new player worker</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#stop_worker/1">stop_worker(id)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Issues request to stop worker</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+
+        </section>
+      
+
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="guess/2">
+  <div class="detail-header">
+    <a href="#guess/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">guess(id, data)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_controller.ex#cl-65" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">guess(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>, tuple | <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Issues guess request with guess data</p>
+
+  </section>
+</div>
+<div class="detail" id="proceed/1">
+  <div class="detail-header">
+    <a href="#proceed/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">proceed(id)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_controller.ex#cl-53" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">proceed(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Issues proceed call to iterate player sequence</p>
+
+  </section>
+</div>
+<div class="detail" id="start_worker/4">
+  <div class="detail-header">
+    <a href="#start_worker/4" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">start_worker(name, type, display, game_pid)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_controller.ex#cl-43" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">start_worker(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>, atom, boolean, pid) :: :ok</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Dynamically start a new player worker</p>
+
+  </section>
+</div>
+<div class="detail" id="stop_worker/1">
+  <div class="detail-header">
+    <a href="#stop_worker/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">stop_worker(id)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_controller.ex#cl-72" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">stop_worker(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>) :: :ok</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Issues request to stop worker</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.0),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-21f1a20b9e.js"></script>
+  </body>
+</html>
+

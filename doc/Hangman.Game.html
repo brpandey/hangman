@@ -1,0 +1,554 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.13.0">
+    <title>Hangman.Game – Hangman v0.9.5</title>
+    <link rel="stylesheet" href="dist/app-9c1e3d5aa2.css" />
+    
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Hangman
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.9.5
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">Hangman v0.9.5</small>
+        Hangman.Game
+        
+        
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p>Module to create and manage <code>Hangman</code> game abstractions.</p>
+<p>Naturally serves as the symbolic core of the game application.</p>
+<p>The game embodies the structure of play in this context of letter and word guessing. Therefore it maintains the secret pattern state along with the guess state, delineated by correct and incorrect, letter and word.</p>
+<p>Further, a game wouldn't amount to much without a quantifiable outcome thus we maintain a score state. If a game is lost, the score is automatically 25, as deemed by the threshhold of the particular max incorect guesses.</p>
+<p>The game rules are simply to stay within the max incorrect guesses and choose letters consistent with the game. No timing or other such rules are imposed.</p>
+<p>If the number of incorrect letter guesses exceeds the threshhold, the game is lost. The lower the score and hence the fewer rounds to guess the word, the more desirable aim.</p>
+<p>The <code>Game</code> handles a single <code>Hangman</code> game or multiple <code>Hangman</code> games and runs each game sequentially. Therefore only one <code>game</code> is in play at any one time.</p>
+<p>Primary game functions are <code>load/3</code>, <a href="#guess/2"><code>guess/2</code></a>, <a href="#status/1"><code>status/1</code></a>.</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:code/0">code()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p><code>Game</code> status code values</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:feedback/0">feedback()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>returned <code>Game</code> feedback data</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:id/0">id()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p><code>Game</code> id is String.t (currently using player's name as unique key)</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t/0">t()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#abort/1">abort(game)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#empty?/1">empty?(game)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns boolean whether <code>Game</code> is empty</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#equal?/2">equal?(game1, game2)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns boolean whether <code>Game</code> states are identical</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#guess/2">guess(game, arg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Runs <code>guess</code> against <code>Game</code> <code>secret</code>. Updates <code>Hangman</code> pattern, status, and other <code>game</code> recordkeeping structures</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#info/1">info(g)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns <code>Game</code> information</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#new/3">new(id_key, secret, max_wrong)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Creates a new <code>Game</code> state given new <code>secret(s)</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#next/1">next(game)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#secret_length/1">secret_length(game)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#status/1">status(game)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns current <code>Game</code> status data and updates status code</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+
+        </section>
+      
+
+      
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:code/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:code/0">code</a> ::
+  :reset |
+  :start |
+  :guessing |
+  :won |
+  :lost |
+  :finished |
+  :abort</code></pre>
+  
+    <div class="typespec-doc"><p><code>Game</code> status code values</p>
+</div>
+  
+</div>
+<div id="t:feedback/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:feedback/0">feedback</a> :: %{id: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, code: <a href="#t:code/0">code</a>}</code></pre>
+  
+    <div class="typespec-doc"><p>returned <code>Game</code> feedback data</p>
+</div>
+  
+</div>
+<div id="t:id/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:id/0">id</a> :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a></code></pre>
+  
+    <div class="typespec-doc"><p><code>Game</code> id is String.t (currently using player's name as unique key)</p>
+</div>
+  
+</div>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="abort/1">
+  <div class="detail-header">
+    <a href="#abort/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">abort(game)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-129" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="empty?/1">
+  <div class="detail-header">
+    <a href="#empty?/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">empty?(game)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-116" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">empty?(<a href="#t:t/0">t</a>) :: boolean</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns boolean whether <code>Game</code> is empty</p>
+
+  </section>
+</div>
+<div class="detail" id="equal?/2">
+  <div class="detail-header">
+    <a href="#equal?/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">equal?(game1, game2)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-104" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">equal?(<a href="#t:t/0">t</a>, <a href="#t:t/0">t</a>) :: boolean</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns boolean whether <code>Game</code> states are identical</p>
+
+  </section>
+</div>
+<div class="detail" id="guess/2">
+  <div class="detail-header">
+    <a href="#guess/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">guess(game, arg)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-150" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, guess :: <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a>) :: {<a href="#t:t/0">t</a>, <a href="#t:feedback/0">feedback</a>}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Runs <code>guess</code> against <code>Game</code> <code>secret</code>. Updates <code>Hangman</code> pattern, status, and other <code>game</code> recordkeeping structures.</p>
+<p>Guesses follow two types</p>
+<ul>
+<li><p><code>{:guess_letter, letter}</code> - If correct, returns the :correct_letter data tuple along with <code>game</code> data otherwise, returns the :incorrect_letter data tuple along with <code>game</code> data</p></li>
+<li><p><code>{:guess_word, word}</code> - If correct, returns the :correct_word data tuple along with <code>game</code> If incorrect, returns the :incorrect_word data tuple with <code>game</code> data</p></li>
+</ul>
+
+  </section>
+</div>
+<div class="detail" id="info/1">
+  <div class="detail-header">
+    <a href="#info/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">info(g)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-418" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">info(<a href="#t:t/0">t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns <code>Game</code> information</p>
+
+  </section>
+</div>
+<div class="detail" id="new/3">
+  <div class="detail-header">
+    <a href="#new/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">new(id_key, secret, max_wrong)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-75" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">new(<a href="#t:id/0">id</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], pos_integer) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Creates a new <code>Game</code> state given new <code>secret(s)</code></p>
+
+  </section>
+</div>
+<div class="detail" id="next/1">
+  <div class="detail-header">
+    <a href="#next/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">next(game)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-254" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">next(<a href="#t:t/0">t</a>) :: {<a href="#t:t/0">t</a>, term}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="secret_length/1">
+  <div class="detail-header">
+    <a href="#secret_length/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">secret_length(game)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-123" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">secret_length(<a href="#t:t/0">t</a>) :: integer</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="status/1">
+  <div class="detail-header">
+    <a href="#status/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">status(game)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-214" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">status(<a href="#t:t/0">t</a>) :: {<a href="#t:id/0">id</a>, <a href="#t:code/0">code</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Returns current <code>Game</code> status data and updates status code</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.0),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-21f1a20b9e.js"></script>
+  </body>
+</html>
+

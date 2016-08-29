@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.13.0">
+    <title>API Reference – Hangman v0.9.5</title>
+    <link rel="stylesheet" href="dist/app-9c1e3d5aa2.css" />
+    
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="extras">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+<div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Hangman
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.9.5
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+  <h1>
+    <small class="visible-xs">Hangman v0.9.5</small>
+    API Reference
+  </h1>
+
+  <ul class="summary-links">
+    
+      <li><a href="#modules">Modules</a></li>
+    
+    
+      <li><a href="#exceptions">Exceptions</a></li>
+    
+    
+      <li><a href="#protocols">Protocols</a></li>
+    
+  </ul>
+
+  
+    <section id="modules" class="details-list">
+      <h1 class="section-heading">Modules</h1>
+      <div class="summary">
+        <div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Action.html">Hangman.Action</a></div>
+  
+    <div class="summary-synopsis"><p>Defines the <code>Action</code> type used in Player.Action</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Action.Human.html">Hangman.Action.Human</a></div>
+  
+    <div class="summary-synopsis"><p>Implements human action player specific functionality</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Action.Robot.html">Hangman.Action.Robot</a></div>
+  
+    <div class="summary-synopsis"><p>Implements robot action player specific functionality</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Application.html">Hangman.Application</a></div>
+  
+    <div class="summary-synopsis"><p>Main <code>Hangman</code> application</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.CLI.html">Hangman.CLI</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides a command line interpreter interface to the <code>Hangman</code> application</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.CLI.Handler.html">Hangman.CLI.Handler</a></div>
+  
+    <div class="summary-synopsis"><p>Module drives <code>Player.Controller</code>, while setting up the proper <code>Game</code> server and <code>Event</code> consumer states beforehand</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Chunks.html">Hangman.Chunks</a></div>
+  
+    <div class="summary-synopsis"><p>Module to manage word list chunks for a given secret length key</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Chunks.Stream.html">Hangman.Chunks.Stream</a></div>
+  
+    <div class="summary-synopsis"><p>Module for generating a <code>chunked</code> stream from a <code>grouped</code> words stream</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Counter.html">Hangman.Counter</a></div>
+  
+    <div class="summary-synopsis"><p>Module for creating and using letter frequency tallies. Contains a set of functions for tallies, such as adding letters, words, lists, and streams, and retrieving their most common letters</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.html">Hangman.Dictionary</a></div>
+  
+    <div class="summary-synopsis"><p>Module defines <code>Dictionary</code> common attributes and types. Serves as a central point to access or update such attributes</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.Cache.html">Hangman.Dictionary.Cache</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides access to a dictionary word cache. Provides lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.ChunkedReader.html">Hangman.Dictionary.File.ChunkedReader</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.Chunker.html">Hangman.Dictionary.File.Chunker</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.GroupedReader.html">Hangman.Dictionary.File.GroupedReader</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.Grouper.html">Hangman.Dictionary.File.Grouper</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.OriginalReader.html">Hangman.Dictionary.File.OriginalReader</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.Reader.html">Hangman.Dictionary.File.Reader</a></div>
+  
+    <div class="summary-synopsis"><p>Module for accessing input file stream for various original and transformed dictionary file types ranging from <code>original</code>, <code>sorted</code>, <code>grouped</code>, <code>chunked</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.SortedReader.html">Hangman.Dictionary.File.SortedReader</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.Sorter.html">Hangman.Dictionary.File.Sorter</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.Transformer.html">Hangman.Dictionary.File.Transformer</a></div>
+  
+    <div class="summary-synopsis"><p>This module specifies the interface routines to transform the input dictionary file to a new file, based on the logic of the transform function</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.File.Writer.html">Hangman.Dictionary.File.Writer</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Dictionary.Transformer.html">Hangman.Dictionary.Transformer</a></div>
+  
+    <div class="summary-synopsis"><p>The original <code>Dictionary</code> file is transformed into intermediary representations. Given an original dictionary file f1, this file may be transformed a few times until it is suitable to be loaded into <code>ETS</code>. E.g. <code>f1</code> -&gt; <code>f2</code> -&gt; <code>f3</code> -&gt; <code>f4</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Game.html">Hangman.Game</a></div>
+  
+    <div class="summary-synopsis"><p>Module to create and manage <code>Hangman</code> game abstractions</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Game.Event.Manager.html">Hangman.Game.Event.Manager</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Game.Pid.Cache.html">Hangman.Game.Pid.Cache</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides access to a game server pid cache. Pid <code>caching</code> prevents a <code>Game.Server</code> process from having to be created every time. Upon game server startup, the new pid is stored into the pid cache.<br />Upon successive game plays with the same game server, the pid does not need to be regenerated, but simply retrieved from the cache</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Game.Server.html">Hangman.Game.Server</a></div>
+  
+    <div class="summary-synopsis"><p>Module handles <code>Hangman</code> <code>Game</code> serving to multiple clients.<br />Each player's active game state is maintained, until the player process exits</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Game.Server.Stub.html">Hangman.Game.Server.Stub</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Guess.html">Hangman.Guess</a></div>
+  
+    <div class="summary-synopsis"><p>Module implements <code>Guess</code> types</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Letter.Strategy.html">Hangman.Letter.Strategy</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides access to a set of functions handling letter guessing strategy</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Pass.html">Hangman.Pass</a></div>
+  
+    <div class="summary-synopsis"><p>Module defines types <code>Pass.key</code> and <code>Pass.t</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Pass.Cache.html">Hangman.Pass.Cache</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides cache access to the game words pass. Given a player, a game and round number, <code>Pass.Cache</code> maintains a words pass <code>cache</code> of current word passes. The words are represented by <code>Chunks</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Pass.Cache.Writer.html">Hangman.Pass.Cache.Writer</a></div>
+  
+    <div class="summary-synopsis"><p>Module is responsible for synchronous chunk <code>pass</code> writes into the <code>Pass.Cache</code> table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Pattern.html">Hangman.Pattern</a></div>
+  
+    <div class="summary-synopsis"><p>Module handles <code>Hangman</code> pattern updates given guessed <code>letter</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.html">Hangman.Player</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.Alert.Handler.html">Hangman.Player.Alert.Handler</a></div>
+  
+    <div class="summary-synopsis"><p>Module implements alert event handler for <code>Hangman.Events.Manager</code>. Each <code>event</code> is displayed to the user as an alert feed event</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.Controller.html">Hangman.Player.Controller</a></div>
+  
+    <div class="summary-synopsis"><p>Serves as External API into Player functionality.<br />Serves to manage players</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.FSM.html">Hangman.Player.FSM</a></div>
+  
+    <div class="summary-synopsis"><p>Module implements a non-process player fsm which handles managing the state of types implemented through the Player Action protocol</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.Generic.html">Hangman.Player.Generic</a></div>
+  
+    <div class="summary-synopsis"><p>Provides Generic player routine implementations used by the Player.Action protocol. Fills in the <code>Player</code> gaps before the specific Action implementation kicks in</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.Logger.Handler.html">Hangman.Player.Logger.Handler</a></div>
+  
+    <div class="summary-synopsis"><p>Module implements event logger handler for <code>Hangman.Events.Manager</code>. Each <code>event</code> is logged to a file named after the player <code>id</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.Types.html">Hangman.Player.Types</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.Worker.html">Hangman.Player.Worker</a></div>
+  
+    <div class="summary-synopsis"><p>GenServer module to implement Player Worker, managed by <code>Player.Controller</code>. Module uses gproc to manage process registry of workers</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Reduction.html">Hangman.Reduction</a></div>
+  
+    <div class="summary-synopsis"><p>Module implements <code>Reduction</code> <code>key</code> type</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Reduction.Engine.html">Hangman.Reduction.Engine</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides access to the words reduction engine</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Reduction.Engine.Pool.html">Hangman.Reduction.Engine.Pool</a></div>
+  
+    <div class="summary-synopsis"><p>Module is a <code>Supervisor</code> that supervises a <code>pool</code> of word <code>Reduction.Engine</code> workers</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Reduction.Engine.Worker.html">Hangman.Reduction.Engine.Worker</a></div>
+  
+    <div class="summary-synopsis"><p>Module implements workers that handle <code>Hangman</code> words reduction. Used primarily by <code>Reduction.Engine</code> through <a href="#reduce_and_store/4"><code>reduce_and_store/4</code></a> to perform a series of steps</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Reduction.Options.html">Hangman.Reduction.Options</a></div>
+  
+    <div class="summary-synopsis"><p>Module generates <code>Reduction</code> key for use when reducing possible <code>Hangman</code> words set. Used primarily during <code>Round</code> setup</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Round.html">Hangman.Round</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides access to game round functions</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Simple.Registry.html">Hangman.Simple.Registry</a></div>
+  
+    <div class="summary-synopsis"><p>Module implements a simple stash registry keeping track of active pids, active ids, and their values e.g. Player.t or Game.t</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Web.html">Hangman.Web</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides access to a http web server for playing <code>Hangman</code> games via a tool such as curl or HTTPoison</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Web.Flow.html">Hangman.Web.Flow</a></div>
+  
+    <div class="summary-synopsis"><p>Module distributes the game requests to the player workers and then collects the resultant game information and combines it in the proper order</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Web.Shard.Handler.html">Hangman.Web.Shard.Handler</a></div>
+  
+    <div class="summary-synopsis"><p>Module runs game play for the given web shard of secrets as determined by <code>Web.Flow</code>. Basically, runs a chunk of the overall original secrets vector</p>
+</div>
+  
+</div>
+
+      </div>
+    </section>
+  
+
+  
+    <section id="exceptions" class="details-list">
+      <h1 class="section-heading">Exceptions</h1>
+      <div class="summary">
+        <div class="summary-row">
+  <div class="summary-signature"><a href="HangmanError.html">HangmanError</a></div>
+  
+    <div class="summary-synopsis"><p>Module serves as <code>Hangman</code> specific, runtime error module</p>
+</div>
+  
+</div>
+
+      </div>
+    </section>
+  
+
+  
+    <section id="protocols" class="details-list">
+      <h1 class="section-heading">Protocols</h1>
+      <div class="summary">
+        <div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Player.Action.html">Hangman.Player.Action</a></div>
+  
+    <div class="summary-synopsis"><p>Module implements player action functionality for various player types via protocol mechanism</p>
+</div>
+  
+</div>
+
+      </div>
+    </section>
+  
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.0),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-21f1a20b9e.js"></script>
+  </body>
+</html>
+
