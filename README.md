@@ -8,9 +8,14 @@ https://en.wikipedia.org/wiki/Hangman_(game)
 
 To see inner game play details go to config/config.exs and change logger :warn to :debug and rebuild mix compile then mix escript.build or do a release build or to suppress details do vice versa
 
-NOTE: The web mode is able to play parallel games using all CPU cores
+NOTES: 
 
-NOTE: Currently the IO will ocassionally double buffer
+The web mode is able to play parallel games using all CPU cores
+
+The hangman game handles word not in dictionary cases.  Player.Worker crashes and is restart to resume where it left off.
+
+Currently the IO will ocassionally double buffer
+
 
 Usage
 
@@ -48,6 +53,10 @@ iex(1)>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&random=20
    {"content-length", "3039"},
    {"cache-control", "max-age=0, private, must-revalidate"},
    {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
+
+
+
+
 
 iex(3)>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&secret=woodpecker")
 {:ok,
@@ -87,94 +96,73 @@ EXAMPLES:
 #fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 
 
-#stanley_feed --> Game 1 has started
-#stanley_feed Game 1, secret length --> 9
 
-Player stanley, Round 1, ---------; score=0; status=KEEP_GUESSING.
-5 weighted letter choices :  e*:18314 s:16133 i:15255 r:13650 a:13625 (* robot choice)
-[Please input letter choice] e
-#stanley_feed Game 1, letter --> e
-#stanley_feed Game 1, Round 1, status --> --E------; score=1; status=KEEP_GUESSING
+./hangman_game -n enrico -t human -r 2
 
-
-Player stanley, Round 2, --E------; score=1; status=KEEP_GUESSING.
-5 weighted letter choices :  r*:410 s:363 i:354 o:305 a:299 (* robot choice)
-[Please input letter choice] r
-#stanley_feed Game 1, letter --> r
-#stanley_feed Game 1, Round 2, status --> --ER-----; score=2; status=KEEP_GUESSING
-
-
-Player stanley, Round 3, --ER-----; score=2; status=KEEP_GUESSING.
-5 weighted letter choices :  o*:96 s:87 v:75 i:63 l:55 (* robot choice)
-[Please input letter choice] s
-#stanley_feed Game 1, letter --> s
-#stanley_feed Game 1, Round 3, status --> --ER----S; score=3; status=KEEP_GUESSING
-
-
-Player stanley, Round 4, --ER----S; score=3; status=KEEP_GUESSING.
-5 weighted letter choices :  o*:39 v:32 l:25 a:18 i:18 (* robot choice)
-[Please input letter choice] #stanley_feed Game 1, letter --> o
-[Please input letter choice] #stanley_feed Game 1, Round 4, status --> O-ER----S; score=4; status=KEEP_GUESSING
-
+Player enrico, Round 1, ----------; score=0; status=KEEP_GUESSING.
+5 weighted letter choices :  e*:15606 i:13788 s:13226 r:11925 a:11763 (* robot choice)
 [Please input letter choice] 
-Possible hangman words left, 18 words: ["operatics", "overbills", "overcalls", "overfills", "overfunds", "overgilds", "overhands", "overhangs", "overhauls", "overhunts", "overkills", "overlands", "overmilks", "overplans", "overplays", "overpumps", "overtalks", "overwinds"]
 
-Player stanley, Round 5, O-ER----S; score=4; status=KEEP_GUESSING.
-5 weighted letter choices :  v:17 l*:11 a:9 i:7 n:7 (* robot choice)
-[Please input letter choice] [Please input letter choice] #stanley_feed Game 1, letter --> v
-[Please input letter choice] #stanley_feed Game 1, Round 5, status --> OVER----S; score=5; status=KEEP_GUESSING
-
+Player enrico, Round 2, ----------; score=1; status=KEEP_GUESSING.
+5 weighted letter choices :  i*:3852 a:3276 o:3157 n:2993 s:2968 (* robot choice)
 [Please input letter choice] 
-Possible hangman words left, 17 words: ["overbills", "overcalls", "overfills", "overfunds", "overgilds", "overhands", "overhangs", "overhauls", "overhunts", "overkills", "overlands", "overmilks", "overplans", "overplays", "overpumps", "overtalks", "overwinds"]
 
-Player stanley, Round 6, OVER----S; score=5; status=KEEP_GUESSING.
-5 weighted letter choices :  l:11 a*:8 n:7 i:6 d:5 (* robot choice)
-[Please input letter choice] [Please input letter choice] 
-[Please input letter choice] #stanley_feed Game 1, letter --> l
-[Please input letter choice] #stanley_feed Game 1, Round 6, status --> OVER----S; score=6; status=KEEP_GUESSING
-
+Player enrico, Round 3, ------I---; score=2; status=KEEP_GUESSING.
+5 weighted letter choices :  s*:309 o:255 a:246 t:214 n:207 (* robot choice)
 [Please input letter choice] 
-Possible hangman words left, 6 words: ["overfunds", "overhands", "overhangs", "overhunts", "overpumps", "overwinds"]
 
-Player stanley, Round 7, OVER----S; score=6; status=KEEP_GUESSING.
-5 weighted letter choices :  n:5 d*:3 h:3 u:3 a:2 (* robot choice)
-[Please input letter choice] [Please input letter choice] 
-[Please input letter choice] #stanley_feed Game 1, letter --> n
-[Please input letter choice] #stanley_feed Game 1, Round 7, status --> OVER--N-S; score=7; status=KEEP_GUESSING
-
+Player enrico, Round 4, ------I--S; score=3; status=KEEP_GUESSING.
+5 weighted letter choices :  n:106 o*:104 a:98 t:70 l:57 (* robot choice)
 [Please input letter choice] 
-Possible hangman words left, 5 words: ["overfunds", "overhands", "overhangs", "overhunts", "overwinds"]
 
-Player stanley, Round 8, OVER--N-S; score=7; status=KEEP_GUESSING.
-5 weighted letter choices :  d:3 h:3 a*:2 u:2 f:1 (* robot choice)
-[Please input letter choice] [Please input letter choice] #stanley_feed Game 1, letter --> d
-[Please input letter choice] #stanley_feed Game 1, Round 8, status --> OVER--NDS; score=8; status=KEEP_GUESSING
-
+Player enrico, Round 5, ------I-NS; score=4; status=KEEP_GUESSING.
+5 weighted letter choices :  a*:39 o:38 t:36 l:21 c:15 (* robot choice)
 [Please input letter choice] 
-Possible hangman words left, 3 words: ["overfunds", "overhands", "overwinds"]
 
-Player stanley, Round 9, OVER--NDS; score=8; status=KEEP_GUESSING.
-5 weighted letter choices :  a*:1 f:1 h:1 i:1 u:1 (* robot choice)
-[Please input letter choice] [Please input letter choice] 
-[Please input letter choice] #stanley_feed Game 1, letter --> a
-[Please input letter choice] #stanley_feed Game 1, Round 9, status --> OVER--NDS; score=9; status=KEEP_GUESSING
+Possible hangman words left, 3 words: ["barbarians", "dalmatians", "mammalians"]
 
+Player enrico, Round 6, -A--A-IANS; score=5; status=KEEP_GUESSING.
+5 weighted letter choices :  l:2 m:2 b*:1 d:1 r:1 (* robot choice)
 [Please input letter choice] 
-Possible hangman words left, 2 words: ["overfunds", "overwinds"]
 
-Player stanley, Round 10, OVER--NDS; score=9; status=KEEP_GUESSING.
-4 weighted letter choices :  f*:1 i:1 u:1 w:1 (* robot choice)
-[Please input letter choice] [Please input letter choice] f
-[Please input letter choice] #stanley_feed Game 1, letter --> f
-[Please input letter choice] #stanley_feed Game 1, Round 10, status --> OVERF-NDS; score=10; status=KEEP_GUESSING
+Player enrico, Round 7, -A--A-IANS; score=6; status=KEEP_GUESSING.
+Last word left: barbarians
 
+BARBARIANS; score=6; status=GAME_WON
+
+Player enrico, Round 1, ------; score=0; status=KEEP_GUESSING.
+5 weighted letter choices :  e*:9356 s:6981 a:6599 r:6097 i:5518 (* robot choice)
 [Please input letter choice] 
-Player stanley, Round 11, OVERF-NDS; score=10; status=KEEP_GUESSING.
-Last word left: overfunds
-[Please input letter choice] #stanley_feed Game 1, word --> overfunds
-[Please input letter choice] #stanley_feed Game 1, Round 11, status --> OVERFUNDS; score=10; status=GAME_WON
 
-[Please input letter choice] #stanley_feed Game Over!! --> Game Over! Average Score: 10.0, # Games: 1, Scores:  (OVERFUNDS: 10)
+Player enrico, Round 2, -E--E-; score=1; status=KEEP_GUESSING.
+5 weighted letter choices :  r*:273 d:266 s:199 t:152 l:146 (* robot choice)
+[Please input letter choice] 
+
+Player enrico, Round 3, -E--ER; score=2; status=KEEP_GUESSING.
+5 weighted letter choices :  t*:50 l:41 d:32 n:30 a:29 (* robot choice)
+[Please input letter choice] 
+
+Player enrico, Round 4, -E--ER; score=3; status=KEEP_GUESSING.
+5 weighted letter choices :  l*:32 d:28 a:22 n:19 i:15 (* robot choice)
+[Please input letter choice] 
+
+Player enrico, Round 5, -E--ER; score=4; status=KEEP_GUESSING.
+5 weighted letter choices :  d:18 n*:17 a:12 i:11 s:10 (* robot choice)
+[Please input letter choice] 
+
+Possible hangman words left, 7 words: ["deafer", "decker", "defier", "deicer", "denier", "denser", "dewier"]
+
+Player enrico, Round 6, DE--ER; score=5; status=KEEP_GUESSING.
+5 weighted letter choices :  i:4 c*:2 f:2 n:2 a:1 (* robot choice)
+[Please input letter choice] 
+
+Possible hangman words left, 3 words: ["defier", "denier", "dewier"]
+
+Player enrico, Round 7, DE-IER; score=6; status=KEEP_GUESSING.
+3 weighted letter choices :  f*:1 n:1 w:1 (* robot choice)
+[Please input letter choice] 
+
+Game Over! Average Score: 6.5, # Games: 2, Scores:  (BARBARIANS: 6) (DEFIER: 7)
 
 
 
