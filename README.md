@@ -6,13 +6,14 @@ Plays really fun hangman games.  What did you expect? :)
 Hangman --> 
 https://en.wikipedia.org/wiki/Hangman_(game)
 
-To see inner game play details go to config/config.exs and change logger :warn to :debug and rebuild mix compile then mix escript.build or do a release build or to suppress details do vice versa
+To see inner game play details go to config/config.exs and change logger :info to :debug and rebuild mix compile then mix escript.build or do a release build or to suppress details do vice versa
 
 NOTES: 
 
 The web mode is able to play parallel games using all CPU cores
 
-The hangman game handles word not in dictionary cases.  Player.Worker crashes and is restart to resume where it left off.
+The hangman game handles word not in dictionary cases.  
+Current procedure is the Player.Worker crashes and is restarted to resume where it left off.
 
 Currently the IO will ocassionally double buffer
 
@@ -45,7 +46,6 @@ $ iex -S mix
 Erlang/OTP 19 [erts-8.0] [source] [64-bit] [smp:2:2] [async-threads:10] [kernel-poll:false]
 
 
-Interactive Elixir (1.3.2) - press Ctrl+C to exit (type h() ENTER for help)
 iex(1)>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&random=200", [],  [recv_timeout: :infinity])
 {:ok,
  %HTTPoison.Response{body: " (GROWLER: 11) (CHAIRLIFTS: 5) (BUGGED: 25) (SNOWBLOWERS: 7) (WORKFARE: 9) (SEASIDE: 6) (ACETANILID: 3) (PALPABLE: 5) (OVERRUNNING: 5) (NOMADISM: 7) (ENSHRINING: 5) (NOVAE: 6) (EMBRYOPHYTES: 3) (SELFLESSNESSES: 4) (WORKMATES: 9) (NYALAS: 7) (WINNOCKS: 25) (POACH: 7) (EXACTED: 6) (FOREIGN: 5) (ABDUCED: 7) (STRUNTS: 25) (ORTHODONTICS: 5) (FRECKLIEST: 5) (PERVASION: 6) (DISTRIBUTE: 4) (CONSCRIBING: 6) (LUNATE: 8) (GUIDES: 25) (OUTLASTED: 7) (PULSARS: 5) (HOTDOGS: 9) (SECULARISES: 8) (RESOLIDIFIED: 3) (VAPIDITIES: 8) (SIMPER: 10) (TOSSPOTS: 6) (NIGHTLY: 8) (WEAPONLESS: 3) (WOBBLY: 9) (PARAGENESIS: 5) (SHOWERING: 8) (SUBMUNITIONS: 5) (STRUNTS: 25) (TRANSPLANTED: 6) (FIFTYISH: 6) (STACK: 8) (COMMUNIONS: 6) (CREATINE: 5) (MAINSTAYS: 7) (BIPAROUS: 9) (LACTALBUMINS: 4) (DEMISSIONS: 4) (EXTEMPORANEOUS: 3) (INARTICULACY: 4) (NONAFFILIATED: 3) (CONTEMNING: 5) (MISSENDING: 5) (FLICKERS: 11) (KARYOTYPES: 6) (UNICYCLISTS: 5) (DATELINED: 6) (ENTHUSE: 6) (COGNAC: 6) (OVERMATURITY: 4) (ELECTRONEGATIVE: 1) (PROPENDS: 7) (OFFICIOUS: 6) (LOCATED: 9) (OWLET: 7) (BISHOPRIC: 6) (TERCETS: 5) (ROUGHCAST: 7) (BABYING: 25) (INSENSITIVENESS: 2) (CEREBRUMS: 5) (COCKLE: 9) (DECEITS: 8) (UNTIRED: 25) (PERCEPTIBLE: 3) (BASIFICATION: 6) (NEUROLEPTIC: 4) (POSTSTIMULATION: 4) (CINDERS: 10) (VIRGINAL: 7) (REDFISHES: 3) (FLORIDNESS: 5) (CRANKER: 8) (LAMBKILL: 6) (LEANT: 7) (UNDERNOURISHED: 4) (REVENGEFULNESS: 1) (BISECTIONAL: 4) (OVERRUNNING: 5) (URETHRITIS: 4) (ERYTHROSINE: 2) (CHOWED: 25) (UNSUBDUED: 5) (PROPHECY: 8) (KASHRUTH: 6) (REINDUCES: 4) (SUCTORIAN: 7) (FRIENDLINESS: 3) (HETEROSPOROUS: 5) (BECARPET: 5) (PREORDAINED: 2) (BIOMORPHIC: 3) (GRAMMATICALLY: 3) (ULTRADISTANT: 5) (CONJUNCTIVES: 7) (COTANGENT: 6) (DANDYISM: 7) (STRODE: 8) (DERELICTION: 4) (CADDISH: 9) (BISHOPRIC: 6) (TRIREMES: 2) (RATIOCINATES: 4) (SALLOWING: 25) (JACKBOOT: 8) (PAWKIER: 25) (ABSORBANCES: 4) (LYRICISES: 7) (LANDSMEN: 6) (HEBDOMADAL: 4) (BACKSPACES: 5) (WORDBOOK: 7) (SUCCULENCE: 3) (BRAVERS: 9) (DECEITS: 8) (ALOINS: 8) (PERSONNEL: 5) (OUTPUSHING: 7) (PHOTOIONIZATION: 5) (PIQUET: 25) (ENGARLANDS: 5) (NUCLEOLE: 6) (BLACKCAPS: 6) (TIERCELS: 5) (MILDEWY: 8) (SERVOMOTORS: 5) (DISBOSOMS: 7) (AERIFIES: 6) (SYNTONIC: 6) (VELARS: 8) (OUTSULK: 8) (STRUNTS: 25) (CLINCHES: 9) (IMPERILMENT: 6) (CONVERTIBLES: 6) (BEDIM: 25) (COGITOS: 7) (RUMINATED: 6) (PRETESTING: 5) (PROTOHISTORIAN: 3) (KNUCKLEHEADED: 2) (FIENDISH: 3) (DERELICTION: 4) (SUPPOSITITIOUS: 4) (WITTIER: 7) (DEGLAZES: 7) (CONTEMNING: 5) (LIMELIGHTING: 4) (ALOINS: 8) (AIRBRUSHES: 3) (COGITOS: 7) (DUMBEST: 9) (SUBFREEZING: 3) (GONIDIAL: 6) (POLARIMETERS: 4) (DISTENT: 3) (INSINUATIONS: 4) (CAPITALS: 6) (RESIGNER: 5) (NOMADISM: 7) (UNCRITICALLY: 4) (ZARIBA: 6) (BENEFICIALNESS: 2) (COLIPHAGE: 6) (BOOMERANGING: 6) (EXCURSIVE: 6) (RESTFULNESSES: 3) (HYPOCAUST: 4) (GUNSMITHS: 5) (VERGE: 6) (CLOBBER: 10) (GROUNDWOOD: 6) (SALUBRITY: 5) (DORMANT: 8) (DISHONEST: 3) (BURETS: 6) (RATTAN: 5) (BEACON: 8) (APOLOGIZE: 7) (SELFLESSNESSES: 4) (CLITORAL: 5) (PLEDGING: 9) (SUPERPLASTIC: 6) (KARAOKE: 6) (WIFTIER: 8)",
@@ -73,27 +73,27 @@ EXAMPLES:
 
 ./hangman_game -n fred -t robot -s spectacle -d
 
-#fred_feed --> Game 1 has started
-#fred_feed Game 1, secret length --> 9
-#fred_feed Game 1, letter --> e
-#fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
+fred_feed --> Game 1 has started
+fred_feed Game 1, secret length --> 9
+fred_feed Game 1, letter --> e
+fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
 
-#fred_feed Game 1, letter --> a
-#fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
+fred_feed Game 1, letter --> a
+fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
 
-#fred_feed Game 1, letter --> l
-#fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
+fred_feed Game 1, letter --> l
+fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
 
-#fred_feed Game 1, letter --> n
-#fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
+fred_feed Game 1, letter --> n
+fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
 
-#fred_feed Game 1, letter --> c
-#fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
+fred_feed Game 1, letter --> c
+fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
 
-#fred_feed Game 1, word --> spectacle
-#fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
+fred_feed Game 1, word --> spectacle
+fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
 
-#fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
+fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 
 
 
@@ -167,9 +167,28 @@ Game Over! Average Score: 6.5, # Games: 2, Scores:  (BARBARIANS: 6) (DEFIER: 7)
 
 
 
-NOTE: Unit tests are not fully complete but there are a handful in test/hangman. 
-      There is "some" truth here: Dave Thomas - Agile is Dead ->  https://www.youtube.com/watch?v=a-BOSpxYJ9M 
+Further Notes:
+        
+        Unit tests are not fully complete but there are a handful in test/hangman. 
+        There is "some" truth here: Dave Thomas - Agile is Dead ->  https://www.youtube.com/watch?v=a-BOSpxYJ9M 
 
-NOTE: Also, the hangman file directory structure is flat in lib/hangman.  There should be
-      directories under lib/hangman technically following the modules names but for portfolio
-      simplicity purposes keeping all in the top level directory.
+        Also, the hangman file directory structure is flat in lib/hangman.  There should be
+        directories under lib/hangman technically following the modules names but for portfolio
+        simplicity purposes keeping all in the top level directory.
+
+
+Future wishlist
+
+       One game server being able to handle multiple concurrent different player games
+
+       Players being able to communicate with each other e.g. using a lookup registry to find other players
+       and being able to play in tandem
+
+       A new type cyborg which alternates between human and robot playing
+
+       A stumper word process which plays the games before hand with all the words and identifies
+       the word stumpers for use in real game play
+
+       New strategy algorithms which try to learn player's guessing style - aka machine learning
+
+       Truly distributed hangman which is on multiple nodes and machines - always running
