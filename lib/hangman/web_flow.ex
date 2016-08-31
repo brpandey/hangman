@@ -2,9 +2,12 @@ defmodule Hangman.Web.Flow do
 
 
   @moduledoc """
-  Module distributes the game requests to the
-  player workers and then collects the resultant game information 
+  Module distributes the game requests to the web shard handler and 
+  then collects the resultant game information 
   and combines it in the proper order.
+
+  Game play is setup to be parallel and concurrent to use
+  all the machines CPU cores.
   """
 
   alias Experimental.Flow
@@ -86,7 +89,7 @@ defmodule Hangman.Web.Flow do
   Combines game summaries and stores into name key
 
   Each shard_key e.g. {"robin", 7} represents the 
-  seventh shard of the "robin" games, and is the result of (# secrets/shard) games played
+  seventh shard of the "robin" games, and is the result of the 10 games played
   """
 
   @spec collate(tuple, term) :: term

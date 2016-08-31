@@ -8,7 +8,7 @@ defmodule Hangman.Round do
   It works in conjuction with `Strategy` and `Game.Server` to 
   orchestrate actual `round` game play through guess actions.
 
-  A) When playing a `Hangman` game, we first init our round, which involves 
+  A) When playing a new `Hangman` game, we first init our round, which involves 
   obtaining the secret word length from the game server.  
 
   B) Next, we take steps to reduce the possible `Hangman` words set to narrow our 
@@ -21,7 +21,7 @@ defmodule Hangman.Round do
 
   C) After a guess is made either by `:human` or `:robot` we
   update our round recordkeeping structures with the guess results and proceed
-  for the next round -- to do it all over again.
+  for the next round -- to do it all over again minus the init stage.
 
   Basic `Round` functionality includes `init/1`, `setup/3`, `guess/2`, 
   `transition/1`, `status/1`.
@@ -210,6 +210,8 @@ defmodule Hangman.Round do
 
     # If text field not in map, return default value
 
+    # Handle the special case if we are starting a new game
+    # return the previous games results
     status_text = 
       case status_code do
         :start -> 

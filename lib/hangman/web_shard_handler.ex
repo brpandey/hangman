@@ -9,12 +9,14 @@ defmodule Hangman.Web.Shard.Handler do
   setting up the proper `Game` server and `Event` consumer states beforehand.
 
   Simply stated it politely nudges the player to proceed to the next 
-  course of action or make the next guess.  The handler also collects 
-  input from the user as necessary and displays data back to the 
-  user.
+  course of action or make the next guess.  
 
-  When the game is finished it politely ends the game playing.
+  When the game is finished it politely ends the game playing return the 
+  shard_key and game snapshot tuple.
 
+  The twist to this is that these shard handlers are run
+  in parallel and concurrently thanks to the concurrent map reduce
+  setup of `Web.Flow`
   """
 
   alias Hangman.{Game.Pid.Cache, Player, Player.Controller}
@@ -40,14 +42,14 @@ defmodule Hangman.Web.Shard.Handler do
   end
 
   @doc """
-  Play handles client play loop
+  Play handles client play loop for particular player shard_key 
   """
 
   @spec play(Player.id) :: tuple
-  def play(player_handler_key) do
+  def play(shard_key) do
 
     # Loop until we have received an :exit value from the Player Controller
-    list = Enum.reduce_while(Stream.cycle([player_handler_key]), [], fn key, acc ->
+    list = Enum.reduce_while(Stream.cycle([shard_key]), [], fn key, acc ->
       
       feedback = key |> Controller.proceed
 
@@ -76,7 +78,7 @@ defmodule Hangman.Web.Shard.Handler do
     # we reverse the prepended list of round statuses
     list = list |> Enum.reverse
 
-    {player_handler_key, list}
+    {shard_key, list}
   end
 
 

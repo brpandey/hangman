@@ -19,6 +19,9 @@ defmodule Hangman.Web do
   The random param specifies how many secret words to generate.  Hence,
   random=5, will generate 5 secret game words for a total of 5 hangman games.
 
+  If the secrets collection vector is only 1 item we show the game history if greater we 
+  show the word and score summary only
+
   ## Example
 
       iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&secret=kiwi")

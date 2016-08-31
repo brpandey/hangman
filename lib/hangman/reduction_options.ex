@@ -109,8 +109,7 @@ defmodule Hangman.Reduction.Options do
   
   def regex_match_key({_, :incorrect_word, incorrect_word}, _guessed_letters) do    
     # If "overflight" was the incorrect word, the pattern would be "^(overflight)$"
-    # Starting from the beginning of the string to the end, any string that 
-    # contains an "E" will fail false-> Regex.match?(regex, "HELLO") 
+
     
     pattern = "^(?!" <> incorrect_word <> "$)"
     Regex.compile!(pattern)
