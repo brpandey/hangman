@@ -14,8 +14,6 @@ The web mode is able to play parallel games using all CPU cores
 The hangman game handles word not in dictionary cases.  
 Current procedure is the Player.Worker crashes and is restarted to resume where it left off.
 
-Currently the IO will ocassionally double buffer
-
 
 Usage
     
@@ -40,6 +38,7 @@ or you can run the release version for your environment
     $  MIX_ENV=prod mix release
 
     $  rel/hangman_game/bin/hangman_game start or use iex -S mix
+
 
 Web Example - Bulk, parallel game play with 200 random secrets
 
