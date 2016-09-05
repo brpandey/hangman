@@ -214,27 +214,27 @@ defmodule Hangman.Game do
   def status(%Game{} = game) do
 
     new_code = cond do
-      # GAMES_RESET, GAMES_OVER -> GAMES_RESET
+      # RESET, FINISHED -> RESET
       game.state in [:reset, :finished] -> :reset
         
-      # GAME_KEEP_GUESSING -> GAME_WON
+      # GUESSING -> WON
       game.state == :guessing and 
       game.secret == game.pattern -> :won
 
-      # GAME_KEEP_GUESSING -> GAME_LOST
+      # GUESSING -> LOST
       game.state == :guessing and 
       incorrect(game) > game.max_wrong -> :lost
 
-      # GAME_START, GAME_KEEP_GUESSING -> GAME_KEEP_GUESSING
+      # START, GUESSING -> GUESSING
       game.state in [:start, :guessing] and 
       game.secret != game.pattern -> :guessing
 
-      # GAME_WON, GAME_LOST -> GAME_START, GAMES_OVER (check if games left)
+      # WON, LOST, ABORT -> NEXT
       game.state in [:won, :lost, :abort] -> :next
     end
 
     case new_code do
-      :next -> game |> next  #state_code either GAME_START or GAMES_OVER
+      :next -> game |> next
       _ ->
         game = Kernel.put_in(game.state, new_code)
         map = build_feedback(game, new_code)

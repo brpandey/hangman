@@ -169,26 +169,26 @@ Game Over! Average Score: 6.5, # Games: 2, Scores:  (BARBARIANS: 6) (DEFIER: 7)
 
 Further Notes:
         
-        Unit tests are not fully complete but there are a handful in test/hangman. 
-        There is "some" truth here: Dave Thomas - Agile is Dead ->  https://www.youtube.com/watch?v=a-BOSpxYJ9M 
+Unit tests are not fully complete but there are a handful in test/hangman. 
+There is "some" truth here: Dave Thomas - Agile is Dead ->  https://www.youtube.com/watch?v=a-BOSpxYJ9M 
 
-        Also, the hangman file directory structure is flat in lib/hangman.  There should be
-        directories under lib/hangman technically following the modules names but for portfolio
-        simplicity purposes keeping all in the top level directory.
+Also, the hangman file directory structure is flat in lib/hangman.  There should be
+directories under lib/hangman technically following the modules names but for portfolio
+simplicity purposes keeping all in the top level directory.
 
 
 Future wishlist
 
-       One game server being able to handle multiple concurrent different player games
+One game server being able to handle multiple concurrent different player games
 
-       Players being able to communicate with each other e.g. using a lookup registry to find other players
-       and being able to play in tandem
+Players being able to communicate with each other e.g. using a lookup registry to find other players 
+and being able to play in tandem
 
-       A new type cyborg which alternates between human and robot playing
+A new type cyborg which alternates between human and robot playing
 
-       A stumper word process which plays the games before hand with all the words and identifies
-       the word stumpers for use in real game play
+A stumper word process which plays the games before hand with all the words and identifies 
+the word stumpers for use in real game play
 
-       New strategy algorithms which try to learn player's guessing style - aka machine learning
+New strategy algorithms which try to learn player's guessing style - aka machine learning
 
-       Truly distributed hangman which is on multiple nodes and machines - always running
+Truly distributed hangman which is on multiple nodes and machines - always running
