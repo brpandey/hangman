@@ -144,6 +144,11 @@ defmodule Hangman.CLI.Handler do
     {:guess_word, last_word}
   end
 
+  @docp """
+  Starts a task to run the IO.gets function as a background process.  
+  Uses the timeout facility to load a dummy guess value.  
+  Timeout value is arg specified
+  """
 
   @spec gets(integer) :: String.t
   defp gets(timeout) when is_integer(timeout) do
