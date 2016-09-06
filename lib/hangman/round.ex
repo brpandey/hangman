@@ -84,14 +84,17 @@ defmodule Hangman.Round do
       case round.game_num do
         0 ->
           # update the passed in round
-          %Round{ round | game_num: round.game_num + 1, num: 0, pid: self(),
-                  status_code: :start}
+          %Round{ round | pid: self() }
+
         _ ->
           # create a new round with some leftover data from passed in round
-          %Round{ id: round.id, pid: round.pid, num: 0,
-                  game_num: round.game_num + 1, status_code: :start,
-                  game_pid: round.game_pid }
+          %Round{ id: round.id, pid: round.pid, game_pid: round.game_pid }
       end
+
+    # Further update round
+    round = %Round{ round | num: 0, game_num: round.game_num + 1, 
+                    status_code: :start}
+
     
     {player_key, round_key, game_pid} = game_context_key(round)
 
