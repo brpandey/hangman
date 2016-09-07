@@ -84,7 +84,6 @@ defmodule Hangman.Web do
     count = conn.params["random"],
     false <- (is_nil(secrets) and is_nil(count)) do
       
-
       secrets = 
         case secrets do
           nil -> Hangman.Dictionary.random(conn.params["random"])
@@ -94,13 +93,13 @@ defmodule Hangman.Web do
 
       results = Web.Flow.run(name, secrets)
       
-      results = 
+      response = 
         case Enum.count(secrets) do 
           1 -> format_rounds(results)
           _ -> results
         end
       
-      Plug.Conn.assign(conn, :response, results)
+      Plug.Conn.assign(conn, :response, response)
       
     else
       error -> 
