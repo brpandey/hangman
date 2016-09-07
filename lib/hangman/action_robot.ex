@@ -4,8 +4,9 @@ defmodule Hangman.Action.Robot do
   Implements robot action player specific functionality
 
   In `Hangman` we have two players.  One explict - the one guessing, the other
-  implicit, 'the game', 'the user tracking the penalties', or 'the stumper
-  stumping the guesser with hard words'.  In this instance, the `Action` is
+  implicit, 'the game', 'the user tracking the penalties'.  
+
+  In this instance, the `Action` is
   merely the user making and choosing the guess selections.  
 
   The `robot` action is reliant on the game strategy to automatically 
