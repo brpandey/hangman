@@ -112,33 +112,33 @@ defmodule Hangman.CLI do
           ["comaker","cumulate", "elixir", "eruptive", "monadism",
            "mus", "nagging", "oses", "remembered", "spodumenes",
            "stereoisomers","toxics","trichromats","triose", "uniformed"]
-        :error -> [:empty]
+        :error -> []
       end
          
     secrets2 = 
       case Keyword.fetch(args, :secret) do
         # split always returns a list
         {:ok, value} -> String.split(value, " ")
-        :error -> [:empty]
+        :error -> []
       end
 
     secrets3 = 
       case Keyword.fetch(args, :random) do
         # ask dictionary for random words
         {:ok, value} -> Hangman.Dictionary.random(value)
-        :error -> [:empty]
+        :error -> []
       end
 
     vector = [secrets1] ++ [secrets2] ++ [secrets3]
 
-    # If all the vector list elements are empty, error
+    # If all the vector list elements are empty lists, error
 
     # Else filter the secrets vector to only those that are not empty
     # And choose the first one (precedence is baseline then secrets then random)
 
-    with false <- Enum.all?(vector, fn x -> x == [:empty] end) do
+    with false <- Enum.all?(vector, fn x -> x == [] end) do
 
-      vector = Enum.reject(vector, fn x -> x == [:empty] end)
+      vector = Enum.reject(vector, fn x -> x == [] end)
 
       # Choose the first secrets vector
       secrets = List.first(vector)
