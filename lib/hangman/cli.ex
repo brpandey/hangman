@@ -106,98 +106,106 @@ defmodule Hangman.CLI do
     # first check if there is a baseline option specified
     # so that we can get the secrets from there
 
-    secrets = 
+    secrets1 = 
       case Keyword.fetch(args, :baseline) do
         {:ok, true} -> 
           ["comaker","cumulate", "elixir", "eruptive", "monadism",
            "mus", "nagging", "oses", "remembered", "spodumenes",
            "stereoisomers","toxics","trichromats","triose", "uniformed"]
-
-        :error -> 
-          # if no baseline arg is specified
-          
-          secrets = 
-            case Keyword.fetch(args, :secret) do
-              {:ok, value} -> 
-                # split always returns a list
-                String.split(value, " ")
-              :error -> nil
-            end
-          
-          secrets = 
-          if secrets == nil do
-            case Keyword.fetch(args, :random) do
-              {:ok, value} -> 
-                Hangman.Dictionary.random(value) # ask dictionary for random words
-              :error -> nil
-            end
-          else secrets end
-
-          if secrets == nil do
-            raise HangmanError, "user must specify either --\"secret\" or --\"random\" option"
-          end
-
-          secrets
+        :error -> [:empty]
+      end
+         
+    secrets2 = 
+      case Keyword.fetch(args, :secret) do
+        # split always returns a list
+        {:ok, value} -> String.split(value, " ")
+        :error -> [:empty]
       end
 
-    if Enum.any?(secrets, fn x -> String.length(x) < @min_secret_length end) do
-      raise HangmanError, "submitted secret is too short!"
+    secrets3 = 
+      case Keyword.fetch(args, :random) do
+        # ask dictionary for random words
+        {:ok, value} -> Hangman.Dictionary.random(value)
+        :error -> [:empty]
+      end
+
+    vector = [secrets1] ++ [secrets2] ++ [secrets3]
+
+    # If all the vector list elements are empty, error
+
+    # Else filter the secrets vector to only those that are not empty
+    # And choose the first one (precedence is baseline then secrets then random)
+
+    with false <- Enum.all?(vector, fn x -> x == [:empty] end) do
+
+      vector = Enum.reject(vector, fn x -> x == [:empty] end)
+
+      # Choose the first secrets vector
+      secrets = List.first(vector)
+
+      # Check each of the secret strings for valid size
+      if Enum.any?(secrets, fn x -> 
+            String.length(x) < @min_secret_length or
+            String.length(x) > @max_secret_length
+          end) do
+        raise HangmanError, "submitted secret is either too short or too long!"
+      end
+      
+      secrets
+    else
+      _ -> raise HangmanError, "user must specify either --\"secret\" --\"random\" or --\"baseline\" option"
     end
 
-    if Enum.any?(secrets, fn x -> String.length(x) > @max_secret_length end) do
-      raise HangmanError, "submitted secret is too long!"
-    end
-
-    secrets
   end
 
 
   @spec fetch_params(Keyword.t) :: {} | no_return
   defp fetch_params(args) do
 
-    name = 
-      case Keyword.fetch(args, :name) do
-        {:ok, value} -> value
-        :error -> raise HangmanError, "name argument missing"
-      end
+    # assert for name flag
+    with {:ok, name} <- Keyword.fetch(args, :name) do
 
-    type = 
-      case Keyword.fetch(args, :type) do
-        {:ok, "human"} -> @human
-        {:ok, "robot"} -> @robot
-        _ -> :robot
-      end
+      type = 
+        case Keyword.fetch(args, :type) do
+          {:ok, "human"} -> @human
+          {:ok, "robot"} -> @robot
+          _ -> @robot
+        end
 
-    secrets = fetch_secrets(args)
+      secrets = fetch_secrets(args)
+      
+      log = 
+        case Keyword.fetch(args, :log) do
+          {:ok, true} -> true
+          :error -> false
+        end
+      
+      display = 
+        case Keyword.fetch(args, :display) do
+          {:ok, true} -> true
+          :error -> false
+        end
+      
+      timeout = 
+        case Keyword.fetch(args, :timeout) do
+          {:ok, timeout} when is_integer(timeout) -> 
+            if timeout > 0 and timeout <= @max_guess_timeout do
+              timeout
+            else
+              @default_guess_timeout
+            end
+          
+            :error -> @default_guess_timeout
+        end
+      
+      {name, type, secrets, log, display, timeout}
 
-    log = 
-      case Keyword.fetch(args, :log) do
-        {:ok, true} -> true
-        :error -> false
-      end
+    else
+      _ -> raise HangmanError, "name argument missing"
+    end
 
-    display = 
-      case Keyword.fetch(args, :display) do
-        {:ok, true} -> 
-          # option only for robot guessing
-          # if type == :robot do true else false end
-          true
-        :error -> false
-      end
-    
-    timeout = 
-      case Keyword.fetch(args, :timeout) do
-        {:ok, timeout} when is_integer(timeout) -> 
-          if timeout > 0 and timeout <= @max_guess_timeout do
-            timeout
-          else
-            @default_guess_timeout
-          end
 
-        :error -> @default_guess_timeout
-      end
-    
-    {name, type, secrets, log, display, timeout}
+
   end
 
   @spec run({}) :: :ok | [...]

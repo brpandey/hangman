@@ -9,9 +9,9 @@ defmodule Hangman.CLI.Test do
   end
 
 
-  test "cli baseline option" do
+  test "cli baseline option even with random specified" do
 
-    command = "-n gustav_test -t robot -bl"
+    command = "-n gustav_test -t robot -bl -r 2"
     argv = String.split(command)
     CLI.main(argv)
     
@@ -78,7 +78,7 @@ defmodule Hangman.CLI.Test do
     argv = String.split(command)
 
     assert catch_error(CLI.main(argv)) ==
-      %HangmanError{message: "user must specify either --\"secret\" or --\"random\" option"}
+      %HangmanError{message: "user must specify either --\"secret\" --\"random\" or --\"baseline\" option"}
 
   end
 
