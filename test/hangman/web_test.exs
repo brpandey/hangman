@@ -42,7 +42,7 @@ defmodule Hangman.Web.Test do
   test "cowboy http server with 40 random secrets print out" do
     
     {:ok, response = %HTTPoison.Response{}} =
-      HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&random=40")
+      HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&random=40", [],  [recv_timeout: :infinity])
 
     assert response.status_code == 200
     

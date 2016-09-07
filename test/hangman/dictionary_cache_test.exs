@@ -4,6 +4,11 @@ defmodule Hangman.Dictionary.Cache.Test do
   alias Hangman.{Dictionary, Counter, Chunks}
 
   setup_all do
+
+    Application.stop(:hangman_game)
+    :ok = Application.start(:hangman_game)
+
+
     # stop cache server started by application callback
     Dictionary.Cache.stop
     IO.puts "Dictionary Cache Server Test"
