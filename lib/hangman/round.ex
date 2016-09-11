@@ -204,6 +204,9 @@ defmodule Hangman.Round do
 
     true = round.status_code in [:won, :lost]
 
+    # clean out round
+    round |> finish
+
     {player_key, round_key, game_pid} = game_context_key(round)
 
     %{key: ^round_key, code: status_code} = status =
@@ -226,6 +229,16 @@ defmodule Hangman.Round do
     round = Kernel.put_in(round.status_text, status_text)
 
     round
+  end
+
+  @docp """
+  Round  clean up routine after a single game over
+  """
+
+  @spec finish(t) :: term
+  defp finish(%Round{} = round) do
+    # invoke pass clean up routine
+    increment_key(round) |> Pass.cleanup
   end
 
 
@@ -265,6 +278,7 @@ defmodule Hangman.Round do
   @spec round_key(t) :: tuple
   def round_key(%Round{} = round), do: {round.id, round.game_num, round.num}
 
+  defp increment_key(%Round{} = round), do:  {round.id, round.game_num, round.num + 1}
 
   defp player_key(%Round{} = round), do: {round.id, round.pid}
 

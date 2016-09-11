@@ -98,4 +98,11 @@ defmodule Hangman.Pass do
     {pass_key, pass_info}
   end
 
+
+  def cleanup({id, game_no, round_no} = pass_key) when 
+  (is_binary(id) or is_tuple(id)) 
+  and is_number(game_no) and is_number(round_no) do
+    Pass.Cache.cleanup(pass_key)
+  end
+
 end

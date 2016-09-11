@@ -120,7 +120,7 @@ defmodule Hangman.Pass.Cache do
   @spec do_get(atom, Pass.key) :: Chunks.t | nil
   defp do_get(:chunks, {_id, _game_no, _round_no} = pass_key) do
     
-    # Using match instead of lookup, to keep processing on the ets side
+    # Using match instead of lookup
     case :ets.match_object(@ets_table_name, {pass_key, :_}) do
       [] -> nil
       [{^pass_key, data}] ->
@@ -147,5 +147,23 @@ defmodule Hangman.Pass.Cache do
     # Make call to Pass Cache Writer to handle synchronized buffered writes 
     :ok = Pass.Cache.Writer.put(pass_key, data)
   end
+
+  @doc """
+  Cleanup pass data if single game is over
+  """
+
+  @spec cleanup(Pass.key) :: term
+  def cleanup({_id, _game_no, _round_no} = pass_key) do
+    # Using match instead of lookup
+    case :ets.match_object(@ets_table_name, {pass_key, :_}) do
+      [] -> nil
+      [{^pass_key, _data}] ->        
+        # delete this last current pass in the table, 
+        :ets.match_delete(@ets_table_name, {pass_key, :_})   
+
+        :ok
+    end
+  end
+
 
 end
