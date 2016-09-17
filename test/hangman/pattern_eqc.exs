@@ -4,7 +4,7 @@ defmodule Hangman.Pattern.Test do
 
 
 
-  property "the union of a pattern with its inverse pattern equals the original pattern" do
+  property "the union of a hangman pattern with its inverse pattern equals the original secret" do
 
     # Property
 
