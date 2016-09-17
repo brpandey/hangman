@@ -19,7 +19,7 @@ defmodule Hangman.Game.Event.Manager.Test do
     {:ok, _lpid} = Player.Logger.Supervisor.start_child(key)
     {:ok, _apid} = Player.Alert.Supervisor.start_child(key, nil)
 
-    Event.Manager.async_notify({:start, key, 1})
+
     Event.Manager.async_notify({:register, key, {1, 8}})
 
     payload = {{:guess_letter, "a"}, 1}

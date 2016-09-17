@@ -5,8 +5,8 @@ defmodule Hangman.Dictionary.Cache.Test do
 
   setup_all do
 
-    Application.stop(:hangman_game)
-    :ok = Application.start(:hangman_game)
+#    Application.stop(:hangman_game)
+#    :ok = Application.start(:hangman_game)
 
 
     # stop cache server started by application callback
@@ -21,7 +21,7 @@ defmodule Hangman.Dictionary.Cache.Test do
     _pid = 
       case Dictionary.Cache.start_link do
         {:ok, pid} -> pid
-#        {:error, {:already_started, pid}} -> pid
+        {:error, {:already_started, pid}} -> pid
       end
     
     IO.puts "finished cache setup"
@@ -81,7 +81,7 @@ defmodule Hangman.Dictionary.Cache.Test do
     _pid = 
       case Dictionary.Cache.start_link(args) do
         {:ok, pid} -> pid
-        #{:error, {:already_started, pid}} -> pid
+        {:error, {:already_started, pid}} -> pid
       end
     
     IO.puts "finished cache setup"
