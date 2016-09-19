@@ -13,12 +13,14 @@ defmodule Hangman.Action.Robot do
   self select the best guess.
   """
 
-  @opaque t :: %__MODULE__{}
 
 
   alias Hangman.{Action.Robot, Round, Letter.Strategy, Pass}
 
   defstruct type: :robot, display: false, round: nil, strategy: nil
+
+  @type t :: %__MODULE__{}
+
 
   @doc """
   Sets up round by running a reduction pass.  Informs Strategy

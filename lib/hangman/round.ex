@@ -134,8 +134,7 @@ defmodule Hangman.Round do
   `Hangman` words from `Pass.Cache` server
   """
 
-  @spec setup(Round.t, List.t, (Map.t -> Strategy.t) ) :: Round.t
-
+  @spec setup(t, List.t, (Map.t -> Strategy.t) ) :: {t, term}
   def setup(%Round{} = round, exclusion, fn_updater) do
 
     # since we're at the start of a new round increment round num
@@ -152,6 +151,7 @@ defmodule Hangman.Round do
   Returns the pass data
   """
 
+  @spec do_reduction_setup(t, Enum.t) :: {t, map}
   defp do_reduction_setup(%Round{} = round, exclusion) do
     
     # Generate the word filter options for the words reduction engine
@@ -213,8 +213,6 @@ defmodule Hangman.Round do
       Game.status(game_pid, player_key, round_key)
 
     round = Kernel.put_in(round.status_code, status_code)
-
-    # If text field not in map, return default value
 
     # Handle the special case if we are starting a new game
     # return the previous games results
@@ -278,10 +276,13 @@ defmodule Hangman.Round do
   @spec round_key(t) :: tuple
   def round_key(%Round{} = round), do: {round.id, round.game_num, round.num}
 
+  @spec increment_key(t) :: tuple
   defp increment_key(%Round{} = round), do:  {round.id, round.game_num, round.num + 1}
 
+  @spec player_key(t) :: tuple
   defp player_key(%Round{} = round), do: {round.id, round.pid}
 
+  @spec game_context_key(t) :: tuple
   defp game_context_key(%Round{} = round) do
     pkey = player_key(round)
     rkey = round_key(round)

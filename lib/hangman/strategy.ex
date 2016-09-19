@@ -74,7 +74,7 @@ defmodule Hangman.Letter.Strategy do
   return it so we can guess it
   """
 
-  @spec last_word?(t) :: Guess.t
+  @spec last_word?(t) :: tuple
   defp last_word?(%Strategy{} = strategy) do
     if strategy.pass.size == 1 do
       {true, {:guess_word, strategy.pass.last_word}}
@@ -110,7 +110,7 @@ defmodule Hangman.Letter.Strategy do
   If not, picks the top `letter` as deemed by heuristics.
   """
 
-  @spec validate(t, pos_integer, String.t) :: Guess.t
+  @spec validate(t, String.t, pos_integer) :: Guess.t
   def validate(%Strategy{} = strategy, letter, n \\ @letter_choices) 
   when is_number(n) and n > 0 and is_binary(letter) do
 
@@ -130,7 +130,7 @@ defmodule Hangman.Letter.Strategy do
   'strategic' letter pick with an `asterisk`.
   """
 
-  @spec choices(t, pos_integer) :: Guess.option
+  @spec choices(t, pos_integer) :: Guess.option | no_return
   def choices(%Strategy{} = strategy, n \\ @letter_choices)
   when is_number(n) and n > 0 do
 
@@ -186,7 +186,7 @@ defmodule Hangman.Letter.Strategy do
   or lower to be chosen. Doesn't handle tie between letters.
   """
 
-  @spec optimal(t) :: String.t
+  @spec optimal(t) :: String.t | no_return
   defp optimal(%Strategy{} = strategy) do
 
     tally = strategy.pass.tally
@@ -236,7 +236,7 @@ defmodule Hangman.Letter.Strategy do
   sets up best letter guess as deemed by heuristics
   """
 
-  @spec setup(t) :: t
+  @spec setup(t) :: t | no_return
   defp setup(%Strategy{} = strategy) do
 
     strategy = 
@@ -293,6 +293,7 @@ defmodule Hangman.Letter.Strategy do
     strategy
   end
 
+  @spec update(t, Guess.t) :: t
   def update(%Strategy{} = strategy, {:guess_word, last_word})
   when is_binary(last_word) do
     %Strategy{strategy | guess: {:guess_word, last_word}}

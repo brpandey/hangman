@@ -14,6 +14,7 @@ The web mode is able to play parallel games using all CPU cores
 The hangman game handles word not in dictionary cases.  
 Current procedure is the Player.Worker crashes and is restarted to resume where it left off.
 
+(If a "mix test" is run, the free version of Quick Check from quvic should be installed)
 
 Usage
     

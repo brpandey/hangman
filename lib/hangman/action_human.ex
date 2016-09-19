@@ -15,9 +15,10 @@ defmodule Hangman.Action.Human do
 
   alias Hangman.{Action.Human, Round, Letter.Strategy, Pass}
 
-  @opaque t :: %__MODULE__{}
-
   defstruct type: :human, display: false, round: nil, strategy: nil
+
+  @type t :: %__MODULE__{}
+
 
   @doc """
   Sets up round by running a reduction pass.  Returns
@@ -59,19 +60,19 @@ defmodule Hangman.Action.Human do
   human guess, executes guess and returns round `status`
   """
 
-  @spec guess(t, Guess.t) :: tuple
-  def guess(%Human{} = human, guess) do
+  @spec guess(t, Guess.t) :: tuple | no_return
+  def guess(%Human{} = human, guess) when is_tuple(guess) do
 
-    guess = case guess do
-      {:guess_letter, letter} ->
-        # Validate the letter is in the top choices, if not
-        # return the optimal letter
-  	    letter = Strategy.validate(human.strategy, letter)
-      {:guess_word, last_word} -> 
-        {:guess_word, last_word}
-      _ -> raise "Unsupported guess type"
-    end
-
+    guess = 
+      case guess do
+        {:guess_letter, letter} ->
+          # Validate the letter is in the top choices, if not
+          # return the optimal letter
+          Strategy.validate(human.strategy, letter)
+        {:guess_word, last_word} -> {:guess_word, last_word}
+        _ -> raise HangmanError, "Unsupported guess type"
+      end
+    
     round = Round.guess(human.round, guess)
     strategy = Strategy.update(human.strategy, guess)
     status = Round.status(round)
@@ -100,6 +101,8 @@ defmodule Hangman.Action.Human do
     {:guess_word, last, text}
   end
 
+
+  @spec do_update_choices(Round.t, String.t) :: String.t
   defp do_update_choices(%Round{} = round, text) when is_binary(text) do
     {name, _, round_no} = Round.round_key(round)
     {_, status_text} = Round.status(round)
