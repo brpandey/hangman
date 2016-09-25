@@ -96,7 +96,7 @@ defmodule Hangman.Player.Worker do
     GenServer.call(via_tuple(worker_id), {:guess, data})
   end
   
-  @spec stop(Player.id) :: tuple
+  @spec stop(Player.id) :: atom
   def stop(worker_id) do
     GenServer.call(via_tuple(worker_id), :stop)
   end

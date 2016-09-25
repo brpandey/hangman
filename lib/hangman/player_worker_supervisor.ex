@@ -18,6 +18,7 @@ defmodule Hangman.Player.Worker.Supervisor do
   '''
   
   require Logger
+  alias Hangman.{Player}
 
   @name __MODULE__
   
@@ -37,10 +38,10 @@ defmodule Hangman.Player.Worker.Supervisor do
   Starts a player worker dynamically
   """
 
-  @spec start_child(String.t, :atom, boolean, pid) :: Supervisor.on_start_child
-  def start_child(player_name, player_type, display, game_pid) do 
+  @spec start_child(Player.id, atom, boolean, pid) :: Supervisor.on_start_child
+  def start_child(player_id, player_type, display, game_pid) do 
     Supervisor.start_child(:hangman_player_worker_supervisor, 
-      [{player_name, player_type, display, game_pid}])
+      [{player_id, player_type, display, game_pid}])
   end
 
   @doc """
@@ -53,7 +54,7 @@ defmodule Hangman.Player.Worker.Supervisor do
   @callback init(term) :: {:ok, tuple}
   def init(_) do
     children = [
-      worker(Hangman.Player.Worker, [], restart: :transient) 
+      worker(Player.Worker, [], restart: :transient) 
     ]
 
     # :simple_one_for_one to indicate that 

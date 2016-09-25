@@ -68,7 +68,7 @@ defmodule Hangman.Player.Controller do
 
   @doc "Issues request to stop worker"
 
-  @spec stop_worker(Player.id) :: :ok
+  @spec stop_worker(Player.id) :: atom
   def stop_worker(id) do
     Player.Worker.stop(id)
   end

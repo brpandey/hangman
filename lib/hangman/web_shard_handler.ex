@@ -28,17 +28,17 @@ defmodule Hangman.Web.Shard.Handler do
   Used primarly by the `Web.Collator`
   """
   
-  @spec setup(tuple()) :: tuple
-  def setup({name, secrets}) when 
-  (is_binary(name) or is_tuple(name)) and is_list(secrets) do
+  @spec setup({Player.id, list[String.t]}) :: Player.id
+  def setup({id, secrets}) when 
+  (is_binary(id) or is_tuple(id)) and is_list(secrets) do
 
     # Grab game pid first from game pid cache
-    game_pid = Cache.get_server_pid(name, secrets)
+    game_pid = Cache.get_server_pid(id, secrets)
 
     # Start Worker in Controller
-    Controller.start_worker(name, :robot, false, game_pid)
+    Controller.start_worker(id, :robot, false, game_pid)
 
-    name
+    id
   end
 
   @doc """
