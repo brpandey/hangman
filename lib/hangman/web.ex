@@ -67,7 +67,7 @@ defmodule Hangman.Web do
   Runs web game. Returns complete game results in connection response body
   """
   
-  @spec run(Plug.Conn.t) :: Plug.Conn.t
+  @spec run(Plug.Conn.t) :: Plug.Conn.t | no_return
   def run(conn) do
 
     # Let's catch most of the errors in the beginning using a "with" construct
@@ -102,8 +102,8 @@ defmodule Hangman.Web do
       Plug.Conn.assign(conn, :response, response)
       
     else
-      error -> 
-      Logger.debug "error is #{inspect error}"
+      _error -> 
+      #Logger.debug "error is #{inspect error}"
       raise HangmanError, "Can't run hangman without a name or either a secrets or a random option specified"
     end
     
@@ -120,6 +120,7 @@ defmodule Hangman.Web do
   end
 '''
 
+  @spec format_rounds(list) :: list
   defp format_rounds(rounds) when is_list(rounds) do
     for round <- rounds do
       "(#) #{round} "

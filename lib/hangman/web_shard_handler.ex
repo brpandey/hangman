@@ -45,7 +45,7 @@ defmodule Hangman.Web.Shard.Handler do
   Play handles client play loop for particular player shard_key 
   """
 
-  @spec play(Player.id) :: tuple
+  @spec play(Player.id) :: {Player.id, list(String.t)}
   def play(shard_key) do
 
     # Loop until we have received an :exit value from the Player Controller

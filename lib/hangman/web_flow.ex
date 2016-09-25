@@ -34,7 +34,7 @@ defmodule Hangman.Web.Flow do
   Whose entries are handed off back to the Web module
   """
 
-  @spec run(Player.id, [String.t]) :: :ok  
+  @spec run(Player.id, [String.t]) :: list | String.t
   def run(name, secrets) when
   is_binary(name) and is_list(secrets) and is_binary(hd(secrets)) do
 
@@ -92,7 +92,7 @@ defmodule Hangman.Web.Flow do
   seventh shard of the "robin" games, and is the result of the 10 games played
   """
 
-  @spec collate(tuple, term) :: term
+  @spec collate({Player.id, list(String.t)}, map) :: map
   defp collate({key, snapshot}, acc) do
       
     # destructure shard key
