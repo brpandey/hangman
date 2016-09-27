@@ -56,13 +56,13 @@ defmodule Hangman.Game.Server do
   If not found, returns `:undefined`
   """
   
-  @spec whereis(id) :: pid | :atom
+  @spec whereis(id) :: pid | :undefined
   def whereis(id_key) do
     :gproc.whereis_name({:n, :l, {:hangman_server, id_key}})
   end
   
   # Used to register / lookup process in process registry via gproc
-  @spec via_tuple(id) :: tuple
+  @spec via_tuple(id) :: {:via, :gproc, {:n, :l, {atom, id}}}
   defp via_tuple(id_key) do
     {:via, :gproc, {:n, :l, {:hangman_server, id_key}}}
   end
@@ -238,7 +238,7 @@ defmodule Hangman.Game.Server do
     Event.Manager.async_notify({:guess, id, {guess, game_num}})
     Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
 
-    _ = Logger.debug("guessed letter, Game.Server: #{inspect state}, self: #{inspect self}")
+#    _ = Logger.debug("guessed letter, Game.Server: #{inspect state}, self: #{inspect self}")
     
     result = result |> Map.put(:key, round_key)
 
@@ -273,7 +273,7 @@ defmodule Hangman.Game.Server do
     Event.Manager.async_notify({:guess, id, {guess, game_num}})
     Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
 
-    _ = Logger.debug("guessed word, Game.Server: #{inspect state}, self: #{inspect self}")
+    #_ = Logger.debug("guessed word, Game.Server: #{inspect state}, self: #{inspect self}")
 
     result = result |> Map.put(:key, round_key)
 
@@ -355,7 +355,7 @@ defmodule Hangman.Game.Server do
       end
       
 
-    _ = Logger.debug(":DOWN :normal, #{inspect state}")
+    #_ = Logger.debug(":DOWN :normal, #{inspect state}")
 
     { :noreply, state }
   end
@@ -390,7 +390,7 @@ defmodule Hangman.Game.Server do
       end
 
 
-    _ = Logger.debug(":DOWN, #{inspect state}")
+    #_ = Logger.debug(":DOWN, #{inspect state}")
     { :noreply, state }
   end
 

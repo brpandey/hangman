@@ -95,11 +95,11 @@ defmodule Hangman.Player.Logger.Handler do
   Terminate callback. Closes player `logger` file
   """
   
-#  @spec terminate(term, term) :: :ok
+  @callback terminate(term, term) :: :ok
   def terminate(_reason, state) do
-#    _ = Logger.debug "Terminating Player Logger Handler"
+    _ = Logger.debug "Terminating Player Logger Handler"
 
-    case state do
+    _ = case state do
       val when is_tuple(val) -> 
         {_key, logger_pid} = val
         File.close(logger_pid)

@@ -47,12 +47,14 @@ defmodule Hangman.Game do
 
   @typedoc "returned `Game` feedback data"
 
-  @type feedback :: %{required(id :: atom) => String.t, 
-                      required(atom) => Game.code,
-                      optional(text :: atom) => String.t, 
-                      optional(pattern :: atom) => String.t,
-                      optional(result :: atom) => atom}
-
+  @type feedback :: %{
+    required(id :: atom) => String.t, 
+    required(code :: atom) => Game.code,
+    optional(text :: atom) => String.t, 
+    optional(pattern :: atom) => String.t,
+    optional(result :: atom) => atom,
+    optional(previous :: atom) => map
+  }
 
   @status_codes  %{
     start: {:start, 'GAME_START', 0},
@@ -147,7 +149,8 @@ defmodule Hangman.Game do
     If incorrect, returns the :incorrect_word data tuple with `game` data    
   """
 
-  @spec guess(t, Guess.t) :: {t, Game.feedback}
+
+#  @spec guess(t, Guess.t) :: {t, map}
   def guess(%Game{} = game, {:guess_letter, letter}) do
 
     {_, %{code: :guessing}} = status(game) # Assert
@@ -210,7 +213,7 @@ defmodule Hangman.Game do
   @doc """
   Returns current `Game` status data and updates status code
   """
-  
+
   @spec status(t) :: {t, map}
   def status(%Game{} = game) do
 
@@ -252,7 +255,8 @@ defmodule Hangman.Game do
   If there are indeed games left to play, 
   updates state and transitions to next game 
   """
-  @spec next(t) :: {t, map}  
+
+#  @spec next(t) :: {t, map}
   def next(%Game{} = game) do
 
     games_played = game.current + 1
@@ -267,7 +271,7 @@ defmodule Hangman.Game do
 
           previous =
             case game.state do
-              :abort -> ""
+              :abort -> %{}
               _ -> build_feedback(game, game.state)
             end
           
@@ -299,7 +303,7 @@ defmodule Hangman.Game do
 
   # Saves result from current game, loads next game
   
-  @spec archive_and_update(t) :: t
+#  @spec archive_and_update(t) :: t
   defp archive_and_update(%Game{} = game) do
 
     ### GAME ARCHIVAL - STEPS ###
@@ -332,7 +336,7 @@ defmodule Hangman.Game do
   
   # Helper function to return current game score
   
-  @spec score(t, code) :: integer
+  @spec score(t, code | nil) :: integer | no_return
   defp score(%Game{} = game, state_code \\ nil)  do
     code = 
       case state_code do
@@ -392,7 +396,7 @@ defmodule Hangman.Game do
   score per game, per game `score`.
   """
   
-  @spec build_summary(t) :: String.t
+  #@spec build_summary(t) :: String.t
   defp build_summary(%Game{} = game) do
 
     total_score = Enum.reduce(game.scores, 0, &(&1 + &2))

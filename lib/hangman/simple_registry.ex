@@ -21,7 +21,7 @@ defmodule Hangman.Simple.Registry do
   defstruct values: %{}, active_pids: %{}, active_ids: %{}
 
 
-  @opaque t :: %__MODULE__{}  
+  @type t :: %__MODULE__{}  
   
   @type id :: String.t | {}
   @type key :: {id, pid}
@@ -105,7 +105,7 @@ defmodule Hangman.Simple.Registry do
 
   @doc "Helper to retrieve the active key given pid or id"
   
-  @spec key(t, pid) :: key
+  @spec key(t, pid) :: key | nil
   def key(%Registry{} = registry, pid) when is_pid(pid) do
     case Map.get(registry.active_pids, pid) do
       nil -> nil
@@ -113,7 +113,7 @@ defmodule Hangman.Simple.Registry do
     end
   end
 
-  @spec key(t, id) :: key
+  @spec key(t, id) :: key | nil
   def key(%Registry{} = registry, id) when is_binary(id) do
     case Map.get(registry.active_ids, id) do
       nil -> nil

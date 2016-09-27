@@ -48,7 +48,7 @@ defmodule Hangman.Player.FSM do
   Ultimately the specific Web or CLI `Handler`, when in exit state terminates the fsm loop
   """
 
-  alias Hangman.Player.{Action, Types}
+  alias Hangman.{Player, Player.Action}
 
   require Logger
 
@@ -58,7 +58,7 @@ defmodule Hangman.Player.FSM do
   defstate initial do
     defevent initialize(args = {_name, type, _display, _game_pid}) do
 
-      action_type = Map.get(Types.mapping, type)
+      action_type = Map.get(Player.types, type)
       args = args |> Tuple.delete_at(1) # remove the type field
       player = Action.new(action_type, args)
 

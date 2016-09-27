@@ -54,14 +54,14 @@ defmodule Hangman.Game.Pid.Cache do
   GenServer callback to initialize server process
   """
 
-  #@callback init(term) :: {}
+  @callback init(term) :: tuple
   def init(_), do:  {:ok, nil}
   
   @docp """
   GenServer callback to retrieve game server pid
   """
   
-  #@callback handle_call({:atom, Player.id, String.t | [String.t]}, {}, term) :: {}
+  @callback handle_call({atom, Player.id, [String.t]}, tuple, term) :: tuple
   def handle_call({:get_server, player_name, secret}, _from, state) do
     
     #Check the registry again for the pid -- safeguard against race condition

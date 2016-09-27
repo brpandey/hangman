@@ -39,14 +39,15 @@ defmodule Hangman.Round do
 
   require Logger
 
+
   defstruct id: "", num: 0, game_num: 0, context: nil,
   guess: {}, result_code: nil, status_code: nil, status_text: "", pattern: "",
   pid: nil, game_pid: nil
   
   @type t :: %__MODULE__{}
-  @type result_code :: :correct_letter | :incorrect_letter | :incorrect_word
+  @type result_code :: :correct_letter | :incorrect_letter | :incorrect_word | :correct_word
 
-  @type key :: {id :: String.t, 
+  @type key :: {id :: (String.t | tuple), 
                 game_num :: integer,
                 round_num :: integer} # Used as round key
 
@@ -54,16 +55,23 @@ defmodule Hangman.Round do
   Sum type used to understand prior `guess` result
   """
 
-  @type context ::  {:start, secret_length :: pos_integer}
-  | {:guessing, :correct_letter, letter :: String.t, pattern :: String.t, mystery_letter :: String.t}
-  | {:guessing, :incorrect_word | :incorrect_letter, String.t}
-  | {:won, :correct_word, word :: String.t}
+  @type context :: {:start, non_neg_integer} 
+  | {:guessing, :correct_letter, String.t, pattern :: String.t, mystery_letter :: String.t} 
+  | {:guessing, :incorrect_letter | :incorrect_word, String.t} 
+  | {:won, :correct_word, String.t}
   
                     
   @mystery_letter "-"
 
 
   # CREATE
+
+  @spec new((String.t | tuple), pid) :: Round.t
+  def new(name, game_pid) when 
+  (is_binary(name) or is_tuple(name)) and is_pid(game_pid) do
+    %Round{ id: name, pid: self, game_pid: game_pid }
+  end
+
 
   @doc """
   Initialize the round with the start of a new game.  Retrieves the 
@@ -79,10 +87,7 @@ defmodule Hangman.Round do
     
     round = 
       case round.game_num do
-        0 ->
-          # update the passed in round
-          %{ round | pid: self() }
-
+        0 -> round
         _ ->
           # create a new round with some leftover data from passed in round
           %Round{ id: round.id, pid: round.pid, game_pid: round.game_pid }
@@ -100,7 +105,7 @@ defmodule Hangman.Round do
       Game.register(game_pid, player_key, round_key)
     
 
-    context = if status_code == :finished do nil else {:start, data} end
+    context = if status_code == :finished do nil else build_context(round, data) end
 
     %{ round | status_code: status_code, # was :start previously
             status_text: status_text, 
@@ -115,9 +120,7 @@ defmodule Hangman.Round do
   """
 
   @spec status(t) :: {Game.code, String.t}
-  def status(%Round{} = round) do
-    {round.status_code, round.status_text}
-  end
+  def status(%Round{} = round), do: {round.status_code, round.status_text}
 
   # UPDATE
   
@@ -131,7 +134,7 @@ defmodule Hangman.Round do
   `Hangman` words from `Pass.Cache` server
   """
 
-  @spec setup(t, List.t, (Map.t -> Strategy.t) ) :: {t, term}
+  @spec setup(t, Enumerable.t, (Pass.t -> Strategy.t) ) :: {t, Strategy.t}
   def setup(%Round{} = round, exclusion, fn_updater) do
 
     # since we're at the start of a new round increment round num
@@ -148,7 +151,7 @@ defmodule Hangman.Round do
   Returns the pass data
   """
 
-  @spec do_reduction_setup(t, Enumerable.t) :: {t, map}
+#  @spec do_reduction_setup(t, Enumerable.t) :: {t, Pass.t}
   defp do_reduction_setup(%Round{} = round, exclusion) do
     
     # Generate the word filter options for the words reduction engine
@@ -230,7 +233,7 @@ defmodule Hangman.Round do
   Round  clean up routine after a single game over
   """
 
-  @spec finish(t) :: nil | :ok
+  #@spec finish(t) :: nil | :ok
   defp finish(%Round{} = round) do
     # invoke pass clean up routine
     increment_key(round) |> Pass.cleanup
@@ -243,9 +246,11 @@ defmodule Hangman.Round do
   Returns round `context` based on results of `last guess`
   """
 
-  @spec build_context(t) :: context | no_return
-  defp build_context(%Round{} = round) do
+  @spec build_context(t, none | non_neg_integer) :: context | no_return
+  defp build_context(%Round{} = round, data \\ 0) do
     case round.result_code do
+      nil -> {:start, data}
+
       :correct_letter -> 
         {:guess_letter, letter} = round.guess
         {:guessing, :correct_letter, letter, round.pattern, @mystery_letter}
@@ -270,10 +275,10 @@ defmodule Hangman.Round do
 
   @doc "Returns round tuple key"
 
-  @spec round_key(t) :: tuple
+  @spec round_key(t) :: key
   def round_key(%Round{} = round), do: {round.id, round.game_num, round.num}
 
-  @spec increment_key(t) :: tuple
+  @spec increment_key(t) :: key
   defp increment_key(%Round{} = round), do:  {round.id, round.game_num, round.num + 1}
 
   @spec player_key(t) :: tuple

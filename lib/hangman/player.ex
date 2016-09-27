@@ -5,6 +5,18 @@ defmodule Hangman.Player do
 
   @type id :: String.t | {id :: String.t, shard_no :: pos_integer}
   @type key :: {id :: String.t, player_pid :: pid} # Used as game key
+
+
+  def human, do: :human
+  def robot, do: :robot
+
+  def types do
+    %{
+      :human => %Hangman.Action.Human{}, 
+      :robot => %Hangman.Action.Robot{}
+    }
+  end
+
 end
 
 

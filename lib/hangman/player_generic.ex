@@ -13,9 +13,8 @@ defmodule Hangman.Player.Generic do
   alias Hangman.{Player, Round, Letter.Strategy}
 
   @spec new(Player.id, pid) :: Round.t
-  def new(name, game_pid) when 
-  (is_binary(name) or is_tuple(name)) and is_pid(game_pid) do
-    %Round{ id: name, pid: nil, game_pid: game_pid }
+  def new(name, game_pid) do
+    Round.new(name, game_pid)
   end
 
   @spec begin(Round.t, atom) :: {Round.t, Strategy.t, atom}

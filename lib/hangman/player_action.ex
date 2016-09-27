@@ -2,20 +2,6 @@ alias Hangman.Player.Generic
 alias Hangman.Action.{Human, Robot}
 
 
-defmodule Hangman.Player.Types do
-
-  def human, do: :human
-  def robot, do: :robot
-
-  def mapping do
-    %{
-      :human => %Hangman.Action.Human{}, 
-      :robot => %Hangman.Action.Robot{}
-    }
-  end
-  
-end
-
 defprotocol Hangman.Player.Action do
 
   @moduledoc """
@@ -40,23 +26,18 @@ defprotocol Hangman.Player.Action do
   """
 
   @doc "Create new player"
-  @spec new(term, tuple) :: term
   def new(player, args)
 
   @doc "Begin new game player action"
-  @spec begin(term) :: term
   def begin(player)
 
   @doc "Sets up each action state"
-  @spec setup(term) :: term
   def setup(player)
   
   @doc "Returns player guess"
-  @spec guess(term, term) :: term
   def guess(player, guess \\ nil)
 
   @doc "Returns the correct player transition at the game end"
-  @spec transition(term) :: term
   def transition(player)
 end
 
