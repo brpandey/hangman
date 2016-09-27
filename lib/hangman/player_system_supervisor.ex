@@ -27,7 +27,7 @@ defmodule Hangman.Player.System.Supervisor do
 
   @spec start_link(Keyword.t) :: Supervisor.on_start
   def start_link(args) do
-    Logger.info "Starting Hangman Player System Supervisor," <> 
+    _ = Logger.debug "Starting Hangman Player System Supervisor," <> 
       " args: #{inspect args}"
 
     Supervisor.start_link(@name, args)

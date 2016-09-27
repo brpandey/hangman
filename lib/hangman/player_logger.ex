@@ -67,7 +67,8 @@ defmodule Hangman.Player.Logger.Handler do
     {:noreply, [], {key, logger_pid}}    
   end
 
-  @spec process_event(term, term) :: :ok
+
+  @spec process_event({atom, term, tuple | binary}, pid) :: :ok
   defp process_event(event, logger_pid) do
 
     msg = 
@@ -85,6 +86,8 @@ defmodule Hangman.Player.Logger.Handler do
       end
 
     IO.write(logger_pid, msg)
+
+    :ok
   end
 
 
@@ -92,15 +95,17 @@ defmodule Hangman.Player.Logger.Handler do
   Terminate callback. Closes player `logger` file
   """
   
-  @callback terminate(term, term) :: :ok
+#  @spec terminate(term, term) :: :ok
   def terminate(_reason, state) do
-    Logger.info "Terminating Player Logger Handler"
+#    _ = Logger.debug "Terminating Player Logger Handler"
 
-    if true == is_tuple(state) do
-      {_key, logger_pid} = state
-      File.close(logger_pid) 
+    case state do
+      val when is_tuple(val) -> 
+        {_key, logger_pid} = val
+        File.close(logger_pid)
+      _ -> ""
     end
-
+    
     :ok
   end
 end

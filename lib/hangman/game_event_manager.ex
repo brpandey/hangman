@@ -12,7 +12,7 @@ defmodule Hangman.Game.Event.Manager do
 
   @spec start_link :: GenServer.on_start
   def start_link() do
-    Logger.info "Starting Hangman Game Event Manager"
+    _ = Logger.debug "Starting Hangman Game Event Manager"
     GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
   end
   

@@ -26,7 +26,7 @@ defmodule Hangman.Dictionary.File.Writer do
           fn_lambda.(read_path, write_file)
 
           # be a responsible file user
-          File.close(write_file)
+          :ok = File.close(write_file)
 
           # return the "transformed" new path
           write_path

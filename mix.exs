@@ -56,7 +56,7 @@ defmodule Hangman.Mixfile do
       {:exactor, "~> 2.2.0", warn_missing: false}, # for simple GenServers
       {:gen_stage, "~> 0.4"}, # exp module for distinct producers and consumers
       {:eqc_ex, "~> 1.2.4"}, # for quick check property tests
-      {:dialyxir, "~> 0.3", only: [:dev]} # just sampling elixir dialyzer mod
+      {:dialyxir, "~> 0.3", only: [:dev]} # for erlang dialyzer type checking
     ] 
   end
 end

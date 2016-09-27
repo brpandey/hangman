@@ -26,7 +26,7 @@ defmodule Hangman.Game.Pid.Cache do
   
   @spec start_link :: {:ok, pid}
   def start_link do
-    Logger.info "Starting Game Pid Cache Server"
+    _ = Logger.debug "Starting Game Pid Cache Server"
     
     args = nil
     options = [name: @name]

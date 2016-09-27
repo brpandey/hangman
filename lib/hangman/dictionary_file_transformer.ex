@@ -24,7 +24,7 @@ defmodule Hangman.Dictionary.File.Transformer do
 
   # Run the transform
 
-  @spec run(atom, fun(), tuple) :: String.t
+  @spec run(Dictionary.kind, fun(), {Dictionary.transform, Dictionary.transform}) :: String.t
   def run(kind, fn_transform, {src, dest}) when is_atom(kind) do
 
     # assert 
@@ -111,7 +111,7 @@ defmodule Hangman.Dictionary.File.Chunker do
   # convert to binary for speed and compactness
   def write(chunk, file_pid) when is_pid(file_pid) do
     bin_chunk = :erlang.term_to_binary(chunk)
-    IO.binwrite(file_pid, bin_chunk)
+    _ = IO.binwrite(file_pid, bin_chunk)
     
     # Add delimiter after every chunk, easier for chunk retrieval
     IO.binwrite(file_pid, Dictionary.chunks_file_delimiter)

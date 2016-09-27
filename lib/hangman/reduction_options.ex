@@ -10,7 +10,7 @@ defmodule Hangman.Reduction.Options do
   Generates `Reduction.key` given round context
   """
 
-  @spec reduce_key(Round.context, exclusion :: Enumerable.t) :: Reduction.key
+  @spec reduce_key(Round.context, Enumerable.t) :: Reduction.key
   def reduce_key({:start, secret_length} = _context, _letters) do
     
     Keyword.new([
@@ -22,7 +22,7 @@ defmodule Hangman.Reduction.Options do
   def reduce_key({_, :correct_letter, guess, _pattern, 
                   _mystery_letter} = context, letters) do
     
-    letters = letters |> Enum.into(MapSet.new)
+    letters = letters |> MapSet.new
 
     # generate regex match key given context to be used to reduce words set
     regex = regex_match_key(context, letters)
@@ -37,7 +37,7 @@ defmodule Hangman.Reduction.Options do
   def reduce_key({_, :incorrect_letter, guess} = context, 
                  letters) do
 
-    letters = letters |> Enum.into(MapSet.new)
+    letters = letters |> MapSet.new
 
     # generate regex match key given context to be used to reduce words set    
     regex = regex_match_key(context, letters)
@@ -52,7 +52,7 @@ defmodule Hangman.Reduction.Options do
 
   def reduce_key({_, :incorrect_word, guess} = context, letters) do
 
-    letters = letters |> Enum.into(MapSet.new)
+    letters = letters |> MapSet.new
 
     # generate regex match key given context to be used to reduce words set    
     regex = regex_match_key(context, letters)

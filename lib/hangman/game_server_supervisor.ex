@@ -23,7 +23,7 @@ defmodule Hangman.Game.Server.Supervisor do
   
   @spec start_link :: Supervisor.on_start
   def start_link do
-    Logger.info "Starting Hangman Game Server Supervisor"
+    _ = Logger.debug "Starting Hangman Game Server Supervisor"
     Supervisor.start_link(@name, nil, name: 
                           :hangman_game_server_supervisor)
   end

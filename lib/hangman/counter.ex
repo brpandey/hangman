@@ -38,11 +38,10 @@ defmodule Hangman.Counter do
   @doc false
   defstruct map: %{}
 
-  @opaque t :: %__MODULE__{}
+  @type t :: %__MODULE__{}
 
   @type key :: String.t
   @type value :: pos_integer
-
 
   @chunk_words_size Chunks.container_size
 
@@ -50,16 +49,15 @@ defmodule Hangman.Counter do
   
   # CREATE
 
+  @spec new(none | String.t | Enumerable.t) :: t
+
   @doc "Returns new, empty `Counter`"
-  @spec new(none | []) :: t
   def new, do: %Counter{}
   def new([]), do: %Counter{}
 
   @doc """
   Returns new `Counter` that reflects contents of either `String.t, [tuple], map`
   """
-
-  @spec new(String.t | [tuple] | map) :: t
   def new(word) when is_binary(word) do 
     add_letters(new(), word) 
   end
@@ -125,11 +123,10 @@ defmodule Hangman.Counter do
   Increment `value` for a given `key` by the given `value`. 
   Default increment `value` 1.
   """
-  @spec inc_by(t, key) :: t
-  @spec inc_by(t, key, value) :: t
+  @spec inc_by(t, key, none | value) :: t
   def inc_by(%Counter{map: map} = counter, key, value \\ 1)
   when is_binary(key) and is_number(value) and value > 0 do
-    %Counter{ counter | map: Map.update(map, key, value, &(&1 + value)) }
+    %{ counter | map: Map.update(map, key, value, &(&1 + value)) }
   end
 
   @doc """
@@ -162,7 +159,7 @@ defmodule Hangman.Counter do
         fn head, acc -> Map.update(acc, head, 1, &(&1 + 1)) end
       )
 
-    %Counter{ counter | map: map_updated }
+    %{ counter | map: map_updated }
   end
 
 
@@ -246,9 +243,8 @@ defmodule Hangman.Counter do
   manageable `lists`, relies on `add_words/2` to reduce into `Counter`.
   """
 
-  @spec add_words(t, stream :: Enumerable.t, exclusion :: map) :: t
-  def add_words(%Counter{} = counter, words_stream, 
-                    %MapSet{} = exclusion_set) do
+  @spec add_words(t, Enumerable.t, Enumerable.t) :: t
+  def add_words(%Counter{} = counter, words_stream, exclusion_set) do
 
     counter = words_stream
     |> Stream.chunk(@chunk_words_size, @chunk_words_size, [])
@@ -257,8 +253,8 @@ defmodule Hangman.Counter do
     
     # Remove exclusion set in one go per word list (vs. per word)
     letters = cond do
-      MapSet.size(exclusion_set) > 0 ->
-        exclusion_set |> MapSet.to_list
+      Enum.count(exclusion_set) > 0 ->
+        exclusion_set |> Enum.to_list
       true ->
         []
     end
@@ -278,7 +274,7 @@ defmodule Hangman.Counter do
     when is_list(letters) and is_binary(hd(letters)) do
 
     map_updated = Map.drop(map, letters)
-    %Counter{ counter | map: map_updated}
+    %{ counter | map: map_updated}
   end
 
   def delete(%Counter{} = _counter) do

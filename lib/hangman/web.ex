@@ -102,8 +102,8 @@ defmodule Hangman.Web do
       Plug.Conn.assign(conn, :response, response)
       
     else
-      _error -> 
-      #Logger.debug "error is #{inspect error}"
+      error -> 
+      _ = Logger.debug "error is #{inspect error}"
       raise HangmanError, "Can't run hangman without a name or either a secrets or a random option specified"
     end
     

@@ -41,7 +41,7 @@ defmodule Hangman.Letter.Strategy do
   defstruct type: nil, guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
 
-  @opaque t :: %__MODULE__{}
+  @type t :: %__MODULE__{}
 
   @type result :: {t, Guess.t}
 
@@ -64,7 +64,7 @@ defmodule Hangman.Letter.Strategy do
   Returns a new `Letter.Strategy`
   """
 
-  @spec new(atom) :: t
+  @spec new(atom) :: struct
   def new(type) when is_atom(type), do: %Strategy{type: type}
 
   # READ
@@ -293,10 +293,10 @@ defmodule Hangman.Letter.Strategy do
     strategy
   end
 
-  @spec update(t, Guess.t) :: t
+#  @spec update(t, Guess.t) :: t
   def update(%Strategy{} = strategy, {:guess_word, last_word})
   when is_binary(last_word) do
-    %Strategy{strategy | guess: {:guess_word, last_word}}
+    %{ strategy | guess: {:guess_word, last_word}}
   end
 
   @doc """
@@ -307,12 +307,10 @@ defmodule Hangman.Letter.Strategy do
   """
 
   @spec update(t, Pass.t) :: t
-
   def update(%Strategy{} = strategy, %Pass{} = pass) do
-    strategy = %Strategy{ strategy | pass: pass, prior_guess: strategy.guess }
+    strategy = %{ strategy | pass: pass, prior_guess: strategy.guess }
     
-    if strategy.type == :robot do strategy = setup(strategy) else strategy end
-
+    if strategy.type == :robot do setup(strategy) else strategy end
   end
 
 

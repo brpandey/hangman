@@ -59,7 +59,7 @@ defmodule Hangman.Application do
 
   #@callback start(term, Keyword.t) :: Supervisor.on_start
   def start(_type, args) do
-    Logger.info "Starting Hangman Application, args: #{inspect args}"
+    _ = Logger.debug "Starting Hangman Application, args: #{inspect args}"
     response = Hangman.Supervisor.start_link args
     Hangman.Web.start_server
     response

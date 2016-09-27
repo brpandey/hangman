@@ -36,10 +36,8 @@ defmodule Hangman.Game.Server do
   Start public interface method with `secret(s)`
   """
   
-  @spec start_link(id, (String.t | [String.t]), 
-                   pos_integer) :: GenServer.on_start
+  @spec start_link(id, [String.t], pos_integer) :: GenServer.on_start
   def start_link(id_key, secret, max_wrong \\ @max_wrong) do
-
 
     game = Game.new(id_key, secret, max_wrong)
 
@@ -103,7 +101,7 @@ defmodule Hangman.Game.Server do
     
   """
   
-  @spec guess(pid, Player.key, Round.key, Guess.t) :: tuple
+  @spec guess(pid, Player.key, Round.key, Guess.t) :: map
   def guess(game_pid, player_key, round_key, guess = {:guess_letter, letter})
   when is_binary(letter) do
     GenServer.call game_pid, {guess, player_key, round_key}
@@ -118,7 +116,7 @@ defmodule Hangman.Game.Server do
   Retrieves `Game` status data
   """
   
-  @spec status(pid, Player.key, Round.key) :: tuple
+  @spec status(pid, Player.key, Round.key) :: map
   def status(game_pid, player_key, round_key) do
     GenServer.call game_pid, {:status, player_key, round_key}
   end
@@ -127,7 +125,7 @@ defmodule Hangman.Game.Server do
   Initiates link with client and returns `Game` secret length
   """
   
-  @spec register(pid, Player.key, Round.key) :: tuple
+  @spec register(pid, Player.key, Round.key) :: map
   def register(game_pid, player_key, round_key) do
     GenServer.call game_pid, {:register, player_key, round_key}
   end
@@ -156,7 +154,7 @@ defmodule Hangman.Game.Server do
   
   @callback init(term) :: tuple
   def init(state) do
-    Logger.debug "Starting Hangman Game Server #{inspect self}"
+    _ = Logger.debug "Starting Hangman Game Server #{inspect self}"
     {:ok, state}
   end
   
@@ -240,7 +238,7 @@ defmodule Hangman.Game.Server do
     Event.Manager.async_notify({:guess, id, {guess, game_num}})
     Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
 
-    Logger.debug("guessed letter, Game.Server: #{inspect state}, self: #{inspect self}")
+    _ = Logger.debug("guessed letter, Game.Server: #{inspect state}, self: #{inspect self}")
     
     result = result |> Map.put(:key, round_key)
 
@@ -275,7 +273,7 @@ defmodule Hangman.Game.Server do
     Event.Manager.async_notify({:guess, id, {guess, game_num}})
     Event.Manager.async_notify({:status, id, {game_num, round_num, status_text}})
 
-    Logger.debug("guessed word, Game.Server: #{inspect state}, self: #{inspect self}")
+    _ = Logger.debug("guessed word, Game.Server: #{inspect state}, self: #{inspect self}")
 
     result = result |> Map.put(:key, round_key)
 
@@ -338,7 +336,7 @@ defmodule Hangman.Game.Server do
   def handle_info({:DOWN, ref, :process, pid, :normal}, state) do
 
 
-    Logger.debug "In Game.Server handle info, received :DOWN normal msg, self: #{inspect self}"
+    _ = Logger.debug "In Game.Server handle info, received :DOWN normal msg, self: #{inspect self}"
 
     Process.demonitor(ref)
 
@@ -357,14 +355,14 @@ defmodule Hangman.Game.Server do
       end
       
 
-    Logger.debug(":DOWN :normal, #{inspect state}")
+    _ = Logger.debug(":DOWN :normal, #{inspect state}")
 
     { :noreply, state }
   end
 
   def handle_info({:DOWN, ref, :process, pid, reason}, state) do
 
-    Logger.debug "In Game.Server handle info, received :DOWN msg, self: #{inspect self}, reason: #{inspect reason}"
+    _ = Logger.debug "In Game.Server handle info, received :DOWN msg, self: #{inspect self}, reason: #{inspect reason}"
 
     Process.demonitor(ref)
     
@@ -392,13 +390,13 @@ defmodule Hangman.Game.Server do
       end
 
 
-    Logger.debug(":DOWN, #{inspect state}")
+    _ = Logger.debug(":DOWN, #{inspect state}")
     { :noreply, state }
   end
 
   # Generic
   def handle_info(msg, state) do
-    Logger.debug "In Game.Server handle info, msg is #{inspect msg}"
+    _ = Logger.debug "In Game.Server handle info, msg is #{inspect msg}"
     { :noreply, state }
   end
 
@@ -411,7 +409,7 @@ defmodule Hangman.Game.Server do
   
 #  @callback terminate(term, term) :: :ok
   def terminate(reason, _state) do
-    Logger.debug "Terminating Hangman Game Server reason: #{inspect reason}, #{inspect self}"
+    _ = Logger.debug "Terminating Hangman Game Server reason: #{inspect reason}, #{inspect self}"
     :ok
   end
   

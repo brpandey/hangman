@@ -25,7 +25,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   
   @spec start_link(pos_integer) :: GenServer.on_start
   def start_link(worker_id) do
-    Logger.debug "Starting Engine Reduce Worker #{worker_id}"
+    _ = Logger.debug "Starting Engine Reduce Worker #{worker_id}"
 
     args = {}
     options = [name: via_tuple(worker_id)]
@@ -48,7 +48,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   def reduce_and_store(worker_id, pass_key, regex_key, %MapSet{} = exc) do
     l = [worker_id, pass_key, regex_key, exc]
 
-    Logger.debug "reduction engine worker #{worker_id}, " <> 
+    _ = Logger.debug "reduction engine worker #{worker_id}, " <> 
       "reduce and store, args #{inspect l}"
 
     GenServer.call(via_tuple(worker_id), 
@@ -57,7 +57,7 @@ defmodule Hangman.Reduction.Engine.Worker do
 
   # Used to register / lookup process in process registry via gproc
 
-  @spec via_tuple(String.t) :: tuple
+  @spec via_tuple(pos_integer) :: tuple
   defp via_tuple(worker_id) do
     {:via, :gproc, {:n, :l, {:reduction_engine_worker, worker_id}}}
   end
@@ -70,7 +70,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   
   @callback terminate(term, term) :: :ok
   def terminate(_reason, _state) do
-    Logger.info "Terminating Reduction Engine Worker Server"
+    _ = Logger.debug "Terminating Reduction Engine Worker Server"
     :ok
   end
 
@@ -79,7 +79,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   GenServer callback function to handle reduce and store request
   """
 
-  #@callback handle_call(:atom, Pass.key, Regex.t, map) :: tuple
+  #@callback handle_call(atom, Pass.key, Regex.t, MapSet.t, term, tuple) :: tuple
   def handle_call({:reduce_and_store, pass_key, regex_key, exclusion}, 
                   _from, {}) do
 
@@ -98,8 +98,8 @@ defmodule Hangman.Reduction.Engine.Worker do
   Returns pass data.
   """
 
-  @spec do_reduce_and_store(Pass.key, Regex.t, map) :: Pass.t
-  defp do_reduce_and_store(pass_key, regex_key, %MapSet{} = exclusion) do
+  @spec do_reduce_and_store(Pass.key, Regex.t, Enumerable.t) :: Pass.t
+  defp do_reduce_and_store(pass_key, regex_key, exclusion) do
 
     # Request chunks data from Pass Cache
     data = %Chunks{} = Pass.Cache.get(pass_key)

@@ -33,7 +33,7 @@ defmodule Hangman.Reduction.Engine do
   Hands off request based on key id.
   """
   
-  @spec reduce(Pass.key, Regex.t, map) :: Pass.t
+  @spec reduce(Pass.key, Regex.t, Enumerable.t) :: Pass.t
   def reduce(pass_key, regex_key, %MapSet{} = exclusion_set) do
     {id_key, _, _} = pass_key
 

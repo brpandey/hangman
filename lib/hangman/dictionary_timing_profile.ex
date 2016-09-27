@@ -11,7 +11,7 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
   Profiling routine that conducts a simple test
   """
 
-  @spec go_simple :: none
+  @spec go_simple :: term
   def go_simple do
     profile do
       run_setup_test
@@ -22,7 +22,7 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
   Profiling routine that conducts an elaborate, long test
   """
 
-  @spec go_hard :: none
+  @spec go_hard :: term
   def go_hard do
     :fprof.apply(&run_test/0, [])
     :fprof.profile()

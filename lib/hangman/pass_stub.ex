@@ -28,7 +28,6 @@ defmodule Hangman.Pass.Stub do
   Stub Routine retrieves stub pass tally given pass key
   """
 
-  @spec result(atom, Pass.key, Reduction.key) :: tuple
   def result(:guessing, {id, game_no, round_no} = pass_key, reduce_key)
     when (is_binary(id) or is_tuple(id)) and 
     is_number(game_no) and is_number(round_no) do

@@ -39,7 +39,7 @@ defmodule Hangman.Pass.Cache do
   
   #@spec start_link :: Supervisor.on_start
   def start_link() do
-    Logger.info "Starting Hangman Pass Cache GenServer"
+    _ = Logger.debug "Starting Hangman Pass Cache GenServer"
     args = {}
     options = [name: :hangman_pass_cache] # same name for table as process
     GenServer.start_link(@name, args, options)
@@ -99,16 +99,16 @@ defmodule Hangman.Pass.Cache do
   when (is_binary(id) or is_tuple(id)) 
   and is_number(game_no) and is_number(round_no) do
 
-    Logger.debug("pass cache get: pass_key is #{inspect pass_key}")
+    _ = Logger.debug("pass cache get: pass_key is #{inspect pass_key}")
 
     case do_get(:chunks, pass_key) do
       
       nil ->
-        Logger.debug("Unable to retrieve chunks from rounds_pass_cache," 
+        _ = Logger.debug("Unable to retrieve chunks from rounds_pass_cache," 
                      <> " given pass_key #{inspect pass_key}")
         
         snapshot_info = :ets.i(@ets_table_name)
-        Logger.debug("Table snapshot: #{inspect snapshot_info}")
+        _ = Logger.debug("Table snapshot: #{inspect snapshot_info}")
         
         raise HangmanError, "chunks not found for key: #{inspect pass_key}"
 
@@ -152,7 +152,7 @@ defmodule Hangman.Pass.Cache do
   Cleanup pass data if single game is over
   """
 
-  @spec cleanup(Pass.key) :: term
+  @spec cleanup(Pass.key) :: nil | :ok
   def cleanup({_id, _game_no, _round_no} = pass_key) do
     # Using match instead of lookup
     case :ets.match_object(@ets_table_name, {pass_key, :_}) do

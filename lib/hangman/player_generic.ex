@@ -18,7 +18,7 @@ defmodule Hangman.Player.Generic do
     %Round{ id: name, pid: nil, game_pid: game_pid }
   end
 
-  @spec begin(Round.t, atom) :: tuple
+  @spec begin(Round.t, atom) :: {Round.t, Strategy.t, atom}
   def begin(%Round{} = round, type) do
     round = Round.init(round)
     strategy = Strategy.new(type)
@@ -29,7 +29,7 @@ defmodule Hangman.Player.Generic do
     end
   end
 
-  @spec transition(Round.t) :: tuple
+  @spec transition(Round.t) :: {Round.t, tuple}
   def transition(%Round{} = round) do
     round = Round.transition(round)
     status = Round.status(round)

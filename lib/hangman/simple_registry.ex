@@ -30,7 +30,7 @@ defmodule Hangman.Simple.Registry do
 
   @doc "Creates a new registry"
 
-  @spec new :: t
+  @spec new :: struct
   def new, do: %Registry{}
 
   @doc "Adds a new key to the active registry list"
@@ -41,7 +41,7 @@ defmodule Hangman.Simple.Registry do
   end
 
 
-  @spec add(atom, t, key) :: t
+  @spec add(t, atom, key) :: t
   defp add(%Registry{} = registry, :active_pids, key) do
 
     # Destructuring bind
@@ -69,13 +69,13 @@ defmodule Hangman.Simple.Registry do
         # Update registry
         registry = Kernel.put_in(registry.active_pids, active_pids)
 
-        Logger.debug("Simple registry, add :active_pids, just added pid_key: #{inspect pid_key}, registry: #{inspect registry}, self: #{inspect self}")
+        _ = Logger.debug("Simple registry, add :active_pids, just added pid_key: #{inspect pid_key}, registry: #{inspect registry}, self: #{inspect self}")
 
         registry
     end
   end
 
-  @spec add(atom, t, key) :: t
+
   defp add(%Registry{} = registry, :active_ids, key) do
 
     # Destructuring bind
@@ -203,11 +203,11 @@ defmodule Hangman.Simple.Registry do
   Returns the updated registry
   """
 
-  @spec remove(t, :atom, key) :: t | no_return
+  @spec remove(t, atom, key) :: t | no_return
   def remove(%Registry{} = registry, :value, {id_key, _pid_key} = _key)
   when (is_binary(id_key) or is_tuple(id_key)) do
 
-    Logger.debug("About to remove state from values")
+    _ = Logger.debug("About to remove state from values")
 
     # Remove value state from registry
     # if it isn't there, raise error
@@ -230,7 +230,7 @@ defmodule Hangman.Simple.Registry do
   defp do_remove(%Registry{} = registry, :active_pids, {id_key, pid_key} = _key)
   when (is_binary(id_key) or is_tuple(id_key)) and is_pid(pid_key) do
 
-    Logger.debug("About to remove pid from active list")
+    _ = Logger.debug("About to remove pid from active list")
 
     registry = 
       case Map.get(registry.active_pids, pid_key) do
@@ -257,7 +257,7 @@ defmodule Hangman.Simple.Registry do
   defp do_remove(%Registry{} = registry, :active_ids, {id_key, pid_key} = _key)
   when (is_binary(id_key) or is_tuple(id_key)) and is_pid(pid_key) do
 
-    Logger.debug("About to remove id from active list")
+    _ = Logger.debug("About to remove id from active list")
 
     registry = 
       case Map.get(registry.active_ids, id_key) do

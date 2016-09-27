@@ -25,7 +25,7 @@ defmodule Hangman.Dictionary.Transformer do
   First we sort, then group, then chunk
   """
 
-  @spec new(atom) :: t
+  @spec new(Dictionary.kind) :: t
   def new(kind) when is_atom(kind) do
 
     transforms = %{}

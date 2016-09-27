@@ -54,7 +54,7 @@ defmodule Hangman.Player.Controller do
     try do
       Player.Worker.proceed(id)
     catch :exit, reason ->
-      Logger.info "Caught exit in player controller, reason is #{inspect reason}"
+      _ = Logger.info "Caught exit in player controller, reason is #{inspect reason}"
       {:retry, reason}
     end
   end

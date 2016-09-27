@@ -75,15 +75,13 @@ defmodule Hangman.CLI do
     parsed
   end
   
-  @spec print([]) :: no_return
+  @spec print(Keyword.t | []) :: Keyword.t | no_return
   defp print([]) do
     IO.puts "No arguments given, try --help or -h"
     System.halt(0)
   end
 
-  @spec print(Keyword.t) :: Keyword.t | no_return
   defp print(parsed) do
-
     case Keyword.fetch(parsed, :help) do
       # if no help supplied, resume normally and return parsed output
       :error -> 
@@ -159,7 +157,7 @@ defmodule Hangman.CLI do
   end
 
 
-  @spec fetch_params(Keyword.t) :: {} | no_return
+  @spec fetch_params(Keyword.t) :: {String.t, atom, list, boolean, boolean, pos_integer} | no_return
   defp fetch_params(args) do
 
     # assert for name flag
@@ -208,11 +206,11 @@ defmodule Hangman.CLI do
 
   end
 
-  @spec run({}) :: :ok | [...]
+
+  @spec run({String.t, atom, list, boolean, boolean, pos_integer}) :: :ok
   defp run({name, type, secrets, log, display, timeout}) when is_binary(name) 
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) and is_integer(timeout) do
-
     CLI.Handler.run(name, type, secrets, log, display, timeout)
   end
 

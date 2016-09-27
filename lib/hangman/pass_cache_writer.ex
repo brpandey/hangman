@@ -25,7 +25,7 @@ defmodule Hangman.Pass.Cache.Writer do
 
   #@spec start_link :: Supervisor.on_start
   def start_link() do
-    Logger.info "Starting Hangman Pass Cache Writer"
+    _ = Logger.debug "Starting Hangman Pass Cache Writer"
     args = {}
     options = [name: :pass_cache_writer]
     GenServer.start_link(__MODULE__, args, options)
@@ -60,7 +60,7 @@ defmodule Hangman.Pass.Cache.Writer do
     
     :ets.insert(@ets_table_name, {pass_key, chunks})
 
-    Logger.debug "inserted chunks into pass key " <> 
+    _ = Logger.debug "inserted chunks into pass key " <> 
       "#{inspect [self, pass_key, chunks]}"
 
     {:reply, :ok, state}

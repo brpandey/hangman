@@ -25,7 +25,7 @@ defmodule Hangman.Chunks.Stream do
   Returns `stream` `Enumerable.t`
   """
 
-  @spec transform(Enumerable.t, :atom, :atom) :: Enumerable.t
+  @spec transform(Enumerable.t, Dictionary.transform, Dictionary.transform) :: Enumerable.t
   def transform(stream, @grouped, @chunked) do
 
     # lambda to split stream into chunks based on generated chunk id

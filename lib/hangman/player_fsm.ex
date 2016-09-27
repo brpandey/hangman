@@ -102,7 +102,7 @@ defmodule Hangman.Player.FSM do
 
       {player, status} = player |> Action.guess(data)
 
-      Logger.debug "FSM action: player is #{inspect player}"
+      _ = Logger.debug "FSM action: player is #{inspect player}"
 
       # check if we get game won or game lost
       case status do
@@ -120,7 +120,7 @@ defmodule Hangman.Player.FSM do
 
       {player, status} = player |> Action.transition
 
-#      Logger.debug "FSM transit: player is #{inspect player}"
+#      _ = Logger.debug "FSM transit: player is #{inspect player}"
 
       case status do
         {:start, text} -> 
@@ -135,7 +135,7 @@ defmodule Hangman.Player.FSM do
   defstate exit do
     defevent proceed, data: player do
 
-      Logger.debug "FSM exit: player is #{inspect player}"
+      _ = Logger.debug "FSM exit: player is #{inspect player}"
 
       #Games Over
       respond({:exit, player.round.status_text}, :exit, player)

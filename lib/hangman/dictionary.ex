@@ -17,38 +17,29 @@ defmodule Hangman.Dictionary do
 
 
   @doc "Returns `original` type"
-  @spec original :: transform
   def original, do: :original
   
   @doc "Returns `sorted` type"
-  @spec sorted :: transform
   def sorted, do: :sorted
 
   @doc "Returns `grouped` type"
-  @spec grouped :: transform
   def grouped, do: :grouped
 
   @doc "Returns `chunked` type"
-  @spec chunked :: transform
   def chunked, do: :chunked
 
   @doc "Returns `regular` type"
-  @spec regular :: kind
   def regular, do: :regular
 
   @doc "Returns `big` type"
-  @spec big :: kind
   def big, do:  :big
   
   @root_path :code.priv_dir(:hangman_game)
 
-  @spec max_random_words_request :: integer
   def max_random_words_request, do: 2000
 
 
-
   @doc "Returns `Dictionary.File` `paths` map, arranged by types `regular` and `big`"
-  @spec paths :: %{}
   def paths do
   %{
     :regular => %{

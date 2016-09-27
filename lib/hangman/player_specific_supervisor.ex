@@ -30,7 +30,7 @@ defmodule Hangman.Player.Specific.Supervisor do
   def start_link do
     args = {}
 
-    Logger.info "Starting Hangman Player Specific Supervisor," <> 
+    _ = Logger.debug "Starting Hangman Player Specific Supervisor," <> 
       " args: #{inspect args}"
 
     Supervisor.start_link(@name, args)

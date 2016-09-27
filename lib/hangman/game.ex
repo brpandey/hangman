@@ -37,7 +37,7 @@ defmodule Hangman.Game do
   max_wrong: 0, correct_letters: MapSet.new, 
   incorrect_letters: MapSet.new, incorrect_words: MapSet.new
   
-  @opaque t :: %__MODULE__{}
+  @type t :: %__MODULE__{}
 
   @typedoc "`Game` id is String.t (currently using player's name as unique key)"
   @type id :: String.t
@@ -47,10 +47,11 @@ defmodule Hangman.Game do
 
   @typedoc "returned `Game` feedback data"
 
-  @type feedback :: %{id: String.t, code: code} 
-#                      optional(:text) => String.t, 
-#                      optional(:pattern) => String.t,
-#                      optional(:result) => :atom}
+  @type feedback :: %{required(id :: atom) => String.t, 
+                      required(atom) => Game.code,
+                      optional(text :: atom) => String.t, 
+                      optional(pattern :: atom) => String.t,
+                      optional(result :: atom) => atom}
 
 
   @status_codes  %{
@@ -146,7 +147,7 @@ defmodule Hangman.Game do
     If incorrect, returns the :incorrect_word data tuple with `game` data    
   """
 
-  @spec guess(t, guess :: Guess.t) :: {t, feedback}
+  @spec guess(t, Guess.t) :: {t, Game.feedback}
   def guess(%Game{} = game, {:guess_letter, letter}) do
 
     {_, %{code: :guessing}} = status(game) # Assert
@@ -210,7 +211,7 @@ defmodule Hangman.Game do
   Returns current `Game` status data and updates status code
   """
   
-  @spec status(t) :: {id, code, String.t}
+  @spec status(t) :: {t, map}
   def status(%Game{} = game) do
 
     new_code = cond do
@@ -251,7 +252,7 @@ defmodule Hangman.Game do
   If there are indeed games left to play, 
   updates state and transitions to next game 
   """
-  @spec next(t) :: {t, term}  
+  @spec next(t) :: {t, map}  
   def next(%Game{} = game) do
 
     games_played = game.current + 1
@@ -367,7 +368,7 @@ defmodule Hangman.Game do
   end
 
 
-  @spec build_feedback(t, code) :: feedback
+  @spec build_feedback(t, code) :: map
   defp build_feedback(%Game{} = game, state_code) when state_code in @states do
 
     {_code, text, score} = @status_codes[state_code]

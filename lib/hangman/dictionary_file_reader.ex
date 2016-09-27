@@ -29,7 +29,7 @@ defmodule Hangman.Dictionary.File.Reader do
   Handles file specific input `streams`, wrapping underlying file formats.
   Returns file `enumerable`, closes file when finished.
   """
-  @callback handler(io_device :: IO.device) :: Enumerable.t  
+  @callback handler(t) :: Enumerable.t  
 
 
   # Create
@@ -64,7 +64,7 @@ defmodule Hangman.Dictionary.File.Reader do
 
   @spec delete(t) :: t
   def delete(%Reader{} = reader) do
-    File.close(reader.file)
+    :ok = File.close(reader.file)
     %Reader{}
   end 
 end
@@ -101,7 +101,7 @@ defmodule Hangman.Dictionary.File.ChunkedReader do
     |> Enum.map(fn_unpack)
 
     # close the file
-    File.close(reader)
+    :ok = File.close(reader.file)
 
     chunks_enumerable
   end

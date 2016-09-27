@@ -61,7 +61,7 @@ defmodule Hangman.Player.Alert.Handler do
     {:noreply, [], {key, write_pid}}    
   end
 
-  @spec process_event(term, term) :: :ok
+  @spec process_event({atom, term, tuple | binary}, pid) :: :ok
   defp process_event(event, _write_pid) do
 
     msg = 
@@ -96,7 +96,7 @@ defmodule Hangman.Player.Alert.Handler do
   
   @callback terminate(term, term) :: :ok | tuple
   def terminate(_reason, _state) do
-    Logger.info "Terminating Player Alert"
+    _ = Logger.debug "Terminating Player Alert"
     :ok
   end
 end

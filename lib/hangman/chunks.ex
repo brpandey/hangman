@@ -22,13 +22,12 @@ defmodule Hangman.Chunks do
 
   alias Hangman.{Chunks}
   
-  @opaque t :: %__MODULE__{}
+  @type t :: %__MODULE__{}
   @type binary_chunk ::  {binary, integer}
   
   
   @chunk_words_size 500
   
-  @spec container_size :: pos_integer
   def container_size, do: @chunk_words_size
   
   @doc """
@@ -153,10 +152,10 @@ defmodule Hangman.Chunks do
     
     new_stream = Stream.concat(raw_stream, [binary_chunk])
     
-    %Chunks{ chunks | raw_stream: new_stream,
-             chunk_count: chunks.chunk_count + 1,
-             word_count: chunks.word_count + word_count
-           }
+    %{ chunks | raw_stream: new_stream,
+       chunk_count: chunks.chunk_count + 1,
+       word_count: chunks.word_count + word_count
+     }
   end
   
   @doc """

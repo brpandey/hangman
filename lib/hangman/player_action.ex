@@ -67,12 +67,12 @@ defimpl Hangman.Player.Action, for: Human do
   is_boolean(display) and is_pid(game_pid) do
 
     round = Generic.new(name, game_pid)
-    %Human{player | display: display, round: round}
+    %{player | display: display, round: round}
   end
 
   def begin(%Human{} = player) do
     {round, strategy, code} = Generic.begin(player.round, player.type)
-    player = %Human{ player | round: round, strategy: strategy }
+    player = %{ player | round: round, strategy: strategy }
     {player, code}
   end
 
@@ -101,12 +101,12 @@ defimpl Hangman.Player.Action, for: Robot do
   when (is_binary(name) or is_tuple(name)) and
   is_boolean(display) and is_pid(game_pid) do
     round = Generic.new(name, game_pid)
-    %Robot{player | display: display, round: round}
+    %{ player | display: display, round: round}
   end
 
   def begin(%Robot{} = player) do
     {round, strategy, code} = Generic.begin(player.round, player.type)
-    player = %Robot{ player | round: round, strategy: strategy }
+    player = %{ player | round: round, strategy: strategy }
     {player, code}
   end
 

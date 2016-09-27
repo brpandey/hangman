@@ -54,15 +54,12 @@ defmodule Hangman.Round do
   Sum type used to understand prior `guess` result
   """
 
-  @type context ::  
-  ({:start, secret_length :: pos_integer}) |
-  ({:guessing, :correct_letter, letter :: String.t, 
-    pattern :: String.t, mystery_letter :: String.t}) |
-  ({:guessing, :incorrect_word, word :: String.t}) |
-  ({:guessing, :incorrect_letter, letter :: String.t}) |
-  ({:won, :correct_word, word :: String.t})
-
-
+  @type context ::  {:start, secret_length :: pos_integer}
+  | {:guessing, :correct_letter, letter :: String.t, pattern :: String.t, mystery_letter :: String.t}
+  | {:guessing, :incorrect_word | :incorrect_letter, String.t}
+  | {:won, :correct_word, word :: String.t}
+  
+                    
   @mystery_letter "-"
 
 
@@ -84,7 +81,7 @@ defmodule Hangman.Round do
       case round.game_num do
         0 ->
           # update the passed in round
-          %Round{ round | pid: self() }
+          %{ round | pid: self() }
 
         _ ->
           # create a new round with some leftover data from passed in round
@@ -92,7 +89,7 @@ defmodule Hangman.Round do
       end
 
     # Further update round
-    round = %Round{ round | num: 0, game_num: round.game_num + 1, 
+    round = %{ round | num: 0, game_num: round.game_num + 1, 
                     status_code: :start}
 
     
@@ -105,7 +102,7 @@ defmodule Hangman.Round do
 
     context = if status_code == :finished do nil else {:start, data} end
 
-    %Round{ round | status_code: status_code, # was :start previously
+    %{ round | status_code: status_code, # was :start previously
             status_text: status_text, 
             context: context}
     
@@ -151,7 +148,7 @@ defmodule Hangman.Round do
   Returns the pass data
   """
 
-  @spec do_reduction_setup(t, Enum.t) :: {t, map}
+  @spec do_reduction_setup(t, Enumerable.t) :: {t, map}
   defp do_reduction_setup(%Round{} = round, exclusion) do
     
     # Generate the word filter options for the words reduction engine
@@ -182,9 +179,9 @@ defmodule Hangman.Round do
       pattern: pattern, text: status_text} =
       Game.guess(game_pid, player_key, round_key, guess)
     
-    round = %Round{round | guess: guess, result_code: result_code, 
-                   status_code: status_code, pattern: pattern, 
-                   status_text: status_text}
+    round = %{round | guess: guess, result_code: result_code, 
+              status_code: status_code, pattern: pattern, 
+              status_text: status_text}
 
     # Compute round context for the next round
     round = Kernel.put_in(round.context, build_context(round))
@@ -233,7 +230,7 @@ defmodule Hangman.Round do
   Round  clean up routine after a single game over
   """
 
-  @spec finish(t) :: term
+  @spec finish(t) :: nil | :ok
   defp finish(%Round{} = round) do
     # invoke pass clean up routine
     increment_key(round) |> Pass.cleanup
@@ -282,7 +279,7 @@ defmodule Hangman.Round do
   @spec player_key(t) :: tuple
   defp player_key(%Round{} = round), do: {round.id, round.pid}
 
-  @spec game_context_key(t) :: tuple
+  @spec game_context_key(t) :: {tuple, tuple, pid}
   defp game_context_key(%Round{} = round) do
     pkey = player_key(round)
     rkey = round_key(round)

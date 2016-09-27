@@ -88,7 +88,7 @@ defmodule Hangman.Action.Human do
   Interjects specific parameters into `choices text`.
   """
 
-  @spec update_choices(Round.t, tuple) :: tuple
+  @spec update_choices(Round.t, Guess.options) :: Guess.options
   def update_choices(%Round{} = round, {:guess_letter, choices_text})
   when is_binary(choices_text) do
     text = do_update_choices(round, choices_text)

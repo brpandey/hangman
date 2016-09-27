@@ -39,7 +39,7 @@ defmodule Hangman.CLI.Handler do
   Setups the `game` server and per player `event` server.
   """
   
-  @spec setup(tuple()) :: tuple
+  @spec setup({binary, atom, list, boolean, boolean, pos_integer}) :: tuple
   defp setup({name, type, secrets, log, display, timeout}) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) and 
   is_boolean(log) and is_boolean(display) and is_integer(timeout) do
@@ -73,7 +73,7 @@ defmodule Hangman.CLI.Handler do
   Play handles client play loop
   """
 
-  @spec play(tuple) :: :ok
+  @spec play({String.t, pid, pid, pos_integer}) :: :ok
   defp play({player_handler_key, alert_pid, logger_pid, timeout}) do 
 
     # Loop until we have received an :exit value from the Player Controller
@@ -98,8 +98,10 @@ defmodule Hangman.CLI.Handler do
 
         {:exit, _status} -> 
           Controller.stop_worker(key)
-          if true == is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
-          if true == is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
+          
+
+          _ = if is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
+          _ = if is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
           {:halt, acc}
 
         _ -> raise "Unknown Player state"
@@ -130,7 +132,7 @@ defmodule Hangman.CLI.Handler do
   If display is valid, show letter choices and also collect letter input
   """
 
-  @spec ui(tuple, integer) :: tuple
+  @spec ui(Guess.options, pos_integer) :: Guess.t
   defp ui({:guess_letter, text}, timeout) when is_binary(text) do
     IO.puts("\n#{text}")
     letter = gets(timeout)

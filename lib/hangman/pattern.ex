@@ -30,24 +30,21 @@ defmodule Hangman.Pattern do
 
 
   # Base case, first is when secret codepoints list is finished
-  @spec do_update(term, [], term, [...]) :: String.t
+  @spec do_update([] | [...], [] | [...], String.t, term) :: String.t | no_return
   defp do_update( _, [], _, value ), do: List.to_string(value)
 
 
   # Base case, second is error condition, pattern can't be longer than secret
-  @spec do_update([], term, term, term) :: no_return
   defp do_update( [], _,  _, _ ), do: raise HangmanError, "pattern can't be longer than secret"
 
 
   # Match only if head of secret is the desired letter
-  @spec do_update([...], [...], String.t, [...]) :: String.t | no_return
   defp do_update( [ _ | p_tail ], [ letter | s_tail ], letter, value ) do 
     do_update( p_tail, s_tail, letter, [value | letter] )
   end
 
 
   # Clause indicating letter not in the secret head, so concat existing pattern character
-  @spec do_update([...], [...], String.t, [...]) :: String.t | no_return
   defp do_update( [ p_head | p_tail ], [ _ | s_tail ], letter, value ) do 
     do_update( p_tail, s_tail, letter, [value | p_head] )
   end

@@ -28,10 +28,10 @@ defmodule Hangman.Pass do
   @type t :: %__MODULE__{}
 
   @typedoc "Defines word `pass` key type"
-  @type key  :: {id :: String.t, game_no :: pos_integer, round_no :: pos_integer}  
+  @type key  :: {String.t | tuple, game_no :: pos_integer, round_no :: pos_integer}  
 
 
-  @spec increment_key(tuple) :: tuple
+  @spec increment_key(Pass.key) :: Pass.key
   def increment_key({id, game_num, round_num} = _key) do
     {id, game_num, round_num + 1}
   end
@@ -53,8 +53,8 @@ defmodule Hangman.Pass do
   """
 
 
-  @spec result(atom, pass_key :: Pass.key, reduce_key :: Reduction.key) 
-  :: {Pass.key, Pass.t} | no_return
+  @spec result(atom, pass_key :: Pass.key, reduce_key :: Reduction.key) :: {Pass.key, Pass.t}
+
   def result(:start, {id, game_no, round_no} = pass_key, reduce_key)
   when (is_binary(id) or is_tuple(id)) 
   and is_number(game_no) and is_number(round_no) do
