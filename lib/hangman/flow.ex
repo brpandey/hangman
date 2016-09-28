@@ -1,8 +1,8 @@
-defmodule Hangman.Web.Flow do
+defmodule Hangman.Flow do
 
 
   @moduledoc """
-  Module distributes the game requests to the web shard handler and 
+  Module distributes the game requests to the flow shard handler and 
   then collects the resultant game information 
   and combines it in the proper order.
 
@@ -11,7 +11,7 @@ defmodule Hangman.Web.Flow do
   """
 
   alias Experimental.Flow
-  alias Hangman.{Player, Web.Shard}
+  alias Hangman.{Player, Flow.Shard}
 
   require Logger
 
@@ -27,11 +27,11 @@ defmodule Hangman.Web.Flow do
   In terms of map-reduce frameworks, the collection vector
   contains the game argument tokens
 
-  These game tokens are mapped to the Web.Handler setup and play
+  These game tokens are mapped to the Handler setup and play
   functions, which setup game play and carry it out.
 
   Finally, the results of play are reduced and store into a map.
-  Whose entries are handed off back to the Web module
+  Whose entries are handed off back to the caller module
   """
 
   @spec run(Player.id, [String.t]) :: list | String.t

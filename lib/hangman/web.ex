@@ -1,7 +1,7 @@
 defmodule Hangman.Web do
   use Plug.Router
 
-  alias Hangman.{Web}
+  alias Hangman.{Flow}
 
   require Logger
 
@@ -91,7 +91,7 @@ defmodule Hangman.Web do
           secrets when is_list(secrets) -> secrets
         end
 
-      results = Web.Flow.run(name, secrets)
+      results = Flow.run(name, secrets)
       
       response = 
         case Enum.count(secrets) do 

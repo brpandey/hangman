@@ -36,7 +36,7 @@ defmodule Hangman.Dictionary do
   
   @root_path :code.priv_dir(:hangman_game)
 
-  def max_random_words_request, do: 2000
+  def max_random_words_request, do: 1000
 
 
   @doc "Returns `Dictionary.File` `paths` map, arranged by types `regular` and `big`"

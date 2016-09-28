@@ -1,8 +1,8 @@
-defmodule Hangman.Web.Shard.Handler do
+defmodule Hangman.Flow.Shard.Handler do
 
   @moduledoc """
-  Module runs game play for the given web shard of secrets
-  as determined by `Web.Flow`.  Basically, runs a chunk
+  Module runs game play for the given shard of secrets
+  as determined by `Flow`.  Basically, runs a chunk
   of the overall original secrets vector.
 
   Module drives `Player.Controller`, while
@@ -16,7 +16,7 @@ defmodule Hangman.Web.Shard.Handler do
 
   The twist to this is that these shard handlers are run
   in parallel and concurrently thanks to the concurrent map reduce
-  setup of `Web.Flow`
+  setup of `Flow`
   """
 
   alias Hangman.{Game.Pid.Cache, Player, Player.Controller}
@@ -25,7 +25,7 @@ defmodule Hangman.Web.Shard.Handler do
 
   @doc """
   Sets up the `game` server and per player `event` server.
-  Used primarly by the `Web.Collator`
+  Used primarly by the collation logic in Flow
   """
   
   @spec setup({Player.id, list[String.t]}) :: Player.id

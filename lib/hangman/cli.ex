@@ -17,14 +17,14 @@ defmodule Hangman.CLI do
   to choose a letter.
 
   `Usage:
-  --name (player id) --type ("human" or "robot") --random (num random secrets, max 10)
-  [--secret (hangman word(s)) --baseline] [--log --display --timeout]`
+  --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000)
+  [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel (40 secrets or more suggested)]`
 
   or
 
   `Aliase Usage: 
-  -n (player id) -t ("human" or "robot") -r (num random secrets, max 10)
-  [-s (hangman word(s)) -bl] [-l -d -ti]`
+  -n (player id) -t ("human" or "robot") -r (num random secrets, max 1000)
+  [-s (hangman word(s)) -bl] [-l -d -ti] [-pl (40 secrets or more suggested)]`
 
   NOTE: Should a player submit a secret hangman word that does not actually
   reside in the `Dictionary.Cache` the player will abort and then restart and the
@@ -37,7 +37,7 @@ defmodule Hangman.CLI do
   @max_guess_timeout 10000 # 10 secs
   @default_guess_timeout 5000 # 5 secs
 
-  alias Hangman.{CLI}
+  alias Hangman.{CLI, Flow}
 
   @human Hangman.Player.human
   @robot Hangman.Player.robot
@@ -65,11 +65,13 @@ defmodule Hangman.CLI do
           log: :boolean, # -- log or alias -l, boolean only
           display: :boolean, # -- display or alias -d, boolean only
           timeout: :integer, # -- timeout or alias -ti, integer only
+          parallel: :boolean, # --parallel or alias -pl, boolean only
           help: :boolean # --help or alias -h, boolean only
         ],
 
         aliases: [n: :name, t: :type, r: :random, s: :secret, 
-                  bl: :baseline, l: :log, d: :display, ti: :timeout, h: :help]
+                  bl: :baseline, l: :log, d: :display, ti: :timeout, 
+                  pl: :parallel, h: :help]
       ])
 
     parsed
@@ -89,15 +91,88 @@ defmodule Hangman.CLI do
 
       {:ok, true} ->
         IO.puts "--name (player id) --type (\"human\" or \"robot\")" <> 
-          " --random (num random secrets, max 10)" <>
-          " [--secret (hangman word(s)) --baseline] [--log --display --timeout]\n"
+          " --random (num random secrets, max 1000)" <>
+          " [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel  (40 secrets or more suggested)]\n"
         
         IO.puts "or aliases: -n (player id) -t (\"human\" or \"robot\") " <> 
-          "-r (num random secrets, max 10) [-s (hangman word(s)) -bl] [-l -d -ti]"
+          "-r (num random secrets, max 1000) [-s (hangman word(s)) -bl] [-l -d -ti] [-pl (40 secrets or more suggested)]"
         System.halt(0)
     end
 
   end
+
+
+  @spec fetch_params(Keyword.t) :: {:parallel, {String.t, list}} 
+  | {:sequential,  {String.t, atom, list, boolean, boolean, pos_integer}} 
+  defp fetch_params(args) do
+
+    case Keyword.fetch(args, :parallel) do
+      {:ok, true} -> parallel_params(args)
+      _ -> sequential_params(args)
+    end
+    
+  end
+
+
+  @spec parallel_params(Keyword.t) :: {:parallel, {String.t, list}} | no_return
+  defp parallel_params(args) do
+
+    # assert for name flag
+    with {:ok, name} <- Keyword.fetch(args, :name) do
+      {:parallel, {name, fetch_secrets(args)}}
+    else
+      _ -> raise HangmanError, "name argument missing"
+    end
+  end
+
+
+  @spec sequential_params(Keyword.t) :: 
+  {:sequential, {String.t, atom, list, boolean, boolean, pos_integer}} | no_return
+  defp sequential_params(args) do
+
+    # assert for name flag
+    with {:ok, name} <- Keyword.fetch(args, :name) do
+
+      type = 
+        case Keyword.fetch(args, :type) do
+          {:ok, "human"} -> @human
+          {:ok, "robot"} -> @robot
+          _ -> @robot
+        end
+
+      secrets = fetch_secrets(args)
+      
+      log = 
+        case Keyword.fetch(args, :log) do
+          {:ok, true} -> true
+          :error -> false
+        end
+      
+      display = 
+        case Keyword.fetch(args, :display) do
+          {:ok, true} -> true
+          :error -> false
+        end
+      
+      timeout = 
+        case Keyword.fetch(args, :timeout) do
+          {:ok, timeout} when is_integer(timeout) -> 
+            if timeout > 0 and timeout <= @max_guess_timeout do
+              timeout
+            else
+              @default_guess_timeout
+            end
+          
+            :error -> @default_guess_timeout
+        end
+      
+      {:sequential, {name, type, secrets, log, display, timeout}}
+
+    else
+      _ -> raise HangmanError, "name argument missing"
+    end
+  end
+
 
   @spec fetch_secrets(Keyword.t) :: [String.t] | no_return
   defp fetch_secrets(args) do
@@ -153,65 +228,20 @@ defmodule Hangman.CLI do
     else
       _ -> raise HangmanError, "user must specify either --\"secret\" --\"random\" or --\"baseline\" option"
     end
-
   end
 
 
-  @spec fetch_params(Keyword.t) :: {String.t, atom, list, boolean, boolean, pos_integer} | no_return
-  defp fetch_params(args) do
-
-    # assert for name flag
-    with {:ok, name} <- Keyword.fetch(args, :name) do
-
-      type = 
-        case Keyword.fetch(args, :type) do
-          {:ok, "human"} -> @human
-          {:ok, "robot"} -> @robot
-          _ -> @robot
-        end
-
-      secrets = fetch_secrets(args)
-      
-      log = 
-        case Keyword.fetch(args, :log) do
-          {:ok, true} -> true
-          :error -> false
-        end
-      
-      display = 
-        case Keyword.fetch(args, :display) do
-          {:ok, true} -> true
-          :error -> false
-        end
-      
-      timeout = 
-        case Keyword.fetch(args, :timeout) do
-          {:ok, timeout} when is_integer(timeout) -> 
-            if timeout > 0 and timeout <= @max_guess_timeout do
-              timeout
-            else
-              @default_guess_timeout
-            end
-          
-            :error -> @default_guess_timeout
-        end
-      
-      {name, type, secrets, log, display, timeout}
-
-    else
-      _ -> raise HangmanError, "name argument missing"
-    end
-
-
-
-  end
-
-
-  @spec run({String.t, atom, list, boolean, boolean, pos_integer}) :: :ok
-  defp run({name, type, secrets, log, display, timeout}) when is_binary(name) 
+  @spec run({:sequential, {String.t, atom, list, boolean, boolean, pos_integer}}) :: :ok
+  defp run({:sequential, {name, type, secrets, log, display, timeout}}) when is_binary(name) 
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) and is_integer(timeout) do
     CLI.Handler.run(name, type, secrets, log, display, timeout)
+  end
+
+  @spec run({:parallel, {String.t, list}}) :: :ok
+  defp run({:parallel, {name, secrets}}) when is_binary(name) and is_list(secrets) 
+  and is_binary(hd(secrets)) do
+    Flow.run(name, secrets) |> IO.inspect
   end
 
 end

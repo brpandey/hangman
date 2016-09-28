@@ -9,7 +9,7 @@ To see inner game play details go to config/config.exs and change logger :info t
 
 NOTES: 
 
-The web mode is able to play parallel games using all CPU cores
+The web mode is able to play parallel games using all CPU cores, but it is suggested to use 40 secrets or more.  Or simply use the random option to specify some value like 60 secrets with the parallel option.  e.g. -n foobar -pl -r 60
 
 The hangman game handles word not in dictionary cases.  
 Current procedure is the Player.Worker crashes and is restarted to resume where it left off.
@@ -18,9 +18,9 @@ Current procedure is the Player.Worker crashes and is restarted to resume where 
 
 Usage
     
-    --name (player id) --type ("human" or "robot") --random (num random secrets, max 10) [--secret (hangman word(s)) --baseline] [--log --display --timeout]
+    --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000) [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel]
 
-    or aliases: -n (player id) -t ("human" or "robot") -r (num random secrets, max 10) [-s (hangman word(s)) -bl] [-l -d -ti]
+    or aliases: -n (player id) -t ("human" or "robot") -r (num random secrets, max 1000) [-s (hangman word(s)) -bl] [-l -d -ti] [-pl]
 
 
     $  git clone https://brpandey@bitbucket.org/brpandey/elixir-hangman.git

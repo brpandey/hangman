@@ -42,6 +42,77 @@ defmodule Hangman.CLI.Test do
     
   end
 
+
+
+#  @tag timeout: :infinity
+  test "parallel test with 40 random words nearly 1/2 time of sequential" do
+
+    command = "-n p_mario_test1 -pl -r 40"
+    argv = String.split(command)
+    CLI.main(argv)
+    
+  end
+
+#  @tag timeout: :infinity
+  test "sequential test with 40 random words nearly double time of parallel" do
+
+    command = "-n p_mario_test1 -t robot -r 40"
+    argv = String.split(command)
+    CLI.main(argv)
+    
+  end
+
+  # Parallel Tests
+
+  # note the parallel tests with the baseline words or small secrets list won't show much improvement
+  # over sequential processing -- needs to be a bigger amount - 40 secrets or more
+
+  # commenting out
+
+_ =  """
+
+  test "parallel test with baseline words" do
+
+    command = "-n p_mario_test2 -pl -bl"
+    argv = String.split(command)
+    CLI.main(argv)
+    
+  end
+
+
+  test "parallel test with secrets list" do
+
+    argv = ["-n", "p_mario_test3", "--parallel", "-s", "fantastic embryo enzyme gigantic entail frolic zygote"]
+
+    IO.puts "argv is {inspect argv}"
+
+    CLI.main(argv)
+    
+  end
+
+  test "sequential test with secrets list" do
+
+    argv = ["-n", "p_mario_test3", "-t", "robot", "-s", "fantastic embryo enzyme gigantic entail frolic zygote"]
+
+    IO.puts "argv is {inspect argv}"
+
+    CLI.main(argv)
+    
+  end
+
+  
+  test "parallel test with secrets list with 1 word not in dictionary" do
+
+    argv = ["-n", "p_mario_test4", "-pl", "-s", "fantastic embryo enzyme azerbaijan entail frolic zygote"]
+
+    IO.puts "argv is {inspect argv}"
+
+    CLI.main(argv)
+    
+  end
+
+"""
+
   test "human double words" do
 
 #    command = "-n humphrey -t human -s \"fantastic embryo\" -d -l"
