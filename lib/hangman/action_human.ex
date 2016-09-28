@@ -1,5 +1,7 @@
 defmodule Hangman.Action.Human do
 
+  alias Hangman.{Action.Human, Round, Letter.Strategy, Pass}
+
   @moduledoc """
   Implements human action player specific functionality
 
@@ -13,11 +15,14 @@ defmodule Hangman.Action.Human do
   from and is able to make an interactive guess.  
   """
 
-  alias Hangman.{Action.Human, Round, Letter.Strategy, Pass}
-
   defstruct type: :human, display: false, round: nil, strategy: nil
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+    type: :human,
+    display: boolean,
+    round: nil | Round.t,
+    strategy: nil | Strategy.t
+  }
 
 
   @doc """
@@ -101,7 +106,6 @@ defmodule Hangman.Action.Human do
     {:guess_word, last, text}
   end
 
-
   @spec do_update_choices(Round.t, String.t) :: String.t
   defp do_update_choices(%Round{} = round, text) when is_binary(text) do
     {name, _, round_no} = Round.round_key(round)
@@ -134,4 +138,6 @@ defmodule Hangman.Action.Human do
       concat ["#Action.Human<", human_info, round_info, ">"]
     end
   end
+
+
 end

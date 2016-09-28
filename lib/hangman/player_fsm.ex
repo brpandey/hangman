@@ -3,12 +3,13 @@ defmodule Hangman.Player.FSM do
   @moduledoc """
   Module implements a non-process player fsm
   which handles managing the state of types implemented
-  through the Player Action protocol.  
+  through Player and the Player Action protocol.  
 
-  FSM provides a state machine wrapper over the `Player.Action` protocol
+  FSM provides a state machine wrapper over the `Player`
 
   The FSM is not coupled at all to the
-  specific player type but the Action Protocol, which
+  specific player type but the generic Player
+  which relies on the Action Protocol, which
   provides for succinct code along with the already succinct
   design of the Fsm module code.
 
@@ -48,7 +49,7 @@ defmodule Hangman.Player.FSM do
   Ultimately the specific Web or CLI `Handler`, when in exit state terminates the fsm loop
   """
 
-  alias Hangman.{Player, Player.Action}
+  alias Hangman.{Player}
 
   require Logger
 
@@ -56,12 +57,8 @@ defmodule Hangman.Player.FSM do
 
 
   defstate initial do
-    defevent initialize(args = {_name, type, _display, _game_pid}) do
-
-      action_type = Map.get(Player.types, type)
-      args = args |> Tuple.delete_at(1) # remove the type field
-      player = Action.new(action_type, args)
-
+    defevent initialize(args) do
+      player = Player.new(args)
       next_state(:begin, player)
     end
   end
@@ -70,7 +67,7 @@ defmodule Hangman.Player.FSM do
   defstate begin do
     defevent proceed, data: player do
 
-      {player, code} = player |> Action.begin 
+      {player, code} = player |> Player.begin 
 
       case code do
         :start -> respond({:begin, "fsm begin"}, :setup, player)
@@ -83,7 +80,7 @@ defmodule Hangman.Player.FSM do
   defstate setup do
     defevent proceed, data: player do
 
-      {player, status} = player |> Action.setup
+      {player, status} = player |> Player.setup
 
   #    Logger.debug "FSM setup: player is #{inspect player}"
 
@@ -100,7 +97,7 @@ defmodule Hangman.Player.FSM do
   defstate action do
     defevent guess(data), data: player do
 
-      {player, status} = player |> Action.guess(data)
+      {player, status} = player |> Player.guess(data)
 
       _ = Logger.debug "FSM action: player is #{inspect player}"
 
@@ -118,7 +115,7 @@ defmodule Hangman.Player.FSM do
   defstate transit do
     defevent proceed, data: player do
 
-      {player, status} = player |> Action.transition
+      {player, status} = player |> Player.transition
 
 #      _ = Logger.debug "FSM transit: player is #{inspect player}"
 

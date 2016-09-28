@@ -1,26 +1,23 @@
 defmodule Hangman.Action.Robot do
 
+
   @moduledoc """
   Implements robot action player specific functionality
-
-  In `Hangman` we have two players.  One explict - the one guessing, the other
-  implicit, 'the game', 'the user tracking the penalties'.  
-
-  In this instance, the `Action` is
-  merely the user making and choosing the guess selections.  
 
   The `robot` action is reliant on the game strategy to automatically 
   self select the best guess.
   """
 
-
-
   alias Hangman.{Action.Robot, Round, Letter.Strategy, Pass}
 
   defstruct type: :robot, display: false, round: nil, strategy: nil
 
-  @type t :: %__MODULE__{}
-
+  @type t :: %__MODULE__{
+    type: :robot,
+    display: boolean,
+    round: nil | Round.t,
+    strategy: nil | Strategy.t
+  }
 
   @doc """
   Sets up round by running a reduction pass.  Informs Strategy
