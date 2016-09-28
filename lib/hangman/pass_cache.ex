@@ -152,11 +152,11 @@ defmodule Hangman.Pass.Cache do
   Cleanup pass data if single game is over
   """
 
-  @spec cleanup(Pass.key) :: nil | :ok
+  @spec cleanup(Pass.key) :: :ok
   def cleanup({_id, _game_no, _round_no} = pass_key) do
     # Using match instead of lookup
     case :ets.match_object(@ets_table_name, {pass_key, :_}) do
-      [] -> nil
+      [] -> :ok
       [{^pass_key, _data}] ->        
         # delete this last current pass in the table, 
         :ets.match_delete(@ets_table_name, {pass_key, :_})   

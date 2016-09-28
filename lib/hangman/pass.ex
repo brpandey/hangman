@@ -28,7 +28,9 @@ defmodule Hangman.Pass do
   @type t :: %__MODULE__{}
 
   @typedoc "Defines word `pass` key type"
-  @type key  :: {String.t | tuple, game_no :: pos_integer, round_no :: pos_integer}  
+  @type key  :: {id :: (String.t | tuple), 
+                 game_num :: non_neg_integer, 
+                 round_num :: non_neg_integer}  
 
 
   @spec increment_key(Pass.key) :: Pass.key
@@ -98,7 +100,7 @@ defmodule Hangman.Pass do
     {pass_key, pass_info}
   end
 
-
+  @spec cleanup(key) :: :ok
   def cleanup({id, game_no, round_no} = pass_key) when 
   (is_binary(id) or is_tuple(id)) 
   and is_number(game_no) and is_number(round_no) do

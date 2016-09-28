@@ -48,8 +48,8 @@ defmodule Hangman.Round do
   @type result_code :: :correct_letter | :incorrect_letter | :incorrect_word | :correct_word
 
   @type key :: {id :: (String.t | tuple), 
-                game_num :: integer,
-                round_num :: integer} # Used as round key
+                game_num :: non_neg_integer,
+                round_num :: non_neg_integer} # Used as round key
 
   @typedoc """
   Sum type used to understand prior `guess` result
@@ -151,7 +151,6 @@ defmodule Hangman.Round do
   Returns the pass data
   """
 
-#  @spec do_reduction_setup(t, Enumerable.t) :: {t, Pass.t}
   defp do_reduction_setup(%Round{} = round, exclusion) do
     
     # Generate the word filter options for the words reduction engine
@@ -233,7 +232,6 @@ defmodule Hangman.Round do
   Round  clean up routine after a single game over
   """
 
-  #@spec finish(t) :: nil | :ok
   defp finish(%Round{} = round) do
     # invoke pass clean up routine
     increment_key(round) |> Pass.cleanup
@@ -284,7 +282,7 @@ defmodule Hangman.Round do
   @spec player_key(t) :: tuple
   defp player_key(%Round{} = round), do: {round.id, round.pid}
 
-  @spec game_context_key(t) :: {tuple, tuple, pid}
+  @spec game_context_key(t) :: {tuple, key, pid}
   defp game_context_key(%Round{} = round) do
     pkey = player_key(round)
     rkey = round_key(round)

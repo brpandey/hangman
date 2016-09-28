@@ -48,12 +48,9 @@ defmodule Hangman.Game do
   @typedoc "returned `Game` feedback data"
 
   @type feedback :: %{
-    required(id :: atom) => String.t, 
-    required(code :: atom) => Game.code,
-    optional(text :: atom) => String.t, 
-    optional(pattern :: atom) => String.t,
-    optional(result :: atom) => atom,
-    optional(previous :: atom) => map
+    required(:id) => String.t, 
+    required(:code) => code,
+    optional(:text | :pattern | :result | :previous) => String.t | atom | map
   }
 
   @status_codes  %{
@@ -150,7 +147,7 @@ defmodule Hangman.Game do
   """
 
 
-#  @spec guess(t, Guess.t) :: {t, map}
+  @spec guess(t, Guess.t) :: {t, feedback}
   def guess(%Game{} = game, {:guess_letter, letter}) do
 
     {_, %{code: :guessing}} = status(game) # Assert
@@ -214,7 +211,7 @@ defmodule Hangman.Game do
   Returns current `Game` status data and updates status code
   """
 
-  @spec status(t) :: {t, map}
+  @spec status(t) :: {t, feedback}
   def status(%Game{} = game) do
 
     new_code = cond do
@@ -256,7 +253,7 @@ defmodule Hangman.Game do
   updates state and transitions to next game 
   """
 
-#  @spec next(t) :: {t, map}
+  @spec next(t) :: {t, feedback}
   def next(%Game{} = game) do
 
     games_played = game.current + 1
@@ -303,7 +300,6 @@ defmodule Hangman.Game do
 
   # Saves result from current game, loads next game
   
-#  @spec archive_and_update(t) :: t
   defp archive_and_update(%Game{} = game) do
 
     ### GAME ARCHIVAL - STEPS ###
@@ -372,7 +368,7 @@ defmodule Hangman.Game do
   end
 
 
-  @spec build_feedback(t, code) :: map
+  @spec build_feedback(t, code) :: feedback
   defp build_feedback(%Game{} = game, state_code) when state_code in @states do
 
     {_code, text, score} = @status_codes[state_code]
@@ -396,7 +392,6 @@ defmodule Hangman.Game do
   score per game, per game `score`.
   """
   
-  #@spec build_summary(t) :: String.t
   defp build_summary(%Game{} = game) do
 
     total_score = Enum.reduce(game.scores, 0, &(&1 + &2))
@@ -421,8 +416,7 @@ defmodule Hangman.Game do
       acc <> " (#{k}: #{v})"  
     end)
 
-    "Game Over! Average Score: #{avg}, " 
-    <> "# Games: #{games}, Scores: #{results}"
+    "Game Over! Average Score: #{avg}, # Games: #{games}, Scores: #{results}"
   end
 
 
