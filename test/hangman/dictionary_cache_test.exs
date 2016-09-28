@@ -5,8 +5,8 @@ defmodule Hangman.Dictionary.Cache.Test do
 
   setup_all do
 
-#    Application.stop(:hangman_game)
-#    :ok = Application.start(:hangman_game)
+    Application.stop(:hangman_game)
+    :ok = Application.start(:hangman_game)
 
 
     # stop cache server started by application callback
