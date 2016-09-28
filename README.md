@@ -9,7 +9,8 @@ To see inner game play details go to config/config.exs and change logger :info t
 
 NOTES: 
 
-The web mode is able to play parallel games using all CPU cores, but it is suggested to use 40 secrets or more.  Or simply use the random option to specify some value like 60 secrets with the parallel option.  e.g. -n foobar -pl -r 60
+The web and cli modes are able to play parallel games using all CPU cores, but it is suggested to use 40 secrets or more.  
+For cli mode, simply use the random option to specify a value like 60 secrets with the parallel option.  e.g. -n luigi -pl -r 60
 
 The hangman game handles word not in dictionary cases.  
 Current procedure is the Player.Worker crashes and is restarted to resume where it left off.
@@ -189,4 +190,4 @@ the word stumpers for use in real game play
 
 New strategy algorithms which try to learn player's guessing style - aka machine learning
 
-Truly distributed hangman which is on multiple nodes and machines - always running
+Truly distributed hangman which is on multiple nodes and machines
