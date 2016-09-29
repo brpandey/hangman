@@ -13,7 +13,7 @@ Plays really fun hangman games.  What did you expect? :)
 To view the game play design please look at the README DIAGRAMS.PDF
 
 
-Usage
+### Usage
 
 ```elixir    
     --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000) 
@@ -26,18 +26,19 @@ Usage
 ```
 
 
-## Step 1 - Git clone and build executable
+### Step 1 - Git clone
 ```
     $  git clone https://brpandey@bitbucket.org/brpandey/elixir-hangman.git
+```
 
+### Step 2 - Build executable
+```
     $  cd elixir-hangman
-
     $  mix compile
     $  mix escript.build
 ```
 
-
-### Step 2 - Run game
+### Step 3 - Run game
 ```
     $  ./hangman_game -n fred -t robot -r 3
 ```
@@ -55,37 +56,37 @@ or alternatively you can run the release version for your environment
 
 ### Game Play Example 1
 
-    Command Line - Robot type with secret specified with display feed
+Command Line - Robot type with secret specified with display feed
 
 ```elixir
     ./hangman_game -n fred -t robot -s spectacle -d
 
-    #fred_feed --> Game 1 has started
-    #fred_feed Game 1, secret length --> 9
-    #fred_feed Game 1, letter --> e
-    #fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
+    \#fred_feed --> Game 1 has started
+    \#fred_feed Game 1, secret length --> 9
+    \#fred_feed Game 1, letter --> e
+    \#fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
 
-    #fred_feed Game 1, letter --> a
-    #fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
+    \#fred_feed Game 1, letter --> a
+    \#fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
 
-    #fred_feed Game 1, letter --> l
-    #fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
+    \#fred_feed Game 1, letter --> l
+    \#fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
 
-    #fred_feed Game 1, letter --> n
-    #fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
+    \#fred_feed Game 1, letter --> n
+    \#fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
 
-    #fred_feed Game 1, letter --> c
-    #fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
+    \#fred_feed Game 1, letter --> c
+    \#fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
 
-    #fred_feed Game 1, word --> spectacle
-    #fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
+    \#fred_feed Game 1, word --> spectacle
+    \#fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
 
-    #fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
+    \#fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 ```
 
 ### Game Play Example 2
 
-    Command Line - Human type with 2 random words requested
+Command Line - Human type with 2 random words requested
 
 ```elixir
     ./hangman_game -n enrico -t human -r 2
@@ -165,12 +166,11 @@ Specifically change :info to :debug and then run `mix compile` and then `mix esc
 
 ```elixir
 
-config :logger, :console,
-  level: :info,
-  format: "\n$time $metadata[$level] $levelpad$message\n",
-  metadata: [:module]
+    config :logger, :console,
+      level: :info,
+      format: "\n$time $metadata[$level] $levelpad$message\n",
+      metadata: [:module]
 ```
-
 
 * The web and cli modes are able to play parallel games using all CPU cores. To tangibly
   see the speedup of parallelization use 40 secrets or more.  For cli mode, simply use the 
