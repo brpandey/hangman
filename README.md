@@ -11,7 +11,7 @@ Hangman
 >
 > – Wikipedia
 
-Plays really fun hangman word games.  [Info](https://en.wikipedia.org/wiki/Hangman_(game))
+Plays really fun hangman word games.  [Wikipedia](https://en.wikipedia.org/wiki/Hangman_(game))
 
 Plays interactive games allowing the user to choose letters
 or allows the computer to guess instead.  
@@ -252,7 +252,7 @@ Web Example - Single Game
 ```
 
 
-Notes:
+### Notes
         
 * Optional -- configure `config/config.exs` to see inner game play details.
 Specifically change :info to :debug and then run `mix compile` and then `mix escript.build`
@@ -283,7 +283,7 @@ directories under lib/hangman following the dotted modules names but for portfol
 simplicity purposes all are in the top level directory.
 
 
-Wishlist:
+### Wishlist
 
 * One game server being able to handle multiple concurrent different player games
 
@@ -300,6 +300,7 @@ the word stumpers for use in real game play
 * Truly distributed hangman running on multiple nodes and machines
 
 
+### Thank You
 
 Enjoy!  
 
