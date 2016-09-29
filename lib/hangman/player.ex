@@ -20,21 +20,12 @@ defmodule Hangman.Player do
   @type id :: String.t | {id :: String.t, shard_no :: pos_integer}
   @type key :: {id :: String.t, player_pid :: pid} # Used as game key
 
-  # Defines the generic player type. Note this is a supertype of the 
-  # player specific types by just the type field
-
-  @type t :: %{
-    type: atom,
-    display: boolean,
-    round: nil | Round.t,
-    strategy: nil | Strategy.t
-  }
 
 
   def human, do: :human
   def robot, do: :robot
 
-  def types do
+  defp types do
     %{
       :human => %Hangman.Action.Human{}, 
       :robot => %Hangman.Action.Robot{}
@@ -43,12 +34,11 @@ defmodule Hangman.Player do
 
 
   @doc "Create new player"
-  @spec new(tuple) :: Player.t
   def new({name, type, display, game_pid})
   when (is_binary(name) or is_tuple(name)) and
   is_boolean(display) and is_pid(game_pid) and is_atom(type) do
 
-    player = Map.get(Player.types, type)
+    player = Map.get(types, type)
     round = Round.new(name, game_pid)
 
     %{player | display: display, round: round}
@@ -56,7 +46,6 @@ defmodule Hangman.Player do
 
 
   @doc "Begin new game player action"
-  @spec begin(Player.t) :: {Player.t, :start | :finished}
   def begin(player) do
 
     round = player.round
@@ -92,7 +81,6 @@ defmodule Hangman.Player do
 
 
   @doc "Returns the correct player transition at the game end"
-  @spec transition(Player.t) :: {Player.t, tuple}
   def transition(player) do
     round = player.round
 

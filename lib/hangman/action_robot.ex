@@ -12,12 +12,8 @@ defmodule Hangman.Action.Robot do
 
   defstruct type: :robot, display: false, round: nil, strategy: nil
 
-  @type t :: %__MODULE__{
-    type: :robot,
-    display: boolean,
-    round: nil | Round.t,
-    strategy: nil | Strategy.t
-  }
+  @type t :: %__MODULE__{}
+
 
   @doc """
   Sets up round by running a reduction pass.  Informs Strategy
@@ -77,7 +73,7 @@ defmodule Hangman.Action.Robot do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      robot_info = Inspect.List.inspect(Robot.info(t), opts)
+      robot_info = Inspect.List.inspect(Hangman.Action.Robot.info(t), opts)
       round_info = Inspect.List.inspect(Round.info(t.round), opts)
       concat ["#Action.Robot<", robot_info, round_info, ">"]
     end

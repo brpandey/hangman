@@ -17,12 +17,7 @@ defmodule Hangman.Action.Human do
 
   defstruct type: :human, display: false, round: nil, strategy: nil
 
-  @type t :: %__MODULE__{
-    type: :human,
-    display: boolean,
-    round: nil | Round.t,
-    strategy: nil | Strategy.t
-  }
+  @type t :: %__MODULE__{}
 
 
   @doc """
@@ -133,7 +128,7 @@ defmodule Hangman.Action.Human do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      human_info = Inspect.List.inspect(Human.info(t), opts)
+      human_info = Inspect.List.inspect(Hangman.Action.Human.info(t), opts)
       round_info = Inspect.List.inspect(Round.info(t.round), opts)
       concat ["#Action.Human<", human_info, round_info, ">"]
     end

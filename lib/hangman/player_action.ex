@@ -1,5 +1,5 @@
 alias Hangman.Action.{Human, Robot}
-
+alias Hangman.Player
 
 defprotocol Hangman.Player.Action do
 
@@ -8,7 +8,7 @@ defprotocol Hangman.Player.Action do
   for various player types via protocol mechanism
   
   The Player Action protocol is implemented for the Human and Robot types, with
-  the generic Player handling overlaps in functionality.  
+  the generic Player handling all overlaps in functionality.  
   
   The goal of a player is to maximize our winning chances in conjunction
   with a letter strategy against the 'implicit' other player, the `game server`.
@@ -23,11 +23,11 @@ defprotocol Hangman.Player.Action do
 
 
   @doc "Sets up each action state"
-  @spec setup(any) :: tuple
+  @spec setup(Player.t(any)) :: tuple
   def setup(player)
   
   @doc "Returns player guess"
-  @spec guess(any, any) :: {Player.t, any}
+  @spec guess(Player.t(any), any) :: {Player.t(any), any}
   def guess(player, guess \\ nil)
 
 end
@@ -35,7 +35,6 @@ end
 
 
 defimpl Hangman.Player.Action, for: Human do
-
 
   def setup(%Human{} = player) do
     # returns {player, choices}
