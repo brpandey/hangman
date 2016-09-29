@@ -26,8 +26,11 @@ Usage
     --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000) [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel]
 
     or aliases: -n (player id) -t ("human" or "robot") -r (num random secrets, max 1000) [-s (hangman word(s)) -bl] [-l -d -ti] [-pl]
+```
 
 
+## Step 1 - Git clone and build executable
+```
     $  git clone https://brpandey@bitbucket.org/brpandey/elixir-hangman.git
 
     $  cd elixir-hangman
@@ -37,7 +40,7 @@ Usage
 
     $  ./hangman_game -n fred -t robot -r 3
 
-or you can run the release version for your environment
+or alternatively you can run the release version for your environment
 
     $  mix deps.get
     $  MIX_ENV=prod mix compile --no-debug-info
@@ -45,6 +48,7 @@ or you can run the release version for your environment
 
     $  rel/hangman_game/bin/hangman_game start or use iex -S mix
 ```
+
 
 Web Example - Bulk, parallel game play with 200 random secrets
 
@@ -102,6 +106,7 @@ Command Line Example - Robot type with secret specified with display feed
 
 Command Line Example - Human type with 2 random words requested
 
+```elixir
     ./hangman_game -n enrico -t human -r 2
 
     Player enrico, Round 1, ----------; score=0; status=KEEP_GUESSING.
@@ -168,31 +173,28 @@ Command Line Example - Human type with 2 random words requested
     [Please input letter choice] 
 
     Game Over! Average Score: 6.5, # Games: 2, Scores:  (BARBARIANS: 6) (DEFIER: 7)
+```
 
 
-
-Further Notes:
+Notes:
         
-Unit tests are not fully complete but there are a handful in test/hangman. 
-There is "some" truth here: Dave Thomas - Agile is Dead ->  https://www.youtube.com/watch?v=a-BOSpxYJ9M 
-
-Also, the hangman file directory structure is flat in lib/hangman.  There should be
+* The hangman file directory structure is flat in lib/hangman.  There should be
 directories under lib/hangman technically following the modules names but for portfolio
 simplicity purposes keeping all in the top level directory.
 
 
-Future wishlist
+Wishlist:
 
-One game server being able to handle multiple concurrent different player games
+* One game server being able to handle multiple concurrent different player games
 
-Players being able to communicate with each other e.g. using a lookup registry to find other players 
+* Players being able to communicate with each other e.g. using a lookup registry to find other players 
 and being able to play in tandem
 
-A new type cyborg which alternates between human and robot playing
+* A new type cyborg which alternates between human and robot playing
 
-A stumper word process which plays the games before hand with all the words and identifies 
+* A stumper word process which plays the games before hand with all the words and identifies 
 the word stumpers for use in real game play
 
-New strategy algorithms which try to learn player's guessing style - aka machine learning
+* New strategy algorithms which try to learn player's guessing style - aka machine learning
 
-Truly distributed hangman which is on multiple nodes and machines
+* Truly distributed hangman running on multiple nodes and machines
