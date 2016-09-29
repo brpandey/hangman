@@ -5,29 +5,40 @@ Plays really fun hangman games.  What did you expect? :)
 
 
 [Hangman](https://en.wikipedia.org/wiki/Hangman_(game))
+> Definition of Hangman Game
+>
+> Hangman is a paper and pencil guessing game for two or more players. 
+> One player thinks of a word, phrase or sentence and the other tries 
+> to guess it by suggesting letters or numbers, 
+> within a certain number of guesses.
+>
+> – Wikipedia
 
 
 ![Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
 
-To view the game play design please look at the README DIAGRAMS.PDF
+To view the game play design please look at the README DIAGRAMS.pdf
 
 
 ### Usage
 
-    Hangman runs both interactive human games with manually specified
-    secrets and also runs human and robot games with 
-    randomly generated secrets either interactive or not.
+*Hangman runs both interactive human games with manually specified
+secrets and also runs human and robot games with 
+randomly generated secrets either interactive or not.*
 
-    Robot games are auto-guessed based on simple strategy heuristics.
+*The random secret generation option allows you to play without*
+knowing the secret hangman word(s) beforehand.
 
-    Player game archival can be captured through logging, e.g. --log option
+Robot games are auto-guessed based on simple strategy heuristics.
 
-    The display and log options are exclusive to the CLI client. As well as the
-    human guessing timeout option which allows values between 0 secs and 10 secs
-    to choose a letter.
+Player game archival can be captured through logging, e.g. --log option
 
-    The parallel option allows games to be played on all the cores of your system
+The display and log options are exclusive to the CLI client. As well as the
+human guessing timeout option which allows values between 0 secs and 10 secs
+to choose a letter.
+
+The parallel option allows games to be played on all the cores of your system
 
 
 ```elixir    
@@ -96,7 +107,8 @@ Command Line - Robot type with secret specified with display feed
     fred_feed Game 1, word --> spectacle
     fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
 
-    fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
+    fred_feed Game Over!! --> 
+    Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 ```
 
 ### Game Play Example 2
@@ -276,5 +288,4 @@ the word stumpers for use in real game play
 
 
 
-Enjoy!
-Bibek Pandey
+Enjoy!  Bibek Pandey
