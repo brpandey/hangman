@@ -3,7 +3,7 @@ Hangman
 
 Plays really fun hangman word games.  
 
-![Logo](https://bytebucket.org/brpandey/elixir-hangman/raw/3fc67f5e2a8e2b8b54d45d35a0fd5155a7745e7e/priv/images/hangman.jpg)
+![Logo](https://bytebucket.org/brpandey/elixir-hangman/raw/46754306a02ecaad07edb9a71ad1c7769dd2ddaa/priv/images/hangman.jpg)
 
 Plays interactive games allowing the player to choose letters
 or allows the computer robot to guess instead.  
@@ -29,7 +29,10 @@ What did you expect? :)
 ![Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
 
-To view the game play design please look at the README DIAGRAMS.pdf
+To view the game play design please look at the README DIAGRAMS
+
+[README Diagrams](https://bitbucket.org/brpandey/elixir-hangman/raw/c561978b04b3167db52af41f1f01df7fb0ecc88b/README%20DIAGRAMS.pdf)
+
 
 
 ### Usage
@@ -91,7 +94,7 @@ or alternatively you can run the release version for the web mode
 ```
 
 
-### Game Play Example 1
+### Game Play - Example 1
 
 Command Line - Robot type with secret specified with display feed
 
@@ -122,7 +125,7 @@ Command Line - Robot type with secret specified with display feed
     Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 ```
 
-### Game Play Example 2
+### Game Play - Example 2
 
 Command Line - Human type with 2 random words requested
 
@@ -196,7 +199,7 @@ Command Line - Human type with 2 random words requested
     Game Over! Average Score: 6.5, # Games: 2, Scores:  (BARBARIANS: 6) (DEFIER: 7)
 ```
 
-### Game Play Example 3
+### Game Play - Example 3
 
 Command Line - Parallel option with 100 secrets
 
@@ -233,7 +236,7 @@ Web Example - Single Game
 
 ```elixir
     $ iex -S mix
-    Erlang/OTP 19 [erts-8.0] [source] [64-bit] [smp:2:2] [async-threads:10] [kernel-poll:false]
+    Erlang/OTP 19 [erts-8.0] [source] [64-bit] [smp:2:2] [async-threads:10] ...
 
     iex>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&secret=woodpecker")
     {:ok,
@@ -261,7 +264,7 @@ Specifically change :info to :debug and then run `mix compile` and then `mix esc
 ```elixir
 
     config :logger, :console,
-      level: :info,
+-->   level: :info,
       format: "\n$time $metadata[$level] $levelpad$message\n",
       metadata: [:module]
 ```
@@ -273,15 +276,15 @@ Specifically change :info to :debug and then run `mix compile` and then `mix esc
 * The hangman game handles word not in dictionary cases.  The current procedure is the Player.Worker crashes and is restarted to resume where it left off.
 
 * The dictionary logic of the game transforms the original dictionary file multiple times to a format
-  suitable for `ETS`.  This was written before `Experimental.GenStage` and each format transform is
-  stored in `priv/dictionary/data`.  Though `GenStage` is slick, this happens to show each file after
+  suitable for `ETS`.  This was written before `Experimental.GenStage` and each transform file is
+  stored in `priv/dictionary/data`.  Though `GenStage` is great, this happens to show each file after
   each transform step which is an interesting transform artifact.
 
-* If a "mix test" is run, the free version of Quick Check from quvic should be installed
+* If a "mix test" is run, the free version of Quick Check from quvic should be installed to avoid errors
 
-* The hangman file directory structure is flat in lib/hangman.  There should be
-directories under lib/hangman technically following the modules names but for portfolio
-simplicity purposes keeping all in the top level directory.
+* The hangman file directory structure is flat in lib/hangman.  There should technically be
+directories under lib/hangman following the dotted modules names but for portfolio
+simplicity purposes all are in the top level directory.
 
 
 Wishlist:
