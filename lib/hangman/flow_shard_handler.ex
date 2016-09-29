@@ -23,6 +23,8 @@ defmodule Hangman.Flow.Shard.Handler do
 
   require Logger
 
+  @sleep 3000
+
   @doc """
   Sets up the `game` server and per player `event` server.
   Used primarly by the collation logic in Flow
@@ -58,7 +60,7 @@ defmodule Hangman.Flow.Shard.Handler do
           {:cont, acc}
 
         {:retry, _status} ->
-          Process.sleep(2000) # Stop gap for now for no proc error by gproc
+          Process.sleep(@sleep) # Stop gap for now for no proc error by gproc
           {:cont, acc}
 
         {:action, status} -> # collect guess result status as given from action state

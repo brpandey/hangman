@@ -19,6 +19,7 @@ defmodule Hangman.CLI.Handler do
 
   require Logger
 
+  @sleep 3000 # 3 secs
 
   @doc """
   Function run connects all the `player` specific components together 
@@ -93,7 +94,7 @@ defmodule Hangman.CLI.Handler do
           {:cont, acc + 1}
 
         {:retry, _status} ->
-          Process.sleep(2000) # Stop gap for now for no proc error by gproc when word not in dict
+          Process.sleep(@sleep) # Stop gap for now for no proc error by gproc when word not in dict
           {:cont, acc + 1}
 
         {:exit, _status} -> 

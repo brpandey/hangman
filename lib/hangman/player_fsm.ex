@@ -46,7 +46,7 @@ defmodule Hangman.Player.FSM do
   Either we proceed to start a new game and head to begin or we've already finished 
   all games and happily head to the exit state.
 
-  Ultimately the specific Web or CLI `Handler`, when in exit state terminates the fsm loop
+  Ultimately the specific Flow or CLI `Handler`, when in exit state terminates the FSM loop
   """
 
   alias Hangman.{Player}
