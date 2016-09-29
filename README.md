@@ -24,21 +24,23 @@ To view the game play design please look at the README DIAGRAMS.pdf
 ### Usage
 
 *Hangman runs both interactive human games with manually specified
-secrets and also runs human and robot games with 
-randomly generated secrets either interactive or not.*
+secrets and also runs games with randomly generated secrets 
+either interactive (human) or not (robot).
 
-*The random secret generation option allows you to play without*
-knowing the secret hangman word(s) beforehand.
+The **random** secret generation option allows you to play without
+knowing the secret hangman word(s) beforehand as the game randomly
+selects the secrets to play against.
 
-Robot games are auto-guessed based on simple strategy heuristics.
+**Robot** games are auto-guessed based on simple strategy heuristics.
 
 Player game archival can be captured through logging, e.g. --log option
 
-The display and log options are exclusive to the CLI client. As well as the
-human guessing timeout option which allows values between 0 secs and 10 secs
+The **display** and **log** options are exclusive to the command line client. 
+
+The human guessing **timeout** option, allows values between 0 secs and 10 secs
 to choose a letter.
 
-The parallel option allows games to be played on all the cores of your system
+The parallel option allows games to be played on all the cores of your system*
 
 
 ```elixir    
