@@ -126,6 +126,12 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
+    <a href="#cleanup/1">cleanup(pass_key)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#increment_key/1">increment_key(key)</a>
   </div>
   
@@ -160,7 +166,7 @@
           </h1>
           <div class="types-list">
             <div id="t:key/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:key/0">key</a> :: {id :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, game_no :: pos_integer, round_no :: pos_integer}</code></pre>
+  <pre><code class="elixir"><a href="#t:key/0">key</a> :: {id :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | tuple, game_num :: non_neg_integer, round_num :: non_neg_integer}</code></pre>
   
     <div class="typespec-doc"><p>Defines word <code>pass</code> key type</p>
 </div>
@@ -186,14 +192,14 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="increment_key/1">
+          <div class="detail" id="cleanup/1">
   <div class="detail-header">
-    <a href="#increment_key/1" class="detail-link" title="Link to this function">
+    <a href="#cleanup/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">increment_key(key)</span>
+    <span class="signature">cleanup(pass_key)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass.ex#cl-35" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass.ex#cl-104" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -204,7 +210,34 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">increment_key(tuple) :: tuple</code></pre>
+          <pre><code class="elixir">cleanup(<a href="#t:key/0">key</a>) :: :ok</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="increment_key/1">
+  <div class="detail-header">
+    <a href="#increment_key/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">increment_key(key)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass.ex#cl-37" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">increment_key(<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>) :: <a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a></code></pre>
         
       </div>
     </div>
@@ -220,7 +253,7 @@
     </a>
     <span class="signature">result(atom, pass_key, reduce_key)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass.ex#cl-58" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass.ex#cl-60" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -231,9 +264,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">result(atom, pass_key :: <a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>, reduce_key :: <a href="Hangman.Reduction.html#t:key/0">Hangman.Reduction.key</a>) ::
-  {<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>, <a href="Hangman.Pass.html#t:t/0">Hangman.Pass.t</a>} |
-  no_return</code></pre>
+          <pre><code class="elixir">result(atom, pass_key :: <a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>, reduce_key :: <a href="Hangman.Reduction.html#t:key/0">Hangman.Reduction.key</a>) :: {<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>, <a href="Hangman.Pass.html#t:t/0">Hangman.Pass.t</a>}</code></pre>
         
       </div>
     </div>

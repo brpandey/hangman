@@ -75,9 +75,9 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements a non-process player fsm which handles managing the state of types implemented through the Player Action protocol.</p>
-<p>FSM provides a state machine wrapper over the <code>Player.Action</code> protocol</p>
-<p>The FSM is not coupled at all to the specific player type but the Action Protocol, which provides for succinct code along with the already succinct design of the Fsm module code.</p>
+          <p>Module implements a non-process player fsm which handles managing the state of types implemented through Player and the Player Action protocol.</p>
+<p>FSM provides a state machine wrapper over the <code>Player</code></p>
+<p>The FSM is not coupled at all to the specific player type but the generic Player which relies on the Action Protocol, which provides for succinct code along with the already succinct design of the Fsm module code.</p>
 <p>Works for all supported player types</p>
 <p>States are <code>initial</code>, <code>begin</code>, <code>setup</code>, <code>action</code>, <code>transit</code>, <code>exit</code></p>
 <p>The event <code>proceed</code> transitions between states, when we are not issuing a <code>guess</code> or <code>initialize</code> event.</p>
@@ -95,7 +95,7 @@
 <p>Once we are in the setup state it is obvious that our next step is to the action state. Here we can try out our new guess (either selected or auto-generated)</p>
 <p>From action state we either circle back to setup state to generate the new word set state and overall guess state and possibly to collect the next user guess. Else, we have either won or lost the game and can confidently move to the transit state.</p>
 <p>The transit state indicates that we are in transition having a single game over. Either we proceed to start a new game and head to begin or we've already finished all games and happily head to the exit state.</p>
-<p>Ultimately the <code>Client.Handler</code> when in the exit state terminates the fsm loop</p>
+<p>Ultimately the specific Flow or CLI <code>Handler</code>, when in exit state terminates the FSM loop</p>
 
         </section>
       
@@ -185,7 +185,7 @@
     </a>
     <span class="signature">data(f_s_m)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-55" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-56" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -203,7 +203,7 @@
     </a>
     <span class="signature">guess(fsm, arg0)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-101" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-98" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -221,7 +221,7 @@
     </a>
     <span class="signature">initialize(fsm, arg0)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-59" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-60" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -239,7 +239,7 @@
     </a>
     <span class="signature">new()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-55" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-56" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -257,7 +257,7 @@
     </a>
     <span class="signature">proceed(fsm)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-71" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-68" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -275,7 +275,7 @@
     </a>
     <span class="signature">state(f_s_m)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-55" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-56" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -293,7 +293,7 @@
     </a>
     <span class="signature">transition(fsm, , )</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-59" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_fsm.ex#cl-60" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

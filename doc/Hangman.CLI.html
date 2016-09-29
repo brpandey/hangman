@@ -76,13 +76,13 @@
       
         <section id="moduledoc" class="docstring">
           <p>Module provides a command line interpreter interface to the <code>Hangman</code> application.</p>
-<p>Runs interactive human games with manually specified secrets and also runs human and robot games with randomly generated secrets.</p>
-<p>Robot games are auto-guessed based on simple strategy heuristics.</p>
-<p>Player game archival can be captured through logging, e.g. --log option</p>
-<p>The display and log options are exclusive to the CLI client. As well as the human guessing timeout option which allows values between 0 secs and 10 secs to choose a letter.</p>
-<p><code>Usage: --name (player id) --type (&quot;human&quot; or &quot;robot&quot;) --random (num random secrets, max 10) [--secret (hangman word(s)) --baseline] [--log --display --timeout]</code></p>
+<p>Hangman runs both interactive human games with manually specified secrets e.g. --secrets or runs games with randomly generated secrets e.g. --random, either with interactive game play (human) or not (robot). Therefore the type of the player <code>-t</code> determines the user interaction type.</p>
+<p>The random <code>-r</code> secret generation option allows you to play without knowing the secret hangman word(s) beforehand as the system randomly selects the secret(s) to play against.</p>
+<p>Robot games are auto-guessed based on simple strategy heuristics. Player game archival can be captured through logging, e.g. --log option</p>
+<p>The display and log options are exclusive to the command line client. The human guessing timeout <code>-ti</code> option allows values between 0 secs and 10 secs to choose a letter. The parallel <code>-pl</code> option allows games to be played on all the cores of your system</p>
+<p><code>Usage: --name (player id) --type (&quot;human&quot; or &quot;robot&quot;) --random (num random secrets, max 1000) [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel (40 secrets or more suggested)]</code></p>
 <p>or</p>
-<p><code>Aliase Usage:  -n (player id) -t (&quot;human&quot; or &quot;robot&quot;) -r (num random secrets, max 10) [-s (hangman word(s)) -bl] [-l -d -ti]</code></p>
+<p><code>Aliase Usage:  -n (player id) -t (&quot;human&quot; or &quot;robot&quot;) -r (num random secrets, max 1000) [-s (hangman word(s)) -bl] [-l -d -ti] [-pl (40 secrets or more suggested)]</code></p>
 <p>NOTE: Should a player submit a secret hangman word that does not actually reside in the <code>Dictionary.Cache</code> the player will abort and then restart and the game will continue on - marking a score of 0 for the word not found game.</p>
 
         </section>
@@ -140,7 +140,7 @@
     </a>
     <span class="signature">main(args)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/cli.ex#cl-51" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/cli.ex#cl-56" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

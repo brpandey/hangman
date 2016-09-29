@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.13.0">
-    <title>Hangman.Web.Shard.Handler – Hangman v0.9.5</title>
+    <title>Hangman.Flow.Shard.Handler – Hangman v0.9.5</title>
     <link rel="stylesheet" href="dist/app-9c1e3d5aa2.css" />
     
     <script src="dist/sidebar_items.js"></script>
@@ -64,10 +64,10 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.5</small>
-        Hangman.Web.Shard.Handler
+        Hangman.Flow.Shard.Handler
         
         
-          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web_shard_handler.ex#cl-1" title="View Source" class="view-source" rel="help">
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/flow_shard_handler.ex#cl-1" title="View Source" class="view-source" rel="help">
             <i class="icon-code"></i>
           </a>
         
@@ -75,10 +75,11 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module runs game play for the given web shard of secrets as determined by <code>Web.Flow</code>. Basically, runs a chunk of the overall original secrets vector.</p>
+          <p>Module runs game play for the given shard of secrets as determined by <code>Flow</code>. Basically, runs a chunk of the overall original secrets vector.</p>
 <p>Module drives <code>Player.Controller</code>, while setting up the proper <code>Game</code> server and <code>Event</code> consumer states beforehand.</p>
-<p>Simply stated it politely nudges the player to proceed to the next course of action or make the next guess. The handler also collects input from the user as necessary and displays data back to the user.</p>
-<p>When the game is finished it politely ends the game playing.</p>
+<p>Simply stated it politely nudges the player to proceed to the next course of action or make the next guess.</p>
+<p>When the game is finished it politely ends the game playing return the shard_key and game snapshot tuple.</p>
+<p>The twist to this is that these shard handlers are run in parallel and concurrently thanks to the concurrent map reduce setup of <code>Flow</code></p>
 
         </section>
       
@@ -100,10 +101,10 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#play/1">play(player_handler_key)</a>
+    <a href="#play/1">play(shard_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Play handles client play loop</p>
+    <div class="summary-synopsis"><p>Play handles client play loop for particular player shard_key</p>
 </div>
   
 </div>
@@ -112,7 +113,7 @@
     <a href="#setup/1">setup(arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sets up the <code>game</code> server and per player <code>event</code> server. Used primarly by the <code>Web.Collator</code></p>
+    <div class="summary-synopsis"><p>Sets up the <code>game</code> server and per player <code>event</code> server. Used primarly by the collation logic in Flow</p>
 </div>
   
 </div>
@@ -142,9 +143,9 @@
     <a href="#play/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">play(player_handler_key)</span>
+    <span class="signature">play(shard_key)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web_shard_handler.ex#cl-47" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/flow_shard_handler.ex#cl-51" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -155,13 +156,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">play(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>) :: tuple</code></pre>
+          <pre><code class="elixir">play(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>) :: {<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]}</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Play handles client play loop</p>
+    <p>Play handles client play loop for particular player shard_key</p>
 
   </section>
 </div>
@@ -172,7 +173,7 @@
     </a>
     <span class="signature">setup(arg)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web_shard_handler.ex#cl-30" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/flow_shard_handler.ex#cl-34" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -183,13 +184,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">setup(tuple) :: tuple</code></pre>
+          <pre><code class="elixir">setup({<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>, <a href="http://elixir-lang.org/docs/stable/elixir/Access.html#t:get/2">list[&lt;a href=&quot;http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0&quot;&gt;String.t&lt;/a&gt;]</a>}) :: <a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Sets up the <code>game</code> server and per player <code>event</code> server. Used primarly by the <code>Web.Collator</code></p>
+    <p>Sets up the <code>game</code> server and per player <code>event</code> server. Used primarly by the collation logic in Flow</p>
 
   </section>
 </div>

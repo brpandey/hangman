@@ -129,7 +129,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t/0">t()</a>
+    <a href="#t:t/0">t()</a>
   </div>
   
 </div>
@@ -249,7 +249,7 @@
   
 </div>
 <div id="t:feedback/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:feedback/0">feedback</a> :: %{id: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, code: <a href="#t:code/0">code</a>}</code></pre>
+  <pre><code class="elixir"><a href="#t:feedback/0">feedback</a> :: %{:id => <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, :code => <a href="#t:code/0">code</a>, optional(:text | :pattern | :result | :previous) => <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | atom | map}</code></pre>
   
     <div class="typespec-doc"><p>returned <code>Game</code> feedback data</p>
 </div>
@@ -262,8 +262,8 @@
 </div>
   
 </div>
-<div id="t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
+<div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Hangman.Game{correct_letters: term, current: term, id: term, incorrect_letters: term, incorrect_words: term, max_wrong: term, pattern: term, patterns: term, score: term, scores: term, secret: term, secrets: term, state: term}</code></pre>
   
 </div>
 
@@ -360,7 +360,7 @@
     </a>
     <span class="signature">guess(game, arg)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-150" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-151" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -371,7 +371,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, guess :: <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a>) :: {<a href="#t:t/0">t</a>, <a href="#t:feedback/0">feedback</a>}</code></pre>
+          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a>) :: {<a href="#t:t/0">t</a>, <a href="#t:feedback/0">feedback</a>}</code></pre>
         
       </div>
     </div>
@@ -393,7 +393,7 @@
     </a>
     <span class="signature">info(g)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-418" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-429" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -449,7 +449,7 @@
     </a>
     <span class="signature">next(game)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-254" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-257" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -460,7 +460,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">next(<a href="#t:t/0">t</a>) :: {<a href="#t:t/0">t</a>, term}</code></pre>
+          <pre><code class="elixir">next(<a href="#t:t/0">t</a>) :: {<a href="#t:t/0">t</a>, <a href="#t:feedback/0">feedback</a>}</code></pre>
         
       </div>
     </div>
@@ -503,7 +503,7 @@
     </a>
     <span class="signature">status(game)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-214" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game.ex#cl-215" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -514,7 +514,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">status(<a href="#t:t/0">t</a>) :: {<a href="#t:id/0">id</a>, <a href="#t:code/0">code</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}</code></pre>
+          <pre><code class="elixir">status(<a href="#t:t/0">t</a>) :: {<a href="#t:t/0">t</a>, <a href="#t:feedback/0">feedback</a>}</code></pre>
         
       </div>
     </div>

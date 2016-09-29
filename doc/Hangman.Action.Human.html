@@ -76,7 +76,8 @@
       
         <section id="moduledoc" class="docstring">
           <p>Implements human action player specific functionality</p>
-<p>In <code>Hangman</code> we have two players. One explict - the one guessing, the other implicit, 'the game', 'the user tracking the penalties', or 'the stumper stumping the guesser with hard words'. In this instance, the <code>Action</code> is merely the user making and choosing the guess selections.</p>
+<p>In <code>Hangman</code> we have two players. One explict - the one guessing, the other implicit, 'the game', 'the user tracking the penalties'.</p>
+<p>In this instance, the <code>Action</code> is merely the user making and choosing the guess selections.</p>
 <p>The <code>human</code> action is given the choice of the top letter choices to choose from and is able to make an interactive guess.</p>
 
         </section>
@@ -97,7 +98,7 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t/0">t()</a>
+    <a href="#t:t/0">t()</a>
   </div>
   
 </div>
@@ -163,8 +164,8 @@
             Types
           </h1>
           <div class="types-list">
-            <div id="t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
+            <div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Hangman.Action.Human{display: term, round: term, strategy: term, type: term}</code></pre>
   
 </div>
 
@@ -187,7 +188,7 @@
     </a>
     <span class="signature">guess(human, guess)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action_human.ex#cl-62" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action_human.ex#cl-64" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -198,7 +199,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, Guess.t) :: tuple</code></pre>
+          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, Guess.t) :: tuple | no_return</code></pre>
         
       </div>
     </div>
@@ -215,7 +216,7 @@
     </a>
     <span class="signature">info(human)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action_human.ex#cl-117" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action_human.ex#cl-120" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -242,7 +243,7 @@
     </a>
     <span class="signature">setup(human)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action_human.ex#cl-27" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action_human.ex#cl-29" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -270,7 +271,7 @@
     </a>
     <span class="signature">update_choices(round, arg)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action_human.ex#cl-90" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/action_human.ex#cl-92" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -281,7 +282,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">update_choices(<a href="Hangman.Round.html#t:t/0">Hangman.Round.t</a>, tuple) :: tuple</code></pre>
+          <pre><code class="elixir">update_choices(<a href="Hangman.Round.html#t:t/0">Hangman.Round.t</a>, Guess.options) :: Guess.options</code></pre>
         
       </div>
     </div>

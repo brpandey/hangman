@@ -83,13 +83,6 @@
       <h1 class="section-heading">Modules</h1>
       <div class="summary">
         <div class="summary-row">
-  <div class="summary-signature"><a href="Hangman.Action.html">Hangman.Action</a></div>
-  
-    <div class="summary-synopsis"><p>Defines the <code>Action</code> type used in Player.Action</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Action.Human.html">Hangman.Action.Human</a></div>
   
     <div class="summary-synopsis"><p>Implements human action player specific functionality</p>
@@ -213,6 +206,20 @@
   
 </div>
 <div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Flow.html">Hangman.Flow</a></div>
+  
+    <div class="summary-synopsis"><p>Module distributes the game requests to the flow shard handler and then collects the resultant game information and combines it in the proper order</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Flow.Shard.Handler.html">Hangman.Flow.Shard.Handler</a></div>
+  
+    <div class="summary-synopsis"><p>Module runs game play for the given shard of secrets as determined by <code>Flow</code>. Basically, runs a chunk of the overall original secrets vector</p>
+</div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Game.html">Hangman.Game</a></div>
   
     <div class="summary-synopsis"><p>Module to create and manage <code>Hangman</code> game abstractions</p>
@@ -286,6 +293,9 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Player.html">Hangman.Player</a></div>
   
+    <div class="summary-synopsis"><p>Defines Player id and key</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Player.Alert.Handler.html">Hangman.Player.Alert.Handler</a></div>
@@ -304,14 +314,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Player.FSM.html">Hangman.Player.FSM</a></div>
   
-    <div class="summary-synopsis"><p>Module implements a non-process player fsm which handles managing the state of types implemented through the Player Action protocol</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Hangman.Player.Generic.html">Hangman.Player.Generic</a></div>
-  
-    <div class="summary-synopsis"><p>Provides Generic player routine implementations used by the Player.Action protocol. Fills in the <code>Player</code> gaps before the specific Action implementation kicks in</p>
+    <div class="summary-synopsis"><p>Module implements a non-process player fsm which handles managing the state of types implemented through Player and the Player Action protocol</p>
 </div>
   
 </div>
@@ -324,6 +327,9 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Player.Types.html">Hangman.Player.Types</a></div>
+  
+    <div class="summary-synopsis"><p>Defines Player types and mapping</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -389,20 +395,6 @@
 </div>
   
 </div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Hangman.Web.Flow.html">Hangman.Web.Flow</a></div>
-  
-    <div class="summary-synopsis"><p>Module distributes the game requests to the player workers and then collects the resultant game information and combines it in the proper order</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Hangman.Web.Shard.Handler.html">Hangman.Web.Shard.Handler</a></div>
-  
-    <div class="summary-synopsis"><p>Module runs game play for the given web shard of secrets as determined by <code>Web.Flow</code>. Basically, runs a chunk of the overall original secrets vector</p>
-</div>
-  
-</div>
 
       </div>
     </section>
@@ -431,7 +423,7 @@
         <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Player.Action.html">Hangman.Player.Action</a></div>
   
-    <div class="summary-synopsis"><p>Module implements player action functionality for various player types via protocol mechanism</p>
+    <div class="summary-synopsis"><p>Typeclass for specific player functionality</p>
 </div>
   
 </div>

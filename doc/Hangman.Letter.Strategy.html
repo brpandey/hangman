@@ -108,7 +108,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t/0">t()</a>
+    <a href="#t:t/0">t()</a>
   </div>
   
 </div>
@@ -217,8 +217,8 @@
   <pre><code class="elixir"><a href="#t:result/0">result</a> :: {<a href="#t:t/0">t</a>, <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a>}</code></pre>
   
 </div>
-<div id="t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
+<div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Hangman.Letter.Strategy{guess: term, guessed_letters: term, pass: term, prior_guess: term, type: term}</code></pre>
   
 </div>
 
@@ -252,7 +252,9 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">choices(<a href="#t:t/0">t</a>, pos_integer) :: <a href="Hangman.Guess.html#t:option/0">Hangman.Guess.option</a></code></pre>
+          <pre><code class="elixir">choices(<a href="#t:t/0">t</a>, pos_integer) ::
+  <a href="Hangman.Guess.html#t:option/0">Hangman.Guess.option</a> |
+  no_return</code></pre>
         
       </div>
     </div>
@@ -325,7 +327,7 @@
     </a>
     <span class="signature">info(s)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-323" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-322" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -392,7 +394,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">new(atom) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">new(atom) :: struct</code></pre>
         
       </div>
     </div>
@@ -451,7 +453,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">validate(<a href="#t:t/0">t</a>, pos_integer, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a></code></pre>
+          <pre><code class="elixir">validate(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, pos_integer) :: <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a></code></pre>
         
       </div>
     </div>

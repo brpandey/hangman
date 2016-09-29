@@ -109,7 +109,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t/0">t()</a>
+    <a href="#t:t/0">t()</a>
   </div>
   
 </div>
@@ -204,8 +204,8 @@
   <pre><code class="elixir"><a href="#t:key/0">key</a> :: {<a href="#t:id/0">id</a>, pid}</code></pre>
   
 </div>
-<div id="t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
+<div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Hangman.Simple.Registry{active_ids: term, active_pids: term, values: term}</code></pre>
   
 </div>
 
@@ -267,9 +267,9 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">key(<a href="#t:t/0">t</a>, pid) :: <a href="#t:key/0">key</a></code></pre>
+          <pre><code class="elixir">key(<a href="#t:t/0">t</a>, pid) :: <a href="#t:key/0">key</a> | nil</code></pre>
         
-          <pre><code class="elixir">key(<a href="#t:t/0">t</a>, <a href="#t:id/0">id</a>) :: <a href="#t:key/0">key</a></code></pre>
+          <pre><code class="elixir">key(<a href="#t:t/0">t</a>, <a href="#t:id/0">id</a>) :: <a href="#t:key/0">key</a> | nil</code></pre>
         
       </div>
     </div>
@@ -297,7 +297,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">new :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">new :: struct</code></pre>
         
       </div>
     </div>
@@ -325,7 +325,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">remove(<a href="#t:t/0">t</a>, :atom, <a href="#t:key/0">key</a>) :: <a href="#t:t/0">t</a> | no_return</code></pre>
+          <pre><code class="elixir">remove(<a href="#t:t/0">t</a>, atom, <a href="#t:key/0">key</a>) :: <a href="#t:t/0">t</a> | no_return</code></pre>
         
       </div>
     </div>

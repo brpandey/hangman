@@ -80,6 +80,7 @@
 <p>These are name :: String.t, secret :: String.t | [String.t], random :: pos_integer</p>
 <p>The name at all times must be specified along with either a secret value or random value: true = name and (secret | random)</p>
 <p>The random param specifies how many secret words to generate. Hence, random=5, will generate 5 secret game words for a total of 5 hangman games.</p>
+<p>If the secrets collection vector is only 1 item we show the game history if greater we show the word and score summary only</p>
 <h2 id="module-example" class="section-heading">
   <a href="#module-example" class="hover-link"><i class="icon-link"></i></a>
   Example
@@ -223,7 +224,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
     </a>
     <span class="signature">run(conn)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-68" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-71" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -234,7 +235,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">run(Plug.Conn.t) :: Plug.Conn.t</code></pre>
+          <pre><code class="elixir">run(Plug.Conn.t) :: Plug.Conn.t | no_return</code></pre>
         
       </div>
     </div>
@@ -251,7 +252,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
     </a>
     <span class="signature">start_server()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-48" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-51" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

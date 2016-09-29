@@ -74,6 +74,15 @@
       </h1>
 
       
+        <section id="moduledoc" class="docstring">
+          <p>Defines Player id and key</p>
+<p>Provides Player generic routine implementations.</p>
+<p>For polymorphic routines, delegates to Player.Action protocol.</p>
+<p>Player is the common DNA unifying all players.</p>
+<p>The <code>Player.Action</code> protocol implement the specialized functionality of the player types</p>
+
+        </section>
+      
 
       
         <section id="summary" class="details-list">
@@ -105,6 +114,58 @@
 
 
           
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#begin/1">begin(player)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Begin new game player action</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#guess/2">guess(player, guess \\ nil)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns player guess</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#new/1">new(arg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Create new player</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#setup/1">setup(player)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sets up each action state</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#transition/1">transition(player)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns the correct player transition at the game end</p>
+</div>
+  
+</div>
+
+  </div>
+
 
           
 
@@ -137,6 +198,111 @@
         </section>
       
 
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="begin/1">
+  <div class="detail-header">
+    <a href="#begin/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">begin(player)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-38" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Begin new game player action</p>
+
+  </section>
+</div>
+<div class="detail" id="guess/2">
+  <div class="detail-header">
+    <a href="#guess/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">guess(player, guess \\ nil)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-66" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Returns player guess</p>
+
+  </section>
+</div>
+<div class="detail" id="new/1">
+  <div class="detail-header">
+    <a href="#new/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">new(arg)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-26" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Create new player</p>
+
+  </section>
+</div>
+<div class="detail" id="setup/1">
+  <div class="detail-header">
+    <a href="#setup/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">setup(player)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-61" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Sets up each action state</p>
+
+  </section>
+</div>
+<div class="detail" id="transition/1">
+  <div class="detail-header">
+    <a href="#transition/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">transition(player)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player.ex#cl-73" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Returns the correct player transition at the game end</p>
+
+  </section>
+</div>
+
+        </section>
       
 
       

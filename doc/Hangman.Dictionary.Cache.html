@@ -66,6 +66,8 @@
         <small class="visible-xs">Hangman v0.9.5</small>
         Hangman.Dictionary.Cache
         
+          <small>behaviour</small>
+        
         
           <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-1" title="View Source" class="view-source" rel="help">
             <i class="icon-code"></i>
@@ -97,15 +99,6 @@
       <a href="#functions">Functions</a>
     </h2>
     <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#init/1">init(args)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>GenServer callback to initalize server process</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature">
     <a href="#lookup/2">lookup(atom, count)</a>
   </div>
@@ -160,6 +153,22 @@
           
 
           
+  <div class="summary-callbacks summary">
+    <h2>
+      <a href="#callbacks">Callbacks</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:init/1">init(arg0)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>GenServer callback to initalize server process</p>
+</div>
+  
+</div>
+
+  </div>
+
 
         </section>
       
@@ -174,34 +183,14 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="init/1">
-  <div class="detail-header">
-    <a href="#init/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">init(args)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-126" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-  <section class="docstring">
-    <p>GenServer callback to initalize server process</p>
-<p>Loads normalized <code>Dictionary.File</code> into <code>ETS</code>. Calculates and loads <code>chunked</code> word lists. Computes and stores letter <code>tallies</code> by word length <code>key</code>. Tags and stores <code>random</code> words.</p>
-
-  </section>
-</div>
-<div class="detail" id="lookup/2">
+          <div class="detail" id="lookup/2">
   <div class="detail-header">
     <a href="#lookup/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
     <span class="signature">lookup(atom, count)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-61" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-59" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -212,11 +201,10 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">lookup(mode :: atom, pos_integer) ::
-  <a href="Hangman.Chunks.html#t:t/0">Hangman.Chunks.t</a> |
-  <a href="Hangman.Counter.html#t:t/0">Hangman.Counter.t</a> |
+          <pre><code class="elixir">lookup(:random | :chunks | :tally, pos_integer) ::
   [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] |
-  no_return</code></pre>
+  <a href="Hangman.Counter.html#t:t/0">Hangman.Counter.t</a> |
+  <a href="Hangman.Chunks.html#t:t/0">Hangman.Chunks.t</a></code></pre>
         
       </div>
     </div>
@@ -234,7 +222,7 @@
     </a>
     <span class="signature">lookup(pid, atom, count)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-88" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-86" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -265,7 +253,7 @@
     </a>
     <span class="signature">setup(args)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-203" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-192" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -321,7 +309,7 @@
     </a>
     <span class="signature">stop()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-111" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-109" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -339,7 +327,7 @@
     </a>
     <span class="signature">stop(pid)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-107" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-105" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -366,6 +354,45 @@
 
       
 
+      
+        <section id="callbacks" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#callbacks">
+              <i class="icon-link"></i>
+            </a>
+            Callbacks
+          </h1>
+          <div class="detail" id="c:init/1">
+  <div class="detail-header">
+    <a href="#c:init/1" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">init(arg0)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-123" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">init(<a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a>) :: tuple</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>GenServer callback to initalize server process</p>
+<p>Loads normalized <code>Dictionary.File</code> into <code>ETS</code>. Calculates and loads <code>chunked</code> word lists. Computes and stores letter <code>tallies</code> by word length <code>key</code>. Tags and stores <code>random</code> words.</p>
+
+  </section>
+</div>
+
+        </section>
       
           <footer class="footer">
         <p>

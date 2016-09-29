@@ -69,7 +69,7 @@
           <small>protocol</small>
         
         
-          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-19" title="View Source" class="view-source" rel="help">
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-1" title="View Source" class="view-source" rel="help">
             <i class="icon-code"></i>
           </a>
         
@@ -77,12 +77,10 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>Module implements player action functionality for various player types via protocol mechanism</p>
-<p>The Player Action protocol is implemented for the Human and Robot types, with Generic Player handling overlaps in functionality. The Action protocol could be thought of as a sort of virtual player as it defers implementation to a combination of type specific functionality and generic type functionality.</p>
-<p>The goal of a player is to maximize our winning chances in conjunction with a letter strategy against the 'implicit' other player, the <code>game server</code>.</p>
-<p>Player action functionality handles choosing letters, guessing letters and words.</p>
-<p>Player action encapsulates via the action types, the data used along with Strategy data. <code>Round</code> functionality extends the scope of the player to handle the actual game round details.</p>
-<p>Function names are <a href="#new/2"><code>new/2</code></a>, <a href="#begin/1"><code>begin/1</code></a>, <a href="#setup/1"><code>setup/1</code></a>, <code>guess</code>, <a href="#transition/1"><code>transition/1</code></a></p>
+          <p>Typeclass for specific player functionality</p>
+<p>The Player Action protocol is implemented for the Human and Robot types, with the generic Player handling all overlaps in functionality.</p>
+<p>Enables custom player implementations</p>
+<p>Function names are <a href="#setup/1"><code>setup/1</code></a>, <a href="#guess/2"><code>guess/2</code></a></p>
 
         </section>
       
@@ -117,15 +115,6 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#begin/1">begin(player)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Begin new game player action</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="#guess/2">guess(player, guess \\ nil)</a>
   </div>
   
@@ -135,28 +124,10 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#new/2">new(player, args)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Create new player</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="#setup/1">setup(player)</a>
   </div>
   
     <div class="summary-synopsis"><p>Sets up each action state</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#transition/1">transition(player)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Returns the correct player transition at the game end</p>
 </div>
   
 </div>
@@ -197,87 +168,22 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="begin/1">
-  <div class="detail-header">
-    <a href="#begin/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">begin(player)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-48" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">begin(term) :: term</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Begin new game player action</p>
-
-  </section>
-</div>
-<div class="detail" id="guess/2">
+          <div class="detail" id="guess/2">
   <div class="detail-header">
     <a href="#guess/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
     <span class="signature">guess(player, guess \\ nil)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-56" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-19" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
     
   </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">guess(term, term) :: term</code></pre>
-        
-      </div>
-    </div>
   
   <section class="docstring">
     <p>Returns player guess</p>
-
-  </section>
-</div>
-<div class="detail" id="new/2">
-  <div class="detail-header">
-    <a href="#new/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">new(player, args)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-44" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">new(term, tuple) :: term</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Create new player</p>
 
   </section>
 </div>
@@ -288,52 +194,15 @@
     </a>
     <span class="signature">setup(player)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-52" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-16" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
     
   </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">setup(term) :: term</code></pre>
-        
-      </div>
-    </div>
   
   <section class="docstring">
     <p>Sets up each action state</p>
-
-  </section>
-</div>
-<div class="detail" id="transition/1">
-  <div class="detail-header">
-    <a href="#transition/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">transition(player)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/player_action.ex#cl-60" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">transition(term) :: term</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Returns the correct player transition at the game end</p>
 
   </section>
 </div>
