@@ -1,10 +1,17 @@
 Hangman
 =======
 
-Plays really fun hangman games.  What did you expect? :)
+Plays really fun hangman word games.  
+
+Supports interactive games allowing the player to choose letters
+or allows the computer robot to guess.  Also is able to play sets of games
+in parallel using the cores on your computer.
+
+What did you expect? :)
 
 
-[Hangman](https://en.wikipedia.org/wiki/Hangman_(game))
+[Hangman Description](https://en.wikipedia.org/wiki/Hangman_(game))
+
 > Definition of Hangman Game
 >
 > Hangman is a paper and pencil guessing game for two or more players. 
@@ -23,24 +30,21 @@ To view the game play design please look at the README DIAGRAMS.pdf
 
 ### Usage
 
-*Hangman runs both interactive human games with manually specified
+Hangman runs both interactive human games with manually specified
 secrets and also runs games with randomly generated secrets 
-either interactive (human) or not (robot).*
+either interactive (human) or not (robot).
 
-*The random secret generation option allows you to play without
+The random secret generation option allows you to play without
 knowing the secret hangman word(s) beforehand as the game randomly
-selects the secrets to play against.*
+selects the secrets to play against.
 
-*Robot games are auto-guessed based on simple strategy heuristics.*
+Robot games are auto-guessed based on simple strategy heuristics. 
+Player game archival can be captured through logging, e.g. --log option
 
-*Player game archival can be captured through logging, e.g. --log option*
-
-*The display and log options are exclusive to the command line client. *
-
-*The human guessing timeout option, allows values between 0 secs and 10 secs
-to choose a letter.*
-
-*The parallel option allows games to be played on all the cores of your system*
+The display and log options are exclusive to the command line client. 
+The human guessing timeout option, allows values between 0 secs and 10 secs
+to choose a letter. The parallel option allows games to be played on 
+all the cores of your system
 
 
 ```elixir    
@@ -276,8 +280,8 @@ Wishlist:
 
 * One game server being able to handle multiple concurrent different player games
 
-* Players being able to communicate with each other e.g. using a lookup registry to find other players 
-and being able to play in tandem
+* Multiple players on a single game. Players being able to communicate with each other 
+  e.g. using a lookup registry to find other players and being able to play in tandem
 
 * A new type cyborg which alternates between human and robot playing
 
