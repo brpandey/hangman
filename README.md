@@ -15,6 +15,21 @@ To view the game play design please look at the README DIAGRAMS.PDF
 
 ### Usage
 
+    Hangman runs both interactive human games with manually specified
+    secrets and also runs human and robot games with 
+    randomly generated secrets either interactive or not.
+
+    Robot games are auto-guessed based on simple strategy heuristics.
+
+    Player game archival can be captured through logging, e.g. --log option
+
+    The display and log options are exclusive to the CLI client. As well as the
+    human guessing timeout option which allows values between 0 secs and 10 secs
+    to choose a letter.
+
+    The parallel option allows games to be played on all the cores of your system
+
+
 ```elixir    
     --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000) 
     [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel]
@@ -167,21 +182,25 @@ After the below command has been issued, check the the cpu utilization of both c
 
 ```elixir
 $ ./hangman_game -n yoshi -pl -r 100
-" (TUMBLEBUG: 7) (BEATIFIC: 5) (BOUDOIRS: 7) (RAVENOUSNESS: 2) (PLEADING: 10) (CHICANER: 6) 
-  (HELMETLIKE: 5) (MISLABEL: 5) (WANDERINGS: 6) (TENDERLY: 4) (TAENIASES: 6) (PROVOCATIVENESS: 6) 
-  (SPACESHIPS: 6) (DAYDREAMER: 6) (TALKIE: 5) (BAROUCHE: 5) (REPULSIVE: 7) (PASTINA: 6) (THWARTS: 7) 
-  (DEMANDERS: 4) (FOSTERAGES: 4) (COMPUTE: 9) (MISLEADER: 5) (REPPED: 7) (WORSHIPPER: 3) (ABOULIC: 6) 
-  (CEROTYPES: 6) (LISLES: 25) (BEHAVIOUR: 4) (ANTIMACASSARS: 3) (BLOWTORCH: 6) (DREDGING: 9) 
-  (WIDOWHOODS: 3) (RABIC: 8) (SURVIVABILITIES: 6) (BACKSIDE: 7) (WESTER: 9) (MISFUNCTION: 5) 
-  (WREATHEN: 5) (PATCHERS: 9) (REACCLIMATIZE: 2) (TERRIBLENESS: 4) (WANIEST: 9) (DESICCATE: 6) 
-  (DINGS: 8) (LANDLUBBERLY: 5) (DOWNTRODDEN: 5) (FADING: 25) (CONCUPISCENCES: 2) (DRIBBLERS: 7) 
-  (OUTRANGE: 8) (SYLLABLE: 6) (DUMBFOUNDERING: 4) (MISTIER: 6) (WOLFRAMITES: 5) (DIAPOSITIVE: 4) 
-  (GLUCINUM: 6) (ARCHAEANS: 2) (UNDERTRICKS: 4) (LONESOMELY: 5) (CHICANER: 6) (HALYARD: 10) (PLEADING: 10) 
-  (CRATED: 9) (RAGGEDY: 5) (CONCUPISCENCES: 2) (CATER: 6) (OUTRODE: 7) (MIDLAND: 7) (NEPHRISMS: 6) 
-  (SOUNDS: 7) (AMMONITIC: 4) (GRUNTLED: 25) (KNOBKERRIE: 2) (INTERMEDDLERS: 4) (LEFTISM: 7) 
-  (CARVEL: 25) (PSYCHOCHEMICALS: 4) (AGREEABLE: 2) (DOGSLEDS: 7) (OUTSCORNS: 6) (TETRAHYMENAS: 2) 
-  (HINTERLANDS: 5) (BOUNCED: 10) (INEDUCABILITIES: 3) (ANTHOPHYLLITE: 5) (ENGARLANDED: 3) (PROPHECIES: 6) 
-  (SUPERHEAVY: 5) (SNEAP: 6) (CHARADES: 6) (FUNNER: 25) (RISKING: 10) (PERISHABLES: 3) (SNORT: 9) 
+" (TUMBLEBUG: 7) (BEATIFIC: 5) (BOUDOIRS: 7) (RAVENOUSNESS: 2) (PLEADING: 10) 
+  (CHICANER: 6) (HELMETLIKE: 5) (MISLABEL: 5) (WANDERINGS: 6) (TENDERLY: 4) 
+  (TAENIASES: 6) (PROVOCATIVENESS: 6) (SPACESHIPS: 6) (DAYDREAMER: 6) (TALKIE: 5) 
+  (BAROUCHE: 5) (REPULSIVE: 7) (PASTINA: 6) (THWARTS: 7) (DEMANDERS: 4) 
+  (FOSTERAGES: 4) (COMPUTE: 9) (MISLEADER: 5) (REPPED: 7) (WORSHIPPER: 3) 
+  (ABOULIC: 6) (CEROTYPES: 6) (LISLES: 25) (BEHAVIOUR: 4) (ANTIMACASSARS: 3) 
+  (BLOWTORCH: 6) (DREDGING: 9) (WIDOWHOODS: 3) (RABIC: 8) (SURVIVABILITIES: 6) 
+  (BACKSIDE: 7) (WESTER: 9) (MISFUNCTION: 5) (WREATHEN: 5) (PATCHERS: 9) 
+  (REACCLIMATIZE: 2) (TERRIBLENESS: 4) (WANIEST: 9) (DESICCATE: 6) (DINGS: 8) 
+  (LANDLUBBERLY: 5) (DOWNTRODDEN: 5) (FADING: 25) (CONCUPISCENCES: 2) (DRIBBLERS: 7) 
+  (OUTRANGE: 8) (SYLLABLE: 6) (DUMBFOUNDERING: 4) (MISTIER: 6) (WOLFRAMITES: 5) 
+  (DIAPOSITIVE: 4) (GLUCINUM: 6) (ARCHAEANS: 2) (UNDERTRICKS: 4) (LONESOMELY: 5) 
+  (CHICANER: 6) (HALYARD: 10) (PLEADING: 10) (CRATED: 9) (RAGGEDY: 5) 
+  (CONCUPISCENCES: 2) (CATER: 6) (OUTRODE: 7) (MIDLAND: 7) (NEPHRISMS: 6) 
+  (SOUNDS: 7) (AMMONITIC: 4) (GRUNTLED: 25) (KNOBKERRIE: 2) (INTERMEDDLERS: 4) 
+  (LEFTISM: 7) (CARVEL: 25) (PSYCHOCHEMICALS: 4) (AGREEABLE: 2) (DOGSLEDS: 7) 
+  (OUTSCORNS: 6) (TETRAHYMENAS: 2) (HINTERLANDS: 5) (BOUNCED: 10) (INEDUCABILITIES: 3) 
+  (ANTHOPHYLLITE: 5) (ENGARLANDED: 3) (PROPHECIES: 6) (SUPERHEAVY: 5) (SNEAP: 6) 
+  (CHARADES: 6) (FUNNER: 25) (RISKING: 10) (PERISHABLES: 3) (SNORT: 9) 
   (ETYMOLOGIST: 3) (URETER: 6) (HETEROGAMOUS: 5) (GRANITELIKE: 3) (ATAXIAS: 6)"
 ```
 
@@ -227,6 +246,11 @@ Specifically change :info to :debug and then run `mix compile` and then `mix esc
 
 * The hangman game handles word not in dictionary cases.  The current procedure is the Player.Worker crashes and is restarted to resume where it left off.
 
+* The dictionary logic of the game transforms the original dictionary file multiple times to a format
+  suitable for `ETS`.  This was written before `Experimental.GenStage` and each format transform is
+  stored in `priv/dictionary/data`.  Though `GenStage` is slick, this happens to show each file after
+  each transform step which is an interesting transform artifact.
+
 * If a "mix test" is run, the free version of Quick Check from quvic should be installed
 
 * The hangman file directory structure is flat in lib/hangman.  There should be
@@ -236,21 +260,21 @@ simplicity purposes keeping all in the top level directory.
 
 Wishlist:
 
-- [] One game server being able to handle multiple concurrent different player games
+* One game server being able to handle multiple concurrent different player games
 
-- [] Players being able to communicate with each other e.g. using a lookup registry to find other players 
+* Players being able to communicate with each other e.g. using a lookup registry to find other players 
 and being able to play in tandem
 
-- [] A new type cyborg which alternates between human and robot playing
+* A new type cyborg which alternates between human and robot playing
 
-- [] A stumper word process which plays the games before hand with all the words and identifies 
+* A stumper word process which plays the games before hand with all the words and identifies 
 the word stumpers for use in real game play
 
-- [] New strategy algorithms which try to learn player's guessing style - aka machine learning
+* New strategy algorithms which try to learn player's guessing style - aka machine learning
 
-- [] Truly distributed hangman running on multiple nodes and machines
+* Truly distributed hangman running on multiple nodes and machines
 
 
 
-Enjoy! :metal 
+Enjoy!
 Bibek Pandey
