@@ -3,16 +3,18 @@ Hangman
 
 Plays really fun hangman word games.  
 
-Supports interactive games allowing the player to choose letters
-or allows the computer robot to guess.  Also is able to play sets of games
-in parallel using the cores on your computer.
+Plays interactive games allowing the player to choose letters
+or allows the computer robot to guess instead.  
+
+Supports parallel play of games using CPU cores concurrently, 
+speeding up the game play of 40 secrets or greater tangibly
 
 What did you expect? :)
 
 
 [Hangman Description](https://en.wikipedia.org/wiki/Hangman_(game))
 
-> Definition of Hangman Game
+> Definition of Hangman
 >
 > Hangman is a paper and pencil guessing game for two or more players. 
 > One player thinks of a word, phrase or sentence and the other tries 
