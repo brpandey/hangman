@@ -11,7 +11,7 @@ Hangman
 >
 > – Wikipedia
 
-Plays really fun hangman word games.  [Wikipedia](https://en.wikipedia.org/wiki/Hangman_(game))
+Plays really fun hangman word games.  [Wikipedia Description](https://en.wikipedia.org/wiki/Hangman_(game))
 
 Plays interactive games allowing the user to choose letters
 or allows the computer to guess instead.  
@@ -61,6 +61,7 @@ Command Line options:
     [-s (hangman word(s)) -bl] [-l -d -ti] [-pl]
 ```
 
+## Install
 
 ### Step 1 - Git clone
 ```
@@ -89,8 +90,9 @@ or alternatively you can run the release version for the web mode
     $  rel/hangman_game/bin/hangman_game start or use iex -S mix
 ```
 
+## Game Play Examples
 
-### Game Play - Example 1
+### Game Play - 1
 
 Command Line - Robot type with secret specified with display feed
 
@@ -121,7 +123,7 @@ Command Line - Robot type with secret specified with display feed
     Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 ```
 
-### Game Play - Example 2
+### Game Play - 2
 
 Command Line - Human type with 2 random words requested
 
@@ -195,7 +197,7 @@ Command Line - Human type with 2 random words requested
     Game Over! Average Score: 6.5, # Games: 2, Scores:  (BARBARIANS: 6) (DEFIER: 7)
 ```
 
-### Game Play - Example 3
+### Game Play - 3
 
 Command Line - Parallel option with 100 secrets
 
@@ -226,7 +228,7 @@ $ ./hangman_game -n yoshi -pl -r 100
   (ETYMOLOGIST: 3) (URETER: 6) (HETEROGAMOUS: 5) (GRANITELIKE: 3) (ATAXIAS: 6)"
 ```
 
-### Game Play - Example 4
+### Game Play - 4
 
 Web Example - Single Game
 
@@ -251,6 +253,7 @@ Web Example - Single Game
        {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
 ```
 
+## Appendices
 
 ### Notes
         
@@ -302,8 +305,8 @@ the word stumpers for use in real game play
 
 ### Thank You
 
-Enjoy!  
+Enjoy playing!  
 
-Bibek Pandey
+**Bibek Pandey**
 
-bibekp@gmail.com
+*bibekp@gmail.com*
