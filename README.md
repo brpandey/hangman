@@ -11,7 +11,7 @@ Hangman
 >
 > – Wikipedia
 
-Plays really fun hangman word games.  [description](https://en.wikipedia.org/wiki/Hangman_(game))
+Plays really fun hangman word games.  [Info](https://en.wikipedia.org/wiki/Hangman_(game))
 
 Plays interactive games allowing the user to choose letters
 or allows the computer to guess instead.  
@@ -301,4 +301,7 @@ the word stumpers for use in real game play
 
 
 
-Enjoy!  Bibek Pandey
+Enjoy!  
+
+Bibek Pandey
+bibekp@gmail.com
