@@ -4,17 +4,22 @@ defmodule Hangman.CLI do
   Module provides a command line interpreter interface
   to the `Hangman` application.
 
-  Runs interactive human games with manually specified
-  secrets and also runs human and robot games with 
-  randomly generated secrets.
-
-  Robot games are auto-guessed based on simple strategy heuristics.
-
+  Hangman runs both interactive human games with manually specified
+  secrets e.g. --secrets or runs games with randomly generated secrets 
+  e.g. --random, either with interactive game play (human) or not (robot).
+  Therefore the type of the player `-t` determines the user interaction type.
+  
+  The random `-r` secret generation option allows you to play without
+  knowing the secret hangman word(s) beforehand as the system randomly
+  selects the secret(s) to play against.
+  
+  Robot games are auto-guessed based on simple strategy heuristics. 
   Player game archival can be captured through logging, e.g. --log option
-
-  The display and log options are exclusive to the CLI client. As well as the
-  human guessing timeout option which allows values between 0 secs and 10 secs
-  to choose a letter.
+  
+  The display and log options are exclusive to the command line client. 
+  The human guessing timeout `-ti` option allows values between 0 secs and 10 secs
+  to choose a letter. The parallel `-pl` option allows games to be played on 
+  all the cores of your system
 
   `Usage:
   --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000)
