@@ -9,23 +9,20 @@ Plays really fun hangman games.  What did you expect? :)
 
 ![Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
-To see inner game play details go to config/config.exs and change logger :info to :debug and rebuild mix compile then mix escript.build or do a release build or to suppress details do vice versa
 
-NOTES: 
+To view the game play design please look at the README DIAGRAMS.PDF
 
-The web and cli modes are able to play parallel games using all CPU cores, but it is suggested to use 40 secrets or more.  
-For cli mode, simply use the random option to specify a value like 60 secrets with the parallel option.  e.g. -n luigi -pl -r 60
-
-The hangman game handles word not in dictionary cases.  
-Current procedure is the Player.Worker crashes and is restarted to resume where it left off.
-
-(If a "mix test" is run, the free version of Quick Check from quvic should be installed)
 
 Usage
-```    
-    --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000) [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel]
 
-    or aliases: -n (player id) -t ("human" or "robot") -r (num random secrets, max 1000) [-s (hangman word(s)) -bl] [-l -d -ti] [-pl]
+```elixir    
+    --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000) 
+    [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel]
+
+    or aliases: 
+
+    -n (player id) -t ("human" or "robot") -r (num random secrets, max 1000) 
+    [-s (hangman word(s)) -bl] [-l -d -ti] [-pl]
 ```
 
 
@@ -37,11 +34,17 @@ Usage
 
     $  mix compile
     $  mix escript.build
+```
 
+
+### Step 2 - Run game
+```
     $  ./hangman_game -n fred -t robot -r 3
+```
 
 or alternatively you can run the release version for your environment
 
+```
     $  mix deps.get
     $  MIX_ENV=prod mix compile --no-debug-info
     $  MIX_ENV=prod mix release
@@ -50,35 +53,11 @@ or alternatively you can run the release version for your environment
 ```
 
 
-Web Example - Bulk, parallel game play with 200 random secrets
+### Game Play Example 1
 
-```
-$ iex -S mix
-Erlang/OTP 19 [erts-8.0] [source] [64-bit] [smp:2:2] [async-threads:10] [kernel-poll:false]
+    Command Line - Robot type with secret specified with display feed
 
-iex>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&random=200", [],  [recv_timeout: :infinity])
-{:ok,
-%HTTPoison.Response{body: " (GROWLER: 11) (CHAIRLIFTS: 5) (BUGGED: 25) (SNOWBLOWERS: 7) (WORKFARE: 9) (SEASIDE: 6) (ACETANILID: 3) (PALPABLE: 5) (OVERRUNNING: 5) (NOMADISM: 7) (ENSHRINING: 5) (NOVAE: 6) (EMBRYOPHYTES: 3) (SELFLESSNESSES: 4) (WORKMATES: 9) (NYALAS: 7) (WINNOCKS: 25) (POACH: 7) (EXACTED: 6) (FOREIGN: 5) (ABDUCED: 7) (STRUNTS: 25) (ORTHODONTICS: 5) (FRECKLIEST: 5) (PERVASION: 6) (DISTRIBUTE: 4) (CONSCRIBING: 6) (LUNATE: 8) (GUIDES: 25) (OUTLASTED: 7) (PULSARS: 5) (HOTDOGS: 9) (SECULARISES: 8) (RESOLIDIFIED: 3) (VAPIDITIES: 8) (SIMPER: 10) (TOSSPOTS: 6) (NIGHTLY: 8) (WEAPONLESS: 3) (WOBBLY: 9) (PARAGENESIS: 5) (SHOWERING: 8) (SUBMUNITIONS: 5) (STRUNTS: 25) (TRANSPLANTED: 6) (FIFTYISH: 6) (STACK: 8) (COMMUNIONS: 6) (CREATINE: 5) (MAINSTAYS: 7) (BIPAROUS: 9) (LACTALBUMINS: 4) (DEMISSIONS: 4) (EXTEMPORANEOUS: 3) (INARTICULACY: 4) (NONAFFILIATED: 3) (CONTEMNING: 5) (MISSENDING: 5) (FLICKERS: 11) (KARYOTYPES: 6) (UNICYCLISTS: 5) (DATELINED: 6) (ENTHUSE: 6) (COGNAC: 6) (OVERMATURITY: 4) (ELECTRONEGATIVE: 1) (PROPENDS: 7) (OFFICIOUS: 6) (LOCATED: 9) (OWLET: 7) (BISHOPRIC: 6) (TERCETS: 5) (ROUGHCAST: 7) (BABYING: 25) (INSENSITIVENESS: 2) (CEREBRUMS: 5) (COCKLE: 9) (DECEITS: 8) (UNTIRED: 25) (PERCEPTIBLE: 3) (BASIFICATION: 6) (NEUROLEPTIC: 4) (POSTSTIMULATION: 4) (CINDERS: 10) (VIRGINAL: 7) (REDFISHES: 3) (FLORIDNESS: 5) (CRANKER: 8) (LAMBKILL: 6) (LEANT: 7) (UNDERNOURISHED: 4) (REVENGEFULNESS: 1) (BISECTIONAL: 4) (OVERRUNNING: 5) (URETHRITIS: 4) (ERYTHROSINE: 2) (CHOWED: 25) (UNSUBDUED: 5) (PROPHECY: 8) (KASHRUTH: 6) (REINDUCES: 4) (SUCTORIAN: 7) (FRIENDLINESS: 3) (HETEROSPOROUS: 5) (BECARPET: 5) (PREORDAINED: 2) (BIOMORPHIC: 3) (GRAMMATICALLY: 3) (ULTRADISTANT: 5) (CONJUNCTIVES: 7) (COTANGENT: 6) (DANDYISM: 7) (STRODE: 8) (DERELICTION: 4) (CADDISH: 9) (BISHOPRIC: 6) (TRIREMES: 2) (RATIOCINATES: 4) (SALLOWING: 25) (JACKBOOT: 8) (PAWKIER: 25) (ABSORBANCES: 4) (LYRICISES: 7) (LANDSMEN: 6) (HEBDOMADAL: 4) (BACKSPACES: 5) (WORDBOOK: 7) (SUCCULENCE: 3) (BRAVERS: 9) (DECEITS: 8) (ALOINS: 8) (PERSONNEL: 5) (OUTPUSHING: 7) (PHOTOIONIZATION: 5) (PIQUET: 25) (ENGARLANDS: 5) (NUCLEOLE: 6) (BLACKCAPS: 6) (TIERCELS: 5) (MILDEWY: 8) (SERVOMOTORS: 5) (DISBOSOMS: 7) (AERIFIES: 6) (SYNTONIC: 6) (VELARS: 8) (OUTSULK: 8) (STRUNTS: 25) (CLINCHES: 9) (IMPERILMENT: 6) (CONVERTIBLES: 6) (BEDIM: 25) (COGITOS: 7) (RUMINATED: 6) (PRETESTING: 5) (PROTOHISTORIAN: 3) (KNUCKLEHEADED: 2) (FIENDISH: 3) (DERELICTION: 4) (SUPPOSITITIOUS: 4) (WITTIER: 7) (DEGLAZES: 7) (CONTEMNING: 5) (LIMELIGHTING: 4) (ALOINS: 8) (AIRBRUSHES: 3) (COGITOS: 7) (DUMBEST: 9) (SUBFREEZING: 3) (GONIDIAL: 6) (POLARIMETERS: 4) (DISTENT: 3) (INSINUATIONS: 4) (CAPITALS: 6) (RESIGNER: 5) (NOMADISM: 7) (UNCRITICALLY: 4) (ZARIBA: 6) (BENEFICIALNESS: 2) (COLIPHAGE: 6) (BOOMERANGING: 6) (EXCURSIVE: 6) (RESTFULNESSES: 3) (HYPOCAUST: 4) (GUNSMITHS: 5) (VERGE: 6) (CLOBBER: 10) (GROUNDWOOD: 6) (SALUBRITY: 5) (DORMANT: 8) (DISHONEST: 3) (BURETS: 6) (RATTAN: 5) (BEACON: 8) (APOLOGIZE: 7) (SELFLESSNESSES: 4) (CLITORAL: 5) (PLEDGING: 9) (SUPERPLASTIC: 6) (KARAOKE: 6) (WIFTIER: 8)",
-  headers: [{"server", "Cowboy"}, {"date", "Mon, 29 Aug 2016 01:18:12 GMT"},
-   {"content-length", "3039"},
-   {"cache-control", "max-age=0, private, must-revalidate"},
-   {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
-```
-
-Web Example - Single Game
-
-    iex>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&secret=woodpecker")
-    {:ok,
-     %HTTPoison.Response{body: "(#) -----E--E-; score=1; status=KEEP_GUESSING (#) -----E--E-; score=2; status=KEEP_GUESSING (#) -----E--ER; score=3; status=KEEP_GUESSING (#) -----E--ER; score=4; status=KEEP_GUESSING (#) -----E--ER; score=5; status=KEEP_GUESSING (#) -----E--ER; score=6; status=KEEP_GUESSING (#) -----E--ER; score=7; status=KEEP_GUESSING (#) WOODPECKER; score=7; status=GAME_WON (#) Game Over! Average Score: 7.0, # Games: 1, Scores:  (WOODPECKER: 7) ",
-      headers: [{"server", "Cowboy"}, {"date", "Mon, 29 Aug 2016 01:20:45 GMT"},
-       {"content-length", "435"},
-       {"cache-control", "max-age=0, private, must-revalidate"},
-       {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
-
-
-
-Command Line Example - Robot type with secret specified with display feed
-
+```elixir
     ./hangman_game -n fred -t robot -s spectacle -d
 
     #fred_feed --> Game 1 has started
@@ -102,9 +81,11 @@ Command Line Example - Robot type with secret specified with display feed
     #fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
 
     #fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
+```
 
+### Game Play Example 2
 
-Command Line Example - Human type with 2 random words requested
+    Command Line - Human type with 2 random words requested
 
 ```elixir
     ./hangman_game -n enrico -t human -r 2
@@ -160,7 +141,8 @@ Command Line Example - Human type with 2 random words requested
     5 weighted letter choices :  d:18 n*:17 a:12 i:11 s:10 (* robot choice)
     [Please input letter choice] 
 
-    Possible hangman words left, 7 words: ["deafer", "decker", "defier", "deicer", "denier", "denser", "dewier"]
+    Possible hangman words left, 7 words: ["deafer", "decker", "defier", 
+    "deicer", "denier", "denser", "dewier"]
 
     Player enrico, Round 6, DE--ER; score=5; status=KEEP_GUESSING.
     5 weighted letter choices :  i:4 c*:2 f:2 n:2 a:1 (* robot choice)
@@ -178,6 +160,26 @@ Command Line Example - Human type with 2 random words requested
 
 Notes:
         
+* Optional -- configure `config/config.exs` to see inner game play details.
+Specifically change :info to :debug and then run `mix compile` and then `mix escript.build`
+
+```elixir
+
+config :logger, :console,
+  level: :info,
+  format: "\n$time $metadata[$level] $levelpad$message\n",
+  metadata: [:module]
+```
+
+
+* The web and cli modes are able to play parallel games using all CPU cores. To tangibly
+  see the speedup of parallelization use 40 secrets or more.  For cli mode, simply use the 
+  random option to specify a value like 60 secrets with the parallel option.  e.g. -n luigi -pl -r 60
+
+* The hangman game handles word not in dictionary cases.  The current procedure is the Player.Worker crashes and is restarted to resume where it left off.
+
+* If a "mix test" is run, the free version of Quick Check from quvic should be installed
+
 * The hangman file directory structure is flat in lib/hangman.  There should be
 directories under lib/hangman technically following the modules names but for portfolio
 simplicity purposes keeping all in the top level directory.
