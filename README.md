@@ -90,7 +90,7 @@ or alternatively you can run the release version for the web mode
     $  rel/hangman_game/bin/hangman_game start or use iex -S mix
 ```
 
-## Game Play Examples
+## Examples
 
 ### Game Play - 1
 
@@ -303,7 +303,7 @@ the word stumpers for use in real game play
 * Truly distributed hangman running on multiple nodes and machines
 
 
-### Thank You
+## Thank You
 
 Enjoy playing!  
 
