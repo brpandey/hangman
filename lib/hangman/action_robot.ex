@@ -73,11 +73,24 @@ defmodule Hangman.Action.Robot do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      robot_info = Inspect.List.inspect(Hangman.Action.Robot.info(t), opts)
+      robot_info = Inspect.List.inspect(Robot.info(t), opts)
       round_info = Inspect.List.inspect(Round.info(t.round), opts)
       concat ["#Action.Robot<", robot_info, round_info, ">"]
     end
   end
 
 
+
+  defimpl Hangman.Player.Action, for: Robot do
+
+    def setup(%Robot{} = player) do
+      Robot.setup(player) # returns {player, []} tuple
+    end
+    
+    def guess(%Robot{} = player, _guess) do
+      Robot.guess(player, nil) # returns {player, status} tuple
+    end
+    
+  end
+  
 end

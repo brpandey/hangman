@@ -128,10 +128,26 @@ defmodule Hangman.Action.Human do
     import Inspect.Algebra
 
     def inspect(t, opts) do
-      human_info = Inspect.List.inspect(Hangman.Action.Human.info(t), opts)
+      human_info = Inspect.List.inspect(Human.info(t), opts)
       round_info = Inspect.List.inspect(Round.info(t.round), opts)
       concat ["#Action.Human<", human_info, round_info, ">"]
     end
+  end
+
+
+  defimpl Hangman.Player.Action, for: Human do
+    
+    def setup(%Human{} = player) do
+      # returns {player, choices}
+      # where choices is {:guess_letter, "choices_text"} 
+      # or {:guess_word, last, "text"}
+      Human.setup(player)
+    end
+    
+    def guess(%Human{} = player, guess) do
+      Human.guess(player, guess) # returns {player, status} tuple
+    end
+    
   end
 
 

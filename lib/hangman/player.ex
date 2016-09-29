@@ -1,15 +1,16 @@
 defmodule Hangman.Player do
 
   @moduledoc """
-  Defines Player types
+  Defines Player id and key
 
   Provides Player generic routine implementations.  
 
-  For polymorphic  routines, forwards request
-  to Player.Action protocol.
+  For polymorphic routines, delegates to Player.Action protocol.
 
-  Player is the common DNA unifying all players and `Action` protocol
-  implement the specialized components of the player types
+  Player is the common DNA unifying all players.
+
+  The `Player.Action` protocol
+  implement the specialized functionality of the player types
   """
 
   alias Hangman.{Player, Round, Letter.Strategy}
@@ -21,24 +22,12 @@ defmodule Hangman.Player do
   @type key :: {id :: String.t, player_pid :: pid} # Used as game key
 
 
-
-  def human, do: :human
-  def robot, do: :robot
-
-  defp types do
-    %{
-      :human => %Hangman.Action.Human{}, 
-      :robot => %Hangman.Action.Robot{}
-    }
-  end
-
-
   @doc "Create new player"
   def new({name, type, display, game_pid})
   when (is_binary(name) or is_tuple(name)) and
   is_boolean(display) and is_pid(game_pid) and is_atom(type) do
 
-    player = Map.get(types, type)
+    player = Map.get(Player.Types.types, type)
     round = Round.new(name, game_pid)
 
     %{player | display: display, round: round}

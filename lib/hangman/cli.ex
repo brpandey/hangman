@@ -39,8 +39,8 @@ defmodule Hangman.CLI do
 
   alias Hangman.{CLI, Flow}
 
-  @human Hangman.Player.human
-  @robot Hangman.Player.robot
+  @human Hangman.Player.Types.human
+  @robot Hangman.Player.Types.robot
 
   @doc """
   Gateway function to fetch and validate parameters.  Handles display
