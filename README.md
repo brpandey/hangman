@@ -3,6 +3,8 @@ Hangman
 
 Plays really fun hangman word games.  
 
+![Logo][https://bytebucket.org/brpandey/elixir-hangman/raw/3fc67f5e2a8e2b8b54d45d35a0fd5155a7745e7e/priv/images/hangman.jpg]
+
 Plays interactive games allowing the player to choose letters
 or allows the computer robot to guess instead.  
 
@@ -38,7 +40,7 @@ either interactive (human) or not (robot).
 
 * The random secret generation option allows you to play without
 knowing the secret hangman word(s) beforehand as the game randomly
-selects the secrets to play against.
+selects the secret(s) to play against.
 
 * Robot games are auto-guessed based on simple strategy heuristics. 
 Player game archival can be captured through logging, e.g. --log option
@@ -48,6 +50,7 @@ The human guessing timeout option, allows values between 0 secs and 10 secs
 to choose a letter. The parallel option allows games to be played on 
 all the cores of your system
 
+Command Line options:
 
 ```elixir    
     --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000) 
