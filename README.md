@@ -30,7 +30,7 @@ To view the game play design please look at the README DIAGRAMS.pdf or click bel
 
 
 
-### Usage
+## Usage
 
 * Hangman runs both interactive human games with manually specified
 secrets e.g. --secrets or runs games with randomly generated secrets 
@@ -305,4 +305,5 @@ the word stumpers for use in real game play
 Enjoy!  
 
 Bibek Pandey
+
 bibekp@gmail.com
