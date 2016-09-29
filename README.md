@@ -1,20 +1,6 @@
 Hangman
 =======
-
-Plays really fun hangman word games.  
-
 ![Logo](https://bytebucket.org/brpandey/elixir-hangman/raw/46754306a02ecaad07edb9a71ad1c7769dd2ddaa/priv/images/hangman.jpg)
-
-Plays interactive games allowing the player to choose letters
-or allows the computer robot to guess instead.  
-
-Supports parallel play of games using CPU cores concurrently, 
-speeding up the game play of 40 secrets or greater tangibly
-
-What did you expect? :)
-
-
-[Hangman Description](https://en.wikipedia.org/wiki/Hangman_(game))
 
 > Definition of Hangman
 >
@@ -25,32 +11,42 @@ What did you expect? :)
 >
 > – Wikipedia
 
+Plays really fun hangman word games.  [description](https://en.wikipedia.org/wiki/Hangman_(game))
+
+Plays interactive games allowing the user to choose letters
+or allows the computer to guess instead.  
+
+Supports parallel play using CPU cores concurrently. 
+Only when the set of secrets is 40 or greater is this speedup tangible
+
+What did you expect? :)
 
 ![Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
 
-To view the game play design please look at the README DIAGRAMS
+To view the game play design please look at the README DIAGRAMS.pdf or click below
 
-[README Diagrams](https://bitbucket.org/brpandey/elixir-hangman/raw/c561978b04b3167db52af41f1f01df7fb0ecc88b/README%20DIAGRAMS.pdf)
+[Hangman Design](https://bitbucket.org/brpandey/elixir-hangman/raw/c561978b04b3167db52af41f1f01df7fb0ecc88b/README%20DIAGRAMS.pdf)
 
 
 
 ### Usage
 
 * Hangman runs both interactive human games with manually specified
-secrets and also runs games with randomly generated secrets 
-either interactive (human) or not (robot).
+secrets e.g. --secrets or runs games with randomly generated secrets 
+e.g. --random, either with interactive game play (human) or not (robot).
+Therefore the type of the player `-t` determines the user interaction type.
 
-* The random secret generation option allows you to play without
-knowing the secret hangman word(s) beforehand as the game randomly
+* The random `-r` secret generation option allows you to play without
+knowing the secret hangman word(s) beforehand as the system randomly
 selects the secret(s) to play against.
 
 * Robot games are auto-guessed based on simple strategy heuristics. 
 Player game archival can be captured through logging, e.g. --log option
 
 * The display and log options are exclusive to the command line client. 
-The human guessing timeout option, allows values between 0 secs and 10 secs
-to choose a letter. The parallel option allows games to be played on 
+The human guessing timeout `-ti` option allows values between 0 secs and 10 secs
+to choose a letter. The parallel `-pl` option allows games to be played on 
 all the cores of your system
 
 Command Line options:
@@ -80,7 +76,7 @@ Command Line options:
 
 ### Step 3 - Run game
 ```
-    $  ./hangman_game -n fred -t robot -r 3
+    $  ./hangman_game -n toad -t robot -r 3
 ```
 
 or alternatively you can run the release version for the web mode
@@ -99,29 +95,29 @@ or alternatively you can run the release version for the web mode
 Command Line - Robot type with secret specified with display feed
 
 ```elixir
-    ./hangman_game -n fred -t robot -s spectacle -d
+    ./hangman_game -n mario -t robot -s spectacle -d
 
-    fred_feed --> Game 1 has started
-    fred_feed Game 1, secret length --> 9
-    fred_feed Game 1, letter --> e
-    fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
+    mario_feed --> Game 1 has started
+    mario_feed Game 1, secret length --> 9
+    mario_feed Game 1, letter --> e
+    mario_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
 
-    fred_feed Game 1, letter --> a
-    fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
+    mario_feed Game 1, letter --> a
+    mario_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
 
-    fred_feed Game 1, letter --> l
-    fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
+    mario_feed Game 1, letter --> l
+    mario_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
 
-    fred_feed Game 1, letter --> n
-    fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
+    mario_feed Game 1, letter --> n
+    mario_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
 
-    fred_feed Game 1, letter --> c
-    fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
+    mario_feed Game 1, letter --> c
+    mario_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
 
-    fred_feed Game 1, word --> spectacle
-    fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
+    mario_feed Game 1, word --> spectacle
+    mario_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
 
-    fred_feed Game Over!! --> 
+    mario_feed Game Over!! --> 
     Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 ```
 
@@ -130,69 +126,69 @@ Command Line - Robot type with secret specified with display feed
 Command Line - Human type with 2 random words requested
 
 ```elixir
-    ./hangman_game -n enrico -t human -r 2
+    ./hangman_game -n luigi -t human -r 2
 
-    Player enrico, Round 1, ----------; score=0; status=KEEP_GUESSING.
+    Player luigi, Round 1, ----------; score=0; status=KEEP_GUESSING.
     5 weighted letter choices :  e*:15606 i:13788 s:13226 r:11925 a:11763 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 2, ----------; score=1; status=KEEP_GUESSING.
+    Player luigi, Round 2, ----------; score=1; status=KEEP_GUESSING.
     5 weighted letter choices :  i*:3852 a:3276 o:3157 n:2993 s:2968 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 3, ------I---; score=2; status=KEEP_GUESSING.
+    Player luigi, Round 3, ------I---; score=2; status=KEEP_GUESSING.
     5 weighted letter choices :  s*:309 o:255 a:246 t:214 n:207 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 4, ------I--S; score=3; status=KEEP_GUESSING.
+    Player luigi, Round 4, ------I--S; score=3; status=KEEP_GUESSING.
     5 weighted letter choices :  n:106 o*:104 a:98 t:70 l:57 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 5, ------I-NS; score=4; status=KEEP_GUESSING.
+    Player luigi, Round 5, ------I-NS; score=4; status=KEEP_GUESSING.
     5 weighted letter choices :  a*:39 o:38 t:36 l:21 c:15 (* robot choice)
     [Please input letter choice] 
 
     Possible hangman words left, 3 words: ["barbarians", "dalmatians", "mammalians"]
 
-    Player enrico, Round 6, -A--A-IANS; score=5; status=KEEP_GUESSING.
+    Player luigi, Round 6, -A--A-IANS; score=5; status=KEEP_GUESSING.
     5 weighted letter choices :  l:2 m:2 b*:1 d:1 r:1 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 7, -A--A-IANS; score=6; status=KEEP_GUESSING.
+    Player luigi, Round 7, -A--A-IANS; score=6; status=KEEP_GUESSING.
     Last word left: barbarians
 
     BARBARIANS; score=6; status=GAME_WON
 
-    Player enrico, Round 1, ------; score=0; status=KEEP_GUESSING.
+    Player luigi, Round 1, ------; score=0; status=KEEP_GUESSING.
     5 weighted letter choices :  e*:9356 s:6981 a:6599 r:6097 i:5518 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 2, -E--E-; score=1; status=KEEP_GUESSING.
+    Player luigi, Round 2, -E--E-; score=1; status=KEEP_GUESSING.
     5 weighted letter choices :  r*:273 d:266 s:199 t:152 l:146 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 3, -E--ER; score=2; status=KEEP_GUESSING.
+    Player luigi, Round 3, -E--ER; score=2; status=KEEP_GUESSING.
     5 weighted letter choices :  t*:50 l:41 d:32 n:30 a:29 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 4, -E--ER; score=3; status=KEEP_GUESSING.
+    Player luigi, Round 4, -E--ER; score=3; status=KEEP_GUESSING.
     5 weighted letter choices :  l*:32 d:28 a:22 n:19 i:15 (* robot choice)
     [Please input letter choice] 
 
-    Player enrico, Round 5, -E--ER; score=4; status=KEEP_GUESSING.
+    Player luigi, Round 5, -E--ER; score=4; status=KEEP_GUESSING.
     5 weighted letter choices :  d:18 n*:17 a:12 i:11 s:10 (* robot choice)
     [Please input letter choice] 
 
     Possible hangman words left, 7 words: ["deafer", "decker", "defier", 
     "deicer", "denier", "denser", "dewier"]
 
-    Player enrico, Round 6, DE--ER; score=5; status=KEEP_GUESSING.
+    Player luigi, Round 6, DE--ER; score=5; status=KEEP_GUESSING.
     5 weighted letter choices :  i:4 c*:2 f:2 n:2 a:1 (* robot choice)
     [Please input letter choice] 
 
     Possible hangman words left, 3 words: ["defier", "denier", "dewier"]
 
-    Player enrico, Round 7, DE-IER; score=6; status=KEEP_GUESSING.
+    Player luigi, Round 7, DE-IER; score=6; status=KEEP_GUESSING.
     3 weighted letter choices :  f*:1 n:1 w:1 (* robot choice)
     [Please input letter choice] 
 
@@ -238,7 +234,7 @@ Web Example - Single Game
     $ iex -S mix
     Erlang/OTP 19 [erts-8.0] [source] [64-bit] [smp:2:2] [async-threads:10] ...
 
-    iex>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&secret=woodpecker")
+    iex>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=princess&secret=woodpecker")
     {:ok,
      %HTTPoison.Response{body: "(#) -----E--E-; score=1; status=KEEP_GUESSING 
      (#) -----E--E-; score=2; status=KEEP_GUESSING 
