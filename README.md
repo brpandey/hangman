@@ -61,27 +61,27 @@ Command Line - Robot type with secret specified with display feed
 ```elixir
     ./hangman_game -n fred -t robot -s spectacle -d
 
-    \# fred_feed --> Game 1 has started
-    \# fred_feed Game 1, secret length --> 9
-    \# fred_feed Game 1, letter --> e
-    \# fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
+    fred_feed --> Game 1 has started
+    fred_feed Game 1, secret length --> 9
+    fred_feed Game 1, letter --> e
+    fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
 
-    \# fred_feed Game 1, letter --> a
-    \# fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
+    fred_feed Game 1, letter --> a
+    fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
 
-    \# fred_feed Game 1, letter --> l
-    \# fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
+    fred_feed Game 1, letter --> l
+    fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
 
-    \# fred_feed Game 1, letter --> n
-    \# fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
+    fred_feed Game 1, letter --> n
+    fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
 
-    \# fred_feed Game 1, letter --> c
-    \# fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
+    fred_feed Game 1, letter --> c
+    fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
 
-    \# fred_feed Game 1, word --> spectacle
-    \# fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
+    fred_feed Game 1, word --> spectacle
+    fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
 
-    \# fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
+    fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 ```
 
 ### Game Play Example 2
@@ -167,7 +167,22 @@ After the below command has been issued, check the the cpu utilization of both c
 
 ```elixir
 $ ./hangman_game -n yoshi -pl -r 100
-" (TUMBLEBUG: 7) (BEATIFIC: 5) (BOUDOIRS: 7) (RAVENOUSNESS: 2) (PLEADING: 10) (CHICANER: 6) (HELMETLIKE: 5) (MISLABEL: 5) (WANDERINGS: 6) (TENDERLY: 4) (TAENIASES: 6) (PROVOCATIVENESS: 6) (SPACESHIPS: 6) (DAYDREAMER: 6) (TALKIE: 5) (BAROUCHE: 5) (REPULSIVE: 7) (PASTINA: 6) (THWARTS: 7) (DEMANDERS: 4) (FOSTERAGES: 4) (COMPUTE: 9) (MISLEADER: 5) (REPPED: 7) (WORSHIPPER: 3) (ABOULIC: 6) (CEROTYPES: 6) (LISLES: 25) (BEHAVIOUR: 4) (ANTIMACASSARS: 3) (BLOWTORCH: 6) (DREDGING: 9) (WIDOWHOODS: 3) (RABIC: 8) (SURVIVABILITIES: 6) (BACKSIDE: 7) (WESTER: 9) (MISFUNCTION: 5) (WREATHEN: 5) (PATCHERS: 9) (REACCLIMATIZE: 2) (TERRIBLENESS: 4) (WANIEST: 9) (DESICCATE: 6) (DINGS: 8) (LANDLUBBERLY: 5) (DOWNTRODDEN: 5) (FADING: 25) (CONCUPISCENCES: 2) (DRIBBLERS: 7) (OUTRANGE: 8) (SYLLABLE: 6) (DUMBFOUNDERING: 4) (MISTIER: 6) (WOLFRAMITES: 5) (DIAPOSITIVE: 4) (GLUCINUM: 6) (ARCHAEANS: 2) (UNDERTRICKS: 4) (LONESOMELY: 5) (CHICANER: 6) (HALYARD: 10) (PLEADING: 10) (CRATED: 9) (RAGGEDY: 5) (CONCUPISCENCES: 2) (CATER: 6) (OUTRODE: 7) (MIDLAND: 7) (NEPHRISMS: 6) (SOUNDS: 7) (AMMONITIC: 4) (GRUNTLED: 25) (KNOBKERRIE: 2) (INTERMEDDLERS: 4) (LEFTISM: 7) (CARVEL: 25) (PSYCHOCHEMICALS: 4) (AGREEABLE: 2) (DOGSLEDS: 7) (OUTSCORNS: 6) (TETRAHYMENAS: 2) (HINTERLANDS: 5) (BOUNCED: 10) (INEDUCABILITIES: 3) (ANTHOPHYLLITE: 5) (ENGARLANDED: 3) (PROPHECIES: 6) (SUPERHEAVY: 5) (SNEAP: 6) (CHARADES: 6) (FUNNER: 25) (RISKING: 10) (PERISHABLES: 3) (SNORT: 9) (ETYMOLOGIST: 3) (URETER: 6) (HETEROGAMOUS: 5) (GRANITELIKE: 3) (ATAXIAS: 6)"
+" (TUMBLEBUG: 7) (BEATIFIC: 5) (BOUDOIRS: 7) (RAVENOUSNESS: 2) (PLEADING: 10) (CHICANER: 6) 
+  (HELMETLIKE: 5) (MISLABEL: 5) (WANDERINGS: 6) (TENDERLY: 4) (TAENIASES: 6) (PROVOCATIVENESS: 6) 
+  (SPACESHIPS: 6) (DAYDREAMER: 6) (TALKIE: 5) (BAROUCHE: 5) (REPULSIVE: 7) (PASTINA: 6) (THWARTS: 7) 
+  (DEMANDERS: 4) (FOSTERAGES: 4) (COMPUTE: 9) (MISLEADER: 5) (REPPED: 7) (WORSHIPPER: 3) (ABOULIC: 6) 
+  (CEROTYPES: 6) (LISLES: 25) (BEHAVIOUR: 4) (ANTIMACASSARS: 3) (BLOWTORCH: 6) (DREDGING: 9) 
+  (WIDOWHOODS: 3) (RABIC: 8) (SURVIVABILITIES: 6) (BACKSIDE: 7) (WESTER: 9) (MISFUNCTION: 5) 
+  (WREATHEN: 5) (PATCHERS: 9) (REACCLIMATIZE: 2) (TERRIBLENESS: 4) (WANIEST: 9) (DESICCATE: 6) 
+  (DINGS: 8) (LANDLUBBERLY: 5) (DOWNTRODDEN: 5) (FADING: 25) (CONCUPISCENCES: 2) (DRIBBLERS: 7) 
+  (OUTRANGE: 8) (SYLLABLE: 6) (DUMBFOUNDERING: 4) (MISTIER: 6) (WOLFRAMITES: 5) (DIAPOSITIVE: 4) 
+  (GLUCINUM: 6) (ARCHAEANS: 2) (UNDERTRICKS: 4) (LONESOMELY: 5) (CHICANER: 6) (HALYARD: 10) (PLEADING: 10) 
+  (CRATED: 9) (RAGGEDY: 5) (CONCUPISCENCES: 2) (CATER: 6) (OUTRODE: 7) (MIDLAND: 7) (NEPHRISMS: 6) 
+  (SOUNDS: 7) (AMMONITIC: 4) (GRUNTLED: 25) (KNOBKERRIE: 2) (INTERMEDDLERS: 4) (LEFTISM: 7) 
+  (CARVEL: 25) (PSYCHOCHEMICALS: 4) (AGREEABLE: 2) (DOGSLEDS: 7) (OUTSCORNS: 6) (TETRAHYMENAS: 2) 
+  (HINTERLANDS: 5) (BOUNCED: 10) (INEDUCABILITIES: 3) (ANTHOPHYLLITE: 5) (ENGARLANDED: 3) (PROPHECIES: 6) 
+  (SUPERHEAVY: 5) (SNEAP: 6) (CHARADES: 6) (FUNNER: 25) (RISKING: 10) (PERISHABLES: 3) (SNORT: 9) 
+  (ETYMOLOGIST: 3) (URETER: 6) (HETEROGAMOUS: 5) (GRANITELIKE: 3) (ATAXIAS: 6)"
 ```
 
 ### Game Play - Example 4
@@ -177,7 +192,15 @@ Web Example - Single Game
 ```elixir
     iex>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=melvin&secret=woodpecker")
     {:ok,
-     %HTTPoison.Response{body: "(#) -----E--E-; score=1; status=KEEP_GUESSING (#) -----E--E-; score=2; status=KEEP_GUESSING (#) -----E--ER; score=3; status=KEEP_GUESSING (#) -----E--ER; score=4; status=KEEP_GUESSING (#) -----E--ER; score=5; status=KEEP_GUESSING (#) -----E--ER; score=6; status=KEEP_GUESSING (#) -----E--ER; score=7; status=KEEP_GUESSING (#) WOODPECKER; score=7; status=GAME_WON (#) Game Over! Average Score: 7.0, # Games: 1, Scores:  (WOODPECKER: 7) ",
+     %HTTPoison.Response{body: "(#) -----E--E-; score=1; status=KEEP_GUESSING 
+     (#) -----E--E-; score=2; status=KEEP_GUESSING 
+     (#) -----E--ER; score=3; status=KEEP_GUESSING 
+     (#) -----E--ER; score=4; status=KEEP_GUESSING 
+     (#) -----E--ER; score=5; status=KEEP_GUESSING 
+     (#) -----E--ER; score=6; status=KEEP_GUESSING 
+     (#) -----E--ER; score=7; status=KEEP_GUESSING 
+     (#) WOODPECKER; score=7; status=GAME_WON 
+     (#) Game Over! Average Score: 7.0, # Games: 1, Scores:  (WOODPECKER: 7) ",
       headers: [{"server", "Cowboy"}, {"date", "Mon, 29 Aug 2016 01:20:45 GMT"},
        {"content-length", "435"},
        {"cache-control", "max-age=0, private, must-revalidate"},
