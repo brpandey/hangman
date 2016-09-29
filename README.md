@@ -43,7 +43,7 @@ To view the game play design please look at the README DIAGRAMS.PDF
     $  ./hangman_game -n fred -t robot -r 3
 ```
 
-or alternatively you can run the release version for your environment
+or alternatively you can run the release version for the web mode
 
 ```
     $  mix deps.get
@@ -61,27 +61,27 @@ Command Line - Robot type with secret specified with display feed
 ```elixir
     ./hangman_game -n fred -t robot -s spectacle -d
 
-    *#*fred_feed --> Game 1 has started
-    *#*fred_feed Game 1, secret length --> 9
-    *#*fred_feed Game 1, letter --> e
-    *#*fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
+    \# fred_feed --> Game 1 has started
+    \# fred_feed Game 1, secret length --> 9
+    \# fred_feed Game 1, letter --> e
+    \# fred_feed Game 1, Round 1, status --> --E-----E; score=1; status=KEEP_GUESSING
 
-    *#*fred_feed Game 1, letter --> a
-    *#*fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
+    \# fred_feed Game 1, letter --> a
+    \# fred_feed Game 1, Round 2, status --> --E--A--E; score=2; status=KEEP_GUESSING
 
-    *#*fred_feed Game 1, letter --> l
-    *#*fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
+    \# fred_feed Game 1, letter --> l
+    \# fred_feed Game 1, Round 3, status --> --E--A-LE; score=3; status=KEEP_GUESSING
 
-    *#*fred_feed Game 1, letter --> n
-    *#*fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
+    \# fred_feed Game 1, letter --> n
+    \# fred_feed Game 1, Round 4, status --> --E--A-LE; score=4; status=KEEP_GUESSING
 
-    *#*fred_feed Game 1, letter --> c
-    *#*fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
+    \# fred_feed Game 1, letter --> c
+    \# fred_feed Game 1, Round 5, status --> --EC-ACLE; score=5; status=KEEP_GUESSING
 
-    *#*fred_feed Game 1, word --> spectacle
-    *#*fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
+    \# fred_feed Game 1, word --> spectacle
+    \# fred_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
 
-    *#*fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
+    \# fred_feed Game Over!! --> Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
 ```
 
 ### Game Play Example 2
@@ -213,21 +213,21 @@ simplicity purposes keeping all in the top level directory.
 
 Wishlist:
 
-* One game server being able to handle multiple concurrent different player games
+- [] One game server being able to handle multiple concurrent different player games
 
-* Players being able to communicate with each other e.g. using a lookup registry to find other players 
+- [] Players being able to communicate with each other e.g. using a lookup registry to find other players 
 and being able to play in tandem
 
-* A new type cyborg which alternates between human and robot playing
+- [] A new type cyborg which alternates between human and robot playing
 
-* A stumper word process which plays the games before hand with all the words and identifies 
+- [] A stumper word process which plays the games before hand with all the words and identifies 
 the word stumpers for use in real game play
 
-* New strategy algorithms which try to learn player's guessing style - aka machine learning
+- [] New strategy algorithms which try to learn player's guessing style - aka machine learning
 
-* Truly distributed hangman running on multiple nodes and machines
+- [] Truly distributed hangman running on multiple nodes and machines
 
 
 
-Enjoy!
+Enjoy! :metal 
 Bibek Pandey
