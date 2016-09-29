@@ -3,7 +3,7 @@ Hangman
 
 Plays really fun hangman word games.  
 
-![Logo][https://bytebucket.org/brpandey/elixir-hangman/raw/3fc67f5e2a8e2b8b54d45d35a0fd5155a7745e7e/priv/images/hangman.jpg]
+![Logo](https://bytebucket.org/brpandey/elixir-hangman/raw/3fc67f5e2a8e2b8b54d45d35a0fd5155a7745e7e/priv/images/hangman.jpg)
 
 Plays interactive games allowing the player to choose letters
 or allows the computer robot to guess instead.  
