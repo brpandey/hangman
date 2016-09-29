@@ -11,7 +11,9 @@ Hangman
 >
 > – Wikipedia
 
-Plays really fun hangman word games.  [Wikipedia Description](https://en.wikipedia.org/wiki/Hangman_(game))
+ [Wikipedia Description](https://en.wikipedia.org/wiki/Hangman_(game))
+
+Plays really fun hangman word games. 
 
 Plays interactive games allowing the user to choose letters
 or allows the computer to guess instead.  
