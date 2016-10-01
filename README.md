@@ -202,7 +202,7 @@ Command Line - Human type with 2 random words requested
 Command Line - Parallel option with 100 secrets
 
 Open another terminal window and type `top` and press `1` to see all cores or `htop` which will automatically show the cores
-After the below command has been issued, check the the cpu utilization of both cores while this runs!
+After the below command has been issued, check the the cpu utilization of the cores while this runs!
 
 ```elixir
 $ ./hangman_game -n yoshi -pl -r 100
