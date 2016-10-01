@@ -13,15 +13,13 @@ Hangman
 
  [Wikipedia Description](https://en.wikipedia.org/wiki/Hangman_(game))
 
-Plays really fun hangman word games. 
+Plays really fun hangman word games. What did you expect? :)
 
 Plays interactive games allowing the user to choose letters
-or allows the computer to guess instead.  
+or allows the computer to guess instead.  Supports parallel play using 
+CPU cores concurrently. Only when the set of secrets is 40 or greater 
+is this speedup tangible
 
-Supports parallel play using CPU cores concurrently. 
-Only when the set of secrets is 40 or greater is this speedup tangible
-
-What did you expect? :)
 
 ![Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
@@ -44,9 +42,9 @@ knowing the secret hangman word(s) beforehand as the system randomly
 selects the secret(s) to play against.
 
 * Robot games are auto-guessed based on simple strategy heuristics. 
-Player game archival can be captured through logging, e.g. --log option
 
-* The display and log options are exclusive to the command line client. 
+* Player game archival can be captured through logging, e.g. --log option
+The display and log options are exclusive to the command line client. 
 The human guessing timeout `-ti` option allows values between 0 secs and 10 secs
 to choose a letter. The parallel `-pl` option allows games to be played on 
 all the cores of your system
@@ -203,31 +201,31 @@ Command Line - Human type with 2 random words requested
 
 Command Line - Parallel option with 100 secrets
 
-Open another terminal window and type `top` and press `1` to see all cores or `atop` which will automatically show the cores
+Open another terminal window and type `top` and press `1` to see all cores or `htop` which will automatically show the cores
 After the below command has been issued, check the the cpu utilization of both cores while this runs!
 
 ```elixir
 $ ./hangman_game -n yoshi -pl -r 100
-" (TUMBLEBUG: 7) (BEATIFIC: 5) (BOUDOIRS: 7) (RAVENOUSNESS: 2) (PLEADING: 10) 
-  (CHICANER: 6) (HELMETLIKE: 5) (MISLABEL: 5) (WANDERINGS: 6) (TENDERLY: 4) 
-  (TAENIASES: 6) (PROVOCATIVENESS: 6) (SPACESHIPS: 6) (DAYDREAMER: 6) (TALKIE: 5) 
-  (BAROUCHE: 5) (REPULSIVE: 7) (PASTINA: 6) (THWARTS: 7) (DEMANDERS: 4) 
-  (FOSTERAGES: 4) (COMPUTE: 9) (MISLEADER: 5) (REPPED: 7) (WORSHIPPER: 3) 
-  (ABOULIC: 6) (CEROTYPES: 6) (LISLES: 25) (BEHAVIOUR: 4) (ANTIMACASSARS: 3) 
-  (BLOWTORCH: 6) (DREDGING: 9) (WIDOWHOODS: 3) (RABIC: 8) (SURVIVABILITIES: 6) 
-  (BACKSIDE: 7) (WESTER: 9) (MISFUNCTION: 5) (WREATHEN: 5) (PATCHERS: 9) 
-  (REACCLIMATIZE: 2) (TERRIBLENESS: 4) (WANIEST: 9) (DESICCATE: 6) (DINGS: 8) 
-  (LANDLUBBERLY: 5) (DOWNTRODDEN: 5) (FADING: 25) (CONCUPISCENCES: 2) (DRIBBLERS: 7) 
-  (OUTRANGE: 8) (SYLLABLE: 6) (DUMBFOUNDERING: 4) (MISTIER: 6) (WOLFRAMITES: 5) 
-  (DIAPOSITIVE: 4) (GLUCINUM: 6) (ARCHAEANS: 2) (UNDERTRICKS: 4) (LONESOMELY: 5) 
-  (CHICANER: 6) (HALYARD: 10) (PLEADING: 10) (CRATED: 9) (RAGGEDY: 5) 
-  (CONCUPISCENCES: 2) (CATER: 6) (OUTRODE: 7) (MIDLAND: 7) (NEPHRISMS: 6) 
-  (SOUNDS: 7) (AMMONITIC: 4) (GRUNTLED: 25) (KNOBKERRIE: 2) (INTERMEDDLERS: 4) 
-  (LEFTISM: 7) (CARVEL: 25) (PSYCHOCHEMICALS: 4) (AGREEABLE: 2) (DOGSLEDS: 7) 
-  (OUTSCORNS: 6) (TETRAHYMENAS: 2) (HINTERLANDS: 5) (BOUNCED: 10) (INEDUCABILITIES: 3) 
-  (ANTHOPHYLLITE: 5) (ENGARLANDED: 3) (PROPHECIES: 6) (SUPERHEAVY: 5) (SNEAP: 6) 
-  (CHARADES: 6) (FUNNER: 25) (RISKING: 10) (PERISHABLES: 3) (SNORT: 9) 
-  (ETYMOLOGIST: 3) (URETER: 6) (HETEROGAMOUS: 5) (GRANITELIKE: 3) (ATAXIAS: 6)"
+  "Game Over! Average Score: 6.31, # Games: 100, Scores:  (ASSURED: 5) (NARWHALES: 6) 
+  (WIRRA: 6) (NURSE: 10) (RETROFIT: 5) (WILLOWWARE: 7) (DOBLAS: 8) (OVOLI: 6) 
+  (HUARACHES: 5) (STROBILATIONS: 6) (BEARABLY: 6) (AQUATINTED: 5) (IMMATERIALIZING: 3) 
+  (JEALOUSNESS: 5) (DANDLER: 9) (OXYPHIL: 6) (UNILOCULAR: 5) (SUPPOSITION: 4) 
+  (WHORING: 9) (WATERPROOFER: 3) (INQUIETS: 6) (ROISTEROUS: 4) (SAPROPEL: 4) 
+  (REDBIRDS: 6) (YEGGS: 25) (WIRRA: 6) (COFOUNDS: 5) (BITCHILY: 7) (ALGEBRAICALLY: 4) 
+  (RECLAMES: 7) (CYCASIN: 6) (ASSURED: 5) (NONEXPLOSIVE: 5) (UNDERCOATS: 7) 
+  (ANTHILLS: 5) (COARSENESSES: 5) (SIMULTANEITY: 2) (INTERCESSORY: 5) (ODORIZE: 5) 
+  (STALAGMITIC: 4) (WOESOME: 6) (CAVILING: 6) (ORDINARIES: 6) (RALLY: 7) 
+  (INHIBITIONS: 4) (SOTERIOLOGIES: 4) (TRIBE: 9) (STOCKROOMS: 5) (SIPHONED: 7) 
+  (EQUESTRIANS: 5) (BOWDLERIZATIONS: 6) (PEEVES: 6) (LUMINESCENCE: 2) (REAVOWING: 6) 
+  (AGENTING: 6) (SWEPT: 6) (SWIFTLY: 5) (ETHNOHISTORIAN: 2) (STEWBUM: 7) 
+  (PARAMETRICALLY: 3) (ONSCREEN: 4) (PRECODED: 6) (VENDETTA: 6) (PEKOES: 25) 
+  (COLOBOMA: 5) (CORROBORATOR: 3) (DEVOICES: 7) (EPICURISMS: 3) (GLUTTING: 10) 
+  (RAVIGOTES: 7) (ENFEVERS: 4) (NONHOSTILE: 5) (TUTORED: 8) (CRAWLER: 10) 
+  (NATUROPATHS: 5) (THERAPEUTICS: 4) (BASTERS: 6) (BRUTISM: 25) (CONDENSING: 4) 
+  (RANKS: 8) (BAPTISE: 6) (SATURNALIAN: 6) (TEMPOS: 6) (PARTNERSHIP: 3) (COLPORTEURS: 5) 
+  (CAPORALS: 6) (SMART: 8) (SCRIVE: 9) (BLURRY: 9) (BALLETOMANE: 3) (DANDLER: 9) 
+  (PETTIFOG: 5) (PREDOMINANCY: 5) (TAPERED: 6) (DENUDEMENT: 4) (BLOODWORM: 5) 
+  (ROSEFISH: 8) (FARDS: 9) (REGRESSORS: 7) (QUIBBLER: 7)"
 ```
 
 ### Game Play - 4

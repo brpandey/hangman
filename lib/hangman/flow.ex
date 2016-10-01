@@ -77,7 +77,7 @@ defmodule Hangman.Flow do
       # result of first shard, which is game history for 1 game, key is e.g. {"typhoon", 1}
       1 -> Map.get(result, {name, 1})
       # for multiple secrets return scores summary for unsharded key e.g. "typhoon"
-      _ -> Map.get(result, name) 
+      _ -> Map.get(result, name) |> summarize
 
     end
 
@@ -108,6 +108,39 @@ defmodule Hangman.Flow do
     |> Map.update(name, scores, &(&1 <> scores))
     
     acc
+  end
+
+  @docp """
+  Prepend avg score and num game info to scores text by computing the average score
+  """
+
+  @spec summarize(String.t) :: String.t
+  def summarize(scores) do
+
+    # Convert a string such as:
+    # " (JOLLITY: 25) (PEMICANS: 7) (PALPITATION: 5) (UNSILENT: 6) (SUPERPROFITS: 4) (GERUNDIVE: 6) (PILEATE: 7) (OVERAWES: 8) (TUSSORS: 6) (ENDARTERECTOMY: 1) (NONADDITIVE: 3) (WAIVE: 25) (MACHINEABILITY: 4) (COURANTO: 6) (NONOCCUPATIONAL: 4) (SLATED: 7) (REMARKET: 6) (BRACTLET: 6) (SPECTROMETRIC: 2) (OXIDOREDUCTASES: 2)"
+
+    l = scores |> String.split([" (", ") (" , ")"], trim: true)
+
+    # After the String.split we have a list like so:
+
+    #["JOLLITY: 25", "PEMICANS: 7", "PALPITATION: 5", "UNSILENT: 6",
+    # "SUPERPROFITS: 4", "GERUNDIVE: 6", "PILEATE: 7", "OVERAWES: 8", "TUSSORS: 6",
+    # "ENDARTERECTOMY: 1", "NONADDITIVE: 3", "WAIVE: 25", "MACHINEABILITY: 4",
+    # "COURANTO: 6", "NONOCCUPATIONAL: 4", "SLATED: 7", "REMARKET: 6", "BRACTLET: 6", 
+    # "SPECTROMETRIC: 2", "OXIDOREDUCTASES: 2"]
+    
+    games = l |> Enum.count
+
+    total_score = l |> Enum.reduce(0, fn x, acc -> 
+      [_a, b] = String.split(x, ": ")   
+      score = String.to_integer(b)
+      acc + score
+    end)
+    
+    avg = total_score / games
+    
+    "Game Over! Average Score: #{avg}, # Games: #{games}, Scores: #{scores}"
   end
 
 end

@@ -64,7 +64,7 @@ defmodule Hangman.Web.Test do
 
     # testing that 2 secrets don't give full game history just scores
 
-    body2 = " (TALENTED: 6) (HERMETIC: 4)"
+    body2 = "Game Over! Average Score: 5.0, # Games: 2, Scores:  (TALENTED: 6) (HERMETIC: 4)"
 
     {:ok, response = %HTTPoison.Response{}} =
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=carmen&secret[]=talented&secret[]=hermetic")
@@ -125,7 +125,7 @@ defmodule Hangman.Web.Test do
     {:ok, response = %HTTPoison.Response{}} = 
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=gustav&secret[]=cumulate&secret[]=avocado&secret[]=eruptive")
 
-    assert response.body == " (CUMULATE: 8) (AVOCADO: 6) (ERUPTIVE: 5)"
+    assert response.body == "Game Over! Average Score: 6.333333333333333, # Games: 3, Scores:  (CUMULATE: 8) (AVOCADO: 6) (ERUPTIVE: 5)"
 
   end
 
@@ -134,7 +134,7 @@ defmodule Hangman.Web.Test do
     {:ok, response = %HTTPoison.Response{}} = 
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=gustav&secret[]=masterful&secret[]=azerbaijan&secret[]=eruptive")
 
-    assert response.body == " (MASTERFUL: 6) (AZERBAIJAN: 0) (ERUPTIVE: 5)"
+    assert response.body == "Game Over! Average Score: 3.6666666666666665, # Games: 3, Scores:  (MASTERFUL: 6) (AZERBAIJAN: 0) (ERUPTIVE: 5)"
 
   end
 
