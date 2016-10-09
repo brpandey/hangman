@@ -4,11 +4,102 @@ defmodule Dictionary.Flow do
 
   @num_stages 27
 
-  def run do
 
-    root_path = "/home/bibek/Workspace/elixir-hangman/priv"    
-    path = "#{root_path}/dictionary/data/words.txt"
+  @root_path "/home/bibek/Workspace/elixir-hangman/priv/"    
+  @dictionary_path "#{@root_path}/dictionary/regular/"
+  @dictionary_file "words.txt"
+  
+  @partition_path "#{@dictionary_path}/partition/"
+  @manifest_file "manifest.txt"
+  @partition_file "words_key_"
 
+
+  # Dictionary Flow transforms the original dictionary file into a format suitable 
+
+  # a) initially for a flow cache setup 
+  # b) flow cache loading into ETS
+
+  # For the first flow run with the dictionary file, we run flow and store the results
+  # in partitioned files.  We pass a map of file_pids keyed by word length key, to 
+  # facilitate writing to the intermediate partition files
+
+  # For subsequent flow runs with the dictionary file, we simply run flow on the cached 
+  # output files (the intermediate partition files) saving the flow intermediary 
+  # processing -- windowing etc...  Allowing us to simply load the file data into ETS 
+  # without hassling with any post - processing
+
+  def main() do
+    setup |> run |> cleanup
+  end
+
+  # path = "/home/bibek/Workspace/elixir-hangman/priv/dictionary/regular/partition/words_key_"
+
+  def setup do
+
+    # Check to see if dictionary path is valid, if not error
+    case File.exists?(@dictionary_path <> @dictionary_file) do
+      true -> :ok
+      false -> raise "Unable to find dictionary file" 
+    end
+
+
+    # The presence of a partition manifest file indicates whether we have finished
+    # the partition steps, if not found we need to partition
+
+    # This allows us to run the main flow logic once and store the results of the
+    # flow in a set of files to be quickly loaded into ETS on second pass
+    # These generate partition files are cache files so to speak for Dictionary.Flow.Cache
+
+
+    # So, let's check whether the partition files have already been generated
+    # If so, forward to Dictionary.Flow.Cache.run
+    # If not, setup partition file state and setup Flow with writing to partition files
+
+    case File.exists?(@partition_path <> @manifest_file) do
+
+      false -> 
+        # Manifest file doesn't exist -> we haven't partitioned into files yet
+
+        # Setup the partition file state
+        # Remove the partition dir + files in case it exists 
+        # so we don't have any prior state
+        File.rm_rf!(@partition_path)
+        
+        # Start clean with a new partition dir
+        File.mkdir!(@partition_path)
+
+        # Take a range of key values, and generate a map which contain k-v paris, where
+        # the key is the word length, and values are open file pids
+
+        # This map will be used when doing the partition each - file write in the 
+        # context of the flow processing
+
+        partial_name = @partition_path <> @partition_file  
+      
+        key_file_map = 2..28 |> Enum.reduce(%{}, fn key, acc ->
+          file_name = partial_name <> "#{key}"
+          IO.puts "file name is : #{inspect file_name}"
+          {:ok, pid} = File.open(file_name, [:append])
+          Map.put(acc, key, pid)
+        end)
+        
+        {:flow_initial, @dictionary_path <> @dictionary_file, key_file_map}
+
+      true -> 
+        {:flow_cache, @partition_path <> @partition_file} # calls Dictionary.Flow.Cache.run
+    end
+
+  end
+  
+
+
+  def run({:flow_cache, path}) when is_binary(path) do
+
+    #Dictionary.Flow.Cache.run(path)
+    :ok
+  end
+
+  def run({:flow_initial, path, %{} = key_file_map}) when is_binary(path) do
 
     # Basically we want checkpoint snapshots of 1000 events for each partition
 
@@ -25,7 +116,7 @@ defmodule Dictionary.Flow do
     {19, 328}, {20, 159}, {21, 62}, {22, 29}, {23, 13}, {24, 9}, {25, 2},]{28, 1}]
 
 
-    ==> So we use Triggers! to process the words in fixed sized containers
+    Now, we use Triggers to process the words in fixed sized containers
 
     Here's an example of the words organized into 1000 event buckets for each
     partition key (which is roughly the word length key) 
@@ -46,30 +137,36 @@ defmodule Dictionary.Flow do
     # is checkpointed every 1000 events
     window = Flow.Window.global |> Flow.Window.trigger_every(1000, :reset)
 
-
-    File.stream!(path)
+    File.stream!(path, read_ahead: 100_000)
     |> Flow.from_enumerable()
     |> Flow.map(&event_map/1)
     |> Flow.partition(window: window, stages: @num_stages, hash: &event_route/1)
     |> Flow.reduce(fn -> %{} end, &partition_reduce/2)
-    |> Flow.each_state(&partition_each/1)
+    |> Flow.each_state(fn state -> partition_each(state, key_file_map) end)
 #    |> Flow.emit(:state)
     |> Flow.run
 
 #    IO.puts "Result is #{inspect result}"
+
+    {:ok, key_file_map}
   end
 
 
-  # Map each event into a tuple event
-  def event_map(event) when is_binary(event) do
+
+  ###################################
+  #  START - FLOW HELPER FUNCTIONS
+  ###################################
+
+  # Maps each event in parallel to a tuple event
+  defp event_map(event) when is_binary(event) do
     event = event |> String.trim |> String.downcase
     {String.length(event), event}    
   end
 
 
-  # caclulate the partition hash for the event using the event_route function
+  # Caclulate the partition hash for the event using the event_route function
   # which returns partition to route the event to
-  def event_route({key, word}) when is_integer(key) and is_binary(word) do
+  defp event_route({key, word}) when is_integer(key) and is_binary(word) do
 
     # If we have key lengths ranging from 2..28 we have 27 partitions
     # So for example, given a key of length 7 this would go into
@@ -86,8 +183,8 @@ defmodule Dictionary.Flow do
 
   # Reduce the partition data given the window trigger of 1000 events
   # The acc state is reset after the trigger is materialized
-  # The reduce is implement per window partition
-  def partition_reduce({key, word}, %{} = acc) do
+  # The reduce is run per window partition 
+  defp partition_reduce({key, word}, %{} = acc) do
 #      IO.puts "key is #{key}, word is #{word}"
       Map.update(acc, key, [word], &([word] ++ &1))
   end
@@ -95,21 +192,58 @@ defmodule Dictionary.Flow do
   # Invoked after partition reduce
   # Apply function to each partition's state which is a map
 
-  def partition_each(%{} = map) do
+  defp partition_each(%{} = acc_map, %{} = key_file_map) do
 
     # Only one key value in each partition map state
-    case Map.to_list(map) do
+    case Map.to_list(acc_map) do
       [] -> ""
-      [{_k, _v}] -> 
-        IO.puts "map_state result: #{inspect map_size(map)}"
-    end
+      [{k, v}] -> 
+        IO.puts "map_state result: #{inspect {k, Enum.count(v)}}"
 
-    #      |> Enum.reduce([], fn {key, words}, acc ->
-    #        [{key, Enum.count(words)}] ++ acc
-    #      end)
+        # retrieve file pid and write partition data to file
+        file_pid = Map.get(key_file_map, k)
+
+        IO.write(file_pid, "#{k}: #{Enum.join(v, ", ")}")
+        # Add delimiter after every chunk, easier for chunk retrieval
+        IO.write(file_pid, "    \n")
+    end
 
     :ok
   end
+
+
+  ###################################
+  #  END - FLOW HELPER FUNCTIONS
+  ###################################
+
+
+  def cleanup(:ok), do: :ok
+
+  def cleanup({:ok, %{} = key_file_map}) do
+
+    # close partition files from file_map
+    key_file_map |> Enum.each(fn {_key, pid} ->
+      :ok = File.close(pid)
+    end)
+
+
+    # Create manifest file to signal flow initial processing is finished
+
+    manifest_path = @partition_path <> @manifest_file
+
+    # Write manifest file
+    # For now we just put :ok into file
+    # But for future, 
+    # it could be populated with the checksums of each partitioned file, etc..
+
+    case File.exists?(manifest_path) do
+      true -> :ok
+      false -> File.touch(manifest_path)
+    end
+
+  end
+
+
 
 end
 
