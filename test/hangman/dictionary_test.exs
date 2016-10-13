@@ -57,7 +57,7 @@ defmodule Hangman.Dictionary.Test do
     # as well as load everything correctly into ETS
 
     dir_path = Dictionary.directory_path(args)
-    manifest = dir_path <> "partition/manifest"
+    manifest = dir_path <> "cache/manifest"
 
     File.rm(manifest)
 
@@ -65,7 +65,7 @@ defmodule Hangman.Dictionary.Test do
 
   def check_partition_structure(args) do
     dir_path = Dictionary.directory_path(args)
-    {:ok, list} = File.ls(dir_path <> "partition/")
+    {:ok, list} = File.ls(dir_path <> "cache/")
 
     assert ["manifest", "words_key_10.txt", "words_key_11.txt", "words_key_12.txt",
             "words_key_13.txt", "words_key_14.txt", "words_key_15.txt", "words_key_16.txt", 

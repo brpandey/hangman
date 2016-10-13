@@ -9,3 +9,5 @@ hangman_game
 mix.lock
 *.txt
 /rel
+/priv/dictionary/big/cache/
+/priv/dictionary/regular/cache/

@@ -32,13 +32,13 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
   defp run_setup_test do
     Dictionary.stop
 
-    {:ok, _pid} = Dictionary.Cache.start_link([regular: true, ingestion: true])
+    {:ok, _pid} = Dictionary.Cache.start_link([type: :regular, ingestion: true])
   end
   
   defp run_test do
     Dictionary.stop
 
-    {:ok, pid} = Dictionary.Cache.start_link([regular: true, ingestion: true])
+    {:ok, pid} = Dictionary.Cache.start_link([type: :regular, ingestion: true])
 
     IO.puts "finished cache setup"
 

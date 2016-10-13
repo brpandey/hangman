@@ -58,10 +58,12 @@ defmodule Hangman.Ingestion.Cache.Flow do
     )
     |> Flow.run
 
+
+    :ok
   end
 
 
-  # Event is a partition file line up to new line
+  # Event is a cache file line up to new line
   # we split it first into a line that contains the word length key
   # and the words data
 

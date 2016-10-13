@@ -13,7 +13,7 @@ defmodule Hangman.Dictionary.Ingestion do
 
   For the first step, we run flow and store the results
   in partitioned files.  We pass a map of file_pids keyed by word length key, to 
-  facilitate writing to the intermediate partition files
+  facilitate writing to the intermediate cache files
 
   For subsequent runs with the dictionary file, we simply run flow on the cached 
   output files (the intermediate partition files) saving the initial flow intermediary 
@@ -28,8 +28,8 @@ defmodule Hangman.Dictionary.Ingestion do
   # with directory name marking the difference e.g. "big"
   @dictionary_file_name "words.txt"
 
-  # Partition
-  @partition_dir "partition/"
+  # Cache Partition
+  @cache_dir "cache/"
   @partition_file_prefix "words_key_"
   @partition_file_suffix ".txt"
 
@@ -52,9 +52,9 @@ defmodule Hangman.Dictionary.Ingestion do
 
       {dir, true} ->
         dictionary_path = dir <> @dictionary_file_name
-        partition_full_dir = dir <> @partition_dir
+        cache_full_dir = dir <> @cache_dir
 
-        setup(dictionary_path, partition_full_dir) |> process
+        setup(dictionary_path, cache_full_dir) |> process
 
         :ok
     end
@@ -70,8 +70,8 @@ defmodule Hangman.Dictionary.Ingestion do
   """
 
   @spec setup(binary, binary) :: {atom, binary, binary, map} | {atom, binary}
-  def setup(dictionary_path, partition_dir)
-  when is_binary(dictionary_path) and is_binary(partition_dir) do
+  def setup(dictionary_path, cache_dir)
+  when is_binary(dictionary_path) and is_binary(cache_dir) do
 
     # Check to see if dictionary path is valid, if not error
     case File.exists?(dictionary_path) do
@@ -90,21 +90,21 @@ defmodule Hangman.Dictionary.Ingestion do
 
     # So, let's check whether the partition files have already been generated
     # If so, forward to Dictionary.Flow.Cache.run
-    # If not, setup partition file state and setup Flow with writing to partition files
+    # If not, setup partition cache file state and setup Flow with writing to partition files
 
-    case File.exists?(partition_dir <> @manifest_file_name) do
+    case File.exists?(cache_dir <> @manifest_file_name) do
       false -> 
         # Manifest file doesn't exist -> we haven't partitioned into files yet
         
-        # Setup the partition file state
-        # Remove the partition dir + files in case it exists cleaning any prior state
+        # Setup the cache state
+        # Remove the partition cache dir + files in case it exists, cleaning any prior state
 
         # NOTE: SAFE TO USE RM_RF SINCE WE DON"T ASK FOR USER INPUT INVOLVING PATHS
         # ALL COMPILE-TIME STATIC PATHS
-        File.rm_rf!(partition_dir) 
+        File.rm_rf!(cache_dir) 
         
-        # Start clean with a new partition dir
-        File.mkdir!(partition_dir)
+        # Start clean with a new cache dir
+        File.mkdir!(cache_dir)
         
         # Take a range of key values, and generate a map which contain k-v parts, where
         # the key is the word length, and values are open file pids
@@ -112,7 +112,7 @@ defmodule Hangman.Dictionary.Ingestion do
         # This map will be used when doing the partition each - file write in the 
         # context of the flow processing
 
-        partial_name = partition_dir <> @partition_file_prefix  
+        partial_name = cache_dir <> @partition_file_prefix  
       
         key_file_map = Dictionary.key_range |> Enum.reduce(%{}, fn key, acc ->
           file_name = partial_name <> "#{key}" <> @partition_file_suffix
@@ -121,9 +121,9 @@ defmodule Hangman.Dictionary.Ingestion do
           Map.put(acc, key, pid)
         end)
         
-        {:ingestion_full, dictionary_path, partition_dir, key_file_map}
+        {:ingestion_full, dictionary_path, cache_dir, key_file_map}
 
-      true -> {:ingestion_cache, partition_dir}
+      true -> {:ingestion_cache, cache_dir}
     end
 
   end
@@ -145,18 +145,18 @@ defmodule Hangman.Dictionary.Ingestion do
   """
 
   @spec process({atom, binary} | {atom, binary, binary, map}) :: :ok
-  def process({:ingestion_full, dictionary_path, partition_dir, 
+  def process({:ingestion_full, dictionary_path, cache_dir, 
                %{} = key_file_map}) do
 
     Ingestion.Flow.run(dictionary_path, key_file_map)
-    cleanup(partition_dir, key_file_map)
+    cleanup(cache_dir, key_file_map)
 
-    Ingestion.Cache.Flow.run(partition_dir)
+    Ingestion.Cache.Flow.run(cache_dir)
     :ok
   end
 
-  def process({:ingestion_cache, partition_dir}) do
-    Ingestion.Cache.Flow.run(partition_dir)
+  def process({:ingestion_cache, cache_dir}) do
+    Ingestion.Cache.Flow.run(cache_dir)
     :ok
   end
   
@@ -167,7 +167,7 @@ defmodule Hangman.Dictionary.Ingestion do
   """
 
   @spec cleanup(binary, map) :: :ok
-  def cleanup(partition_dir, %{} = key_file_map) do
+  def cleanup(cache_dir, %{} = key_file_map) do
 
     # Close partition files from file_map
     key_file_map |> Enum.each(fn {_key, pid} ->
@@ -176,7 +176,7 @@ defmodule Hangman.Dictionary.Ingestion do
 
 
     # Create manifest file to signal flow initial processing is finished
-    manifest_path = partition_dir <> @manifest_file_name
+    manifest_path = cache_dir <> @manifest_file_name
 
     # Write manifest file
     # For now we just put :ok into file
