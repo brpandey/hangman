@@ -12,7 +12,7 @@ defmodule Hangman.Counter.Test do
 
   # Basic CRUD Functionality: Create, Read, Update, Delete
   
-  test "test basic counter crud" do
+  test "basic counter crud" do
 
     mystery_letter = "-"
     hangman_pattern = "A-OCA-O"
@@ -84,4 +84,39 @@ defmodule Hangman.Counter.Test do
 
     IO.puts "Counter: deleted -- #{inspect Counter.delete(tally)}"
   end
+
+
+  test "merge operation, two non-empty counters" do
+
+    a = Counter.new("mississippi")
+    
+    assert [{"i", 4}, {"m", 1}, {"p", 2}, {"s", 4}] = a |> Counter.items
+
+    b = Counter.new("louisiana")  
+
+    assert [{"a", 2}, {"i", 2}, {"l", 1}, {"n", 1}, {"o", 1}, {"s", 1}, {"u", 1}] = 
+      b |> Counter.items
+
+    c = Counter.merge(a, b)
+
+    assert [{"a", 2}, {"i", 6}, {"l", 1}, {"m", 1}, {"n", 1}, {"o", 1}, {"p", 2},
+            {"s", 5}, {"u", 1}] == c |> Counter.items
+
+  end
+
+
+  test "merge operation, two counters, 1 empty" do
+    
+    a = Counter.new("mississippi")
+
+    b = Counter.new("")
+
+    c = Counter.merge(a, b)
+
+    # The merged counter should be the same as the original non-empty counter
+    assert a |> Counter.items == c |> Counter.items
+
+  end
+
+
 end

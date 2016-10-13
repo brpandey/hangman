@@ -28,7 +28,8 @@ defmodule Hangman.Mixfile do
     [
       applications: [:logger, :gproc, :httpoison, :cowboy, 
                      :plug, :exprof, :ex_doc, :runtime_tools, :gen_stage],
-      mod: {Hangman.Application, [{Hangman.Dictionary.regular, true}]}
+      mod: {Hangman.Application, [type: :regular, ingestion: true]}
+#      mod: {Hangman.Application, [type: :big, ingestion: true]}
     ]
   end
 

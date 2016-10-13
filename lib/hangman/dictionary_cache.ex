@@ -4,31 +4,15 @@ defmodule Hangman.Dictionary.Cache do
   require Logger
 
   @moduledoc """
-  Module provides access to a dictionary word cache. 
-  Provides lookup routines to access `chunks`, `tallys`, and `random` words.
+  Module implements a GenServer process 
+  providing access to a dictionary word cache. 
+  Handles lookup routines to access `chunks`, `tallys`, and `random` words.
 
-  `Dictionary.Cache` loads dictionary words into `chunks` and stores them
-  into `ETS`.  Upon startup, letter frequency `tallies` are computed 
-  and stored into `ETS`. Words identified as `random` are tagged and 
-  stored as well.
+  Serves as a wrapper around dictinary specific implementation
   """
 
-  alias Hangman.{Chunks, Counter, Dictionary}
-  alias Hangman.Dictionary.File.{Reader}
+  alias Hangman.{Dictionary}
 
-  @ets_table_name :dictionary_cache_table
-
-  # Used to insert the word list chunks and frequency counter tallies, 
-  # indexed by word length 2..28, for both the normal and big 
-  # dictionary file sizes
-  @possible_length_keys MapSet.new(2..28)
-
-
-  # Use for admin of random words extract 
-  @ets_random_words_key :random_hangman_words
-  @random_words_per_chunk 20
-  @min_random_word_length 5
-  @max_random_word_length 15
 
   @name __MODULE__
   # External API
@@ -38,8 +22,7 @@ defmodule Hangman.Dictionary.Cache do
   """
 
   @spec start_link(Keyword.t) :: {:ok, pid}
-  def start_link(args \\ [{Dictionary.regular, true}]) do
-    _ = Logger.debug "Starting Hangman Dictionary Cache Server, args #{inspect args}"
+  def start_link(args) do
     options = [name: :hangman_dictionary_cache_server]
     GenServer.start_link(@name, args, options)
   end
@@ -54,33 +37,6 @@ defmodule Hangman.Dictionary.Cache do
 
   """
 
-  @spec lookup(:random | :chunks | :tally, pos_integer) ::  [String.t] | Counter.t | Chunks.t
-
-  def lookup(:random, count) do
-    # Uses global server name to retrieve the server pid
-    pid = Process.whereis(:hangman_dictionary_cache_server)  
-    true = is_pid(pid) 
-    
-    lookup(pid, :random, count)
-  end
-
-  def lookup(:tally, length_key)
-  when is_integer(length_key) and length_key > 0 do
-    # Uses global server name to retrieve the server pid
-    pid = Process.whereis(:hangman_dictionary_cache_server)  
-    true = is_pid(pid) 
-  
-    lookup(pid, :tally, length_key)
-  end
-
-  def lookup(:chunks, length_key)
-  when is_integer(length_key) and length_key > 0 do
-    # Uses global server name to retrieve the server pid
-    pid = Process.whereis(:hangman_dictionary_cache_server)
-    true = is_pid(pid)
-
-    lookup(pid, :chunks, length_key)
-  end
 
   @spec lookup(pid, atom, pos_integer) :: Chunks.t | Counter.t | [String.t] | no_return
   def lookup(pid, :random, count) do
@@ -106,23 +62,20 @@ defmodule Hangman.Dictionary.Cache do
     GenServer.call pid, :stop
   end
 
-  def stop do
-    pid = Process.whereis(:hangman_dictionary_cache_server)
-
-    if is_pid(pid), do: GenServer.call pid, :stop
-  end
 
   @doc """
   GenServer callback to initalize server process
 
-  Loads normalized `Dictionary.File` into `ETS`. Calculates and 
-  loads `chunked` word lists. Computes and stores letter 
-  `tallies` by word length `key`.  Tags and stores `random` words.
+  Kicks off ingestion process to load dictionary words
   """
 
   @callback init(Keyword.t) :: tuple
   def init(args) do
-    :ok = setup(args)
+
+    _ = Logger.debug "Starting Hangman Dictionary Cache Server, args #{inspect args}"
+
+    Dictionary.ETS.setup(args)
+
     {:ok, {}}
   end
 
@@ -132,7 +85,7 @@ defmodule Hangman.Dictionary.Cache do
 
   #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_random, count}, _from, {}) do
-    data = do_lookup(:random, count)
+    data = Dictionary.ETS.get(:random, count)
     {:reply, data, {}}
   end
 
@@ -143,7 +96,7 @@ defmodule Hangman.Dictionary.Cache do
   #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_tally, length_key}, _from, {})
   when is_integer(length_key) do
-    data = do_lookup(:tally, length_key)
+    data = Dictionary.ETS.get(:counter, length_key)
     {:reply, data, {}}
   end
 
@@ -152,7 +105,7 @@ defmodule Hangman.Dictionary.Cache do
   """
   #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_chunks, length_key}, _from, {}) do
-    data = do_lookup(:chunks, length_key)
+    data = Dictionary.ETS.get(:chunks, length_key)
     {:reply, data, {}}
   end
  
@@ -175,349 +128,6 @@ defmodule Hangman.Dictionary.Cache do
     :ok
   end
 
-  # Dictionary Cache Abstraction Methods
-
-
-  # CREATE (and UPDATE)
-
-  # Setup cache ets
-
-  @doc """
-  Loads normalized `Dictionary.File` into `ETS`. Calculates and 
-  loads `chunked` word lists. Computes and stores letter 
-  `tallies` by word length `key`.  Tags and stores `random` words.
-  """
-
-  @spec setup(Keyword.t) :: :ok | no_return
-  def setup(args) do
-
-    case :ets.info(@ets_table_name) do
-      :undefined -> # if fresh, empty table only process
-        # normalize then load into table
-        Dictionary.normalize(args) |> load(@ets_table_name)
-
-      _ -> raise HangmanError, "cache already setup!"
-    end
-
-    :ok
-  end
-
-
-  # READ
-  
-  #Retrieves all words tagged as random upon startup,
-  #then randomly chooses count words from this set, and returns
-  #the shuffled words result.
-
-  @spec do_lookup(:random | :tally | :chunks, pos_integer) :: [String.t] | Counter.t | Chunks.t | no_return
-
-  defp do_lookup(:random, count) 
-  when is_integer(count) and count > 0 do
-
-    if count > Dictionary.max_random_words_request do
-      raise HangmanError, "requested random words exceeds limit"
-    end
-
-    if :ets.info(@ets_table_name) == :undefined do
-      raise HangmanError, "table not loaded yet"
-    end
-
-    # we use a module constant since the key doesn't change
-    ets_key = @ets_random_words_key
-      
-    fn_reduce_random_words = fn
-      {^ets_key, ets_value}, acc ->
-        # NOTE: value first and acc second is orders of magnitude faster
-        # then reversed
-        List.flatten(ets_value, acc)
-      _, acc -> acc 
-    end
-
-    # Since we are using a bag type, aggregate all random word key values
-    randoms = :ets.foldl(fn_reduce_random_words, [], @ets_table_name)
-
-    # seed random number generator with random seed
-
-    # crypto method apparently produces genuinely random bytes 
-    # w/o unintended side effects
-    << a :: 32, b :: 32, c :: 32 >> = :crypto.strong_rand_bytes(12)
-    r_seed = {a, b, c}
-
-    
-    _ = :rand.seed(:exsplus, r_seed)
-    _ = :rand.seed(:exsplus, r_seed)
-
-    # Note: Its not necessary to seed the random item generator but 
-    # doing so ensures our results are really random
-
-    # Using list comp to retrieve the list of count random words
-    randoms = for _x <- 1..count do Enum.random(randoms) end
-
-    # Shake and shuffle
-    randoms = Enum.shuffle(randoms)
-
-    randoms
-  end
-
-  # Retrieve dictionary tally counter given word length key
-
-  defp do_lookup(:tally, length_key) 
-  when is_number(length_key) and length_key > 0 do
-
-    if :ets.info(@ets_table_name) == :undefined do
-      raise HangmanError, "table not loaded yet"
-    end
-
-    # validate that the key is within our valid set
-    case Enum.any?(@possible_length_keys, fn x -> x == length_key end) do
-      true -> 
-        ets_key = get_ets_counter_key(length_key)
-        
-        # Grab the matching tally counter -- not sure if match_object or lookup is faster
-        case :ets.match_object(@ets_table_name, {ets_key, :_}) do
-          [] -> raise HangmanError, "counter not found for key: #{length_key}"
-          [{_key, ets_value}] -> 
-            counter = :erlang.binary_to_term(ets_value)
-            counter
-        end
-      false -> raise HangmanError, "key not in set of possible keys!"
-    end
-  end
-
-  # Retrieve chunks given word length key
-
-  defp do_lookup(:chunks, length_key) do
-
-    if :ets.info(@ets_table_name) == :undefined do
-      raise HangmanError, "table not loaded yet"
-    end
-
-    # create chunk key given length
-    ets_key = get_ets_chunk_key(length_key)
-      
-    fn_reduce_chunks = fn
-      {^ets_key, ets_value}, acc ->
-      # we pin to specified ets {chunk, length} key
-        Chunks.add(acc, ets_value) 
-      _, acc -> acc 
-    end
-
-    # since we are using the bag type, aggregate all chunk value given the same chunk_key
-    # reduce into a single Chunks type
-    chunks = :ets.foldl(fn_reduce_chunks, 
-                        Chunks.new(length_key), @ets_table_name)
-
-    chunks
-  end
-
-  # UPDATE
-
-  # Load dictionary word file into ets table @ets_table_name
-  # Segments of the dictionary word stream are broken up into chunks, 
-  # normalized and stored in the ets
-  
-  # Letter frequency counters of the dictionary words 
-  # arranged by length are also stored in the ets after the 
-  # chunks are stored
-
-  # Optimization Note: Converting word_list chunks to binaries
-  # and counters to binaries drastically reduces ets memory footprint
-
-  @spec load(String.t, :dictionary_cache_table) :: :ok
-  defp load(dict_path, table_name) 
-  when is_atom(table_name) and is_binary(dict_path) do
-    
-    _ = :ets.new(table_name, [:bag, :named_table, :protected])
-    
-    do_load(:chunks, {table_name, dict_path})
-    do_load(:counters, table_name)
-
-    :ok
-  end
-
-
-  @spec do_load(:chunks | :counters, atom | {atom, String.t}) :: :ok
-  defp do_load(:chunks, {table_name, path}) do
-
-    # For each words list chunk, insert into ets lambda
-
-    fn_ets_insert_chunks = fn 
-    {nil, 0} -> ""
-    {words_chunk_list, length} -> 
-      ets_key = get_ets_chunk_key(length)
-
-      # record actual chunk size :)
-      chunk_size = Kernel.length(words_chunk_list)
-      
-      # convert chunk into binary :)
-      bin_chunk = :erlang.term_to_binary(words_chunk_list) 
-      ets_value = {bin_chunk, chunk_size}
-      :ets.insert(table_name, {ets_key, ets_value}) 
-    end
-
-    # Group the word reader stream by chunks, 
-    # unpack the chunks then insert into ets
-    
-    Reader.new(Dictionary.chunked, path)
-    |> Reader.proceed
-    |> Stream.each(fn_ets_insert_chunks)
-    |> Stream.each(&ets_put_random_words/1)
-    |> Stream.run
-
-    info = :ets.info(@ets_table_name)
-    _ = Logger.debug ":chunks, ets info is: #{inspect info}\n"
-
-    :ok
-  end
-
-
-  # Generate the counters from the ets word chunks and store them into the ets
-  defp do_load(:counters, table_name) do
-
-    # lambda to insert verified counter structure into ets
-    fn_ets_insert_counters = fn 
-      {0, nil} -> ""
-      {length, %Counter{} = counter} ->  
-        ets_key = get_ets_counter_key(length)
-        ets_value = :erlang.term_to_binary(counter)
-        :ets.insert(table_name, {ets_key, ets_value})
-    end
-
-    # Given all the keys we inserted, create the tallys 
-    # and insert it into the ets
-
-    # Example key is {:chunk, 8}
-    # Example {length, counter} is: {8,
-    #    %Counter{entries: %{"a" => 14490, "b" => 4485, "c" => 7815,
-    #    "d" => 8046, "e" => 19600, "f" => 2897, "g" => 6009, "h" => 5111,
-    #    "i" => 15530, "j" => 384, "k" => 2628, "l" => 11026, "m" => 5793,
-    #    "n" => 12186, "o" => 11462, "p" => 5763, "q" => 422, "r" => 14211,
-    #    "s" => 16560, "t" => 11870, "u" => 7377, "v" => 2156, "w" => 2313,
-    #    "x" => 662, "y" => 3395, "z" => 783}}}
-
-    get_ets_keys_lazy(table_name) 
-    |> Stream.map(&generate_tally(table_name, &1)) 
-    |> Stream.each(fn_ets_insert_counters)
-    |> Stream.run
-
-    info = :ets.info(@ets_table_name)
-    _ = Logger.debug ":counter + chunks, ets info is: #{inspect info}\n"
-
-    :ok
-  end
-
-  # HELPERS
-
-  # Simple helpers to generate tuple keys for ets based on word length size
-
-  @spec get_ets_chunk_key(pos_integer) :: {atom, pos_integer}
-  defp get_ets_chunk_key(length_key) do
-    true = Enum.any?(@possible_length_keys, fn x -> x == length_key end)
-    _ets_key = {:chunk, length_key}
-  end
-
-  @spec get_ets_counter_key(pos_integer) :: {atom, pos_integer}
-  defp get_ets_counter_key(length_key) do
-    true = Enum.any?(@possible_length_keys, fn x -> x == length_key end)
-    _ets_key = {:counter, length_key}
-  end
-
-
-  # Tally letter frequencies from all words of similiar length
-  # as specified by length_key
-  # We are only generating tallys from chunks of words, 
-  # not existing tallies or randoms
-
-  @spec generate_tally(atom, {atom, pos_integer}) :: {pos_integer, Counter.t}
-  defp generate_tally(table_name, ets_key = {:chunk, length}) do
-    # Use for pattern matching when we do ets.foldl
-
-    # acc is the counter here
-    fn_reduce_key_chunks_into_counter = fn
-    # we pin to function arg's specified key
-    {^ets_key, {bin_chunk, _size} = _value}, acc -> 
-        # convert back from binary to words list chunk
-        word_list = :erlang.binary_to_term(bin_chunk)
-        Counter.add_words(acc, word_list)
-      
-      _, acc -> acc 
-    end
-
-    counter = :ets.foldl(fn_reduce_key_chunks_into_counter, 
-      Counter.new(), table_name)
-    
-    {length, counter}
-  end
-
-  # Lazily gets inserted ets keys, by traversing the ets table keys
-  # This is wrapped into a Stream using Stream.resource/3
-
-  # Ensure we are only getting keys which match chunk keys!
-
-
-  @spec get_ets_keys_lazy(:dictionary_cache_table) :: Enumerable.t
-  defp get_ets_keys_lazy(table_name) when is_atom(table_name) do
-    eot = :"$end_of_table"
-
-    Stream.resource(
-      fn -> [] end,
-
-      fn acc ->
-        case acc do
-          [] -> 
-            case :ets.first(table_name) do
-              ^eot -> {:halt, acc}
-              first_key = {:chunk, _} -> {[first_key], first_key}
-              first_key -> {[], first_key}
-            end
-
-          acc -> 
-            case :ets.next(table_name, acc) do  
-              ^eot -> {:halt, acc}
-              next_key = {:chunk, _} -> {[next_key], next_key}
-              next_key -> {[], next_key}
-            end
-        end
-      end,
-
-      fn _acc -> :ok end
-    )
-  end
-
-
-  # For each chunk list of words and length key, within valid
-  # length key sizes, extract @random_words_per_chunk count words,
-  # dedup extracted set and insert into ets
-
-  @spec ets_put_random_words({[String.t], pos_integer}) :: :ok
-  defp ets_put_random_words({words_chunk_list, length}) do
-    cond do
-      length >= @min_random_word_length and length <= @max_random_word_length ->
-        # seed random number generator with random seed
-        << a :: 32, b :: 32, c :: 32 >> = :crypto.strong_rand_bytes(12)
-        r_seed = {a, b, c}
-        
-        _ = :rand.seed(:exsplus, r_seed)
-        _ = :rand.seed(:exsplus, r_seed)
-      
-        # Grab @random_words_per_chunk random words
-      
-        rand = for _x <- 1..@random_words_per_chunk do 
-          Enum.random(words_chunk_list) 
-        end
-      
-        # Remove duplicate random words
-        random_words = rand |> Enum.sort |> Enum.dedup
-
-        :ets.insert(@ets_table_name, {@ets_random_words_key, random_words})
-
-        #Logger.debug "hangman random words, length_key #{length}: #{inspect random_words}"
-
-      true -> nil
-    end
-
-    :ok
-  end
 
 end
 

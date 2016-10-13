@@ -1,92 +1,58 @@
 defmodule Hangman.Dictionary do
 
   @moduledoc """
-  Module defines `Dictionary` common attributes and types. 
-  Serves as a central point to access or update such attributes
-
-  Also provides access point to normalize the dictionary
-  
-
-  Used in `Dictionary.Cache`, `Dictionary.Transformer`, `Dictionary.File.Reader`
+  Module provides central point to perform dictionary
+  functions for clients for types, paths, random
+  words, and lookup functionality.
   """
 
-  alias Hangman.{Dictionary.Cache, Dictionary.Transformer}
-
-  @type transform :: :original | :sorted | :grouped | :chunked
-  @type kind :: :regular | :big
+  alias Hangman.{Dictionary.Cache}
 
 
-  @doc "Returns `original` type"
-  def original, do: :original
-  
-  @doc "Returns `sorted` type"
-  def sorted, do: :sorted
+  @type kind :: :regular | :big  
 
-  @doc "Returns `grouped` type"
-  def grouped, do: :grouped
-
-  @doc "Returns `chunked` type"
-  def chunked, do: :chunked
-
-  @doc "Returns `regular` type"
-  def regular, do: :regular
-
-  @doc "Returns `big` type"
-  def big, do:  :big
-  
   @root_path :code.priv_dir(:hangman_game)
+
+  @paths %{
+    :regular => "#{@root_path}/dictionary/regular/",
+    :big => "#{@root_path}/dictionary/big/"
+  }
 
   def max_random_words_request, do: 1000
 
 
-  @doc "Returns `Dictionary.File` `paths` map, arranged by types `regular` and `big`"
-  def paths do
-  %{
-    :regular => %{
-      :original => "#{@root_path}/dictionary/data/words.txt",
-      :sorted => "#{@root_path}/dictionary/data/words_sorted.txt",
-      :grouped => "#{@root_path}/dictionary/data/words_grouped.txt",
-      :chunked => "#{@root_path}/dictionary/data/words_chunked.txt"
-    },
-    :big => %{
-      :original => "#{@root_path}/dictionary/data/words_big.txt",
-      :sorted => "#{@root_path}/dictionary/data/words_big_sorted.txt",
-      :grouped => "#{@root_path}/dictionary/data/words_big_grouped.txt",
-      :chunked => "#{@root_path}/dictionary/data/words_big_chunked.txt"
-    }
-  }
-  end
-
-  @doc "Delimiter `token` used to delimit `chunk` values in `binary` chunks file"
-  def chunks_file_delimiter, do: :erlang.term_to_binary({8,1,8,1,8,1})
+  # dictionary hangman words range in size 2..28
+  def key_range, do: 2..28
 
 
-  # UPDATE
-
-  @doc """
-  Ensure the dictionary file has been normalized in order to be
-  loaded into the ets table.  Normalization is done through a series of
-  transformations.  Returns path of final, transformed, chunked dictionary file
-  """
-
-  @spec normalize(Keyword.t) :: String.t
-  def normalize(opts) do
-
-    kind = 
-      case Keyword.fetch(opts, :regular) do
-        {:ok, true} -> :regular
-        _ ->
-          case Keyword.fetch(opts, :big) do
-            {:ok, true} -> :big
-            _ -> raise "valid dictionary type not provided"
-          end
-      end
-    
-    Transformer.new(kind) |> Transformer.run
-    
+  def startup_params(opts) do
+    dir_path = directory_path(opts)
+    ingestion = ingestion_enabled(opts)
+    {dir_path, ingestion}
   end
 
 
+  @doc "Returns dictionary dir path"
+  @spec directory_path(Keyword.t) :: String.t
+  def directory_path(opts) do
+
+    case Keyword.fetch(opts, :type) do
+      {:ok, :regular} -> Map.get(@paths, :regular)
+      {:ok, :big} -> Map.get(@paths, :big)
+      _ -> raise "invalid dictionary type setting"
+    end
+  end
+
+
+  @doc "Returns whether ingestion is enabled"
+  @spec ingestion_enabled(Keyword.t) :: String.t
+  def ingestion_enabled(opts) do
+    case Keyword.fetch(opts, :ingestion) do
+      {:ok, true} -> true
+      {:ok, false} -> false
+        _ -> raise "invalid ingestion setting"
+    end
+  end
 
 
   @doc "Returns random word secrets given count"
@@ -96,10 +62,57 @@ defmodule Hangman.Dictionary do
     value = String.to_integer(count)
     cond do
       value > 0 and value <= max_random_words_request() ->
-        Cache.lookup(:random, value)
+        lookup(:random, value)
       true ->
         raise HangmanError, "submitted random count value is not valid"
     end
   end
+
+  @doc """
+  Cache lookup routines
+
+  The allowed modes:
+    * `:random` - extracts count number of random hangman words. 
+    * `:tally` - retrieve letter tally associated with word length key
+    * `:chunk` -  retrieve the word data chunk associated with the word length key
+
+  """
+
+  @spec lookup(:random | :chunks | :tally, pos_integer) ::  [String.t] | Counter.t | Chunks.t
+
+  def lookup(:random, count) do
+    # Uses global server name to retrieve the server pid
+    pid = Process.whereis(:hangman_dictionary_cache_server)  
+    true = is_pid(pid) 
+    
+    Cache.lookup(pid, :random, count)
+  end
+
+  def lookup(:tally, length_key)
+  when is_integer(length_key) and length_key > 0 do
+    # Uses global server name to retrieve the server pid
+    pid = Process.whereis(:hangman_dictionary_cache_server)  
+    true = is_pid(pid) 
+  
+    Cache.lookup(pid, :tally, length_key)
+  end
+
+  def lookup(:chunks, length_key)
+  when is_integer(length_key) and length_key > 0 do
+    # Uses global server name to retrieve the server pid
+    pid = Process.whereis(:hangman_dictionary_cache_server)
+    true = is_pid(pid)
+
+    Cache.lookup(pid, :chunks, length_key)
+  end
+
+
+  @doc "Handles dictionary server termination"
+  def stop do
+    pid = Process.whereis(:hangman_dictionary_cache_server)
+
+    Cache.stop(pid)
+  end
+
 
 end

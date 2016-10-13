@@ -19,8 +19,7 @@ defmodule Hangman.Pass do
   removed from the `cache`.
   """
 
-  alias Hangman.{Reduction, Pass, Chunks, Counter}
-  alias Hangman.Dictionary.Cache, as: DCache
+  alias Hangman.{Reduction, Pass, Chunks, Counter, Dictionary}
 
   defstruct size: 0, tally: %{}, possible: "", last_word: ""
 
@@ -70,8 +69,8 @@ defmodule Hangman.Pass do
 
     # Subsequent round lookups will be from the pass table
 
-    chunks = %Chunks{} = DCache.lookup(:chunks, length_key)
-    tally = %Counter{} = DCache.lookup(:tally, length_key)
+    chunks = %Chunks{} = Dictionary.lookup(:chunks, length_key)
+    tally = %Counter{} = Dictionary.lookup(:tally, length_key)
 
     pass_size = Chunks.count(chunks)
     pass_info = %Pass{ size: pass_size, tally: tally, last_word: ""}

@@ -93,6 +93,19 @@ defmodule Hangman.Counter do
     Enum.empty?(map)
   end
 
+  @doc "Merges the two counters into one with duplicate keys merged, 
+  their values summed"
+  
+  @spec merge(t, t) :: t
+  def merge(%Counter{map: map1}, %Counter{map: map2}) do
+    map_merged = Map.merge(map1, map2, fn _k, v1, v2 ->
+      v1 + v2
+    end)
+
+    Counter.new(map_merged)
+  end
+
+
   @doc "Returns `list` of the most common `n` codepoint `keys` and codepoint `values`"
   @spec most_common(t, pos_integer) :: [tuple]
   def most_common(%Counter{map: map} = _counter, n) 

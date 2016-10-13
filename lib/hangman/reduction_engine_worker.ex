@@ -130,24 +130,26 @@ defmodule Hangman.Reduction.Engine.Worker do
       pass_size == 0 -> {"", ""}
       # Note: lets strategy handle error higher up, don't crash process
       # raise "Word not in dictionary, pass size can't be zero"
-
-      pass_size == 1 -> 
+      pass_size == 1 ->
         last_word = Chunks.get_words_lazy(new_data)
-        |> Enum.take(1) |> List.first
-
-      {last_word, ""}
-
+        |> Enum.take(1) 
+        |> List.first
+          
+        {last_word, ""}
+      
       pass_size > 1 and pass_size < @possible_words_left ->
-        l = Chunks.get_words_lazy(new_data) |> Enum.take(pass_size)
-
+        l = Chunks.get_words_lazy(new_data) 
+        |> Enum.take(pass_size)
+        |> Enum.sort
+          
         possible_txt = 
-            "Possible hangman words left, #{pass_size} words: #{inspect l}"
-
-      {"", possible_txt}
-
-      # since greater than possible words left, don't show text yet
+          "Possible hangman words left, #{pass_size} words: #{inspect l}"
+          
+        {"", possible_txt}
+          
+          # since greater than possible words left, don't show text yet
       pass_size > 1 -> {"", ""} 
-
+          
       true -> raise HangmanError, "Invalid pass_size value #{pass_size}"
     end
 
