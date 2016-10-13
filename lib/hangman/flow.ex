@@ -53,13 +53,13 @@ defmodule Hangman.Flow do
 
     game_args = Stream.zip(sharded_keys, sharded_secrets)
     
-    result = Flow.from_enumerable(game_args)
+    result = Flow.from_enumerable(game_args, max_demand: 2)
     |> Flow.map(fn {shard_key, shard_value} ->
       {shard_key, shard_value} 
       |> Shard.Handler.setup 
       |> Shard.Handler.play
     end)
-    |> Flow.partition(max_demand: 2)
+    |> Flow.partition
     |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
       collate({key, history}, acc)
     end)
