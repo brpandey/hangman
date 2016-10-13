@@ -139,7 +139,7 @@ defmodule Hangman.Web.Test do
   end
 
 
-  @tag timeout: 90000
+  @tag timeout: :infinity
   test "cowboy http server with 100 specified secrets" do
     
     secrets_args = "&secret[]=warrior&secret[]=cannelon&secret[]=squads&secret[]=anemographs&secret[]=beatific&secret[]=upwafting&secret[]=isocyanates&secret[]=retouchers&secret[]=camail&secret[]=aureole&secret[]=hoodie&secret[]=floppier&secret[]=switching&secret[]=worshiping&secret[]=disobediences&secret[]=merchanted&secret[]=motivate&secret[]=sunscald&secret[]=canonising&secret[]=benzoles&secret[]=retted&secret[]=superpatriot&secret[]=curia&secret[]=aquariums&secret[]=haplessnesses&secret[]=selfish&secret[]=gingelli&secret[]=personalizes&secret[]=bowfront&secret[]=muons&secret[]=suspenser&secret[]=polymer&secret[]=shrewing&secret[]=postneonatal&secret[]=weightless&secret[]=immanences&secret[]=favorably&secret[]=ungovernable&secret[]=worsen&secret[]=biconvexity&secret[]=ptyalins&secret[]=therapeutic&secret[]=peplums&secret[]=laniards&secret[]=rains&secret[]=gobioid&secret[]=invalidity&secret[]=sublimate&secret[]=fatherlike&secret[]=coombs&secret[]=equinity&secret[]=gathering&secret[]=martyrly&secret[]=avengers&secret[]=subconsciouses&secret[]=lixivia&secret[]=catalysts&secret[]=excrescency&secret[]=engages&secret[]=pagod&secret[]=buffeters&secret[]=jesuits&secret[]=coeducations&secret[]=microclimatic&secret[]=alarming&secret[]=strophe&secret[]=stateliest&secret[]=undernourished&secret[]=larval&secret[]=bushfire&secret[]=trusted&secret[]=gelee&secret[]=unhusk&secret[]=verify&secret[]=stabilizing&secret[]=whoever&secret[]=tastemakers&secret[]=glarier&secret[]=costumer&secret[]=dependableness&secret[]=curveballed&secret[]=zibeline&secret[]=scrimpiest&secret[]=colligation&secret[]=hydrodynamical&secret[]=quoth&secret[]=frequentations&secret[]=sunscald&secret[]=skinflints&secret[]=cartoned&secret[]=thoroughbraces&secret[]=commixtures&secret[]=heliac&secret[]=geographer&secret[]=wetproof&secret[]=speciousnesses&secret[]=megaspores&secret[]=upcurved&secret[]=skellums&secret[]=needlessnesses"
@@ -156,7 +156,7 @@ defmodule Hangman.Web.Test do
     IO.puts "#{inspect response.body}\n\n"
   end
 
-
+  @tag timeout: :infinity
   test "cowboy http server with 200 random secrets print out" do
     
     {:ok, response = %HTTPoison.Response{}} =
