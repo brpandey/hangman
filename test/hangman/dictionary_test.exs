@@ -27,8 +27,8 @@ defmodule Hangman.Dictionary.Test do
     case_key = context[:case_key]
     args = Map.get(map, case_key)
 
-    # To ensure we are doing a full ingestion we remove the manifest file
-    if case_key == :regular_full, do: remove_manifest(args)
+    # To ensure we are doing a full ingestion we remove the manifest and ets file
+    if case_key == :regular_full, do: remove_manifest_and_ets(args)
 
     pid = 
       case Dictionary.Cache.start_link(args) do
@@ -45,21 +45,23 @@ defmodule Hangman.Dictionary.Test do
       # Ensure the dictionary is shutdown with non-normal reason
       Process.exit(pid, :shutdown)
 
-      # Wait until the bucket is dead
+      # Wait until the server is dead
       ref = Process.monitor(pid)
       assert_receive {:DOWN, ^ref, _, _, _}
     end
   end
 
 
-  def remove_manifest(args) do
-    # remove manifest file and ensure we generate intermediary files
+  def remove_manifest_and_ets(args) do
+    # remove manifest and ets file and ensure we generate intermediary files
     # as well as load everything correctly into ETS
 
     dir_path = Dictionary.directory_path(args)
     manifest = dir_path <> "cache/manifest"
+    ets_file = dir_path <> "cache/ets_table"
 
     File.rm(manifest)
+    File.rm(ets_file)
 
   end
 
@@ -67,7 +69,7 @@ defmodule Hangman.Dictionary.Test do
     dir_path = Dictionary.directory_path(args)
     {:ok, list} = File.ls(dir_path <> "cache/")
 
-    assert ["manifest", "words_key_10.txt", "words_key_11.txt", "words_key_12.txt",
+    assert ["ets_table", "manifest", "words_key_10.txt", "words_key_11.txt", "words_key_12.txt",
             "words_key_13.txt", "words_key_14.txt", "words_key_15.txt", "words_key_16.txt", 
             "words_key_17.txt", "words_key_18.txt", "words_key_19.txt", "words_key_2.txt",
             "words_key_20.txt", "words_key_21.txt", "words_key_22.txt", "words_key_23.txt", 

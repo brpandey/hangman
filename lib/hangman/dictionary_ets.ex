@@ -169,6 +169,8 @@ defmodule Hangman.Dictionary.ETS do
     chunks
   end
 
+  # UPDATE
+
 
   @doc """
   Put function inserts data into the ETS via three modes: chunk, random, counter
@@ -255,6 +257,36 @@ defmodule Hangman.Dictionary.ETS do
   end
 
 
+
+  # Load ets into memory via ets file
+
+  def load(path) when is_binary(path) do
+
+    Logger.debug("Loading ets table from file")
+
+    path = path |> String.to_charlist
+
+    case :ets.file2tab(path, [verify: true]) do
+      {:ok, @ets_table_name} -> @ets_table_name
+      error -> raise HangmanError, "Unable to load table #{inspect error}"
+    end
+  end
+
+  # Dump ets table into a ets file
+
+  def dump(table, path) when is_atom(table) and is_binary(path) do
+
+    Logger.debug("Dumping ets table to file")
+
+    path = path |> String.to_charlist
+
+    case :ets.tab2file(table, path) do
+      :ok -> :ok
+      error -> raise HangmanError, "Unable to dump ets table #{inspect error}"
+    end
+  end
+
+
   # Simple helpers to generate tuple keys for ets based on word length size
 
   @spec key(:chunk, pos_integer) :: {atom, pos_integer}
@@ -270,5 +302,8 @@ defmodule Hangman.Dictionary.ETS do
     _ets_key = {:counter, length_key}
   end
 
+
+
+  
 
 end

@@ -4,6 +4,9 @@ defmodule Hangman.Dictionary.Ingestion do
   Module handles the ingestion of hangman dictionary words
   through the coordination of `Ingestion.Flow` and `Ingestion.Cache.Flow`
 
+  Saves ingestion state in intermediary cache partition files and finally in
+  ets dump file
+
   Module transforms the dictionary file in two steps
 
   a) a preprocessing step, which ingests the dictionary file and
@@ -11,14 +14,21 @@ defmodule Hangman.Dictionary.Ingestion do
 
   b) ingestion of cache files into ETS
 
+  c) if both steps are down, we generate an ets table file which can be loaded
+  upon startup the next time through
+
   For the first step, we run flow and store the results
   in partitioned files.  We pass a map of file_pids keyed by word length key, to 
   facilitate writing to the intermediate cache files
 
-  For subsequent runs with the dictionary file, we simply run flow on the cached 
+  After the inital run with the dictionary file, we run flow on the cached 
   output files (the intermediate partition files) saving the initial flow intermediary 
   processing -- windowing etc.  Allowing us to generate and load the relevant data 
   (word list chunks, random word generation, tally generation) into ETS concurrently.
+
+  Lastly, once both the flows have finished we generate an ets file. 
+  On subsequent runs, this bypasses extra flow processing as the ets file 
+  is loaded to create the ets
   """
 
   alias Hangman.{Dictionary, Ingestion}
@@ -33,6 +43,8 @@ defmodule Hangman.Dictionary.Ingestion do
   @partition_file_prefix "words_key_"
   @partition_file_suffix ".txt"
 
+  @ets_file_name "ets_table"
+
   # Manifest file existance indicates initial flow pass has been completed
   @manifest_file_name "manifest"
 
@@ -40,9 +52,10 @@ defmodule Hangman.Dictionary.Ingestion do
   @doc """
   Routine kicks off the ingestion process by 
   setting up the proper state and then running it
+
+  If we have pregenerated an ets table file previously
+  use that to load the ets and bypass flow processing
   """
-
-
 
   @spec run(Keyword.t) :: :ok
   def run(args) do
@@ -53,8 +66,17 @@ defmodule Hangman.Dictionary.Ingestion do
       {dir, true} ->
         dictionary_path = dir <> @dictionary_file_name
         cache_full_dir = dir <> @cache_dir
+        ets_file_path = cache_full_dir <> @ets_file_name
 
-        setup(dictionary_path, cache_full_dir) |> process
+        # Check to see if we've already written to an ets cache file
+        case File.exists?(ets_file_path) do
+          true -> 
+            args = {:ets, ets_file_path} 
+            args |> setup
+          false -> 
+            args = {:flow, dictionary_path, cache_full_dir, ets_file_path} 
+            args |> setup |> process
+        end
 
         :ok
     end
@@ -62,6 +84,13 @@ defmodule Hangman.Dictionary.Ingestion do
 
 
   @doc """
+  Setup has two modes: a) :ets b) :flow
+
+  a) :ets
+  Checks if there is an ets cache file that has been pre-generated. If so, we can
+  avoid running the flow computations because the table is ready to load from the file.
+
+  b) :flow
   Loads environment to run initial ingestion pass through the dictionary file.
   If this is the first time through, we set up intermediary ingestion cache files
   If not, we ensure the partition manifest file is present indicating the initial
@@ -69,16 +98,22 @@ defmodule Hangman.Dictionary.Ingestion do
   random words into ETS as well as generating tally data
   """
 
-  @spec setup(binary, binary) :: {atom, binary, binary, map} | {atom, binary}
-  def setup(dictionary_path, cache_dir)
-  when is_binary(dictionary_path) and is_binary(cache_dir) do
+  @spec setup({:ets, binary} | {:flow, binary, binary, binary}) :: 
+  {:full, binary, binary, map, binary} | {:cache, binary, binary} | :ok
+
+  def setup({:ets, ets_path}) when is_binary(ets_path) do
+    Dictionary.ETS.load(ets_path)
+    :ok
+  end
+
+  def setup({:flow, dictionary_path, cache_dir, ets_path})
+  when is_binary(dictionary_path) and is_binary(cache_dir) and is_binary(ets_path) do
 
     # Check to see if dictionary path is valid, if not error
     case File.exists?(dictionary_path) do
       true -> :ok
       false -> raise "Unable to find dictionary file" 
     end
-
 
     # The presence of a partition manifest file indicates whether we have finished
     # the partition steps, if not found we need to partition
@@ -121,42 +156,58 @@ defmodule Hangman.Dictionary.Ingestion do
           Map.put(acc, key, pid)
         end)
         
-        {:ingestion_full, dictionary_path, cache_dir, key_file_map}
+        {:full, dictionary_path, cache_dir, key_file_map, ets_path}
 
-      true -> {:ingestion_cache, cache_dir}
+      true -> 
+        {:cache, cache_dir, ets_path}
     end
 
   end
   
   @doc """
-  Process method supports two modes: full and cache
+  Process method supports two modes: new, cache, and full
 
-  `Full` runs the full ingestion process by first
-  running the initial ingestion flow process followed by 
-  a state cleanup, then running the ingestion cache flow process
-
-  The initial ingestion concurrently chunks the original dictionary
+  `New` runs the initial ingestion concurrently chunking the original dictionary
   file into key based partition files which contain the various
   windowed data
 
   `Cache` runs a flow against the cached partitioned files and 
   concurrently generates and loads all the relevent information into
   memory
+
+  Full basically invokes new and cache
+
+  `Full` runs the full ingestion process by first
+  running the initial ingestion flow process followed by 
+  a state cleanup, then running the ingestion cache flow process
+
+
   """
 
-  @spec process({atom, binary} | {atom, binary, binary, map}) :: :ok
-  def process({:ingestion_full, dictionary_path, cache_dir, 
-               %{} = key_file_map}) do
+  @spec process({:new, binary, binary, map} |
+                {:cache, binary, binary} |
+                {:full, binary, binary, map, binary}) :: :ok
+
+  def process({:full, dictionary_path, cache_dir, 
+               %{} = key_file_map, ets_path}) do
+
+    process({:new, dictionary_path, cache_dir, key_file_map})
+    process({:cache, cache_dir, ets_path})
+    
+    :ok
+  end
+
+  def process({:new, dictionary_path, cache_dir, %{} = key_file_map}) do
 
     Ingestion.Flow.run(dictionary_path, key_file_map)
     cleanup(cache_dir, key_file_map)
 
-    Ingestion.Cache.Flow.run(cache_dir)
     :ok
   end
 
-  def process({:ingestion_cache, cache_dir}) do
-    Ingestion.Cache.Flow.run(cache_dir)
+  def process({:cache, cache_dir, ets_path}) do
+    Ingestion.Cache.Flow.run(cache_dir, ets_path)
+
     :ok
   end
   
@@ -187,9 +238,11 @@ defmodule Hangman.Dictionary.Ingestion do
       true -> :ok
       false -> File.touch(manifest_path)
     end
+
+    :ok
   end
 
-  :ok
+
 end
 
 

@@ -24,7 +24,8 @@ defmodule Hangman.Ingestion.Cache.Flow do
   and counters to binaries drastically reduces ets memory footprint
   """
 
-  def run(cache_dir) when is_binary(cache_dir) do
+  def run(cache_dir, ets_path)
+  when is_binary(cache_dir) and is_binary(ets_path) do
 
     # NOTE: The process will own the ets table
     # Since Ingestion.Flow.Cache.run is called from the
@@ -58,6 +59,7 @@ defmodule Hangman.Ingestion.Cache.Flow do
     )
     |> Flow.run
 
+    Dictionary.ETS.dump(@ets, ets_path)
 
     :ok
   end
