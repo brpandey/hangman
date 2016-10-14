@@ -33,7 +33,7 @@ defmodule Hangman.Dictionary do
 
 
   @doc "Returns dictionary dir path"
-  @spec directory_path(Keyword.t) :: String.t
+  @spec directory_path(Keyword.t) :: String.t | no_return
   def directory_path(opts) do
 
     case Keyword.fetch(opts, :type) do
@@ -45,7 +45,7 @@ defmodule Hangman.Dictionary do
 
 
   @doc "Returns whether ingestion is enabled"
-  @spec ingestion_enabled(Keyword.t) :: String.t
+  @spec ingestion_enabled(Keyword.t) :: boolean | no_return
   def ingestion_enabled(opts) do
     case Keyword.fetch(opts, :ingestion) do
       {:ok, true} -> true

@@ -30,13 +30,13 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
   end 
 
   defp run_setup_test do
-    Dictionary.stop
+    _ = Dictionary.stop
 
     {:ok, _pid} = Dictionary.Cache.start_link([type: :regular, ingestion: true])
   end
   
   defp run_test do
-    Dictionary.stop
+    _ = Dictionary.stop
 
     {:ok, pid} = Dictionary.Cache.start_link([type: :regular, ingestion: true])
 

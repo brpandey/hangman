@@ -24,6 +24,16 @@ defmodule Hangman.Ingestion.Cache.Flow do
   and counters to binaries drastically reduces ets memory footprint
   """
 
+  @doc """
+  Loads up the intermediate cached files and processes the data
+  using flow so that it can be stored in ets. The types of data
+  generated and stored into ets are chunk data, random words, and 
+  letter frequency counters arranged by word key length.
+
+  Lastly, the ets table is dumped to file
+  """
+
+  @spec run(binary, binary) :: :ok
   def run(cache_dir, ets_path)
   when is_binary(cache_dir) and is_binary(ets_path) do
 
@@ -64,17 +74,22 @@ defmodule Hangman.Ingestion.Cache.Flow do
     :ok
   end
 
+  @docp """
+  Event is a cache file line up to new line
+  The function splits it first into a line without the delimiter 
+  and then into the word length key and the words data
+  """
 
-  # Event is a cache file line up to new line
-  # we split it first into a line that contains the word length key
-  # and the words data
-
+  @spec event_map(binary) :: {pos_integer, [binary]}
   defp event_map(event) do
 
+    kv_delim = Dictionary.Ingestion.delimiter(:kv)
+    line_delim = Dictionary.Ingestion.delimiter(:line)
+
     [k, v] = event 
-    |> String.split("    \n", trim: true) 
+    |> String.split(line_delim, trim: true) 
     |> List.first 
-    |> String.split(": ") 
+    |> String.split(kv_delim) 
 
     key = k |> String.to_integer
     value = v |> String.split(", ", trim: true)
@@ -82,11 +97,14 @@ defmodule Hangman.Ingestion.Cache.Flow do
     {key, value}
   end
   
+  @docp """
+  Event reduce performs three tasks
+  -Reduce the word length key and words lists into the ets
+  -Generate random words as well into the ets
+  -Build up the counter object in the meantime
+  """
 
-  # Reduce the word length key and words lists into the ets
-  # Generate random words as well into the ets
-  # Build up the counter object in the meantime
-
+  @spec event_reduce({pos_integer, [binary,...]}, map) :: map
   defp event_reduce({k,v}, %{} = counter_map) 
   when is_integer(k) and is_list(v) and is_binary(hd(v)) do
 
@@ -108,14 +126,17 @@ defmodule Hangman.Ingestion.Cache.Flow do
     # If a counter value does exist, simply merge the two counters together
     counter_map = Map.update(counter_map, k, counter, &Counter.merge(&1, counter))
 
-    Logger.debug("ingestion cache flow - partition reduce: key #{k}, counter_map keys are #{inspect Map.keys(counter_map)}")
+    _ = Logger.debug("partition reduce: key #{k}, counter_map keys are #{inspect Map.keys(counter_map)}")
     
     counter_map
   end
 
-  # Take the final acc, namely the counter map here and
-  # insert it into the ets table
+  @docp """
+  Take the final acc, namely the counter map here and
+  insert it into the ets table
+  """
 
+  @spec final_reduce(map) :: :ok
   defp final_reduce(%{} = counter_map) do
 
     ets = @ets

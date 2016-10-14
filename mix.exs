@@ -50,13 +50,13 @@ defmodule Hangman.Mixfile do
       {:exprof, "~> 0.2.0"}, # to facilitate profiling
       {:ex_doc, "~> 0.13.0"}, # for mix docs
       {:cowboy, "1.0.4"}, # for hangman web
-      {:plug, "1.1.6"},  # for hangman web
+      {:plug, "~> 1.2"},  # for hangman web
       {:httpoison, "~> 0.9.0"}, # for hangman web
       {:exrm, "1.0.1"}, # for mix release
       {:fsm, "~> 0.2.0"}, # for state machine handling
       {:exactor, "~> 2.2.0", warn_missing: false}, # for simple GenServers
       {:gen_stage, "~> 0.6"}, # exp module for distinct producers and consumers
-      {:eqc_ex, "~> 1.2.4"}, # for quick check property tests
+      {:eqc_ex, "~> 1.3"}, # for quick check property tests
       {:dialyxir, "~> 0.3", only: [:dev]} # for erlang dialyzer type checking
     ] 
   end

@@ -2,7 +2,7 @@ defmodule Hangman.Dictionary.Ingestion do
 
   @moduledoc """
   Module handles the ingestion of hangman dictionary words
-  through the coordination of `Ingestion.Flow` and `Ingestion.Cache.Flow`
+  through the coordination of `Ingestion.First.Flow` and `Ingestion.Cache.Flow`
 
   Saves ingestion state in intermediary cache partition files and finally in
   ets dump file
@@ -14,7 +14,7 @@ defmodule Hangman.Dictionary.Ingestion do
 
   b) ingestion of cache files into ETS
 
-  c) if both steps are down, we generate an ets table file which can be loaded
+  c) if both steps are done, we generate an ets table file which can be loaded
   upon startup the next time through
 
   For the first step, we run flow and store the results
@@ -48,6 +48,13 @@ defmodule Hangman.Dictionary.Ingestion do
   # Manifest file existance indicates initial flow pass has been completed
   @manifest_file_name "manifest"
 
+  # Used in writing intermediate files and conversely parsing them
+  @line_delimiter "    \n"
+  @key_value_delimiter ": "
+
+  def delimiter(:line), do: @line_delimiter
+  def delimiter(:kv), do: @key_value_delimiter
+
 
   @doc """
   Routine kicks off the ingestion process by 
@@ -69,7 +76,7 @@ defmodule Hangman.Dictionary.Ingestion do
         ets_file_path = cache_full_dir <> @ets_file_name
 
         # Check to see if we've already written to an ets cache file
-        case File.exists?(ets_file_path) do
+        :ok = case File.exists?(ets_file_path) do
           true -> 
             args = {:ets, ets_file_path} 
             args |> setup
@@ -136,10 +143,10 @@ defmodule Hangman.Dictionary.Ingestion do
 
         # NOTE: SAFE TO USE RM_RF SINCE WE DON"T ASK FOR USER INPUT INVOLVING PATHS
         # ALL COMPILE-TIME STATIC PATHS
-        File.rm_rf!(cache_dir) 
+        _ = File.rm_rf!(cache_dir) 
         
         # Start clean with a new cache dir
-        File.mkdir!(cache_dir)
+        :ok = File.mkdir!(cache_dir)
         
         # Take a range of key values, and generate a map which contain k-v parts, where
         # the key is the word length, and values are open file pids
@@ -180,8 +187,6 @@ defmodule Hangman.Dictionary.Ingestion do
   `Full` runs the full ingestion process by first
   running the initial ingestion flow process followed by 
   a state cleanup, then running the ingestion cache flow process
-
-
   """
 
   @spec process({:new, binary, binary, map} |
@@ -190,7 +195,6 @@ defmodule Hangman.Dictionary.Ingestion do
 
   def process({:full, dictionary_path, cache_dir, 
                %{} = key_file_map, ets_path}) do
-
     process({:new, dictionary_path, cache_dir, key_file_map})
     process({:cache, cache_dir, ets_path})
     
@@ -198,8 +202,7 @@ defmodule Hangman.Dictionary.Ingestion do
   end
 
   def process({:new, dictionary_path, cache_dir, %{} = key_file_map}) do
-
-    Ingestion.Flow.run(dictionary_path, key_file_map)
+    {:ok, key_file_map} = Ingestion.First.Flow.run(dictionary_path, key_file_map)
     cleanup(cache_dir, key_file_map)
 
     :ok
@@ -234,9 +237,9 @@ defmodule Hangman.Dictionary.Ingestion do
     # But for future, 
     # it could be populated with the checksums of each partitioned file, etc..
 
-    case File.exists?(manifest_path) do
+    _ = case File.exists?(manifest_path) do
       true -> :ok
-      false -> File.touch(manifest_path)
+      false -> :ok = File.touch(manifest_path)
     end
 
     :ok

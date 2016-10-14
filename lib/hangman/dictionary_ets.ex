@@ -33,7 +33,7 @@ defmodule Hangman.Dictionary.ETS do
   @spec new :: atom
   def new, do: :ets.new(@ets_table_name, [:bag, :named_table, :public])
 
-  @spec table_name :: atom
+  @spec table_name :: :dictionary_table
   def table_name, do: @ets_table_name
 
 
@@ -198,7 +198,7 @@ defmodule Hangman.Dictionary.ETS do
   """
 
   @spec put(:chunk | :random | :counter, atom, 
-            {pos_integer, [String.t] | Counter.t}) :: :ok
+            {pos_integer, [String.t] | Counter.t}) :: :ok | no_return
   
   def put(:chunk, table_name, {k, list})
   when is_list(list) and is_binary(hd(list)) do
@@ -211,7 +211,11 @@ defmodule Hangman.Dictionary.ETS do
     # convert chunk into binary for compactness
     bin_chunk = :erlang.term_to_binary(list) 
     ets_value = {bin_chunk, chunk_size}
-    :ets.insert(table_name, {ets_key, ets_value}) 
+
+    case :ets.insert(table_name, {ets_key, ets_value}) do
+      true -> :ok
+    end
+
   end
 
 
@@ -234,7 +238,9 @@ defmodule Hangman.Dictionary.ETS do
         # Remove duplicate random words
         random_words = rand |> Enum.sort |> Enum.dedup
 
-        :ets.insert(table_name, {@ets_random_words_key, random_words})
+        case :ets.insert(table_name, {@ets_random_words_key, random_words}) do
+          true -> :ok
+        end
 
         #Logger.debug "hangman random words, length_key #{length}: #{inspect random_words}"
 
@@ -249,20 +255,22 @@ defmodule Hangman.Dictionary.ETS do
 
   def put(:counter, table_name, {length, %Counter{} = counter}) do
 
-    Logger.debug "Dictionary.ETS.put, table is #{table_name} length is #{length}, counter is #{inspect counter}"
+    _ = Logger.debug "Dictionary.ETS.put, table is #{table_name} length is #{length}, counter is #{inspect counter}"
 
     ets_key = key(:counter, length)
     ets_value = :erlang.term_to_binary(counter)
-    :ets.insert(table_name, {ets_key, ets_value})
+
+    case :ets.insert(table_name, {ets_key, ets_value}) do
+      true -> :ok
+    end
   end
 
 
-
-  # Load ets into memory via ets file
-
+  @doc "Loads ets into memory via ets file"
+  @spec load(binary) :: :dictionary_table | no_return
   def load(path) when is_binary(path) do
 
-    Logger.debug("Loading ets table from file")
+    _ = Logger.debug("Loading ets table from file")
 
     path = path |> String.to_charlist
 
@@ -272,11 +280,11 @@ defmodule Hangman.Dictionary.ETS do
     end
   end
 
-  # Dump ets table into a ets file
 
+  @doc "Dumps ets table into an ets file"
+  @spec dump(atom, binary) :: :ok | no_return
   def dump(table, path) when is_atom(table) and is_binary(path) do
-
-    Logger.debug("Dumping ets table to file")
+    _ = Logger.debug("Dumping ets table to file")
 
     path = path |> String.to_charlist
 
@@ -288,7 +296,6 @@ defmodule Hangman.Dictionary.ETS do
 
 
   # Simple helpers to generate tuple keys for ets based on word length size
-
   @spec key(:chunk, pos_integer) :: {atom, pos_integer}
   defp key(:chunk, length_key) do
     true = Enum.any?(@possible_length_keys, fn x -> x == length_key end)
