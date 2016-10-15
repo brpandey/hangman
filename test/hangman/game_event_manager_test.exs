@@ -6,9 +6,23 @@ defmodule Hangman.Game.Event.Manager.Test do
   setup_all do
     IO.puts "Game Event Manager Test"
 
-    # {:ok, _epid} = Event.Manager.start_link()
 
-    :ok
+    case Event.Manager.start_link() do
+      {:ok, _pid} -> :ok
+      {:error, {:already_started, _pid}} -> :ok
+    end
+
+
+    case Player.Logger.Supervisor.start_link() do
+      {:ok, _pid} -> :ok
+      {:error, {:already_started, _pid}} -> :ok
+    end
+
+    case Player.Alert.Supervisor.start_link() do
+      {:ok, _pid} -> :ok
+      {:error, {:already_started, _pid}} -> :ok
+    end
+
   end
 
   test "inital events server setup" do
