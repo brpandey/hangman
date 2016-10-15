@@ -42,7 +42,7 @@ defmodule Hangman.CLI do
   @max_guess_timeout 10000 # 10 secs
   @default_guess_timeout 5000 # 5 secs
 
-  alias Hangman.{CLI, Flow}
+  alias Hangman.{CLI, Shard}
 
   @human Hangman.Player.Types.human
   @robot Hangman.Player.Types.robot
@@ -246,7 +246,7 @@ defmodule Hangman.CLI do
   @spec run({:parallel, {String.t, list}}) :: :ok
   defp run({:parallel, {name, secrets}}) when is_binary(name) and is_list(secrets) 
   and is_binary(hd(secrets)) do
-    Flow.run(name, secrets) |> IO.inspect
+    Shard.Flow.run(name, secrets) |> IO.inspect
   end
 
 end

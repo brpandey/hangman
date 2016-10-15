@@ -1,8 +1,8 @@
-defmodule Hangman.Flow.Shard.Handler do
+defmodule Hangman.Shard.Handler do
 
   @moduledoc """
   Module runs game play for the given shard of secrets
-  as determined by `Flow`.  Basically, runs a chunk
+  as determined by `Shard.Flow`.  Basically, runs a chunk
   of the overall original secrets vector.
 
   Module drives `Player.Controller`, while

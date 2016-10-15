@@ -1,7 +1,7 @@
 defmodule Hangman.Web do
   use Plug.Router
 
-  alias Hangman.{Flow}
+  alias Hangman.{Shard}
 
   require Logger
 
@@ -53,7 +53,6 @@ defmodule Hangman.Web do
   end
 
 
-
   @docp "Get macro, matches GET request and /hangman"
   get "/hangman" do
     conn
@@ -91,7 +90,8 @@ defmodule Hangman.Web do
           secrets when is_list(secrets) -> secrets
         end
 
-      results = Flow.run(name, secrets)
+      # Run secrets via flow which breakes up game args into shards
+      results = Shard.Flow.run(name, secrets)
       
       response = 
         case Enum.count(secrets) do 

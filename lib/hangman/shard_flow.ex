@@ -1,17 +1,20 @@
-defmodule Hangman.Flow do
+defmodule Hangman.Shard.Flow do
 
 
   @moduledoc """
-  Module distributes the game requests to the flow shard handler and 
-  then collects the resultant game information 
-  and combines it in the proper order.
+  Module splits the game args into shards
+  which is distributed to shard handlers.  The resultant 
+  game information is collected and combined in the proper order.
 
   Game play is setup to be parallel and concurrent to use
   all the machines CPU cores.
+
+  A single shard key resembles the format: {name, shard num} or {"fred", 1}, 
+  and the shard value is a list of secrets or ["radical", "rabbit"]
   """
 
   alias Experimental.Flow
-  alias Hangman.{Player, Flow.Shard}
+  alias Hangman.{Player, Shard}
 
   require Logger
 

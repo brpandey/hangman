@@ -1,7 +1,7 @@
-defmodule Hangman.Flow.Test do
+defmodule Hangman.Shard.Test do
   use ExUnit.Case, async: true
 
-  alias Hangman.Flow
+  alias Hangman.Shard.Flow
 
   test "parallel test of 20 secrets" do
 
