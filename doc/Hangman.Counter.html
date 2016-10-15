@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.13.0">
+    <meta name="generator" content="ExDoc v0.13.2">
     <title>Hangman.Counter – Hangman v0.9.5</title>
-    <link rel="stylesheet" href="dist/app-9c1e3d5aa2.css" />
+    <link rel="stylesheet" href="dist/app-bbdf358507.css" />
     
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -74,7 +74,7 @@
       </h1>
 
       
-        <section id="moduledoc" class="docstring">
+        <section id="moduledoc">
           <p>Module for creating and using letter frequency tallies. Contains a set of functions for tallies, such as adding letters, words, lists, and streams, and retrieving their most common letters.</p>
 <p>Conventional <code>Hangman</code> strategy deals exclusively with letter frequency data.</p>
 <p><code>Counter</code> is a key value store where a <code>key</code> is a letter string and a <code>value</code> is a positive integer.</p>
@@ -233,6 +233,15 @@ iex&gt; Counter.most_common(tally, 5)
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#merge/2">merge(counter1, counter2)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Merges the two counters into one with duplicate keys merged, their values summed</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#most_common/2">most_common(counter, n)</a>
   </div>
   
@@ -319,7 +328,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">add_letters(counter, word)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-140" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-153" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -347,7 +356,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">add_unique_letters(counter, word)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-173" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-186" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -375,7 +384,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">add_words(counter, words)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-191" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-204" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -403,7 +412,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">add_words(counter, words_stream, exclusion_set)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-247" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-260" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -431,7 +440,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">delete(counter)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-280" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-293" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -449,7 +458,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">delete(counter, letters)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-271" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-284" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -533,7 +542,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">inc_by(counter, key, value \\ 1)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-127" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-140" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -582,6 +591,34 @@ iex&gt; Counter.most_common(tally, 5)
 
   </section>
 </div>
+<div class="detail" id="merge/2">
+  <div class="detail-header">
+    <a href="#merge/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">merge(counter1, counter2)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-100" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">merge(<a href="#t:t/0">t</a>, <a href="#t:t/0">t</a>) :: <a href="#t:t/0">t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Merges the two counters into one with duplicate keys merged, their values summed</p>
+
+  </section>
+</div>
 <div class="detail" id="most_common/2">
   <div class="detail-header">
     <a href="#most_common/2" class="detail-link" title="Link to this function">
@@ -589,7 +626,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">most_common(counter, n)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-98" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-111" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -617,7 +654,7 @@ iex&gt; Counter.most_common(tally, 5)
     </a>
     <span class="signature">most_common_key(counter, n)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-113" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/counter.ex#cl-126" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -696,7 +733,7 @@ iex&gt; Counter.most_common(tally, 5)
         <p>
           <span class="line">
             Built using
-            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.0),
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.2),
           </span>
           <span class="line">
             designed by
@@ -709,7 +746,7 @@ iex&gt; Counter.most_common(tally, 5)
   </div>
 </section>
 </div>
-  <script src="dist/app-21f1a20b9e.js"></script>
+  <script src="dist/app-9b2d1e432c.js"></script>
   </body>
 </html>
 

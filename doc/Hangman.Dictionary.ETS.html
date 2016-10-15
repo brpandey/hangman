@@ -1,0 +1,411 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.13.2">
+    <title>Hangman.Dictionary.ETS – Hangman v0.9.5</title>
+    <link rel="stylesheet" href="dist/app-bbdf358507.css" />
+    
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Hangman
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.9.5
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">Hangman v0.9.5</small>
+        Hangman.Dictionary.ETS
+        
+        
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-1" title="View Source" class="view-source" rel="help">
+            <i class="icon-code"></i>
+          </a>
+        
+      </h1>
+
+      
+        <section id="moduledoc">
+          <p>Module provides access to a dictionary word cache powered by <code>ETS</code>. Provides lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words. Handles all ETS specific operations while <code>Dictionary</code> serves as a wrapper.</p>
+<p><code>Dictionary.ETS</code> loads the dictionary words into <code>chunks</code> and stores them into <code>ETS</code> via <code>Dictionary.Ingestion</code>. Upon startup, letter frequency <code>tallies</code> are computed and stored compactly into <code>ETS</code>. Words identified as <code>random</code> are tagged and stored as well.</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#dump/2">dump(table, path)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Dumps ets table into an ets file</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get/2">get(atom, count)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Get has three modes: <code>:random</code>, <code>:counter</code>, <code>:chunks</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#load/1">load(path)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Loads ets into memory via ets file</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#new/0">new()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#put/3">put(atom, table_name, arg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Put function inserts data into the ETS via three modes: chunk, random, counter</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#setup/1">setup(args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Runs the dictionary ingestion process, loading the data into ETS</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#table_name/0">table_name()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+
+        </section>
+      
+
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="dump/2">
+  <div class="detail-header">
+    <a href="#dump/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">dump(table, path)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-286" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">dump(atom, binary) :: :ok | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Dumps ets table into an ets file</p>
+
+  </section>
+</div>
+<div class="detail" id="get/2">
+  <div class="detail-header">
+    <a href="#get/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">get(atom, count)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-75" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">get(:random | :counter | :chunks, pos_integer) ::
+  [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] |
+  <a href="Hangman.Counter.html#t:t/0">Hangman.Counter.t</a> |
+  <a href="Hangman.Chunks.html#t:t/0">Hangman.Chunks.t</a> |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Get has three modes: <code>:random</code>, <code>:counter</code>, <code>:chunks</code></p>
+<p>:random - Retrieves all words tagged as random upon startup, then randomly chooses count words from this set, and returns the shuffled words result.</p>
+<p>:counter - Retrieves dictionary tally counter given word length key</p>
+<p>:chunks - Retrieves chunks given word length key</p>
+
+  </section>
+</div>
+<div class="detail" id="load/1">
+  <div class="detail-header">
+    <a href="#load/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">load(path)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-271" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">load(binary) :: :dictionary_table | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Loads ets into memory via ets file</p>
+
+  </section>
+</div>
+<div class="detail" id="new/0">
+  <div class="detail-header">
+    <a href="#new/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">new()</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-34" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">new :: atom</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="put/3">
+  <div class="detail-header">
+    <a href="#put/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">put(atom, table_name, arg)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-203" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">put(:chunk | :random | :counter, atom, {pos_integer, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] | <a href="Hangman.Counter.html#t:t/0">Hangman.Counter.t</a>}) ::
+  :ok |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Put function inserts data into the ETS via three modes: chunk, random, counter</p>
+<p>:chunk - For each words list chunk, insert into ets</p>
+<p>:random - For each chunk list of words and length key, within valid length key sizes, extract <span class="citation">@random_words_per_chunk</span> count words, dedup extracted set and insert into ets</p>
+<p>:counter - Inserts verified counter structure into ets</p>
+<p>Example key is {:counter, 8} Example {length, counter} is: {8, %Counter{entries: %{&quot;a&quot; =&gt; 14490, &quot;b&quot; =&gt; 4485, &quot;c&quot; =&gt; 7815, &quot;d&quot; =&gt; 8046, &quot;e&quot; =&gt; 19600, &quot;f&quot; =&gt; 2897, &quot;g&quot; =&gt; 6009, &quot;h&quot; =&gt; 5111, &quot;i&quot; =&gt; 15530, &quot;j&quot; =&gt; 384, &quot;k&quot; =&gt; 2628, &quot;l&quot; =&gt; 11026, &quot;m&quot; =&gt; 5793, &quot;n&quot; =&gt; 12186, &quot;o&quot; =&gt; 11462, &quot;p&quot; =&gt; 5763, &quot;q&quot; =&gt; 422, &quot;r&quot; =&gt; 14211, &quot;s&quot; =&gt; 16560, &quot;t&quot; =&gt; 11870, &quot;u&quot; =&gt; 7377, &quot;v&quot; =&gt; 2156, &quot;w&quot; =&gt; 2313, &quot;x&quot; =&gt; 662, &quot;y&quot; =&gt; 3395, &quot;z&quot; =&gt; 783}}}</p>
+
+  </section>
+</div>
+<div class="detail" id="setup/1">
+  <div class="detail-header">
+    <a href="#setup/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">setup(args)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-45" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">setup(<a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a>) :: :ok</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Runs the dictionary ingestion process, loading the data into ETS</p>
+
+  </section>
+</div>
+<div class="detail" id="table_name/0">
+  <div class="detail-header">
+    <a href="#table_name/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">table_name()</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-37" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">table_name :: :dictionary_table</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.2),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-9b2d1e432c.js"></script>
+  </body>
+</html>
+
