@@ -66,12 +66,8 @@ defmodule Hangman.Shard.Flow do
     |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
       collate({key, history}, acc)
     end)
-    |> Enum.into([])
+    |> Enum.into(%{})
 
-    # Change from list to map
-    result = result |> Enum.reduce(%{}, fn {k,v}, acc -> 
-      Map.update(acc, k, v, &(&1 <> v))
-    end)
     
     # Based on the secrets count either return single game history or score results
     case Enum.count(secrets) do
