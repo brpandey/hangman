@@ -7,7 +7,7 @@ defmodule Hangman.Dictionary.Ingestion do
   Saves ingestion state in intermediary cache partition files and finally in
   ets dump file
 
-  Module transforms the dictionary file in two steps
+  Module transforms the dictionary file in three steps
 
   a) a preprocessing step, which ingests the dictionary file and
   generates ingestion cache partition files
@@ -232,10 +232,8 @@ defmodule Hangman.Dictionary.Ingestion do
     # Create manifest file to signal flow initial processing is finished
     manifest_path = cache_dir <> @manifest_file_name
 
-    # Write manifest file
-    # For now we just put :ok into file
-    # But for future, 
-    # it could be populated with the checksums of each partitioned file, etc..
+    # 'Touch' manifest file
+    # Future could have checksums of each partitioned file, etc..
 
     _ = case File.exists?(manifest_path) do
       true -> :ok
