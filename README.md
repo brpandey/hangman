@@ -24,8 +24,8 @@ is this speedup tangible
 ![Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
 
-To view the game play design please look at the README DIAGRAMS.pdf or click below
-[Hangman Design](https://bitbucket.org/brpandey/elixir-hangman/raw/09d55957c1a4745de60b813fdcf9bf3cb8fc3db3/README%20DIAGRAMS.pdf)
+To view the game play design please look at the README DIAGRAMS.pdf or click --> 
+[Design](https://bitbucket.org/brpandey/elixir-hangman/raw/09d55957c1a4745de60b813fdcf9bf3cb8fc3db3/README%20DIAGRAMS.pdf)
 
 
 
