@@ -66,9 +66,14 @@ defmodule Hangman.Shard.Flow do
     |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
       collate({key, history}, acc)
     end)
-    |> Enum.into(%{})
+    |> Enum.into([])
 
-    
+
+    # Change from list to map
+    result = result |> Enum.reduce(%{}, fn {k,v}, acc -> 
+      Map.update(acc, k, v, &(&1 <> v))
+    end)
+
     # Based on the secrets count either return single game history or score results
     case Enum.count(secrets) do
       0 -> raise "No secrets provided"
@@ -80,7 +85,6 @@ defmodule Hangman.Shard.Flow do
     end
 
   end
-
 
   @docp """
   Collects game result information and stores into shard key
@@ -115,19 +119,36 @@ defmodule Hangman.Shard.Flow do
   @spec summarize(String.t) :: String.t
   def summarize(scores) do
 
-    # Convert a string such as:
-    # " (JOLLITY: 25) (PEMICANS: 7) (PALPITATION: 5) (UNSILENT: 6) (SUPERPROFITS: 4) (GERUNDIVE: 6) (PILEATE: 7) (OVERAWES: 8) (TUSSORS: 6) (ENDARTERECTOMY: 1) (NONADDITIVE: 3) (WAIVE: 25) (MACHINEABILITY: 4) (COURANTO: 6) (NONOCCUPATIONAL: 4) (SLATED: 7) (REMARKET: 6) (BRACTLET: 6) (SPECTROMETRIC: 2) (OXIDOREDUCTASES: 2)"
+    # Convert a string to a form where we can easily extract score information and sort it:
 
-    l = scores |> String.split([" (", ") (" , ")"], trim: true)
+    # (SUSPENSER: 2) (POLYMER: 6) (SHREWING: 8) (POSTNEONATAL: 3) (WEIGHTLESS: 5)
+    # (IMMANENCES: 4) (FAVORABLY: 7) (UNGOVERNABLE: 4) (WORSEN: 9) (BICONVEXITY: 3)
+    # (HOODIE: 8) (FLOPPIER: 10) (SWITCHING: 9) (WORSHIPING: 8) (DISOBEDIENCES: 4)
+    # (MERCHANTED: 4) (MOTIVATE: 6) (SUNSCALD: 6) (CANONISING: 5) (BENZOLES: 7)
+    # (PTYALINS: 7) (THERAPEUTIC: 2) (PEPLUMS: 25) (LANIARDS: 9) (RAINS: 7)
+    # (GOBIOID: 4) (INVALIDITY: 5) (SUBLIMATE: 7) (FATHERLIKE: 4) (COOMBS: 8)
+    # (BUFFETERS: 8) (JESUITS: 7) (COEDUCATIONS: 3) (MICROCLIMATIC: 3) 
+    # (ALARMING: 6) (STROPHE: 5) (STATELIEST: 4) (UNDERNOURISHED: 4) (LARVAL: 6)
+    # (BUSHFIRE: 6) (TRUSTED: 5) (GELEE: 3) (UNHUSK: 25) (VERIFY: 7) (STABILIZING: 6)
+    # (WHOEVER: 4) (TASTEMAKERS: 4) (GLARIER: 7) (COSTUMER: 8) (DEPENDABLENESS: 3)"
 
-    # After the String.split we have a list like so:
 
-    #["JOLLITY: 25", "PEMICANS: 7", "PALPITATION: 5", "UNSILENT: 6",
-    # "SUPERPROFITS: 4", "GERUNDIVE: 6", "PILEATE: 7", "OVERAWES: 8", "TUSSORS: 6",
-    # "ENDARTERECTOMY: 1", "NONADDITIVE: 3", "WAIVE: 25", "MACHINEABILITY: 4",
-    # "COURANTO: 6", "NONOCCUPATIONAL: 4", "SLATED: 7", "REMARKET: 6", "BRACTLET: 6", 
-    # "SPECTROMETRIC: 2", "OXIDOREDUCTASES: 2"]
-    
+    l = scores |> String.split([" (", ") (" , ")"], trim: true) |> Enum.sort
+
+    # After the String.split we have a sorted list instead of a string, like so:
+
+    # ["ALARMING: 6", "BENZOLES: 7", "BICONVEXITY: 3", "BUFFETERS: 8", 
+    # "BUSHFIRE: 6", "CANONISING: 5", "COEDUCATIONS: 3", "COOMBS: 8", 
+    # "COSTUMER: 8", "DEPENDABLENESS: 3", "DISOBEDIENCES: 4", "FATHERLIKE: 4", 
+    # "FAVORABLY: 7", "FLOPPIER: 10", "GELEE: 3", "GLARIER: 7", "GOBIOID: 4", 
+    # "HOODIE: 8", "IMMANENCES: 4", "INVALIDITY: 5", "JESUITS: 7", "LANIARDS: 9", 
+    # "LARVAL: 6", "MERCHANTED: 4", "MICROCLIMATIC: 3", "MOTIVATE: 6", 
+    # "PEPLUMS: 25", "POLYMER: 6", "POSTNEONATAL: 3", "PTYALINS: 7", "RAINS: 7", 
+    # "SHREWING: 8", "STABILIZING: 6", "STATELIEST: 4", "STROPHE: 5", 
+    # "SUBLIMATE: 7", "SUNSCALD: 6", "SUSPENSER: 2", "SWITCHING: 9", "TASTEMAKERS: 4", 
+    # "THERAPEUTIC: 2", "TRUSTED: 5", "UNDERNOURISHED: 4", "UNGOVERNABLE: 4", 
+    # "UNHUSK: 25", "VERIFY: 7", "WEIGHTLESS: 5", "WHOEVER: 4", "WORSEN: 9", "WORSHIPING: 8"]
+
     games = l |> Enum.count
 
     total_score = l |> Enum.reduce(0, fn x, acc -> 
@@ -137,6 +158,33 @@ defmodule Hangman.Shard.Flow do
     end)
     
     avg = total_score / games
+
+    # Convert string back to scores list with paren format
+
+    scores = l 
+    |> Enum.reverse 
+    |> Enum.reduce("", fn x, acc -> # prepend to tail -- O(n)
+      case acc do
+        "" -> "(#{x})" <> acc
+        _ -> "(#{x}) " <> acc # add space between terms
+      end
+      
+    end)
+
+    # Summary text finished now
+
+    # "Game Over! Average Score: 6.4, # Games: 50, Scores: (ALARMING: 6) 
+    # (BENZOLES: 7) (BICONVEXITY: 3) (BUFFETERS: 8) (BUSHFIRE: 6) (CANONISING: 5) 
+    # (COEDUCATIONS: 3) (COOMBS: 8) (COSTUMER: 8) (DEPENDABLENESS: 3) 
+    # (DISOBEDIENCES: 4) (FATHERLIKE: 4) (FAVORABLY: 7) (FLOPPIER: 10) (GELEE: 3) 
+    # (GLARIER: 7) (GOBIOID: 4) (HOODIE: 8) (IMMANENCES: 4) (INVALIDITY: 5) (JESUITS: 7) 
+    # (LANIARDS: 9) (LARVAL: 6) (MERCHANTED: 4) (MICROCLIMATIC: 3) (MOTIVATE: 6) 
+    # (PEPLUMS: 25) (POLYMER: 6) (POSTNEONATAL: 3) (PTYALINS: 7) (RAINS: 7) 
+    # (SHREWING: 8) (STABILIZING: 6) (STATELIEST: 4) (STROPHE: 5) (SUBLIMATE: 7) 
+    # (SUNSCALD: 6) (SUSPENSER: 2) (SWITCHING: 9) (TASTEMAKERS: 4) (THERAPEUTIC: 2) 
+    # (TRUSTED: 5) (UNDERNOURISHED: 4) (UNGOVERNABLE: 4) (UNHUSK: 25) (VERIFY: 7) 
+    # (WEIGHTLESS: 5) (WHOEVER: 4) (WORSEN: 9) (WORSHIPING: 8)"
+    
     
     "Game Over! Average Score: #{avg}, # Games: #{games}, Scores: #{scores}"
   end

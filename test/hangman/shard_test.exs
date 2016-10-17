@@ -9,7 +9,9 @@ defmodule Hangman.Shard.Test do
 
     output = Flow.run("fox", secrets)
 
-    assert output == "Game Over! Average Score: 7.0, # Games: 20, Scores:  (JOLLITY: 25) (PEMICANS: 7) (PALPITATION: 5) (UNSILENT: 6) (SUPERPROFITS: 4) (GERUNDIVE: 6) (PILEATE: 7) (OVERAWES: 8) (TUSSORS: 6) (ENDARTERECTOMY: 1) (NONADDITIVE: 3) (WAIVE: 25) (MACHINEABILITY: 4) (COURANTO: 6) (NONOCCUPATIONAL: 4) (SLATED: 7) (REMARKET: 6) (BRACTLET: 6) (SPECTROMETRIC: 2) (OXIDOREDUCTASES: 2)"
+
+    assert output == "Game Over! Average Score: 7.0, # Games: 20, Scores: (BRACTLET: 6) (COURANTO: 6) (ENDARTERECTOMY: 1) (GERUNDIVE: 6) (JOLLITY: 25) (MACHINEABILITY: 4) (NONADDITIVE: 3) (NONOCCUPATIONAL: 4) (OVERAWES: 8) (OXIDOREDUCTASES: 2) (PALPITATION: 5) (PEMICANS: 7) (PILEATE: 7) (REMARKET: 6) (SLATED: 7) (SPECTROMETRIC: 2) (SUPERPROFITS: 4) (TUSSORS: 6) (UNSILENT: 6) (WAIVE: 25)"
+
   end
 
 
@@ -20,7 +22,7 @@ defmodule Hangman.Shard.Test do
 
     output = Flow.run("badger", secrets)
 
-    assert output == "Game Over! Average Score: 9.4, # Games: 5, Scores:  (JOLLITY: 25) (PEMICANS: 7) (PALPITATION: 5) (UNSILENT: 6) (SUPERPROFITS: 4)"
+    assert output == "Game Over! Average Score: 9.4, # Games: 5, Scores: (JOLLITY: 25) (PALPITATION: 5) (PEMICANS: 7) (SUPERPROFITS: 4) (UNSILENT: 6)"
 
   end
 
@@ -32,7 +34,7 @@ defmodule Hangman.Shard.Test do
 
     output = Flow.run("rabbit", secrets)
 
-    assert output == "Game Over! Average Score: 6.333333333333333, # Games: 3, Scores:  (CUMULATE: 8) (AVOCADO: 6) (ERUPTIVE: 5)"
+    assert output == "Game Over! Average Score: 6.333333333333333, # Games: 3, Scores: (AVOCADO: 6) (CUMULATE: 8) (ERUPTIVE: 5)"
   end
 
   test "single test of 1 secret, should see game history" do
