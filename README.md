@@ -274,10 +274,8 @@ Specifically change :info to :debug and then run `mix compile` and then `mix esc
 
 * The hangman game handles word not in dictionary cases.  The current procedure is the Player.Worker crashes and is restarted to resume where it left off.
 
-* The dictionary logic of the game transforms the original dictionary file multiple times to a format
-  suitable for `ETS`.  This was written before `Experimental.GenStage` and each transform file is
-  stored in `priv/dictionary/data`.  Though `GenStage` is great, this happens to show each file after
-  each transform step which is an interesting transform artifact.
+* The dictionary ingestion is handled through multiple GenStage Flows.  Lastly it is written to an ets dump file for
+  near instantaneous load.
 
 * If a "mix test" is run, the free version of Quick Check from quvic should be installed to avoid errors
 
@@ -298,7 +296,8 @@ simplicity purposes all are in the top level directory.
 * A stumper word process which plays the games before hand with all the words and identifies 
 the word stumpers for use in real game play
 
-* New strategy algorithms which try to learn player's guessing style - aka machine learning
+* New strategy algorithms which try to learn player's guessing style - aka machine learning.
+As well as difficulty level setting: e.g. easy, medium, or hard
 
 * Truly distributed hangman running on multiple nodes and machines
 
