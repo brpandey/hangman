@@ -21,7 +21,7 @@ CPU cores concurrently. Only when the set of secrets is 40 or greater
 is this speedup tangible
 
 
-[comment]: # ( ![Hangman](http://i.imgur.com/m3dh9ny.jpg) )
+[Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
 
 To view the game play design please look at the README DIAGRAMS.pdf or click --> 
