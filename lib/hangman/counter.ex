@@ -81,6 +81,12 @@ defmodule Hangman.Counter do
     Map.equal?(c1, c2)
   end
 
+  @doc "Returns `key` list"
+  @spec keys(t) :: list
+  def keys(%Counter{map: map} = _counter) do
+    Map.keys(map)
+  end
+
   @doc "Returns a `key-value` list of {`letter`, `count`} `tuples`"
   @spec items(t) :: [tuple]
   def items(%Counter{map: map} = _counter) do
