@@ -1,5 +1,4 @@
 defmodule Hangman.Player do
-
   @moduledoc """
   Defines Player id and key
 
