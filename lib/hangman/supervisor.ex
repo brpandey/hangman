@@ -1,9 +1,5 @@
 defmodule Hangman.Supervisor do 
-  use Supervisor
-
   @moduledoc false
-
-  alias Hangman.{Game, Player}
   
   '''
   Module is the root level supervisor.
@@ -15,6 +11,8 @@ defmodule Hangman.Supervisor do
   are multi-depth supervisors
   '''
 
+  use Supervisor
+  alias Hangman.{Game, Player}
   require Logger
 
   @name __MODULE__

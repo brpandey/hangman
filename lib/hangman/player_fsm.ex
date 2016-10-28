@@ -1,5 +1,4 @@
 defmodule Hangman.Player.FSM do
-
   @moduledoc """
   Module implements a non-process player fsm
   which handles managing the state of types implemented
@@ -49,12 +48,9 @@ defmodule Hangman.Player.FSM do
   Ultimately the specific Flow or CLI `Handler`, when in exit state terminates the FSM loop
   """
 
-  alias Hangman.{Player}
-
-  require Logger
-
   use Fsm, initial_state: :initial, initial_data: nil
-
+  alias Hangman.Player
+  require Logger
 
   defstate initial do
     defevent initialize(args) do
@@ -63,27 +59,20 @@ defmodule Hangman.Player.FSM do
     end
   end
 
-
   defstate begin do
     defevent proceed, data: player do
-
-      {player, code} = player |> Player.begin 
-
+      {player, code} = player |> Player.begin
       case code do
         :start -> respond({:begin, "fsm begin"}, :setup, player)
         :finished -> respond({:begin, "going to fsm exit"}, :exit, player)
       end
     end
   end
-
   
   defstate setup do
     defevent proceed, data: player do
-
       {player, status} = player |> Player.setup
-
   #    Logger.debug "FSM setup: player is #{inspect player}"
-
       case status do
         [] -> respond({:setup, []}, 
                       :action, player)
@@ -96,9 +85,7 @@ defmodule Hangman.Player.FSM do
 
   defstate action do
     defevent guess(data), data: player do
-
       {player, status} = player |> Player.guess(data)
-
       _ = Logger.debug "FSM action: player is #{inspect player}"
 
       # check if we get game won or game lost
@@ -114,9 +101,7 @@ defmodule Hangman.Player.FSM do
   
   defstate transit do
     defevent proceed, data: player do
-
       {player, status} = player |> Player.transition
-
 #      _ = Logger.debug "FSM transit: player is #{inspect player}"
 
       case status do
@@ -131,12 +116,10 @@ defmodule Hangman.Player.FSM do
   
   defstate exit do
     defevent proceed, data: player do
-
       _ = Logger.debug "FSM exit: player is #{inspect player}"
 
       #Games Over
       respond({:exit, player.round.status_text}, :exit, player)
-
     end
   end
 

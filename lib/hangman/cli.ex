@@ -1,6 +1,5 @@
 defmodule Hangman.CLI do
   @moduledoc """
-
   Module provides a command line interpreter interface
   to the `Hangman` application.
 
@@ -36,13 +35,13 @@ defmodule Hangman.CLI do
   game will continue on - marking a score of 0 for the word not found game.
   """
 
+  alias Hangman.{CLI, Shard}
+
   @min_secret_length 3
   @max_secret_length 28
 
   @max_guess_timeout 10000 # 10 secs
   @default_guess_timeout 5000 # 5 secs
-
-  alias Hangman.{CLI, Shard}
 
   @human Hangman.Player.Types.human
   @robot Hangman.Player.Types.robot

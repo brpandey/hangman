@@ -1,5 +1,4 @@
 defmodule Hangman.Player.Worker do
-
   @moduledoc """
   GenServer module to implement Player Worker,
   managed by `Player.Controller`. Module uses gproc to manage
@@ -45,10 +44,8 @@ defmodule Hangman.Player.Worker do
   """
 
   use GenServer
+  alias Hangman.Player
   require Logger
-
-  alias Hangman.{Player}
-
 
   # CLIENT API #
 

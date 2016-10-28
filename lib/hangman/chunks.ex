@@ -1,6 +1,4 @@
 defmodule Hangman.Chunks do
-  defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
-  
   @moduledoc """
   Module to manage word list chunks for a given secret length key.  
 
@@ -20,9 +18,11 @@ defmodule Hangman.Chunks do
   Primary functions are `new/2`, `count/1`, `add/2`, and `get_words_lazy/1`.
   """
 
-  alias Hangman.{Chunks}
+  alias Hangman.Chunks
+
+  defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
   
-  @type t :: %__MODULE__{}
+  @opaque t :: %__MODULE__{}
   @type binary_chunk ::  {binary, integer}
   
   
@@ -95,13 +95,12 @@ defmodule Hangman.Chunks do
       Chunks.add(acc, value) # Adds to Chunks abstraction
     end
     
-    chunks = words
+    words
     |> Stream.with_index
     |> Stream.chunk_by(fn_split_into_chunks)
     |> Stream.map(fn_normalize_chunks)
     |> Enum.reduce(Chunks.new(length_key), fn_reduce_chunks)
-    
-    chunks
+
   end
   
   @doc "Returns total word count across all `chunk` containers"

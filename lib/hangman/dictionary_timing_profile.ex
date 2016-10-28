@@ -1,8 +1,7 @@
 defmodule Hangman.Dictionary.Cache.Timing.Profile do
-  import ExProf.Macro
-
   @moduledoc false
 
+  import ExProf.Macro
   alias Hangman.{Dictionary, Counter, Chunks}
 
   # Module to time dictionary cache server

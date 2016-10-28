@@ -1,14 +1,11 @@
 defmodule Hangman.Reduction.Engine.Pool do
-  use Supervisor
-
   @moduledoc """
   Module is a `Supervisor` that supervises a `pool` of 
   word `Reduction.Engine` workers
   """
 
-  alias Hangman.{Reduction}
-
-  @name __MODULE__
+  use Supervisor
+  alias Hangman.Reduction
 
   @docp """
   `Supervisor` start link wrapper function. Accepts `pool` size argument.
@@ -16,7 +13,7 @@ defmodule Hangman.Reduction.Engine.Pool do
   
   #@spec start_link(pos_integer) :: Supervisor.on_start
   def start_link(pool_size) do
-    Supervisor.start_link(@name, pool_size)
+    Supervisor.start_link(__MODULE__, pool_size)
   end
 
   @doc """

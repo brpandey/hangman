@@ -3,10 +3,7 @@ defmodule Hangman.Reduction do
   Module implements `Reduction` `key` type.
   """
 
-  @typedoc """
-  Defines `key` type format used to `reduce` words set.
-  """
-  
+  @typedoc "Defines `key` type format used to `reduce` words set."
   @type key :: ( [{:start, boolean}, {:secret_length, pos_integer}] ) |
   ( [{:incorrect_word, word :: String.t}, {:guessed_letters, MapSet.t}, 
      {:regex_match_key, Regex.t}] ) |

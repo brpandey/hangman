@@ -1,5 +1,4 @@
 defmodule Hangman.Dictionary.Ingestion do
-
   @moduledoc """
   Module handles the ingestion of hangman dictionary words
   through the coordination of `Ingestion.First.Flow` and `Ingestion.Cache.Flow`

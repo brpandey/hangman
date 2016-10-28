@@ -33,10 +33,8 @@ defmodule Hangman.Round do
   """
 
   alias Hangman.{Round, Guess, Reduction, Letter.Strategy}
-
   alias Hangman.Game.Server, as: Game   # single place to switch to Game.Server.Stub
   alias Hangman.Pass, as: Pass   # single place to switch to Pass.Stub
-
   require Logger
 
 
@@ -44,7 +42,7 @@ defmodule Hangman.Round do
   guess: {}, result_code: nil, status_code: nil, status_text: "", pattern: "",
   pid: nil, game_pid: nil
   
-  @type t :: %__MODULE__{}
+  @opaque t :: %__MODULE__{}
   @type result_code :: :correct_letter | :incorrect_letter | :incorrect_word | :correct_word
 
   @type key :: {id :: (String.t | tuple), 

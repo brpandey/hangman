@@ -1,6 +1,4 @@
 defmodule Hangman.Pass.Cache do
-  use GenServer
-
   @moduledoc """
   Module provides cache access to the game words pass.
   Given a player, a game and round number, `Pass.Cache` maintains a words pass 
@@ -23,11 +21,10 @@ defmodule Hangman.Pass.Cache do
   `Pass.Cache`.
   """
 
+  use GenServer
+  alias Hangman.{Pass, Chunks}
   require Logger
   
-  alias Hangman.{Pass, Chunks}
-  
-  @name __MODULE__
   @ets_table_name :hangman_pass_cache
 
 
@@ -42,7 +39,7 @@ defmodule Hangman.Pass.Cache do
     _ = Logger.debug "Starting Hangman Pass Cache GenServer"
     args = {}
     options = [name: :hangman_pass_cache] # same name for table as process
-    GenServer.start_link(@name, args, options)
+    GenServer.start_link(__MODULE__, args, options)
   end
 
   @doc """

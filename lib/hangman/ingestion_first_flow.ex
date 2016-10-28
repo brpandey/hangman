@@ -1,5 +1,4 @@
 defmodule Hangman.Ingestion.First.Flow do
-
   @moduledoc """
   Module implements the introductory ingestion flow logic given an initial 
   hangman dictionary file.  Serves to split dictionary into windowed word chunks

@@ -1,7 +1,4 @@
 defmodule Hangman.Dictionary.ETS do
-
-  require Logger
-
   @moduledoc """
   Module provides access to a dictionary word cache powered by `ETS`. 
   Provides lookup routines to access `chunks`, `tallys`, and `random` words.
@@ -15,6 +12,7 @@ defmodule Hangman.Dictionary.ETS do
   """
 
   alias Hangman.{Chunks, Counter, Dictionary}
+  require Logger
 
   @ets_table_name :dictionary_table
 

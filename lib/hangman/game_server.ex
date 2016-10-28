@@ -1,10 +1,4 @@
 defmodule Hangman.Game.Server do
-  use GenServer
-    
-  require Logger
-
-  alias Hangman.{Game, Game.Event, Guess, Player, Round, Simple.Registry}
-  
   @moduledoc """
   Module handles `Hangman` `Game` serving to multiple clients.  
   Each player's active game state is maintained, until the player 
@@ -22,10 +16,12 @@ defmodule Hangman.Game.Server do
   not presently utilized.
   """
   
+  use GenServer
+  alias Hangman.{Game, Game.Event, Guess, Player, Round, Simple.Registry}
+  require Logger
+
   @type id :: Player.id
-
   @vsn "0"
-
   @max_wrong 5
   
   #####
@@ -349,9 +345,10 @@ defmodule Hangman.Game.Server do
         player_key ->
           # remove player from active keys and games
           # it was a normal exit, clean the state
-          state = state 
-          |> Registry.remove(:active, player_key)
-          |> Registry.remove(:value, player_key)
+          state = 
+            state 
+            |> Registry.remove(:active, player_key)
+            |> Registry.remove(:value, player_key)
       end
       
 

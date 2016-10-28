@@ -1,6 +1,4 @@
 defmodule Hangman.Player.Specific.Supervisor do
-  use Supervisor
-
   @moduledoc false
 
   '''
@@ -11,16 +9,12 @@ defmodule Hangman.Player.Specific.Supervisor do
   start workers, namely player worker supervisor and 
   the various player event handler supervisors.  As well
   as the player controller worker.
-  
   '''
 
-  alias Hangman.Player
-
-  require Logger
-
+  use Supervisor
   import Supervisor.Spec
-
-  @name __MODULE__
+  alias Hangman.Player
+  require Logger
 
   @doc """
   Supervisor start and link wrapper function
@@ -33,7 +27,7 @@ defmodule Hangman.Player.Specific.Supervisor do
     _ = Logger.debug "Starting Hangman Player Specific Supervisor," <> 
       " args: #{inspect args}"
 
-    Supervisor.start_link(@name, args)
+    Supervisor.start_link(__MODULE__, args)
   end
 
   @doc """

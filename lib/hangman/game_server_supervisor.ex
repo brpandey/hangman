@@ -1,20 +1,14 @@
 defmodule Hangman.Game.Server.Supervisor do
-  use Supervisor
-  
-  alias Hangman.{Game}
-
   @moduledoc false 
 
-  '''
-  Module implements supervisor behaviour.
+  # Module implements supervisor behaviour.
 
-  Module is a first line supervisor
-  which will dynamically start its Game.Server children
-  '''
-  
+  # Module is a first line supervisor
+  # which will dynamically start its Game.Server children
+
+  use Supervisor
+  alias Hangman.{Game}  
   require Logger
-  
-  @name __MODULE__
   
   
   @doc """
@@ -24,7 +18,7 @@ defmodule Hangman.Game.Server.Supervisor do
   @spec start_link :: Supervisor.on_start
   def start_link do
     _ = Logger.debug "Starting Hangman Game Server Supervisor"
-    Supervisor.start_link(@name, nil, name: 
+    Supervisor.start_link(__MODULE__, nil, name: 
                           :hangman_game_server_supervisor)
   end
   

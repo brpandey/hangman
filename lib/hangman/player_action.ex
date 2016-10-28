@@ -1,5 +1,4 @@
 defprotocol Hangman.Player.Action do
-
   @moduledoc """
   Typeclass for specific player functionality
 
@@ -10,7 +9,6 @@ defprotocol Hangman.Player.Action do
   
   Function names are `setup/1`, `guess/2`
   """
-
 
   @doc "Sets up each action state"
   def setup(player)

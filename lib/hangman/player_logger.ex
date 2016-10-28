@@ -1,15 +1,12 @@
-
-alias Experimental.GenStage
-
 defmodule Hangman.Player.Logger.Handler do
-  use GenStage
-
-  require Logger
-
   @moduledoc """
   Module implements event logger handler for `Hangman.Events.Manager`.
   Each `event` is logged to a file named after the player `id`.
   """
+
+  use Experimental.GenStage
+  alias Experimental.GenStage
+  require Logger
 
   @root_path   :code.priv_dir(:hangman_game)
 
@@ -58,6 +55,7 @@ defmodule Hangman.Player.Logger.Handler do
   Only those that match the player id key are selected
   """
 
+  @callback handle_events(term, term, tuple) :: tuple
   def handle_events(events, _from, {key, logger_pid}) do
 
     for event <- events,  key == Kernel.elem(event, 1) do

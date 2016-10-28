@@ -1,11 +1,4 @@
-
-alias Experimental.GenStage
-
 defmodule Hangman.Player.Alert.Handler do
-  use GenStage
-
-  require Logger
-
   @moduledoc """
   Module implements alert event handler for `Hangman.Events.Manager`.
   Each `event` is displayed to the user as an alert feed event.
@@ -13,6 +6,10 @@ defmodule Hangman.Player.Alert.Handler do
   Alert.Handler is setup per player key and consumes the producer events
   of the events manager
   """
+
+  use Experimental.GenStage
+  alias Experimental.GenStage
+  require Logger
 
   @spec start_link(Keyword.t) :: GenServer.on_start
   def start_link(options) do

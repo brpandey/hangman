@@ -1,5 +1,4 @@
 defmodule Hangman.Letter.Strategy do
-
   @moduledoc """
   Module provides access to a set of functions handling 
   letter guessing strategy.
@@ -34,15 +33,13 @@ defmodule Hangman.Letter.Strategy do
   choices to be presented to `human` to manually choose.
   """
 
-  require Logger
-
   alias Hangman.{Counter, Guess, Pass, Letter.Strategy}
+  require Logger
 
   defstruct type: nil, guessed_letters: MapSet.new, pass: %Pass{}, 
     prior_guess: {}, guess: {}
 
-  @type t :: %__MODULE__{}
-
+  @opaque t :: %__MODULE__{}
   @type result :: {t, Guess.t}
 
   # English letter frequency of english letters (Wikipedia)

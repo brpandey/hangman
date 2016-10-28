@@ -1,13 +1,4 @@
 defmodule Hangman.Ingestion.Cache.Flow do
-
-  alias Experimental.Flow
-
-  alias Hangman.{Counter, Dictionary}
-
-  require Logger
-
-  @ets Dictionary.ETS.table_name
-
   @moduledoc """
   Loads partitioned dictionary word files into ets table
   piecewise through words list chunks.  Random words are generated
@@ -23,6 +14,13 @@ defmodule Hangman.Ingestion.Cache.Flow do
   Optimization Note 2: Converting word_list chunks to binaries
   and counters to binaries drastically reduces ets memory footprint
   """
+
+  alias Experimental.Flow
+  alias Hangman.{Counter, Dictionary}
+  require Logger
+
+  @ets Dictionary.ETS.table_name
+
 
   @doc """
   Loads up the intermediate cached files and processes the data
@@ -86,10 +84,11 @@ defmodule Hangman.Ingestion.Cache.Flow do
     kv_delim = Dictionary.Ingestion.delimiter(:kv)
     line_delim = Dictionary.Ingestion.delimiter(:line)
 
-    [k, v] = event 
-    |> String.split(line_delim, trim: true) 
-    |> List.first 
-    |> String.split(kv_delim) 
+    [k, v] = 
+      event 
+      |> String.split(line_delim, trim: true) 
+      |> List.first 
+      |> String.split(kv_delim) 
 
     key = k |> String.to_integer
     value = v |> String.split(", ", trim: true)
@@ -142,7 +141,7 @@ defmodule Hangman.Ingestion.Cache.Flow do
     ets = @ets
 
     # Store the counters by key into the ets
-    counter_map |> Enum.reduce(ets, fn {k,c}, acc ->
+    Enum.reduce(counter_map, ets, fn {k,c}, acc ->
       Dictionary.ETS.put(:counter, acc, {k,c})
       acc
     end)

@@ -1,6 +1,4 @@
 defmodule Hangman.Player.System.Supervisor do
-  use Supervisor
-
   @moduledoc false
 
   '''
@@ -13,13 +11,10 @@ defmodule Hangman.Player.System.Supervisor do
   second-line supervisor.
   '''
 
-  alias Hangman.{Dictionary, Pass, Reduction}
-
-  require Logger
-
+  use Supervisor
   import Supervisor.Spec
-
-  @name __MODULE__
+  alias Hangman.{Dictionary, Pass, Reduction}
+  require Logger
 
   @doc """
   Supervisor start and link wrapper function
@@ -30,7 +25,7 @@ defmodule Hangman.Player.System.Supervisor do
     _ = Logger.debug "Starting Hangman Player System Supervisor," <> 
       " args: #{inspect args}"
 
-    Supervisor.start_link(@name, args)
+    Supervisor.start_link(__MODULE__, args)
   end
 
   @doc """

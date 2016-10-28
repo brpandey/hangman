@@ -1,14 +1,12 @@
 defmodule Hangman.Pass.Stub do 
   @moduledoc false
 
+  # Stub module to mimic `Pass` functionality
+
+  # Provides a scaffold implementation 
+  # to provide simple, predictable behavior
+
   alias Hangman.{Pass, Reduction, Counter}
-
-  '''
-  Stub module to mimic `Pass` functionality
-
-  Provides a scaffold implementation 
-  to provide simple, predictable behavior
-  '''
 
   @doc """
   Stub Routine retrieves stub pass tally given game start pass key

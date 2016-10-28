@@ -1,7 +1,4 @@
 defmodule Hangman.Action.Human do
-
-  alias Hangman.{Action.Human, Round, Letter.Strategy, Pass}
-
   @moduledoc """
   Implements human action player specific functionality
 
@@ -14,6 +11,8 @@ defmodule Hangman.Action.Human do
   The `human` action is given the choice of the top letter choices to choose
   from and is able to make an interactive guess.  
   """
+
+  alias Hangman.{Action.Human, Round, Letter.Strategy, Pass}
 
   defstruct type: :human, display: false, round: nil, strategy: nil
 

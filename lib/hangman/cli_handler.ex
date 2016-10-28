@@ -1,5 +1,4 @@
 defmodule Hangman.CLI.Handler do
-
   @moduledoc """
   Module drives `Player.Controller`, while
   setting up the proper `Game` server and `Event` consumer states beforehand.
@@ -99,7 +98,6 @@ defmodule Hangman.CLI.Handler do
 
         {:exit, _status} -> 
           Controller.stop_worker(key)
-          
 
           _ = if is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
           _ = if is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)

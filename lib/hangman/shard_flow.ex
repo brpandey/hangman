@@ -1,6 +1,4 @@
 defmodule Hangman.Shard.Flow do
-
-
   @moduledoc """
   Module splits the game args into shards
   which is distributed to shard handlers.  The resultant 
@@ -14,8 +12,7 @@ defmodule Hangman.Shard.Flow do
   """
 
   alias Experimental.Flow
-  alias Hangman.{Player, Shard}
-
+  alias Hangman.{Player, Shard.Handler}
   require Logger
 
   @flow_shard_size 10   # 1 flow shard contains 10 secrets
@@ -56,23 +53,24 @@ defmodule Hangman.Shard.Flow do
 
     game_args = Stream.zip(sharded_keys, sharded_secrets)
     
-    result = Flow.from_enumerable(game_args, max_demand: 2)
-    |> Flow.map(fn {shard_key, shard_value} ->
-      {shard_key, shard_value} 
-      |> Shard.Handler.setup 
-      |> Shard.Handler.play
-    end)
-    |> Flow.partition
-    |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
-      collate({key, history}, acc)
-    end)
-    |> Enum.into([])
+    result = 
+      game_args
+      |> Flow.from_enumerable(max_demand: 2)
+      |> Flow.map(fn {skey, svalue} ->
+           {skey, svalue} |> Handler.setup |> Handler.play
+         end)
+      |> Flow.partition
+      |> Flow.reduce(fn -> %{} end, fn {key, history}, acc ->
+           collate({key, history}, acc)
+         end)
+      |> Enum.into([])
 
 
     # Change from list to map
-    result = result |> Enum.reduce(%{}, fn {k,v}, acc -> 
-      Map.update(acc, k, v, &(&1 <> v))
-    end)
+    result = 
+      Enum.reduce(result, %{}, fn {k,v}, acc -> 
+        Map.update(acc, k, v, &(&1 <> v))
+      end)
 
     # Based on the secrets count either return single game history or score results
     case Enum.count(secrets) do
@@ -105,11 +103,10 @@ defmodule Hangman.Shard.Flow do
     # Store individual game snapshots into shard_key and
     # Store score results into name key (e.g. non-sharded)
     
-    acc = acc 
+    acc 
     |> Map.put(key, snapshot) 
     |> Map.update(name, scores, &(&1 <> scores))
-    
-    acc
+
   end
 
   @docp """
@@ -133,7 +130,7 @@ defmodule Hangman.Shard.Flow do
     # (WHOEVER: 4) (TASTEMAKERS: 4) (GLARIER: 7) (COSTUMER: 8) (DEPENDABLENESS: 3)"
 
 
-    l = scores |> String.split([" (", ") (" , ")"], trim: true) |> Enum.sort
+    list = scores |> String.split([" (", ") (" , ")"], trim: true) |> Enum.sort
 
     # After the String.split we have a sorted list instead of a string, like so:
 
@@ -149,27 +146,28 @@ defmodule Hangman.Shard.Flow do
     # "THERAPEUTIC: 2", "TRUSTED: 5", "UNDERNOURISHED: 4", "UNGOVERNABLE: 4", 
     # "UNHUSK: 25", "VERIFY: 7", "WEIGHTLESS: 5", "WHOEVER: 4", "WORSEN: 9", "WORSHIPING: 8"]
 
-    games = l |> Enum.count
+    games = list |> Enum.count
 
-    total_score = l |> Enum.reduce(0, fn x, acc -> 
-      [_a, b] = String.split(x, ": ")   
-      score = String.to_integer(b)
-      acc + score
-    end)
+    total_score = 
+      Enum.reduce(list, 0, fn x, acc -> 
+        [_a, b] = String.split(x, ": ")   
+        score = String.to_integer(b)
+        acc + score
+      end)
     
     avg = total_score / games
 
     # Convert string back to scores list with paren format
 
-    scores = l 
-    |> Enum.reverse 
-    |> Enum.reduce("", fn x, acc -> # prepend to tail -- O(n)
-      case acc do
-        "" -> "(#{x})" <> acc
-        _ -> "(#{x}) " <> acc # add space between terms
-      end
-      
-    end)
+    scores = 
+      list 
+      |> Enum.reverse 
+      |> Enum.reduce("", fn x, acc -> # prepend to tail -- O(n)
+           case acc do
+             "" -> "(#{x})" <> acc
+             _ -> "(#{x}) " <> acc # add space between terms
+           end
+         end)
 
     # Summary text finished now
 

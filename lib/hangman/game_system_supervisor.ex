@@ -1,22 +1,15 @@
 defmodule Hangman.Game.System.Supervisor do 
-  use Supervisor
-
   @moduledoc false
 
-  '''
-  Module implements `Supervisor` behaviour.
+  # Module implements `Supervisor` behaviour.
 
-  Module is a second line supervisor
-  as it supervises a first-line supervisor, Game.Server.Supervisor
-  along with the Game.Pid.Cache and Game.Event.Manager
-  '''
-  
+  # Module is a second line supervisor
+  # as it supervises a first-line supervisor, Game.Server.Supervisor
+  # along with the Game.Pid.Cache and Game.Event.Manager
+
+  use Supervisor
+  alias Hangman.{Game}  
   require Logger
-
-  alias Hangman.{Game}
-  
-  @name __MODULE__
-
 
   @doc """
   Supervisor start_link wrapper function
@@ -26,7 +19,7 @@ defmodule Hangman.Game.System.Supervisor do
   def start_link do
     _ = Logger.debug "Starting Hangman Game System Supervisor"
 
-    Supervisor.start_link(@name, nil)
+    Supervisor.start_link(__MODULE__, nil)
   end
 
   @doc """

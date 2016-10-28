@@ -1,18 +1,12 @@
 defmodule Hangman.Player.Logger.Supervisor do
-  use Supervisor
-
-  alias Hangman.{Player}
-
   @moduledoc false
 
-  '''
-  Module implements supervisor functionality overseeing 
-  dynamically started player logger handlers
-  '''
+  # Module implements supervisor functionality overseeing 
+  # dynamically started player logger handlers
 
+  use Supervisor
+  alias Hangman.Player
   require Logger
-
-  @name __MODULE__
 
   @doc """
   Supervisor start and link wrapper function
@@ -21,7 +15,7 @@ defmodule Hangman.Player.Logger.Supervisor do
   @spec start_link :: Supervisor.on_start
   def start_link do
     _ = Logger.debug "Starting Hangman Player Logger Supervisor"
-    Supervisor.start_link(@name, {}, name: :player_logger_supervisor)
+    Supervisor.start_link(__MODULE__, {}, name: :player_logger_supervisor)
   end
 
   @doc """

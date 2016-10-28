@@ -1,8 +1,4 @@
 defmodule Hangman.Dictionary.Cache do
-  use GenServer
-
-  require Logger
-
   @moduledoc """
   Module implements a GenServer process 
   providing access to a dictionary word cache. 
@@ -11,10 +7,10 @@ defmodule Hangman.Dictionary.Cache do
   Serves as a wrapper around dictinary specific implementation
   """
 
-  alias Hangman.{Dictionary}
+  use GenServer
+  alias Hangman.Dictionary
+  require Logger
 
-
-  @name __MODULE__
   # External API
 
   @doc """
@@ -24,7 +20,7 @@ defmodule Hangman.Dictionary.Cache do
   @spec start_link(Keyword.t) :: {:ok, pid}
   def start_link(args) do
     options = [name: :hangman_dictionary_cache_server]
-    GenServer.start_link(@name, args, options)
+    GenServer.start_link(__MODULE__, args, options)
   end
 
   @doc """

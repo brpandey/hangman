@@ -1,6 +1,4 @@
-defmodule Hangman.Game.Pid.Cache do 
-  use GenServer
-  
+defmodule Hangman.Game.Pid.Cache do
   @moduledoc """
   Module provides access to a game server pid cache.  Pid `caching`
   prevents a `Game.Server` process from having to be created every time. 
@@ -13,13 +11,13 @@ defmodule Hangman.Game.Pid.Cache do
   unique players.  The simple idea for now, is to have multiple tiny game 
   servers map to multiple tiny players
   """
-  
+
+  use GenServer  
+  alias Hangman.{Game, Player}
   require Logger
 
-  alias Hangman.{Game, Player}
-  
-  @name __MODULE__
-  
+  @name :game_pid_cache
+
   @doc """
   GenServer start link wrapper function
   """
@@ -31,7 +29,7 @@ defmodule Hangman.Game.Pid.Cache do
     args = nil
     options = [name: @name]
     
-    GenServer.start_link(@name, args, options)
+    GenServer.start_link(__MODULE__, args, options)
   end
   
   @doc """

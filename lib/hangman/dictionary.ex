@@ -1,13 +1,11 @@
 defmodule Hangman.Dictionary do
-
   @moduledoc """
   Module provides central point to perform dictionary
   functions for clients for types, paths, random
   words, and lookup functionality.
   """
 
-  alias Hangman.{Dictionary.Cache}
-
+  alias Hangman.Dictionary.Cache
 
   @type kind :: :regular | :big  
 

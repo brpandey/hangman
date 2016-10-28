@@ -1,6 +1,4 @@
-defmodule Hangman.Pass.Cache.Writer do
-  use GenServer
-  
+defmodule Hangman.Pass.Cache.Writer do  
   @moduledoc """
   Module is responsible for synchronous chunk 
   `pass` writes into the `Pass.Cache` table. 
@@ -11,11 +9,11 @@ defmodule Hangman.Pass.Cache.Writer do
   NOTE: Could be a source of bottleneck as all reduce workers
   are synchronously relying on this writer process.  As of current
   load, no bottleneck for time being
-
   """
 
-  require Logger
+  use GenServer
   alias Hangman.{Pass, Chunks}
+  require Logger
     
   @ets_table_name :hangman_pass_cache
 

@@ -1,6 +1,5 @@
 defmodule Hangman.Counter do
   @moduledoc """
-
   Module for creating and using letter frequency tallies.
   Contains a set of functions for tallies, such as adding 
   letters, words, lists, and streams, and retrieving their
@@ -35,10 +34,9 @@ defmodule Hangman.Counter do
 
   alias Hangman.{Chunks, Counter}
 
-  @doc false
   defstruct map: %{}
 
-  @type t :: %__MODULE__{}
+  @opaque t :: %__MODULE__{}
 
   @type key :: String.t
   @type value :: pos_integer

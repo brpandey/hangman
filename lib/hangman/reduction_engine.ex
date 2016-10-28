@@ -1,5 +1,4 @@
 defmodule Hangman.Reduction.Engine do
-
   @moduledoc """
   Module provides access to the words reduction engine.  
   

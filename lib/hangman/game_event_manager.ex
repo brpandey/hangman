@@ -1,7 +1,11 @@
 defmodule Hangman.Game.Event.Manager do
-  alias Experimental.GenStage
+  @moduledoc """
+  Module implements GenStage event manager which handles event 
+  dispatching given consumer backpressure
+  """
 
-  use GenStage
+  use Experimental.GenStage
+  alias Experimental.GenStage
   require Logger
 
   ### Client API

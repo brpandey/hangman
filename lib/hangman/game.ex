@@ -27,9 +27,8 @@ defmodule Hangman.Game do
   Primary game functions are `load/3`, `guess/2`, `status/1`.
   """
   
-  require Logger
-
   alias Hangman.{Game, Guess, Pattern}
+  require Logger
   
   defstruct id: nil, current: 0, #Current game index
   secret: "", pattern: "", score: 0, state: :reset,
@@ -37,7 +36,7 @@ defmodule Hangman.Game do
   max_wrong: 0, correct_letters: MapSet.new, 
   incorrect_letters: MapSet.new, incorrect_words: MapSet.new
   
-  @type t :: %__MODULE__{}
+  @opaque t :: %__MODULE__{}
 
   @typedoc "`Game` id is String.t (currently using player's name as unique key)"
   @type id :: String.t
@@ -88,8 +87,8 @@ defmodule Hangman.Game do
     #initialize the list of patterns to fit the secrets length
     secrets = secrets |> Enum.map(&String.upcase(&1))    
 
-    patterns = secrets 
-    |> Enum.map(&String.duplicate(@mystery_letter, String.length(&1)))
+    patterns = 
+      secrets |> Enum.map(&String.duplicate(@mystery_letter, String.length(&1)))
     
     %Game{id: id_key, secret: List.first(secrets), 
           pattern: List.first(patterns), secrets: secrets, 
@@ -174,9 +173,10 @@ defmodule Hangman.Game do
     #return updated game status
     {game, feedback} = status(game)
     
-    feedback = feedback 
-    |> Map.put(:pattern, game.pattern) 
-    |> Map.put(:result, result)
+    feedback = 
+      feedback 
+      |> Map.put(:pattern, game.pattern) 
+      |> Map.put(:result, result)
     
     {game, feedback}
   end
@@ -200,9 +200,10 @@ defmodule Hangman.Game do
     
     {game, feedback} = status(game)
 
-    feedback = feedback 
-    |> Map.put(:pattern, game.pattern) 
-    |> Map.put(:result, result)
+    feedback = 
+      feedback 
+      |> Map.put(:pattern, game.pattern) 
+      |> Map.put(:result, result)
 
     {game, feedback}
   end

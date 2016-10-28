@@ -1,6 +1,4 @@
 defmodule Hangman.Player.Worker.Supervisor do
-  use Supervisor
-
   @moduledoc false
 
   '''
@@ -16,12 +14,11 @@ defmodule Hangman.Player.Worker.Supervisor do
   Hangman.Player.Worker.Supervisor is a first line supervisor
   which will dynamically start its children
   '''
-  
-  require Logger
-  alias Hangman.{Player}
 
-  @name __MODULE__
-  
+  use Supervisor
+  alias Hangman.Player
+  require Logger
+
   @doc """
   Supervisor start and link wrapper function
   """
@@ -30,7 +27,7 @@ defmodule Hangman.Player.Worker.Supervisor do
   def start_link() do
     _ = Logger.debug "Starting Hangman Player Worker Supervisor"
 
-    Supervisor.start_link(@name, {}, 
+    Supervisor.start_link(__MODULE__, {}, 
                           name: :hangman_player_worker_supervisor)
   end
 

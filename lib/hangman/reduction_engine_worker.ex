@@ -1,8 +1,4 @@
 defmodule Hangman.Reduction.Engine.Worker do
-  use GenServer
-
-  alias Hangman.{Pass, Chunks, Counter}
-
   @moduledoc """
   Module implements workers that handle `Hangman` words reduction.
   Used primarily by `Reduction.Engine` through `reduce_and_store/4` to perform
@@ -14,9 +10,10 @@ defmodule Hangman.Reduction.Engine.Worker do
     * Returns new `Pass`.
   """
 
+  use GenServer
+  alias Hangman.{Pass, Chunks, Counter}
   require Logger
 
-  @name __MODULE__
   @possible_words_left 40
 
   @doc """
@@ -29,7 +26,7 @@ defmodule Hangman.Reduction.Engine.Worker do
 
     args = {}
     options = [name: via_tuple(worker_id)]
-    GenServer.start_link(@name, args, options)
+    GenServer.start_link(__MODULE__, args, options)
   end
   
   
@@ -110,9 +107,10 @@ defmodule Hangman.Reduction.Engine.Worker do
     # filter out words that don't regex match
     # do for all values in stream
 
-    filtered_stream = data 
-    |> Chunks.get_words_lazy 
-    |> Stream.filter(&regex_match?(&1, regex_key))
+    filtered_stream = 
+      data 
+      |> Chunks.get_words_lazy 
+      |> Stream.filter(&regex_match?(&1, regex_key))
     
     # Populate counter object, now that we've created new filtered chunks
     tally = Counter.new |> Counter.add_words(filtered_stream, exclusion)
@@ -131,19 +129,23 @@ defmodule Hangman.Reduction.Engine.Worker do
       # Note: lets strategy handle error higher up, don't crash process
       # raise "Word not in dictionary, pass size can't be zero"
       pass_size == 1 ->
-        last_word = Chunks.get_words_lazy(new_data)
-        |> Enum.take(1) 
-        |> List.first
+        last_word = 
+          new_data
+          |> Chunks.get_words_lazy
+          |> Enum.take(1) 
+          |> List.first
           
         {last_word, ""}
       
       pass_size > 1 and pass_size < @possible_words_left ->
-        l = Chunks.get_words_lazy(new_data) 
-        |> Enum.take(pass_size)
-        |> Enum.sort
+        list = 
+          new_data
+          |> Chunks.get_words_lazy
+          |> Enum.take(pass_size)
+          |> Enum.sort
           
         possible_txt = 
-          "Possible hangman words left, #{pass_size} words: #{inspect l}"
+          "Possible hangman words left, #{pass_size} words: #{inspect list}"
           
         {"", possible_txt}
           
@@ -154,10 +156,7 @@ defmodule Hangman.Reduction.Engine.Worker do
     end
 
     # Write to cache
-
-    next_pass_key = Pass.increment_key(pass_key)
-
-    Pass.Cache.put(next_pass_key, new_data)
+    pass_key |> Pass.increment_key |> Pass.Cache.put(new_data)
 
     %Pass{size: pass_size, tally: tally, 
            possible: possible_txt, last_word: last_word}    

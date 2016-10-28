@@ -1,5 +1,4 @@
 defmodule Hangman.Player.Controller do
-
   @moduledoc """
   Serves as External API into Player functionality.  
   Serves to manage players.  
@@ -28,12 +27,10 @@ defmodule Hangman.Player.Controller do
   --------
   round | strategy (handles game playing specifics -- choosing best letter, 
                     communicating with game server and reduction engine)
-
   """
 
-  require Logger
   alias Hangman.Player
-
+  require Logger
 
   @doc """
   Dynamically start a new player worker

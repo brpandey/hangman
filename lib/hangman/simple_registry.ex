@@ -1,5 +1,4 @@
 defmodule Hangman.Simple.Registry do
-
   @moduledoc """
   Module implements a simple stash registry keeping track of active pids,
   active ids, and their values e.g. Player.t or Game.t
@@ -10,8 +9,7 @@ defmodule Hangman.Simple.Registry do
   to trigger registry removal
   """
 
-  alias Hangman.{Simple.Registry}
-
+  alias Hangman.Simple.Registry
   require Logger
 
   # values map ids to values e.g. Player.t or Game.t
@@ -21,8 +19,7 @@ defmodule Hangman.Simple.Registry do
   defstruct values: %{}, active_pids: %{}, active_ids: %{}
 
 
-  @type t :: %__MODULE__{}  
-  
+  @type t :: %__MODULE__{}
   @type id :: String.t | {}
   @type key :: {id, pid}
 
@@ -222,7 +219,6 @@ defmodule Hangman.Simple.Registry do
 
   def remove(%Registry{} = registry, :active, {id_key, pid_key} = key)
   when (is_binary(id_key) or is_tuple(id_key)) and is_pid(pid_key) do
-
     registry |> do_remove(:active_pids, key) |> do_remove(:active_ids, key)
   end
 

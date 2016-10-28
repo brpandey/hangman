@@ -1,6 +1,4 @@
 defmodule Hangman.Action.Robot do
-
-
   @moduledoc """
   Implements robot action player specific functionality
 

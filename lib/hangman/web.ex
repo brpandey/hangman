@@ -1,10 +1,4 @@
 defmodule Hangman.Web do
-  use Plug.Router
-
-  alias Hangman.{Shard}
-
-  require Logger
-
   @moduledoc """
   Module provides access to a http web server for playing 
   `Hangman` games via a tool such as curl or HTTPoison.
@@ -43,6 +37,11 @@ defmodule Hangman.Web do
       {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
   
   """
+
+  use Plug.Router
+  alias Hangman.Shard
+  require Logger
+
 
   plug :match
   plug :dispatch

@@ -1,5 +1,4 @@
 defmodule Hangman.Shard.Handler do
-
   @moduledoc """
   Module runs game play for the given shard of secrets
   as determined by `Shard.Flow`.  Basically, runs a chunk
@@ -20,7 +19,6 @@ defmodule Hangman.Shard.Handler do
   """
 
   alias Hangman.{Game.Pid.Cache, Player, Player.Controller}
-
   require Logger
 
   @sleep 3000
@@ -51,32 +49,33 @@ defmodule Hangman.Shard.Handler do
   def play(shard_key) do
 
     # Loop until we have received an :exit value from the Player Controller
-    list = Enum.reduce_while(Stream.cycle([shard_key]), [], fn key, acc ->
+    list = 
+      Enum.reduce_while(Stream.cycle([shard_key]), [], fn key, acc ->
       
-      feedback = key |> Controller.proceed
+        feedback = key |> Controller.proceed
 
-      case feedback do
-        {code, _status} when code in [:begin, :transit] ->
-          {:cont, acc}
-
-        {:retry, _status} ->
-          Process.sleep(@sleep) # Stop gap for now for no proc error by gproc
-          {:cont, acc}
-
-        {:action, status} -> # collect guess result status as given from action state
-          acc = [status | acc] # prepend to list then later reverse -- O(1)
-          {:cont, acc}
-
-        {:exit, status} -> 
-          acc = [status | acc] # prepend to list then later reverse -- O(1)
-          Controller.stop_worker(key)
-
-          {:halt, acc}
-
-        _ -> raise "Unknown Player state"
-      end
-    end)
-
+        case feedback do
+          {code, _status} when code in [:begin, :transit] ->
+            {:cont, acc}
+          
+            {:retry, _status} ->
+            Process.sleep(@sleep) # Stop gap for now for no proc error by gproc
+            {:cont, acc}
+          
+            {:action, status} -> # collect guess result status as given from action state
+              acc = [status | acc] # prepend to list then later reverse -- O(1)
+            {:cont, acc}
+          
+            {:exit, status} -> 
+            acc = [status | acc] # prepend to list then later reverse -- O(1)
+            Controller.stop_worker(key)
+            
+            {:halt, acc}
+          
+            _ -> raise "Unknown Player state"
+        end
+      end)
+    
     # we reverse the prepended list of round statuses
     list = list |> Enum.reverse
 
