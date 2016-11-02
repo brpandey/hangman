@@ -1,7 +1,6 @@
 defmodule Hangman.Game.Test do
   use ExUnit.Case, async: true
-
-  alias Hangman.{Game}
+  alias Hangman.Game
 
   test "fred - game w/o server" do
 

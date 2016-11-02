@@ -63,6 +63,8 @@ defmodule Hangman.Game do
   
   @mystery_letter "-"
 
+  @min_secret_size 2
+
   @states [:reset, :start, :guessing, :won, :lost, :finished]
     
   
@@ -74,6 +76,11 @@ defmodule Hangman.Game do
   def new(id_key, secret, max_wrong)
   when (is_binary(id_key) or is_tuple(id_key)) and is_binary(secret) do
 
+    case (@min_secret_size <= String.length(secret)) do
+      true -> :ok
+      false -> raise HangmanError, "Secret submitted is too short"
+    end
+
     secret = String.upcase(secret)
     pattern = String.duplicate(@mystery_letter, String.length(secret))
 
@@ -83,9 +90,17 @@ defmodule Hangman.Game do
   
   def new(id_key, secrets, max_wrong) when 
   (is_binary(id_key) or is_tuple(id_key)) and is_list(secrets) do
+
+    #Ensure the secrets are atleast the min secret size
+
+    case Enum.all?(secrets, fn x -> @min_secret_size <= String.length(x) end) do
+      true -> :ok
+      false -> raise HangmanError, "Secret submitted is too short"
+    end
+
     #initialize the list of secrets to be uppercase 
     #initialize the list of patterns to fit the secrets length
-    secrets = secrets |> Enum.map(&String.upcase(&1))    
+    secrets = secrets |> Enum.map(&String.upcase(&1))
 
     patterns = 
       secrets |> Enum.map(&String.duplicate(@mystery_letter, String.length(&1)))
@@ -220,7 +235,7 @@ defmodule Hangman.Game do
       game.state in [:reset, :finished] -> :reset
         
       # GUESSING -> WON
-      game.state == :guessing and 
+      game.state in [:start, :guessing] and 
       game.secret == game.pattern -> :won
 
       # GUESSING -> LOST
@@ -233,6 +248,8 @@ defmodule Hangman.Game do
 
       # WON, LOST, ABORT -> NEXT
       game.state in [:won, :lost, :abort] -> :next
+
+      true -> raise HangmanError, "unmatched status cond, game is #{inspect game}"
     end
 
     case new_code do
@@ -256,6 +273,13 @@ defmodule Hangman.Game do
 
   @spec next(t) :: {t, feedback}
   def next(%Game{} = game) do
+
+    # assert that we are only called once a single game is over
+    # as opposed to mid-game play
+    case game.state in [:won, :lost, :abort] do
+      true -> :ok
+      _ -> raise HangmanError, "not supported - calling of next when single game is not over"
+    end
 
     games_played = game.current + 1
     
