@@ -99,11 +99,15 @@ defmodule Hangman.Pass do
     {pass_key, pass_info}
   end
 
-  @spec cleanup(key) :: :ok
-  def cleanup({id, game_no, round_no} = pass_key) when 
+  @doc """
+  Removes pass key from ets
+  """
+
+  @spec delete(key) :: :ok
+  def delete({id, game_no, round_no} = pass_key) when 
   (is_binary(id) or is_tuple(id)) 
   and is_number(game_no) and is_number(round_no) do
-    Pass.Cache.cleanup(pass_key)
+    Pass.Cache.delete(pass_key)
   end
 
 end

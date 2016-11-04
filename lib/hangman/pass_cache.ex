@@ -46,9 +46,9 @@ defmodule Hangman.Pass.Cache do
   Routine to stop server normally
   """
 
-  @spec stop(pid) :: {}
-  def stop(pid) do
-    GenServer.call pid, :stop
+  @spec stop() :: {}
+  def stop() do
+    GenServer.call :hangman_pass_cache, :stop
   end
 
   @docp """
@@ -57,7 +57,8 @@ defmodule Hangman.Pass.Cache do
 
   #@callback init(term) :: {}
   def init(_) do
-    setup()
+    # Loads ets table type set
+    :ets.new(@ets_table_name, [:set, :named_table, :public])
     {:ok, {}}
   end
 
@@ -79,13 +80,6 @@ defmodule Hangman.Pass.Cache do
     :ok
   end
 
-  # Loads ets table type set
-  
-  @spec setup :: :atom
-  defp setup() do
-    :ets.new(@ets_table_name, [:set, :named_table, :public])
-  end
-
 
   @doc """
   Get routine retrieves `pass` chunks cache data given the pass key
@@ -99,18 +93,16 @@ defmodule Hangman.Pass.Cache do
     _ = Logger.debug("pass cache get: pass_key is #{inspect pass_key}")
 
     case do_get(:chunks, pass_key) do
-      
-      nil ->
+      :error ->
         _ = Logger.debug("Unable to retrieve chunks from rounds_pass_cache," 
                      <> " given pass_key #{inspect pass_key}")
-        
-        snapshot_info = :ets.i(@ets_table_name)
-        _ = Logger.debug("Table snapshot: #{inspect snapshot_info}")
-        
-        raise HangmanError, "chunks not found for key: #{inspect pass_key}"
+        #raise HangmanError, "chunks not found for key: #{inspect pass_key}"
+        :error
 
-      data -> data
+      {:ok, data} -> 
+        data
     end
+
   end
 
 
@@ -119,9 +111,9 @@ defmodule Hangman.Pass.Cache do
     
     # Using match instead of lookup
     case :ets.match_object(@ets_table_name, {pass_key, :_}) do
-      [] -> nil
+      [] -> 
+        :error
       [{^pass_key, data}] ->
-
         %Chunks{} = data # quick assert
 
         # delete this current pass in the table, 
@@ -129,7 +121,7 @@ defmodule Hangman.Pass.Cache do
         :ets.match_delete(@ets_table_name, {pass_key, :_})
     
         # return chunks :)
-        data
+        {:ok, data}
     end
 
   end
@@ -146,14 +138,14 @@ defmodule Hangman.Pass.Cache do
   end
 
   @doc """
-  Cleanup pass data if single game is over
+  Delete pass data if single game is over
   """
 
-  @spec cleanup(Pass.key) :: :ok
-  def cleanup({_id, _game_no, _round_no} = pass_key) do
+  @spec delete(Pass.key) :: :ok
+  def delete({_id, _game_no, _round_no} = pass_key) do
     # Using match instead of lookup
     case :ets.match_object(@ets_table_name, {pass_key, :_}) do
-      [] -> :ok
+      [] -> :error
       [{^pass_key, _data}] ->        
         # delete this last current pass in the table, 
         :ets.match_delete(@ets_table_name, {pass_key, :_})   

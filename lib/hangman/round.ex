@@ -232,7 +232,7 @@ defmodule Hangman.Round do
 
   defp finish(%Round{} = round) do
     # invoke pass clean up routine
-    increment_key(round) |> Pass.cleanup
+    increment_key(round) |> Pass.delete
   end
 
 

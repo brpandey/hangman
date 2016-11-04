@@ -28,6 +28,15 @@ defmodule Hangman.Pass.Cache.Writer do
     options = [name: :pass_cache_writer]
     GenServer.start_link(__MODULE__, args, options)
   end
+
+  @doc """
+  Routine to stop server normally
+  """
+
+  @spec stop() :: {}
+  def stop() do
+    GenServer.call :pass_cache_writer, :stop
+  end
   
   @docp """
   GenServer callback to initialize server process
@@ -63,5 +72,14 @@ defmodule Hangman.Pass.Cache.Writer do
 
     {:reply, :ok, state}
   end
+
+  @docp """
+  GenServer callback to stop server
+  """
+  
+  #@callback handle_call(:atom, {}, {}) :: {}
+  def handle_call(:stop, _from, {}) do
+    { :stop, :normal, :ok, {}}
+  end 
 
 end
