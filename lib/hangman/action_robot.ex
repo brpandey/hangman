@@ -23,17 +23,17 @@ defmodule Hangman.Action.Robot do
 
     round = robot.round
     strategy = robot.strategy
+    
+    # Retrieve the exclusion set, simply the list of already guessed letters
+    exclusion = strategy |> Strategy.guessed
+    
+    # Setup game round, passing in strategy callback routine
+    {round, %Pass{} = pass} = round |> Round.setup(exclusion)
 
-    fn_updater = fn
-      %Pass{} = word_pass ->
-        # Update the strategy with the round, with the latest reduced word set data
-        Strategy.update(strategy, word_pass)
-    end
-    
-    exclusion = Strategy.guessed(strategy)
-    
-    # Setup game round, passing in strategy update routine
-    {round, strategy} = Round.setup(round, exclusion, fn_updater)
+    # Process the strategy against the latest reduced word set data
+    # We are using the auto self-selecting mode
+
+    strategy = strategy |> Strategy.process(:auto, pass)
 
     robot = Kernel.put_in(robot.round, round)
     robot = Kernel.put_in(robot.strategy, strategy)
@@ -48,9 +48,12 @@ defmodule Hangman.Action.Robot do
 
   @spec guess(t, Guess.t) :: tuple()
   def guess(%Robot{} = robot, _data) do
+
+    strategy = robot.strategy
+    round = robot.round
     
-    guess = Strategy.guess(robot.strategy)
-    round = Round.guess(robot.round, guess)
+    guess = strategy |> Strategy.guess(:auto)
+    round = round |> Round.guess(guess)
     robot = Kernel.put_in(robot.round, round)
     status = Round.status(round)
 

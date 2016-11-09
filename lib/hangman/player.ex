@@ -37,10 +37,9 @@ defmodule Hangman.Player do
   def begin(player) do
 
     round = player.round
-    type = player.type
 
     round = Round.init(round)
-    strategy = Strategy.new(type)
+    strategy = Strategy.new
 
     code = 
       case Round.status(round) do

@@ -30,23 +30,19 @@ defmodule Hangman.Action.Human do
     round = human.round
     strategy = human.strategy
 
-    fn_updater = fn
-      %Pass{} = word_pass ->
-        # Update the strategy with the round, with the latest reduced word set data
-        Strategy.update(strategy, word_pass)
-    end
+    # Retrieve the exclusion set, simply the list of already guessed letters
+    exclusion = strategy |> Strategy.guessed
 
-    exclusion = Strategy.guessed(strategy)
-
-    # Set up the game play round
+    # Set up the game play round passing in letters already guessed
     # Retrieve the reduction pass info from the engine
 
-    {round, strategy} = Round.setup(round, exclusion, fn_updater)
+    {round, %Pass{} = pass} = round |> Round.setup(exclusion)
+
+    # Process the strategy against the latest reduced word set pass data
+    strategy = strategy |> Strategy.process(:choices, pass)
     
-    # Retrieve top letter strategy options,
-    # and then updating options with round specific information
-    choices = Strategy.choices(strategy)
-    choices = update_choices(round, choices)
+    # Retrieve top letter strategy options augmented by round data
+    choices = strategy |> Strategy.choices(round)
 
     human = Kernel.put_in(human.round, round)
     human = Kernel.put_in(human.strategy, strategy)
@@ -62,56 +58,28 @@ defmodule Hangman.Action.Human do
   @spec guess(t, Guess.t) :: tuple | no_return
   def guess(%Human{} = human, guess) when is_tuple(guess) do
 
-    guess = 
-      case guess do
-        {:guess_letter, letter} ->
-          # Validate the letter is in the top choices, if not
-          # return the optimal letter
-          Strategy.validate(human.strategy, letter)
-        {:guess_word, last_word} -> {:guess_word, last_word}
-        _ -> raise HangmanError, "Unsupported guess type"
-      end
-    
-    round = Round.guess(human.round, guess)
-    strategy = Strategy.update(human.strategy, guess)
-    status = Round.status(round)
+    round = human.round
+    strategy = human.strategy
 
+    # Validate the guess retrieved from the choices options
+    guess = strategy |> Strategy.guess(:choices, guess)
+    
+    # Make the guess
+    round = round |> Round.guess(guess)
+
+    # Record the guess
+    strategy = strategy |> Strategy.update(guess)
+
+    # Retrieve the result
+    status = round |> Round.status
+
+    # Store into struct
     human = Kernel.put_in(human.round, round)
     human = Kernel.put_in(human.strategy, strategy)
     
     {human, status}
   end
   
-
-  @doc """
-  Interjects specific parameters into `choices text`.
-  """
-
-  @spec update_choices(Round.t, Guess.options) :: Guess.options
-  def update_choices(%Round{} = round, {:guess_letter, choices_text})
-  when is_binary(choices_text) do
-    text = do_update_choices(round, choices_text)
-    {:guess_letter, text}
-  end
-
-  def update_choices(%Round{} = round, {:guess_word, last, choices_text})
-  when is_binary(choices_text) do
-    text = do_update_choices(round, choices_text)
-    {:guess_word, last, text}
-  end
-
-  @spec do_update_choices(Round.t, String.t) :: String.t
-  defp do_update_choices(%Round{} = round, text) when is_binary(text) do
-    {name, _, round_no} = Round.round_key(round)
-    {_, status_text} = Round.status(round)
-
-    text 
-    |> String.replace("{name}", "#{name}")
-    |> String.replace("{round_no}", "#{round_no}")
-    |> String.replace("{status}", "#{status_text}")
-
-  end
-
 
   # EXTRA
   # Returns player information 

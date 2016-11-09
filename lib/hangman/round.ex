@@ -32,7 +32,7 @@ defmodule Hangman.Round do
   to determine if we transition to a new game or games over.
   """
 
-  alias Hangman.{Round, Guess, Reduction, Letter.Strategy}
+  alias Hangman.{Round, Guess, Reduction}
   alias Hangman.Game.Server, as: Game   # single place to switch to Game.Server.Stub
   alias Hangman.Pass, as: Pass   # single place to switch to Pass.Stub
   require Logger
@@ -92,22 +92,21 @@ defmodule Hangman.Round do
       end
 
     # Further update round
-    round = %{ round | num: 0, game_num: round.game_num + 1, 
-                    status_code: :start}
-
+    round = %{ round | num: 0, 
+               game_num: round.game_num + 1, 
+               status_code: :start }
     
     {player_key, round_key, game_pid} = game_context_key(round)
 
     # Register the client with the game server and set the context
     %{key: ^round_key, code: status_code, data: data, text: status_text} =
-      Game.register(game_pid, player_key, round_key)
-    
+      Game.register(game_pid, player_key, round_key)    
 
     context = if status_code == :finished do nil else build_context(round, data) end
 
-    %{ round | status_code: status_code, # was :start previously
-            status_text: status_text, 
-            context: context}
+    %{ round | status_code: status_code,
+       status_text: status_text, 
+       context: context }
     
   end
   
@@ -130,27 +129,16 @@ defmodule Hangman.Round do
   Generates a reduce key based on the result of the
   last guess or secret length to filter possible 
   `Hangman` words from `Pass.Cache` server
+
+  Returns round and pass data metadata
   """
 
-  @spec setup(t, Enumerable.t, (Pass.t -> Strategy.t) ) :: {t, Strategy.t}
-  def setup(%Round{} = round, exclusion, fn_updater) do
+  @spec setup(t, Enumerable.t) :: {t, Pass.t}
+  def setup(%Round{} = round, exclusion) do
 
     # since we're at the start of a new round increment round num
     round = Kernel.put_in(round.num, round.num + 1)
 
-    {round, pass_info} = round |> do_reduction_setup(exclusion)
-    updater_result = fn_updater.(pass_info)
-
-    {round, updater_result}
-  end
-
-  @docp """
-  Filters the word set via the reduction engine
-  Returns the pass data
-  """
-
-  defp do_reduction_setup(%Round{} = round, exclusion) do
-    
     # Generate the word filter options for the words reduction engine
     reduce_key = round.context |> Reduction.Options.reduce_key(exclusion)
     match_key = round.context |> Kernel.elem(0)
@@ -201,8 +189,9 @@ defmodule Hangman.Round do
 
     true = round.status_code in [:won, :lost]
 
-    # clean out round
-    round |> finish
+    # invoke pass clean up routine, so that we purge pass table of 
+    # last pass data
+    round |> increment_key |> Pass.delete
 
     {player_key, round_key, game_pid} = game_context_key(round)
 
@@ -225,16 +214,6 @@ defmodule Hangman.Round do
 
     round
   end
-
-  @docp """
-  Round  clean up routine after a single game over
-  """
-
-  defp finish(%Round{} = round) do
-    # invoke pass clean up routine
-    increment_key(round) |> Pass.delete
-  end
-
 
   # Returns round relevant data parameters
 

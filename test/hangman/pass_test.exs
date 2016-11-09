@@ -37,7 +37,7 @@ defmodule Hangman.Pass.Test do
   # assume secret word is asparagus
 
     #### ROUND 1
-    strategy = Strategy.new(:robot)
+    strategy = Strategy.new
 
     pass_key = {id, game_no, round_no} = {"julio", 3, 1}
 
@@ -58,7 +58,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "Passed initial game start reduce"
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
 
     {:guess_letter, "e"} = Strategy.guess(strategy)
 
@@ -88,7 +88,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "a"} = Strategy.guess(strategy)
 
 
@@ -118,7 +118,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "n"} = Strategy.guess(strategy)
 
 
@@ -150,7 +150,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "b"} = Strategy.guess(strategy)
 
 
@@ -181,7 +181,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "g"} = Strategy.guess(strategy)
 
 
@@ -212,7 +212,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_word, "asparagus"} = Strategy.guess(strategy)
 
   end
@@ -222,7 +222,7 @@ defmodule Hangman.Pass.Test do
   # assume secret word is asparagus
 
     #### ROUND 1
-    strategy = Strategy.new(:robot)
+    strategy = Strategy.new
 
     pass_key = {id, game_no, round_no} = {"yoko", 3, 1}
 
@@ -243,7 +243,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "Passed initial game start reduce"
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
 
     {:guess_letter, "e"} = Strategy.guess(strategy)
 
@@ -273,7 +273,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "a"} = Strategy.guess(strategy)
 
 
@@ -303,7 +303,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "n"} = Strategy.guess(strategy)
 
 
@@ -335,7 +335,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "b"} = Strategy.guess(strategy)
 
 
@@ -366,7 +366,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "g"} = Strategy.guess(strategy)
 
 
@@ -397,7 +397,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_word, "asparagus"} = Strategy.guess(strategy)
 
   end
@@ -409,7 +409,7 @@ defmodule Hangman.Pass.Test do
     # assume secret word is voluptuous
 
     #### ROUND 1
-    strategy = Strategy.new(:robot)
+    strategy = Strategy.new
 
     pass_key = {id, game_no, round_no} = {"julio", 2, 1}
 
@@ -430,7 +430,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "Passed initial game start reduce"
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
 
     {:guess_letter, "e"} = Strategy.guess(strategy)
 
@@ -460,7 +460,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "i"} = Strategy.guess(strategy)
 
 
@@ -491,7 +491,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "a"} = Strategy.guess(strategy)
 
 
@@ -520,7 +520,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "o"} = Strategy.guess(strategy)
 
 
@@ -553,7 +553,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "s"} = Strategy.guess(strategy)
 
 
@@ -586,7 +586,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "c"} = Strategy.guess(strategy)
 
 
@@ -617,7 +617,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "g"} = Strategy.guess(strategy)
 
     IO.puts "strategy round 7 is: #{inspect strategy}"
@@ -650,7 +650,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_word, "voluptuous"} = Strategy.guess(strategy)
   end
 
@@ -660,7 +660,7 @@ defmodule Hangman.Pass.Test do
     # assume secret word is voluptuous
 
     #### ROUND 1
-    strategy = Strategy.new(:robot)
+    strategy = Strategy.new
 
     pass_key = {id, game_no, round_no} = {"yoko", 2, 1}
 
@@ -681,7 +681,7 @@ defmodule Hangman.Pass.Test do
     IO.puts "Passed initial game start reduce"
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
 
     {:guess_letter, "e"} = Strategy.guess(strategy)
 
@@ -711,7 +711,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "i"} = Strategy.guess(strategy)
 
 
@@ -742,7 +742,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "a"} = Strategy.guess(strategy)
 
 
@@ -771,7 +771,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "o"} = Strategy.guess(strategy)
 
 
@@ -804,7 +804,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "s"} = Strategy.guess(strategy)
 
 
@@ -837,7 +837,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "c"} = Strategy.guess(strategy)
 
 
@@ -868,7 +868,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "g"} = Strategy.guess(strategy)
 
     IO.puts "strategy round 7 is: #{inspect strategy}"
@@ -901,7 +901,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_word, "voluptuous"} = Strategy.guess(strategy)
   end
 
@@ -910,7 +910,7 @@ defmodule Hangman.Pass.Test do
     # assume secret word is cumulate
 
     #### ROUND 1
-    strategy = Strategy.new(:robot)
+    strategy = Strategy.new
 
     pass_key = {id, game_no, round_no} = {"julio" <> tag, 1, 1}
 
@@ -932,7 +932,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
 
     {:guess_letter, "e"} = Strategy.guess(strategy)
 
@@ -963,7 +963,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "a"} = Strategy.guess(strategy)
 
 
@@ -992,7 +992,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "t"} = Strategy.guess(strategy)
 
 
@@ -1021,7 +1021,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "o"} = Strategy.guess(strategy)
 
 
@@ -1052,7 +1052,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "i"} = Strategy.guess(strategy)
 
 
@@ -1086,7 +1086,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "l"} = Strategy.guess(strategy)
 
 
@@ -1117,7 +1117,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "c"} = Strategy.guess(strategy)
 
     IO.puts "strategy round 7 is: #{inspect strategy}"
@@ -1150,7 +1150,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "m"} = Strategy.guess(strategy)
 
 
@@ -1178,7 +1178,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
 
     {:guess_word, "cumulate"} = Strategy.guess(strategy)
 
@@ -1189,7 +1189,7 @@ defmodule Hangman.Pass.Test do
     # assume secret word is cumulate
 
     #### ROUND 1
-    strategy = Strategy.new(:robot)
+    strategy = Strategy.new
 
     pass_key = {id, game_no, round_no} = {"yoko" <> tag, 1, 1}
 
@@ -1211,7 +1211,7 @@ defmodule Hangman.Pass.Test do
 
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
 
     {:guess_letter, "e"} = Strategy.guess(strategy)
 
@@ -1242,7 +1242,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "a"} = Strategy.guess(strategy)
 
 
@@ -1271,7 +1271,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "t"} = Strategy.guess(strategy)
 
 
@@ -1300,7 +1300,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "o"} = Strategy.guess(strategy)
 
 
@@ -1331,7 +1331,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "i"} = Strategy.guess(strategy)
 
 
@@ -1365,7 +1365,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "l"} = Strategy.guess(strategy)
 
 
@@ -1396,7 +1396,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "c"} = Strategy.guess(strategy)
 
     IO.puts "strategy round 7 is: #{inspect strategy}"
@@ -1429,7 +1429,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
     {:guess_letter, "m"} = Strategy.guess(strategy)
 
 
@@ -1457,7 +1457,7 @@ defmodule Hangman.Pass.Test do
       Pass.result(:guessing, pass_key, reduce_key)
 
     # Choose guess
-    strategy = Strategy.update(strategy, pass_info)
+    strategy = Strategy.process(strategy, pass_info)
 
     {:guess_word, "cumulate"} = Strategy.guess(strategy)
 
