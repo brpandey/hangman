@@ -23,8 +23,7 @@ defmodule Hangman.Chunks do
   defstruct key: nil, raw_stream: nil, chunk_count: nil, word_count: nil
   
   @opaque t :: %__MODULE__{}
-  @type binary_chunk ::  {binary, integer}
-  
+  @type binary_chunk ::  {[binary], integer}
   
   @chunk_words_size 500
   
@@ -133,13 +132,13 @@ defmodule Hangman.Chunks do
   @doc """
   Takes an existing `Chunks` and adds the passed in binary `chunk` `tuple`.
   
-  Heavily used in reduce methods to add a {binary, word_count} to the
+  Used in reduce to add a {[binary], word_count} to the
   `Chunks` accumulator value.
   
   The `tuple` head is a binaried word list and the tail is the word count
   """
   
-  @spec add(t, binary_chunk) :: t
+  @spec add(t, {[binary], integer}) :: t
   def add(%Chunks{raw_stream: raw_stream} = chunks, 
           {binary_chunk, word_count} = _value)
   when is_binary(binary_chunk) and is_number(word_count) 
