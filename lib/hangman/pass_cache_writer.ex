@@ -1,6 +1,6 @@
 defmodule Hangman.Pass.Cache.Writer do  
   @moduledoc """
-  Module is responsible for synchronous chunk 
+  Module is responsible for synchronous words 
   `pass` writes into the `Pass.Cache` table. 
 
   Serves as a write operation specific process to isolate write 
@@ -12,7 +12,7 @@ defmodule Hangman.Pass.Cache.Writer do
   """
 
   use GenServer
-  alias Hangman.{Pass, Chunks}
+  alias Hangman.{Pass, Words}
   require Logger
     
   @ets_table_name :hangman_pass_cache
@@ -51,24 +51,24 @@ defmodule Hangman.Pass.Cache.Writer do
   Write is synchronous
   """
   
-  @spec put(Pass.key, Chunks.t) :: :ok
-  def put({id, game_no, round_no} = pass_key, %Chunks{} = chunks)
+  @spec put(Pass.key, Words.t) :: :ok
+  def put({id, game_no, round_no} = pass_key, %Words{} = words)
   when (is_binary(id) or is_tuple(id)) 
   and is_number(game_no) and is_number(round_no) do
-    GenServer.call(:pass_cache_writer, {:put, pass_key, chunks})
+    GenServer.call(:pass_cache_writer, {:put, pass_key, words})
   end
 
-  @callback handle_call({atom, Pass.key, Chunks.t}, tuple, tuple) :: tuple
-  def handle_call({:put, pass_key, %Chunks{} = chunks}, _from, state) do
+  @callback handle_call({atom, Pass.key, Words.t}, tuple, tuple) :: tuple
+  def handle_call({:put, pass_key, %Words{} = words}, _from, state) do
 
     if :ets.info(@ets_table_name) == :undefined do
       raise HangmanError, "table not loaded yet"
     end
     
-    :ets.insert(@ets_table_name, {pass_key, chunks})
+    :ets.insert(@ets_table_name, {pass_key, words})
 
-    _ = Logger.debug "inserted chunks into pass key " <> 
-      "#{inspect [self, pass_key, chunks]}"
+    _ = Logger.debug "inserted words into pass key " <> 
+      "#{inspect [self, pass_key, words]}"
 
     {:reply, :ok, state}
   end

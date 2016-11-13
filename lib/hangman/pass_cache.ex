@@ -2,10 +2,10 @@ defmodule Hangman.Pass.Cache do
   @moduledoc """
   Module provides cache access to the game words pass.
   Given a player, a game and round number, `Pass.Cache` maintains a words pass 
-  `cache` of current word passes.  The words are represented by `Chunks`.  
+  `cache` of current word passes.  The words are represented by `Words.t`.  
 
   Implements a `get/1` and `put/2` routine to retrieve and store these word 
-  pass `Chunks`.
+  pass `Words.t`.
 
   Given a new `Hangman` game, initially the words pass is the size of all words
   in the dictionary of secret length k.  As each round proceeds, this is reduced by the 
@@ -22,7 +22,7 @@ defmodule Hangman.Pass.Cache do
   """
 
   use GenServer
-  alias Hangman.{Pass, Chunks}
+  alias Hangman.{Pass, Words}
   require Logger
   
   @ets_table_name :hangman_pass_cache
@@ -82,21 +82,21 @@ defmodule Hangman.Pass.Cache do
 
 
   @doc """
-  Get routine retrieves `pass` chunks cache data given the pass key
+  Get routine retrieves `pass` words cache data given the pass key
   """
 
-  @spec get(Pass.key) :: Chunks.t | no_return
+  @spec get(Pass.key) :: Words.t | no_return
   def get({id, game_no, round_no} = pass_key)
   when (is_binary(id) or is_tuple(id)) 
   and is_number(game_no) and is_number(round_no) do
 
     _ = Logger.debug("pass cache get: pass_key is #{inspect pass_key}")
 
-    case do_get(:chunks, pass_key) do
+    case do_get(:words, pass_key) do
       :error ->
-        _ = Logger.debug("Unable to retrieve chunks from rounds_pass_cache," 
+        _ = Logger.debug("Unable to retrieve words from rounds_pass_cache," 
                      <> " given pass_key #{inspect pass_key}")
-        #raise HangmanError, "chunks not found for key: #{inspect pass_key}"
+        #raise HangmanError, "words not found for key: #{inspect pass_key}"
         :error
 
       {:ok, data} -> 
@@ -106,32 +106,32 @@ defmodule Hangman.Pass.Cache do
   end
 
 
-  @spec do_get(atom, Pass.key) :: Chunks.t | nil
-  defp do_get(:chunks, {_id, _game_no, _round_no} = pass_key) do
+  @spec do_get(atom, Pass.key) :: Words.t | nil
+  defp do_get(:words, {_id, _game_no, _round_no} = pass_key) do
     
     # Using match instead of lookup
     case :ets.match_object(@ets_table_name, {pass_key, :_}) do
       [] -> 
         :error
       [{^pass_key, data}] ->
-        %Chunks{} = data # quick assert
+        %Words{} = data # quick assert
 
         # delete this current pass in the table, 
         # since we only keep 1 pass for each user
         :ets.match_delete(@ets_table_name, {pass_key, :_})
     
-        # return chunks :)
+        # return words :)
         {:ok, data}
     end
 
   end
 
   @doc """
-  Put routine stores new `pass` chunks data, provided the pass key
+  Put routine stores new `pass` words data, provided the pass key
   """
 
-  @spec put(Pass.key, Chunks.t) :: :ok | no_return
-  def put({_id, _game_no, _round_no} = pass_key, %Chunks{} = data) do
+  @spec put(Pass.key, Words.t) :: :ok | no_return
+  def put({_id, _game_no, _round_no} = pass_key, %Words{} = data) do
 
     # Make call to Pass Cache Writer to handle synchronized buffered writes 
     :ok = Pass.Cache.Writer.put(pass_key, data)

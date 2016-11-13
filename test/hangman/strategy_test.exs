@@ -83,7 +83,7 @@ defmodule Hangman.Letter.Strategy.Test do
       # Choose guess
       strategy = Strategy.new |> Strategy.process(:choices, pass)
       
-      assert {:guess_word, "asparagus",
+      assert {:guess_word, ^token,
               "Player kermit, Round 7, KEEP GUESSING.\nLast word left: asparagus"} = 
         strategy |> Strategy.choices(%Hangman.Round{id: "kermit", num: 7, status_text: "KEEP GUESSING"})
     end

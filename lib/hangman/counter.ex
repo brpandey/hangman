@@ -32,7 +32,7 @@ defmodule Hangman.Counter do
       [{"i", 4}, {"s", 4}, {"p", 2}, {"m", 1}]
   """
 
-  alias Hangman.{Chunks, Counter}
+  alias Hangman.{Words, Counter}
 
   defstruct map: %{}
 
@@ -41,7 +41,7 @@ defmodule Hangman.Counter do
   @type key :: String.t
   @type value :: pos_integer
 
-  @chunk_words_size Chunks.container_size
+  @chunk_words_size Words.container_size
 
   # Letter Frequency Counter for words
   

@@ -19,7 +19,7 @@ defmodule Hangman.Pass do
   removed from the `cache`.
   """
 
-  alias Hangman.{Reduction, Pass, Chunks, Counter, Dictionary}
+  alias Hangman.{Reduction, Pass, Pass.Cache, Words, Counter, Dictionary}
 
   defstruct size: 0, tally: %{}, possible: "", last_word: ""
 
@@ -29,14 +29,7 @@ defmodule Hangman.Pass do
   @typedoc "Defines word `pass` key type"
   @type key  :: {id :: (String.t | tuple), 
                  game_num :: non_neg_integer, 
-                 round_num :: non_neg_integer}  
-
-
-  @spec increment_key(Pass.key) :: Pass.key
-  def increment_key({id, game_num, round_num} = _key) do
-    {id, game_num, round_num + 1}
-  end
-
+                 round_num :: non_neg_integer}
 
   @doc """
   Result routine retrieves the `pass` size, tally, possible words, 
@@ -54,7 +47,7 @@ defmodule Hangman.Pass do
   """
 
 
-  @spec result(atom, pass_key :: Pass.key, reduce_key :: Reduction.key) :: {Pass.key, Pass.t}
+  @spec result(atom, pass_key :: key, reduce_key :: Reduction.key) :: {key, t}
 
   def result(:start, {id, game_no, round_no} = pass_key, reduce_key)
   when (is_binary(id) or is_tuple(id)) 
@@ -69,17 +62,17 @@ defmodule Hangman.Pass do
 
     # Subsequent round lookups will be from the pass table
 
-    chunks = %Chunks{} = Dictionary.lookup(:chunks, length_key)
+    words = %Words{} = Dictionary.lookup(:words, length_key)
     tally = %Counter{} = Dictionary.lookup(:tally, length_key)
 
-    pass_size = Chunks.count(chunks)
+    pass_size = Words.count(words)
     pass_info = %Pass{ size: pass_size, tally: tally, last_word: ""}
 
     # Store pass info into ets table for round 2 (next pass)
     # Allow writer engine to execute (and distribute) as necessary
 
-    next_pass_key = Pass.increment_key(pass_key)
-    Pass.Cache.put(next_pass_key, chunks)
+    next_pass_key = increment_key(pass_key)
+    Cache.put(next_pass_key, words)
   
     {pass_key, pass_info}
   end
@@ -90,7 +83,7 @@ defmodule Hangman.Pass do
     
     {:ok, exclusion_set} = Keyword.fetch(reduce_key, :guessed_letters)
     {:ok, regex_key} = Keyword.fetch(reduce_key, :regex_match_key)
-  
+
     # Send pass and reduce information off to Engine server
     # to execute (and distribute) as appropriate
     # operation subsequently writes back to pass_cache
@@ -98,6 +91,8 @@ defmodule Hangman.Pass do
 
     {pass_key, pass_info}
   end
+
+
 
   @doc """
   Removes pass key from ets
@@ -107,7 +102,17 @@ defmodule Hangman.Pass do
   def delete({id, game_no, round_no} = pass_key) when 
   (is_binary(id) or is_tuple(id)) 
   and is_number(game_no) and is_number(round_no) do
-    Pass.Cache.delete(pass_key)
+    Cache.delete(pass_key)
   end
+
+
+  # HELPERS
+
+  @doc "Helper to increment pass key"
+  @spec increment_key(key) :: key
+  def increment_key({id, game_num, round_num} = _key) do
+    {id, game_num, round_num + 1}
+  end
+
 
 end

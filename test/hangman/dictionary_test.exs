@@ -1,7 +1,7 @@
 defmodule Hangman.Dictionary.Test do
   use ExUnit.Case #, async: true since the ets table name is unique
 
-  alias Hangman.{Dictionary, Counter, Chunks}
+  alias Hangman.{Dictionary, Counter, Words}
 
   # Run before all tests
   setup_all do
@@ -104,13 +104,13 @@ defmodule Hangman.Dictionary.Test do
     
     IO.puts "Counters match\n\n"
   
-    chunks = %Chunks{} = Dictionary.lookup(:chunks, 8)
+    words = %Words{} = Dictionary.lookup(:words, 8)
 
     word_count = 28558
 
-    assert word_count == Chunks.count(chunks)    
+    assert word_count == Words.count(words)    
 
-    IO.puts "chunks: #{inspect chunks}"
+    IO.puts "words: #{inspect words}"
 
     randoms = Dictionary.lookup(:random, 10)
     IO.puts "random hangman words 1: #{inspect randoms}"
@@ -122,7 +122,7 @@ defmodule Hangman.Dictionary.Test do
     IO.puts "random hangman words 3: #{inspect randoms}"
 
 
-    Chunks.get_words_lazy(chunks)
+    Words.stream(words)
     |> Stream.each(&IO.inspect/1)
     |> Enum.take(20)
 
@@ -152,13 +152,13 @@ defmodule Hangman.Dictionary.Test do
     
     IO.puts "Counters match\n\n"
   
-    chunks = %Chunks{} = Dictionary.lookup(:chunks, 8)
+    words = %Words{} = Dictionary.lookup(:words, 8)
 
     big_word_count = 54500
 
-    assert big_word_count == Chunks.count(chunks)
+    assert big_word_count == Words.count(words)
 
-    IO.puts "chunks: #{inspect chunks}"
+    IO.puts "words: #{inspect words}"
 
     randoms = Dictionary.lookup(:random, 10)
     IO.puts "random hangman words 1: #{inspect randoms}"
@@ -170,7 +170,7 @@ defmodule Hangman.Dictionary.Test do
     IO.puts "random hangman words 3: #{inspect randoms}"
 
 
-    Chunks.get_words_lazy(chunks)
+    Words.stream(words)
     |> Stream.each(&IO.inspect/1)
     |> Enum.take(20)
 

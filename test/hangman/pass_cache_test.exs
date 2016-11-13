@@ -3,7 +3,7 @@ defmodule Hangman.Pass.Cache.Test do
 
   require Logger
 
-  alias Hangman.{Pass, Chunks}
+  alias Hangman.{Pass, Words}
 
   setup_all do
     IO.puts "Pass Cache Test"
@@ -52,11 +52,11 @@ defmodule Hangman.Pass.Cache.Test do
     assert :error = Pass.Cache.get(key)
 
     # put
-    chunks = Chunks.new(123)
-    Pass.Cache.put(key, chunks)
+    words = Words.new(123)
+    Pass.Cache.put(key, words)
 
     # read (read returns value and deletes it in ets)
-    assert ^chunks = Pass.Cache.get(key)
+    assert ^words = Pass.Cache.get(key)
 
     # error delete
     assert :error = Pass.Cache.delete(key)
@@ -78,8 +78,8 @@ defmodule Hangman.Pass.Cache.Test do
     assert :error = Pass.Cache.get(key)
 
     # put
-    chunks = Chunks.new(456)
-    Pass.Cache.put(key, chunks)
+    words = Words.new(456)
+    Pass.Cache.put(key, words)
 
     # delete then error read
     assert :ok = Pass.Cache.delete(key)

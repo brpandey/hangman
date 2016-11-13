@@ -6,7 +6,7 @@ defmodule Hangman.Ingestion.First.Flow do
   """
 
   alias Experimental.Flow
-  alias Hangman.{Dictionary, Chunks}
+  alias Hangman.Dictionary
   require Logger
 
   # Use the number of keys as the same number to partition our dictionary words
@@ -83,7 +83,7 @@ defmodule Hangman.Ingestion.First.Flow do
 
     # By setting the trigger, the reduce function
     # is checkpointed every so many events, e.g. 500 events
-    window = Flow.Window.global |> Flow.Window.trigger_every(Chunks.container_size, :reset)
+    window = Flow.Window.global |> Flow.Window.trigger_every(Hangman.Words.container_size, :reset)
 
     File.stream!(path, read_ahead: 100_000)
     |> Flow.from_enumerable()

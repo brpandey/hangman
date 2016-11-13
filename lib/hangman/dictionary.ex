@@ -70,13 +70,13 @@ defmodule Hangman.Dictionary do
   Cache lookup routines
 
   The allowed modes:
-    * `:random` - extracts count number of random hangman words. 
+    * `:random` - extracts specified count of random hangman words. 
     * `:tally` - retrieve letter tally associated with word length key
-    * `:chunk` -  retrieve the word data chunk associated with the word length key
+    * `:words` -  retrieve the word data lists associated with the word length key
 
   """
 
-  @spec lookup(:random | :chunks | :tally, pos_integer) ::  [String.t] | Counter.t | Chunks.t
+  @spec lookup(:random | :tally | :words, pos_integer) ::  [String.t] | Counter.t | Words.t
 
   def lookup(:random, count) do
     # Uses global server name to retrieve the server pid
@@ -95,13 +95,13 @@ defmodule Hangman.Dictionary do
     Cache.lookup(pid, :tally, length_key)
   end
 
-  def lookup(:chunks, length_key)
+  def lookup(:words, length_key)
   when is_integer(length_key) and length_key > 0 do
     # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)
     true = is_pid(pid)
 
-    Cache.lookup(pid, :chunks, length_key)
+    Cache.lookup(pid, :words, length_key)
   end
 
 

@@ -11,10 +11,9 @@ defmodule Hangman.Reduction.Engine.Worker do
   """
 
   use GenServer
-  alias Hangman.{Pass, Chunks, Counter}
+  alias Hangman.{Pass, Words}
   require Logger
 
-  @possible_words_left 40
 
   @doc """
   GenServer start_link wrapper function
@@ -31,9 +30,9 @@ defmodule Hangman.Reduction.Engine.Worker do
   
   
   @doc """
-  Primary `worker` function which retrieves current `pass chunks` data,
+  Primary `worker` function which retrieves current `pass words` data,
   filters words with `regex`, tallies reduced word stream, creates new
-  `Chunks` abstraction and stores it back into words pass table.
+  `Words` abstraction and stores it back into words pass table.
 
   If pass size happens to be small enough, will also return
   remaining `Hangman` possible words left to aid in `guess` selection. 
@@ -85,89 +84,34 @@ defmodule Hangman.Reduction.Engine.Worker do
   end
 
   @docp """
-  Primary worker function which retrieves current pass chunks data,
-  filters words with regex, tallies reduced word stream, creates new
+  Primary worker function which retrieves current pass words data,
+  filters words with regex.
+
+  Takes reduced word set and tallies it, creates new
   Chunk abstraction and stores it back into words pass table.
 
   If pass size happens to be small enough, will also return
   remaining hangman possible words left to aid in guess selection. 
 
-  Returns pass data.
+  Returns pass metadata.
   """
 
   @spec do_reduce_and_store(Pass.key, Regex.t, Enumerable.t) :: Pass.t
   defp do_reduce_and_store(pass_key, regex_key, exclusion) do
 
-    # Request chunks data from Pass Cache
-    data = %Chunks{} = Pass.Cache.get(pass_key)
+    # Request word list data from Pass
+    data = %Words{} = Pass.Reduction.words(pass_key)
 
-    length_key = Chunks.key(data)
-
-    # convert chunks into word stream, 
-    # filter out words that don't regex match
-    # do for all values in stream
-
-    filtered_stream = 
-      data 
-      |> Chunks.get_words_lazy 
-      |> Stream.filter(&regex_match?(&1, regex_key))
+    # REDUCE
+    # Create new Words abstraction after filtering out failed word matches
+    new_data = %Words{} = data |> Words.filter(regex_key)
     
-    # Populate counter object, now that we've created new filtered chunks
-    tally = Counter.new |> Counter.add_words(filtered_stream, exclusion)
-    
-    # Create new Chunks abstraction with filtered word stream
-    new_data = Chunks.new(length_key, filtered_stream)
-
-    pass_size = Chunks.count(new_data)
-
-    # let's collect possible hangman words if pass size is small enough
-    # and return them for guessing aid
-
-    # if down to 1 word, return the last word
-    {last_word, possible_txt} = cond do
-      pass_size == 0 -> {"", ""}
-      # Note: lets strategy handle error higher up, don't crash process
-      # raise "Word not in dictionary, pass size can't be zero"
-      pass_size == 1 ->
-        last_word = 
-          new_data
-          |> Chunks.get_words_lazy
-          |> Enum.take(1) 
-          |> List.first
-          
-        {last_word, ""}
-      
-      pass_size > 1 and pass_size < @possible_words_left ->
-        list = 
-          new_data
-          |> Chunks.get_words_lazy
-          |> Enum.take(pass_size)
-          |> Enum.sort
-          
-        possible_txt = 
-          "Possible hangman words left, #{pass_size} words: #{inspect list}"
-          
-        {"", possible_txt}
-          
-          # since greater than possible words left, don't show text yet
-      pass_size > 1 -> {"", ""} 
-          
-      true -> raise HangmanError, "Invalid pass_size value #{pass_size}"
-    end
-
+    # STORE
     # Write to cache
-    pass_key |> Pass.increment_key |> Pass.Cache.put(new_data)
-
-    %Pass{size: pass_size, tally: tally, 
-           possible: possible_txt, last_word: last_word}    
-  end
-  
-
-  # Helper function to perform actual regex match
-  @spec regex_match?(String.t, Regex.t) :: boolean
-  defp regex_match?(word, compiled_regex)
-  when is_binary(word) and is_nil(compiled_regex) == false do
-    Regex.match?(compiled_regex, word)
+    receipt = %Pass{} = Pass.Reduction.store(pass_key, new_data, exclusion)
+    
+    # Return pass receipt metadata
+    receipt
   end
 
 end

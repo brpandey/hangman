@@ -109,7 +109,7 @@ defmodule Hangman.Ingestion.Cache.Flow do
 
     ets = @ets
           
-    Dictionary.ETS.put(:chunk, ets, {k, v})
+    Dictionary.ETS.put(:words, ets, {k, v})
     Dictionary.ETS.put(:random, ets, {k, v})
     
     info = :ets.info(ets)

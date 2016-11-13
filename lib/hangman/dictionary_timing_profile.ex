@@ -2,7 +2,7 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
   @moduledoc false
 
   import ExProf.Macro
-  alias Hangman.{Dictionary, Counter, Chunks}
+  alias Hangman.{Dictionary, Counter, Words}
 
   # Module to time dictionary cache server
 
@@ -56,15 +56,16 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
 
     IO.puts "#{inspect lookup}"
 
-    chunks = %Chunks{} = Dictionary.Cache.lookup(pid, :chunks, 8)
+    words = %Words{} = Dictionary.Cache.lookup(pid, :words, 8)
 
     word_count = 28558
 
-    ^word_count = Chunks.count(chunks)
+    ^word_count = Words.count(words)
 
-    IO.puts "chunks: #{inspect chunks}"
+    IO.puts "words: #{inspect words}"
 
-    Chunks.get_words_lazy(chunks)
+    words
+    |> Words.stream
     |> Stream.each(&IO.inspect/1)
     |> Enum.take(20)
   end
