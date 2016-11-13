@@ -8,8 +8,8 @@ defmodule Hangman.Round do
   It works in conjuction with `Strategy` and `Game.Server` to 
   orchestrate actual `round` game play through guess actions.
 
-  A) When playing a new `Hangman` game, we first init our round, which involves 
-  obtaining the secret word length from the game server.  
+  A) When playing a new `Hangman` game, we first register our round, 
+  which involves obtaining the secret word length from the game server.  
 
   B) Next, we take steps to reduce the possible `Hangman` words set to narrow our 
   word choices.  
@@ -23,7 +23,7 @@ defmodule Hangman.Round do
   update our round recordkeeping structures with the guess results and proceed
   for the next round -- to do it all over again minus the init stage.
 
-  Basic `Round` functionality includes `init/1`, `setup/3`, `guess/2`, 
+  Basic `Round` functionality includes `register/1`, `setup/2`, `guess/2`, 
   `transition/1`, `status/1`.
 
   We always invoke setup before a guess, to properly setup the new words state.  
@@ -72,7 +72,7 @@ defmodule Hangman.Round do
 
 
   @doc """
-  Initialize the round with the start of a new game.  Retrieves the 
+  Register the round with the start of a new game.  Retrieves the 
   secret length from the game server and creates a process link to the 
   game server via the register call.  
 
@@ -80,8 +80,8 @@ defmodule Hangman.Round do
   from `Pass.Cache` server on the next round setup.
   """
 
-  @spec init(t) :: t
-  def init(%Round{} = round) do
+  @spec register(t) :: t
+  def register(%Round{} = round) do
     
     round = 
       case round.game_num do

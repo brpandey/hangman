@@ -38,7 +38,7 @@ defmodule Hangman.Player do
 
     round = player.round
 
-    round = Round.init(round)
+    round = Round.register(round)
     strategy = Strategy.new
 
     code = 
