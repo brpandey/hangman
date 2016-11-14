@@ -96,6 +96,8 @@ defmodule Hangman.Dictionary.ETS do
     # Since we are using a bag type, aggregate all random word key values
     randoms = :ets.foldl(fn_reduce_random_words, [], @ets_table_name)
 
+    ^randoms = randoms |> Enum.uniq 
+
     # seed random number generator with random seed
 
     # crypto method apparently produces genuinely random bytes 
@@ -109,11 +111,19 @@ defmodule Hangman.Dictionary.ETS do
     # Note: Its not necessary to seed the random item generator but 
     # doing so ensures our results are really random
 
-    # Using list comp to retrieve the list of count random words
-    randoms = for _x <- 1..count do Enum.random(randoms) end
+    # Let's pad the count value with count + count/10
+    # just in case we happen to pull the same random number twice in Enum.random
+    # We're assuming there is less than a 10% chance of getting the same random number
 
+    padded_count = count + div(count, 10)
+
+    # Using list comp to retrieve the list of count random words
+    randoms = for _x <- 1..padded_count do Enum.random(randoms) end
+
+    # Ensure the list has unique words and grab the first "count"
     # Shake and shuffle
-    randoms = Enum.shuffle(randoms)
+    randoms = 
+      randoms |> Enum.uniq |> Enum.shuffle |> Enum.take(count)
 
     randoms
   end

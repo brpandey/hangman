@@ -79,6 +79,12 @@ defmodule Hangman.Dictionary do
   @spec lookup(:random | :tally | :words, pos_integer) ::  [String.t] | Counter.t | Words.t
 
   def lookup(:random, count) do
+
+    # quick assert
+    unless count < max_random_words_request() do
+      raise HangmanError, message: "random count exceeds max random words"
+    end
+
     # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)  
     true = is_pid(pid) 
@@ -88,6 +94,13 @@ defmodule Hangman.Dictionary do
 
   def lookup(:tally, length_key)
   when is_integer(length_key) and length_key > 0 do
+
+    # quick assert on length_key
+    unless Enum.any?(key_range, fn x -> x == length_key end) do
+      raise HangmanError, message: "key not in set of possible keys!"
+    end
+
+
     # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)  
     true = is_pid(pid) 
@@ -97,6 +110,12 @@ defmodule Hangman.Dictionary do
 
   def lookup(:words, length_key)
   when is_integer(length_key) and length_key > 0 do
+
+    # quick assert on length_key
+    unless Enum.any?(key_range, fn x -> x == length_key end)  do
+      raise HangmanError, message: "key not in set of possible keys!"
+    end
+
     # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)
     true = is_pid(pid)

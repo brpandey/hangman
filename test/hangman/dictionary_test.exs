@@ -13,6 +13,7 @@ defmodule Hangman.Dictionary.Test do
     # initialize params map for test cases
     # each test just needs to grab the current player id
     map = %{
+      :regular => [type: :regular, ingestion: true],
       :regular_full => [type: :regular, ingestion: true],
       :big => [type: :big, ingestion: true]
     }
@@ -81,13 +82,32 @@ defmodule Hangman.Dictionary.Test do
   end
 
 
+  @tag case_key: :regular
+  test "test of regular dictionary with random word lookups" do
+
+
+    assert catch_error(Dictionary.lookup(:random, 8472)) ==
+      %HangmanError{message: "random count exceeds max random words"}
+
+    randoms = Dictionary.lookup(:random, 50)
+    assert ^randoms = randoms |> Enum.uniq 
+
+    # Takes 3 secs skipping
+    # randoms = Dictionary.lookup(:random, 500)
+    # assert ^randoms = randoms |> Enum.uniq 
+
+    Dictionary.stop
+  end
+
+
+
   @tag case_key: :regular_full
-  test "test of regular dictionary, full ingestion" do
+  test "test of regular dictionary, full ingestion, along with tally and counter lookups" do
 
     size = 8
 
-#   assert catch_error(Dictionary.Cache.lookup(pid, :tally, 3383)) ==
-#     %Hangman.Error{message: "key not in set of possible keys!"}
+    assert catch_error(Dictionary.lookup(:tally, 3383)) ==
+      %HangmanError{message: "key not in set of possible keys!"}
 
     lookup = Dictionary.lookup(:tally, size)
 
@@ -98,34 +118,22 @@ defmodule Hangman.Dictionary.Test do
       "r" => 14211, "s" => 16560, "t" => 11870, "u" => 7377, "v" => 2156, 
       "w" => 2313, "x" => 662, "y" => 3395, "z" => 783})
 
-    IO.puts "lookup is: #{inspect lookup}"
-
     assert Counter.equal?(lookup, counter_8)
+
+
+    assert catch_error(Dictionary.lookup(:words, 2775)) ==
+      %HangmanError{message: "key not in set of possible keys!"}
+
     
-    IO.puts "Counters match\n\n"
-  
     words = %Words{} = Dictionary.lookup(:words, 8)
 
     word_count = 28558
 
     assert word_count == Words.count(words)    
 
-    IO.puts "words: #{inspect words}"
-
-    randoms = Dictionary.lookup(:random, 10)
-    IO.puts "random hangman words 1: #{inspect randoms}"
-
-    randoms = Dictionary.lookup(:random, 10)
-    IO.puts "random hangman words 2: #{inspect randoms}"
-
-    randoms = Dictionary.lookup(:random, 10)
-    IO.puts "random hangman words 3: #{inspect randoms}"
-
-
     Words.stream(words)
     |> Stream.each(&IO.inspect/1)
     |> Enum.take(20)
-
 
     Dictionary.stop
   end
@@ -133,42 +141,30 @@ defmodule Hangman.Dictionary.Test do
 
 
   @tag case_key: :big  
-  test "test of big dictionary ingestion" do
+  test "test of big dictionary ingestion and counter and tally lookup" do
 
 
     size = 8
 
-#   assert catch_error(Dictionary.lookup(:tally, 3383)) ==
-#     %RuntimeError{message: "key not in set of possible keys!"}
+    assert catch_error(Dictionary.lookup(:tally, 3383)) ==
+      %HangmanError{message: "key not in set of possible keys!"}
 
     lookup = Dictionary.lookup(:tally, size)
 
     counter_big_8 = Counter.new(%{"a" => 31575, "b" => 9147, "c" => 14546, "d" => 14298, "e" => 33942, "f" => 5370, "g" => 10575, "h" => 11748, "i" => 28901, "j" => 1267, "k" => 6898, "l" => 21204, "m" => 12953, "n" => 25202, "o" => 23069, "p" => 9747, "q" => 714, "r" => 26380, "s" => 23083, "t" => 21248, "u" => 14382, "v" => 4257, "w" => 4804, "x" => 1150, "y" => 7307, "z" => 1906})
 
 
-    IO.puts "lookup is: #{inspect lookup}"
-
     assert Counter.equal?(lookup, counter_big_8)
+
+
+    assert catch_error(Dictionary.lookup(:words, 2775)) ==
+      %HangmanError{message: "key not in set of possible keys!"}
     
-    IO.puts "Counters match\n\n"
-  
     words = %Words{} = Dictionary.lookup(:words, 8)
 
     big_word_count = 54500
 
     assert big_word_count == Words.count(words)
-
-    IO.puts "words: #{inspect words}"
-
-    randoms = Dictionary.lookup(:random, 10)
-    IO.puts "random hangman words 1: #{inspect randoms}"
-
-    randoms = Dictionary.lookup(:random, 10)
-    IO.puts "random hangman words 2: #{inspect randoms}"
-
-    randoms = Dictionary.lookup(:random, 10)
-    IO.puts "random hangman words 3: #{inspect randoms}"
-
 
     Words.stream(words)
     |> Stream.each(&IO.inspect/1)
