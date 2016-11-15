@@ -58,7 +58,7 @@ defmodule Hangman.Ingestion.Cache.Flow do
     streams
     |> Flow.from_enumerables() # Plural for multiple streams
     |> Flow.map(&event_map/1)
-    |> Flow.partition(hash: {:elem, 0}) # Use the word length key when doing the hash
+    |> Flow.partition(key: {:elem, 0}) # Use the word length key when doing the hash
     |> Flow.reduce(fn -> %{} end, &event_reduce/2)
     |> Flow.departition(
       &Map.new/0, 

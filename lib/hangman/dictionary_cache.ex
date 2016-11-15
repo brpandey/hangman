@@ -13,6 +13,14 @@ defmodule Hangman.Dictionary.Cache do
 
   # External API
 
+  @doc "Check whether ets is setup"
+  
+  @spec setup? :: atom | no_return
+  def setup? do
+    Dictionary.ETS.setup?
+  end
+
+
   @doc """
   GenServer start link wrapper function
   """

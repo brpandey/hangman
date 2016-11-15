@@ -35,6 +35,18 @@ defmodule Hangman.Dictionary.ETS do
   def table_name, do: @ets_table_name
 
 
+  @doc "Check whether ets is setup"
+  
+  @spec setup? :: atom | no_return
+  def setup? do
+    if :ets.info(@ets_table_name) == :undefined do
+      raise HangmanError, "table not loaded yet"
+    else
+      true
+    end
+  end
+
+
   @doc """
   Runs the dictionary ingestion process, loading the data into ETS
   """
@@ -78,9 +90,7 @@ defmodule Hangman.Dictionary.ETS do
       raise HangmanError, "requested random words exceeds limit"
     end
 
-    if :ets.info(@ets_table_name) == :undefined do
-      raise HangmanError, "table not loaded yet"
-    end
+    true = setup?
 
     # we use a module constant since the key doesn't change
     ets_key = @ets_random_words_key
@@ -131,9 +141,7 @@ defmodule Hangman.Dictionary.ETS do
   def get(:counter, length_key) 
   when is_number(length_key) and length_key > 0 do
 
-    if :ets.info(@ets_table_name) == :undefined do
-      raise HangmanError, "table not loaded yet"
-    end
+    true = setup?
 
     # validate that the key is within our valid set
     case Enum.any?(@possible_length_keys, fn x -> x == length_key end) do
@@ -153,9 +161,7 @@ defmodule Hangman.Dictionary.ETS do
   
   def get(:words, length_key) do
 
-    if :ets.info(@ets_table_name) == :undefined do
-      raise HangmanError, "table not loaded yet"
-    end
+    true = setup?
 
     # create words key given length
     ets_key = key(:words, length_key)

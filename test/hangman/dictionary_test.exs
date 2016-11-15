@@ -13,9 +13,9 @@ defmodule Hangman.Dictionary.Test do
     # initialize params map for test cases
     # each test just needs to grab the current player id
     map = %{
-      :regular => [type: :regular, ingestion: true],
-      :regular_full => [type: :regular, ingestion: true],
-      :big => [type: :big, ingestion: true]
+      :regular_randoms => [type: :regular, ingestion: true],
+      :regular_tally_words => [type: :regular, ingestion: true],
+      :big_tally_words => [type: :big, ingestion: true]
     }
 
     {:ok, params: map}
@@ -28,19 +28,14 @@ defmodule Hangman.Dictionary.Test do
     case_key = context[:case_key]
     args = Map.get(map, case_key)
 
-    # To ensure we are doing a full ingestion we remove the manifest and ets file
-    if case_key == :regular_full, do: remove_manifest_and_ets(args)
-
     pid = 
       case Dictionary.Cache.start_link(args) do
         {:ok, pid} -> pid
         {:error, {:already_started, pid}} -> pid
       end
 
-    if case_key == :regular_full, do: check_partition_structure(args)
 
     IO.puts "finished dictionary setup"
-
 
     on_exit fn -> 
       # Ensure the dictionary is shutdown with non-normal reason
@@ -53,38 +48,8 @@ defmodule Hangman.Dictionary.Test do
   end
 
 
-  def remove_manifest_and_ets(args) do
-    # remove manifest and ets file and ensure we generate intermediary files
-    # as well as load everything correctly into ETS
-
-    dir_path = Dictionary.directory_path(args)
-    manifest = dir_path <> "cache/manifest"
-    ets_file = dir_path <> "cache/ets_table"
-
-    File.rm(manifest)
-    File.rm(ets_file)
-
-  end
-
-  def check_partition_structure(args) do
-    dir_path = Dictionary.directory_path(args)
-    {:ok, list} = File.ls(dir_path <> "cache/")
-
-    assert ["ets_table", "manifest", "words_key_10.txt", "words_key_11.txt", "words_key_12.txt",
-            "words_key_13.txt", "words_key_14.txt", "words_key_15.txt", "words_key_16.txt", 
-            "words_key_17.txt", "words_key_18.txt", "words_key_19.txt", "words_key_2.txt",
-            "words_key_20.txt", "words_key_21.txt", "words_key_22.txt", "words_key_23.txt", 
-            "words_key_24.txt", "words_key_25.txt", "words_key_26.txt", "words_key_27.txt", 
-            "words_key_28.txt", "words_key_3.txt", "words_key_4.txt", "words_key_5.txt",
-            "words_key_6.txt", "words_key_7.txt", "words_key_8.txt", "words_key_9.txt"] = 
-      Enum.sort(list)
-
-  end
-
-
-  @tag case_key: :regular
-  test "test of regular dictionary with random word lookups" do
-
+  @tag case_key: :regular_randoms
+  test "test of regular dictionary random word lookups" do
 
     assert catch_error(Dictionary.lookup(:random, 8472)) ==
       %HangmanError{message: "random count exceeds max random words"}
@@ -101,8 +66,8 @@ defmodule Hangman.Dictionary.Test do
 
 
 
-  @tag case_key: :regular_full
-  test "test of regular dictionary, full ingestion, along with tally and counter lookups" do
+  @tag case_key: :regular_tally_words
+  test "test of regular dictionary tally and words lookups" do
 
     size = 8
 
@@ -140,9 +105,8 @@ defmodule Hangman.Dictionary.Test do
 
 
 
-  @tag case_key: :big  
-  test "test of big dictionary ingestion and counter and tally lookup" do
-
+  @tag case_key: :big_tally_words  
+  test "test of big dictionary tally and words lookup" do
 
     size = 8
 

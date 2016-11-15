@@ -23,6 +23,7 @@ defmodule Hangman.Dictionary do
   def key_range, do: 2..28
 
 
+
   def startup_params(opts) do
     dir_path = directory_path(opts)
     ingestion = ingestion_enabled(opts)
@@ -85,6 +86,9 @@ defmodule Hangman.Dictionary do
       raise HangmanError, message: "random count exceeds max random words"
     end
 
+    # assert that table is setup
+    true = Cache.setup?
+
     # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)  
     true = is_pid(pid) 
@@ -100,6 +104,8 @@ defmodule Hangman.Dictionary do
       raise HangmanError, message: "key not in set of possible keys!"
     end
 
+    # assert that table is setup
+    true = Cache.setup?
 
     # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)  
@@ -115,6 +121,9 @@ defmodule Hangman.Dictionary do
     unless Enum.any?(key_range, fn x -> x == length_key end)  do
       raise HangmanError, message: "key not in set of possible keys!"
     end
+
+    # assert that table is setup
+    true = Cache.setup?
 
     # Uses global server name to retrieve the server pid
     pid = Process.whereis(:hangman_dictionary_cache_server)
