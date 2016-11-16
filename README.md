@@ -33,8 +33,8 @@ To view the game play design please click
 
 * Hangman runs both interactive human games with manually specified
 secrets e.g. --secrets or runs games with randomly generated secrets 
-e.g. --random, either with interactive game play (human) or not (robot).
-Therefore the type of the player `-t` determines the user interaction type.
+e.g. --random.  Interactivity is denoted by the player type `-t`,  
+with values of either human or robot.
 
 * The random `-r` secret generation option allows you to play without
 knowing the secret hangman word(s) beforehand as the system randomly
