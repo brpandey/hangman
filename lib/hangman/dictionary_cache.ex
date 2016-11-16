@@ -76,7 +76,8 @@ defmodule Hangman.Dictionary.Cache do
 
     _ = Logger.debug "Starting Hangman Dictionary Cache Server, args #{inspect args}"
 
-    Dictionary.ETS.setup(args)
+    # Run ingestion workflow, store the results into ETS
+    Dictionary.Ingestion.run(args)
 
     {:ok, {}}
   end

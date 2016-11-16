@@ -1,8 +1,8 @@
 defmodule Hangman.Ingestion.First.Flow do
   @moduledoc """
   Module implements the introductory ingestion flow logic given an initial 
-  hangman dictionary file.  Serves to split dictionary into windowed word chunks
-  storing them in intermediate cached files arranged by word key length
+  hangman dictionary file.  Serves to split dictionary into windowed word list
+  chunks storing them in intermediate cached files arranged by word key length
   """
 
   alias Experimental.Flow
@@ -171,7 +171,7 @@ defmodule Hangman.Ingestion.First.Flow do
           # Add delimiter after every windowed word list chunk, 
           # easier for chunk retrieval
           IO.write(file_pid, line_delim)
-        _ -> raise "Unable to extra acc_map in partition each"
+        _ -> raise "Unable to extract acc_map in partition each"
       end
 
     :ok

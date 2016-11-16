@@ -1,45 +1,36 @@
 defmodule Hangman.Ingestion.Cache.Flow do
   @moduledoc """
-  Loads partitioned dictionary word files into ets table
+  Loads partitioned dictionary word files into ingestion table
   piecewise through words list chunks.  Random words are generated
   from these words lists.
   
   Letter frequency counters of the dictionary words 
-  are arranged by length and also stored in the ets after the 
-  chunks are stored
+  are arranged by length and also stored in the ingestion db after the 
+  words are stored
 
   Optimization Note 1: Generating counter tallies outside of 
-  ETS allows us to use Flow's parallelism to generate these
+  the ingestion table allows us to use Flow's parallelism to generate these
 
   Optimization Note 2: Converting word_list chunks to binaries
-  and counters to binaries drastically reduces ets memory footprint
+  and counters to binaries drastically reduces table memory footprint
   """
 
   alias Experimental.Flow
   alias Hangman.{Counter, Dictionary}
   require Logger
 
-  @ets Dictionary.ETS.table_name
-
-
   @doc """
   Loads up the intermediate cached files and processes the data
-  using flow so that it can be stored in ets. The types of data
-  generated and stored into ets are chunk data, random words, and 
+  using flow so that it can be stored in a table. The types of data
+  generated and stored into the db are words data, random words, and 
   letter frequency counters arranged by word key length.
 
-  Lastly, the ets table is dumped to file
+  Lastly, the ingestion db is dumped to file
   """
 
   @spec run(binary, binary) :: :ok
-  def run(cache_dir, ets_path)
-  when is_binary(cache_dir) and is_binary(ets_path) do
-
-    # NOTE: The process will own the ets table
-    # Since Ingestion.Flow.Cache.run is called from the
-    # Dictionary.Cache process this works as desired
-
-    @ets = Dictionary.ETS.new
+  def run(cache_dir, dump_path)
+  when is_binary(cache_dir) and is_binary(dump_path) do
 
     streams = for file <- File.ls!(cache_dir) do
       case String.ends_with?(file, ".txt") do
@@ -51,7 +42,7 @@ defmodule Hangman.Ingestion.Cache.Flow do
     # Filter out the stream items that aren't nil
     streams = Enum.filter(streams, fn x -> x != nil end)
     
-    # The flow logic allows us to insert the chunks and random values in parallel (event reduce)
+    # The flow logic allows us to insert the word lists and random values in parallel (event reduce)
     # The counter generation is also done in parallel, with the final counter insert
     # performed in the final reduce
 
@@ -67,7 +58,7 @@ defmodule Hangman.Ingestion.Cache.Flow do
     )
     |> Flow.run
 
-    Dictionary.ETS.dump(@ets, ets_path)
+    dump_path |> Dictionary.Ingestion.dump
 
     :ok
   end
@@ -98,8 +89,8 @@ defmodule Hangman.Ingestion.Cache.Flow do
   
   @docp """
   Event reduce performs three tasks
-  -Reduce the word length key and words lists into the ets
-  -Generate random words as well into the ets
+  -Reduce the word length key and words lists into the table
+  -Generate random words as well into the ingestion db
   -Build up the counter object in the meantime
   """
 
@@ -107,13 +98,10 @@ defmodule Hangman.Ingestion.Cache.Flow do
   defp event_reduce({k,v}, %{} = counter_map) 
   when is_integer(k) and is_list(v) and is_binary(hd(v)) do
 
-    ets = @ets
-          
-    Dictionary.ETS.put(:words, ets, {k, v})
-    Dictionary.ETS.put(:random, ets, {k, v})
+    Dictionary.Ingestion.put(:words, {k, v})
+    Dictionary.Ingestion.put(:random, {k, v})
     
-    info = :ets.info(ets)
-    _ = Logger.debug ":chunks, ets info is: #{inspect info}\n"
+    Dictionary.Ingestion.print_table_info
     
     # Create a simple counter object representing 
     # the letter tally of the word list
@@ -132,22 +120,16 @@ defmodule Hangman.Ingestion.Cache.Flow do
 
   @docp """
   Take the final acc, namely the counter map here and
-  insert it into the ets table
+  insert it into the db
   """
 
   @spec final_reduce(map) :: :ok
   defp final_reduce(%{} = counter_map) do
 
-    ets = @ets
-
-    # Store the counters by key into the ets
-    Enum.reduce(counter_map, ets, fn {k,c}, acc ->
-      Dictionary.ETS.put(:counter, acc, {k,c})
-      acc
+    # Store the counters by key into the ingestion db
+    Enum.reduce(counter_map, [], fn {k,c}, _acc ->
+      Dictionary.Ingestion.put(:counter, {k,c})
     end)
-
-    info = :ets.info(ets)
-    _ = Logger.debug ":counter + chunks, ets info is: #{inspect info}\n"
 
     :ok
   end

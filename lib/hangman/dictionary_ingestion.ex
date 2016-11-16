@@ -54,6 +54,9 @@ defmodule Hangman.Dictionary.Ingestion do
   def delimiter(:line), do: @line_delimiter
   def delimiter(:kv), do: @key_value_delimiter
 
+  
+  def print_table_info, do: Dictionary.ETS.info
+
 
   @doc """
   Routine kicks off the ingestion process by 
@@ -100,7 +103,7 @@ defmodule Hangman.Dictionary.Ingestion do
   Loads environment to run initial ingestion pass through the dictionary file.
   If this is the first time through, we set up intermediary ingestion cache files
   If not, we ensure the partition manifest file is present indicating the initial
-  run is complete and execute the cache ingestion run loading chunks and generating 
+  run is complete and execute the cache ingestion run loading word lists and generating 
   random words into ETS as well as generating tally data
   """
 
@@ -208,10 +211,27 @@ defmodule Hangman.Dictionary.Ingestion do
   end
 
   def process({:cache, cache_dir, ets_path}) do
+    # NOTE: The Dictionary Cache process will own the ETS table
+    # load the ETS table since we will be storing the results in here
+    Dictionary.ETS.new
+    
     Ingestion.Cache.Flow.run(cache_dir, ets_path)
 
     :ok
   end
+
+  @doc "Put data into Dictionary.ETS"
+  @spec put(:words | :random | :counter, term) :: :ok | no_return
+  
+  def put(:words, data), do: Dictionary.ETS.put(:words, data)
+  def put(:random, data), do: Dictionary.ETS.put(:random, data)
+  def put(:counter, data), do: Dictionary.ETS.put(:counter, data)
+
+
+  @doc "Dumps table data into file"
+  @spec dump(binary) :: :ok | no_return
+  def dump(path), do: Dictionary.ETS.dump(path)
+
   
   @doc """
   Cleans up open file handles left over from writing to the cached files.
