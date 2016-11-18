@@ -21,7 +21,7 @@ CPU cores concurrently. Only when the set of secrets is 40 or greater
 is this speedup tangible
 
 
-[9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
+Comic - [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
 
 To view the game play design please click
@@ -42,7 +42,7 @@ Some highlights:
   * Player.Worker, Game.Server, Pass.Cache, Dictionary.Cache, Reduction.Engine etc..
 * Uses fast in memory tables via Erlang Term Storage (ETS), caches ETS dictionary table for quick load
 * Used some performance testing to shape dictionary load and letter tally generation,
-* Uses a liberal dose of unit and integration testing, along with mocks and stubs, even a quickcheck test
+* Uses a liberal dose of unit and integration testing, along with mocks stubs and even a quickcheck test
 * And mostly the Elixir code IMO is a delight to look at
 
 
