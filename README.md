@@ -19,13 +19,13 @@ or allows the computer to guess instead.  Supports parallel play using
 CPU cores concurrently. Only when the set of secrets is 40 or greater 
 is this speedup tangible
 
-## Fun
+## Links
 
-* IMGUR Comic - [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
+* Comic -> [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
-* Game play design - [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
+* Game play design -> [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
 
-* Feature highlights - [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/a10e3e0bc827ae55f11f35a0b53fcb5576204d65/FEATURES.md)
+* Feature highlights -> [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/a10e3e0bc827ae55f11f35a0b53fcb5576204d65/FEATURES.md)
 
 
 ## Usage
@@ -118,7 +118,7 @@ Command Line - Robot type with secret specified with display feed
     mario_feed Game 1, Round 6, status --> SPECTACLE; score=5; status=GAME_WON
 
     mario_feed Game Over!! --> 
-    Game Over! Average Score: 5.0, # Games: 1, Scores:  (SPECTACLE: 5)
+    Game Over! Average Score: 5.0, \# Games: 1, Scores:  (SPECTACLE: 5)
 ```
 
 ### Game Play - 2
@@ -192,7 +192,7 @@ Command Line - Human type with 2 random words requested
     3 weighted letter choices :  f*:1 n:1 w:1 (* robot choice)
     [Please input letter choice] 
 
-    Game Over! Average Score: 6.5, # Games: 2, Scores:  (BARBARIANS: 6) (DEFIER: 7)
+    Game Over! Average Score: 6.5, \# Games: 2, Scores:  (BARBARIANS: 6) (DEFIER: 7)
 ```
 
 ### Game Play - 3
@@ -204,7 +204,7 @@ After the below command has been issued, check the the cpu utilization of the co
 
 ```elixir
 $ ./hangman_game -n yoshi -pl -r 100
-   "Game Over! Average Score: 6.91, # Games: 100, Scores: (BARRELS: 5) (BETIDES: 6) 
+   "Game Over! Average Score: 6.91, \# Games: 100, Scores: (BARRELS: 5) (BETIDES: 6) 
    (BRANDERS: 8) (BRILLIANTLY: 3) (BUCKISH: 10) (BUCKSHEES: 2) (CAGILY: 10) 
    (CHAFFIEST: 9) (CHARBROILER: 5) (CIRCULATABLE: 4) (CLOBBERED: 9) (COENURI: 5) 
    (CONCURRENT: 6) (CONSULTANTS: 7) (COWEDLY: 8) (CURBER: 25) (CYANOGENS: 7) 
@@ -236,15 +236,15 @@ Web Example - Single Game
 
     iex>       HTTPoison.get("http://127.0.0.1:3737/hangman?name=princess&secret=woodpecker")
     {:ok,
-     %HTTPoison.Response{body: "(#) -----E--E-; score=1; status=KEEP_GUESSING 
-     (#) -----E--E-; score=2; status=KEEP_GUESSING 
-     (#) -----E--ER; score=3; status=KEEP_GUESSING 
-     (#) -----E--ER; score=4; status=KEEP_GUESSING 
-     (#) -----E--ER; score=5; status=KEEP_GUESSING 
-     (#) -----E--ER; score=6; status=KEEP_GUESSING 
-     (#) -----E--ER; score=7; status=KEEP_GUESSING 
-     (#) WOODPECKER; score=7; status=GAME_WON 
-     (#) Game Over! Average Score: 7.0, # Games: 1, Scores:  (WOODPECKER: 7) ",
+     %HTTPoison.Response{body: "(\#) -----E--E-; score=1; status=KEEP_GUESSING 
+     (\#) -----E--E-; score=2; status=KEEP_GUESSING 
+     (\#) -----E--ER; score=3; status=KEEP_GUESSING 
+     (\#) -----E--ER; score=4; status=KEEP_GUESSING 
+     (\#) -----E--ER; score=5; status=KEEP_GUESSING 
+     (\#) -----E--ER; score=6; status=KEEP_GUESSING 
+     (\#) -----E--ER; score=7; status=KEEP_GUESSING 
+     (\#) WOODPECKER; score=7; status=GAME_WON 
+     (\#) Game Over! Average Score: 7.0, \# Games: 1, Scores:  (WOODPECKER: 7) ",
       headers: [{"server", "Cowboy"}, {"date", "Mon, 29 Aug 2016 01:20:45 GMT"},
        {"content-length", "435"},
        {"cache-control", "max-age=0, private, must-revalidate"},
