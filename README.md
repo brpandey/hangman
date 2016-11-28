@@ -9,9 +9,8 @@ Hangman
 > to guess it by suggesting letters or numbers, 
 > within a certain number of guesses.
 >
-> – Wikipedia
+–  [Wikipedia](https://en.wikipedia.org/wiki/Hangman_(game))
 
- [Wikipedia Description](https://en.wikipedia.org/wiki/Hangman_(game))
 
 Plays really fun hangman word games. What did you expect? :)
 
@@ -20,12 +19,13 @@ or allows the computer to guess instead.  Supports parallel play using
 CPU cores concurrently. Only when the set of secrets is 40 or greater 
 is this speedup tangible
 
+## Fun
 
-View the IMGUR comic - [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
+* IMGUR Comic - [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
-View the game play design - [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
+* Game play design - [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
 
-View the feature highlights - [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/a10e3e0bc827ae55f11f35a0b53fcb5576204d65/FEATURES.md)
+* Feature highlights - [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/a10e3e0bc827ae55f11f35a0b53fcb5576204d65/FEATURES.md)
 
 
 ## Usage
