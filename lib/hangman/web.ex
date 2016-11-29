@@ -21,7 +21,7 @@ defmodule Hangman.Web do
       iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&secret=kiwi")
 
       {:ok,
-      %HTTPoison.Response{body: "(#) ----; score=1; status=KEEP_GUESSING (#) ----; score=2; status=KEEP_GUESSING (#) ----; score=3; status=KEEP_GUESSING (#) -I-I; score=4; status=KEEP_GUESSING (#) -I-I; score=5; status=KEEP_GUESSING (#) -I-I; score=6; status=KEEP_GUESSING (#) -I-I; score=25; status=GAME_LOST (#) Game Over! Average Score: 25.0, # Games: 1, Scores:  (KIWI: 25) ",
+      %HTTPoison.Response{body: "(H) ----; score=1; status=KEEP_GUESSING (H) ----; score=2; status=KEEP_GUESSING (H) ----; score=3; status=KEEP_GUESSING (H) -I-I; score=4; status=KEEP_GUESSING (H) -I-I; score=5; status=KEEP_GUESSING (H) -I-I; score=6; status=KEEP_GUESSING (H) -I-I; score=25; status=GAME_LOST (H) Game Over! Average Score: 25.0, Games: 1, Scores:  (KIWI: 25) ",
       headers: [{"server", "Cowboy"}, {"date", "Mon, 14 Mar 2016 04:27:39 GMT"},
       {"content-length", "345"},
       {"cache-control", "max-age=0, private, must-revalidate"},
@@ -30,7 +30,7 @@ defmodule Hangman.Web do
       iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&random=1")
 
       {:ok,
-      %HTTPoison.Response{body: "(#) --E-----------; score=1; status=KEEP_GUESSING (#) --E--------O--; score=2; status=KEEP_GUESSING (#) --E--------O--; score=3; status=KEEP_GUESSING (#) --E----C---O--; score=4; status=KEEP_GUESSING (#) PREVARICATIONS; score=4; status=GAME_WON (#) Game Over! Average Score: 4, # Games: 1, Scores:  (PREVARICATIONS: 4) ",
+      %HTTPoison.Response{body: "(H) --E-----------; score=1; status=KEEP_GUESSING (H) --E--------O--; score=2; status=KEEP_GUESSING (H) --E--------O--; score=3; status=KEEP_GUESSING (H) --E----C---O--; score=4; status=KEEP_GUESSING (H) PREVARICATIONS; score=4; status=GAME_WON (H) Game Over! Average Score: 4, Games: 1, Scores:  (PREVARICATIONS: 4) ",
       headers: [{"server", "Cowboy"}, {"date", "Mon, 14 Mar 2016 04:29:05 GMT"},
       {"content-length", "601"},
       {"cache-control", "max-age=0, private, must-revalidate"},

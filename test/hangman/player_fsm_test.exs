@@ -230,7 +230,7 @@ defmodule Hangman.Player.FSM.Test do
 
     {response, _fsm} = Player.FSM.proceed(fsm)
 
-    assert(response == {:exit, "Game Over! Average Score: 6.5, # Games: 2, Scores:  (TULIP: 5) (DAISY: 8)"})
+    assert(response == {:exit, "Game Over! Average Score: 6.5, Games: 2, Scores:  (TULIP: 5) (DAISY: 8)"})
 
   end
 
@@ -294,12 +294,12 @@ defmodule Hangman.Player.FSM.Test do
 
     {response, fsm} = Player.FSM.proceed(fsm)
     assert(response == 
-      {:transit, "Game Over! Average Score: 4.0, # Games: 1, Scores:  (IMMACULATE: 4)"})
+      {:transit, "Game Over! Average Score: 4.0, Games: 1, Scores:  (IMMACULATE: 4)"})
     assert(Player.FSM.state(fsm) == :exit)
 
     {response, fsm} = Player.FSM.proceed(fsm)
     assert(response == 
-      {:exit, "Game Over! Average Score: 4.0, # Games: 1, Scores:  (IMMACULATE: 4)"})
+      {:exit, "Game Over! Average Score: 4.0, Games: 1, Scores:  (IMMACULATE: 4)"})
     assert(Player.FSM.state(fsm) == :exit)
   end
 

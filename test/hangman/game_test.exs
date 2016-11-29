@@ -52,7 +52,7 @@ defmodule Hangman.Game.Test do
       {game, feedback} = Game.status(game)
 
       assert %{code: :finished, id: "fred", 
-               text: "Game Over! Average Score: 7.0, # Games: 1, Scores:  (EXOTIC: 7)"} == feedback
+               text: "Game Over! Average Score: 7.0, Games: 1, Scores:  (EXOTIC: 7)"} == feedback
 
       {_game, feedback} = Game.status(game)
 

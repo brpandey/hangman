@@ -80,7 +80,7 @@ defmodule Hangman.Game.UnitTest do
       game = Game.abort(game)
       {_game, feedback} = Game.status(game)
       
-      assert %{code: :finished, id: "orange", text: "Game Over! Average Score: 0, # Games: 0, Scores:  (GENEALOGY: 0)"} == feedback
+      assert %{code: :finished, id: "orange", text: "Game Over! Average Score: 0, Games: 0, Scores:  (GENEALOGY: 0)"} == feedback
     end    
     
     test "game status after 1st incorrect guess", %{game: game} do
@@ -108,7 +108,7 @@ defmodule Hangman.Game.UnitTest do
       {_game, feedback} = Game.status(game)
       
       assert %{id: "orange", code: :finished, 
-               text: "Game Over! Average Score: 25.0, # Games: 1, Scores:  (GENEALOGY: 25)"} == feedback
+               text: "Game Over! Average Score: 25.0, Games: 1, Scores:  (GENEALOGY: 25)"} == feedback
     end
     
     test "game status after 1st correct guess", %{game: game} do
@@ -141,7 +141,7 @@ defmodule Hangman.Game.UnitTest do
       {game, _result} = Game.guess(game, {:guess_word, "genealogy"})
       {_game, feedback} = Game.next(game)
       
-      assert %{code: :finished, id: "orange", text: "Game Over! Average Score: 1.0, # Games: 1, Scores:  (GENEALOGY: 1)"} == feedback
+      assert %{code: :finished, id: "orange", text: "Game Over! Average Score: 1.0, Games: 1, Scores:  (GENEALOGY: 1)"} == feedback
       
     end    
   end
@@ -223,7 +223,7 @@ defmodule Hangman.Game.UnitTest do
 
       assert %{code: :finished, 
                id: "orange", 
-               text: "Game Over! Average Score: 2.0, # Games: 2, Scores:  (GENEALOGY: 1) (PROBIOTIC: 3)"}
+               text: "Game Over! Average Score: 2.0, Games: 2, Scores:  (GENEALOGY: 1) (PROBIOTIC: 3)"}
       == feedback
 
     end

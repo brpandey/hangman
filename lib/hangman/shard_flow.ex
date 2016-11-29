@@ -184,7 +184,7 @@ defmodule Hangman.Shard.Flow do
     # (WEIGHTLESS: 5) (WHOEVER: 4) (WORSEN: 9) (WORSHIPING: 8)"
     
     
-    "Game Over! Average Score: #{avg}, # Games: #{games}, Scores: #{scores}"
+    "Game Over! Average Score: #{avg}, Games: #{games}, Scores: #{scores}"
   end
 
 end

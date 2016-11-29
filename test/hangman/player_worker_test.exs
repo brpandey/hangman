@@ -123,13 +123,13 @@ defmodule Hangman.Player.Worker.Test do
 
     {:transit, reply} = id |> Player.Worker.proceed
 
-    assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
+    assert "Game Over! Average Score: 8.0, Games: 1, Scores:  (CUMULATE: 8)" = reply
 
     IO.puts reply
 
     {:exit, reply} = id |> Player.Worker.proceed
 
-    assert "Game Over! Average Score: 8.0, # Games: 1, Scores:  (CUMULATE: 8)" = reply
+    assert "Game Over! Average Score: 8.0, Games: 1, Scores:  (CUMULATE: 8)" = reply
 
     IO.puts reply
 
@@ -308,13 +308,13 @@ defmodule Hangman.Player.Worker.Test do
 
     IO.puts "\nGame 2q: #{inspect reply}"
 
-    assert "Game Over! Average Score: 7.0, # Games: 2, Scores:  (CUMULATE: 8) (AVOCADO: 6)" = reply
+    assert "Game Over! Average Score: 7.0, Games: 2, Scores:  (CUMULATE: 8) (AVOCADO: 6)" = reply
 
     {:exit, reply} = id |> Player.Worker.proceed
 
     IO.puts "\nGame 2r: #{inspect reply}"
 
-    assert "Game Over! Average Score: 7.0, # Games: 2, Scores:  (CUMULATE: 8) (AVOCADO: 6)" = reply
+    assert "Game Over! Average Score: 7.0, Games: 2, Scores:  (CUMULATE: 8) (AVOCADO: 6)" = reply
 
   end
 

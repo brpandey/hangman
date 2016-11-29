@@ -126,7 +126,7 @@ defmodule Hangman.Game.Server.Test do
       Game.Server.guess(game_pid, player_key, round_key, {:guess_word, "backpack"}) 
 
     assert %{key: ^round_key, code: :finished,
-             text: "Game Over! Average Score: 4.5, # Games: 2, Scores:  (FACTUAL: 6) (BACKPACK: 3)"} =
+             text: "Game Over! Average Score: 4.5, Games: 2, Scores:  (FACTUAL: 6) (BACKPACK: 3)"} =
       Game.Server.status(game_pid, player_key, round_key)
 
     assert %{key: ^round_key, code: :reset} = 
@@ -199,7 +199,7 @@ defmodule Hangman.Game.Server.Test do
       Game.Server.guess(game_pid, player_key, round_key, {:guess_word, "lullaby"})  
 
     assert %{key: ^round_key, code: :finished, 
-             text: "Game Over! Average Score: 4.5, # Games: 2, Scores:  (HEART: 5) (LULLABY: 4)"} =
+             text: "Game Over! Average Score: 4.5, Games: 2, Scores:  (HEART: 5) (LULLABY: 4)"} =
       Game.Server.status(game_pid, player_key, round_key)
 
 
@@ -247,7 +247,7 @@ defmodule Hangman.Game.Server.Test do
 
 
     assert %{key: {"stanley1", 1, 6}, code: :finished, 
-             text: "Game Over! Average Score: 3.0, # Games: 1, Scores:  (JOVIAL: 3)"} =
+             text: "Game Over! Average Score: 3.0, Games: 1, Scores:  (JOVIAL: 3)"} =
       Game.Server.status(game_pid, player_key, {"stanley1", 1, 6})
 
   end
@@ -359,7 +359,7 @@ defmodule Hangman.Game.Server.Test do
 
 
     assert %{key: {{"rabbit", 1}, 2, 7}, code: :finished, 
-             text: "Game Over! Average Score: 7.0, # Games: 2, Scores:  (CUMULATE: 8) (AVOCADO: 6)"} =
+             text: "Game Over! Average Score: 7.0, Games: 2, Scores:  (CUMULATE: 8) (AVOCADO: 6)"} =
       Game.Server.status(game_pid, player_key, {{"rabbit", 1}, 2, 7})
 
   end
@@ -410,7 +410,7 @@ defmodule Hangman.Game.Server.Test do
 
 
     assert %{key: {{"rabbit", 2}, 1, 6}, code: :finished, 
-             text: "Game Over! Average Score: 5.0, # Games: 1, Scores:  (ERUPTIVE: 5)"} =
+             text: "Game Over! Average Score: 5.0, Games: 1, Scores:  (ERUPTIVE: 5)"} =
       Game.Server.status(game_pid, player_key, {{"rabbit", 2}, 1, 6})
 
   end
