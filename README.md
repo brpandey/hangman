@@ -19,9 +19,9 @@ or allows the computer to guess instead.  Supports parallel play using
 CPU cores concurrently. Only when the set of secrets is 40 or greater 
 is this speedup tangible
 
-## Links
+## Noteworthy
 
-* Comic -> [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
+* Comics -> [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
 * Game play design -> [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
 
