@@ -20,7 +20,7 @@ defmodule Hangman.Web.Test do
 
   test "cowboy http server with single secret woodpecker" do
     
-    body1 = "(#) -----E--E-; score=1; status=KEEP_GUESSING (#) -----E--E-; score=2; status=KEEP_GUESSING (#) -----E--ER; score=3; status=KEEP_GUESSING (#) -----E--ER; score=4; status=KEEP_GUESSING (#) -----E--ER; score=5; status=KEEP_GUESSING (#) -----E--ER; score=6; status=KEEP_GUESSING (#) -----E--ER; score=7; status=KEEP_GUESSING (#) WOODPECKER; score=7; status=GAME_WON (#) Game Over! Average Score: 7.0, # Games: 1, Scores:  (WOODPECKER: 7) "
+    body1 = "(H) -----E--E-; score=1; status=KEEP_GUESSING (H) -----E--E-; score=2; status=KEEP_GUESSING (H) -----E--ER; score=3; status=KEEP_GUESSING (H) -----E--ER; score=4; status=KEEP_GUESSING (H) -----E--ER; score=5; status=KEEP_GUESSING (H) -----E--ER; score=6; status=KEEP_GUESSING (H) -----E--ER; score=7; status=KEEP_GUESSING (H) WOODPECKER; score=7; status=GAME_WON (H) Game Over! Average Score: 7.0, Games: 1, Scores:  (WOODPECKER: 7) "
     
     {:ok, response = %HTTPoison.Response{}} =
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=julio&secret=woodpecker")
@@ -31,7 +31,7 @@ defmodule Hangman.Web.Test do
 
 
   test "cowboy http server with single secret kiwi" do
-    body2 = "(#) ----; score=1; status=KEEP_GUESSING (#) ----; score=2; status=KEEP_GUESSING (#) ----; score=3; status=KEEP_GUESSING (#) -I-I; score=4; status=KEEP_GUESSING (#) -I-I; score=5; status=KEEP_GUESSING (#) -I-I; score=6; status=KEEP_GUESSING (#) -I-I; score=25; status=GAME_LOST (#) Game Over! Average Score: 25.0, # Games: 1, Scores:  (KIWI: 25) "
+    body2 = "(H) ----; score=1; status=KEEP_GUESSING (H) ----; score=2; status=KEEP_GUESSING (H) ----; score=3; status=KEEP_GUESSING (H) -I-I; score=4; status=KEEP_GUESSING (H) -I-I; score=5; status=KEEP_GUESSING (H) -I-I; score=6; status=KEEP_GUESSING (H) -I-I; score=25; status=GAME_LOST (H) Game Over! Average Score: 25.0, Games: 1, Scores:  (KIWI: 25) "
     
     {:ok, response = %HTTPoison.Response{}} =
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=carmen&secret=kiwi")
@@ -64,7 +64,7 @@ defmodule Hangman.Web.Test do
 
     # testing that 2 secrets don't give full game history just scores
 
-    body2 = "Game Over! Average Score: 5.0, # Games: 2, Scores: (HERMETIC: 4) (TALENTED: 6)"
+    body2 = "Game Over! Average Score: 5.0, Games: 2, Scores: (HERMETIC: 4) (TALENTED: 6)"
 
     {:ok, response = %HTTPoison.Response{}} =
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=carmen&secret[]=talented&secret[]=hermetic")
@@ -114,7 +114,7 @@ defmodule Hangman.Web.Test do
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=daquiri&secret=instructive&random=2")
 
 
-    assert response.body == "(#) ----------E; score=1; status=KEEP_GUESSING (#) ----------E; score=2; status=KEEP_GUESSING (#) ----------E; score=3; status=KEEP_GUESSING (#) I-------I-E; score=4; status=KEEP_GUESSING (#) INSTRUCTIVE; score=4; status=GAME_WON (#) Game Over! Average Score: 4.0, # Games: 1, Scores:  (INSTRUCTIVE: 4) "
+    assert response.body == "(H) ----------E; score=1; status=KEEP_GUESSING (H) ----------E; score=2; status=KEEP_GUESSING (H) ----------E; score=3; status=KEEP_GUESSING (H) I-------I-E; score=4; status=KEEP_GUESSING (H) INSTRUCTIVE; score=4; status=GAME_WON (H) Game Over! Average Score: 4.0, Games: 1, Scores:  (INSTRUCTIVE: 4) "
 
 
   end
@@ -125,7 +125,7 @@ defmodule Hangman.Web.Test do
     {:ok, response = %HTTPoison.Response{}} = 
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=gustav&secret[]=cumulate&secret[]=avocado&secret[]=eruptive")
 
-    assert response.body == "Game Over! Average Score: 6.333333333333333, # Games: 3, Scores: (AVOCADO: 6) (CUMULATE: 8) (ERUPTIVE: 5)"
+    assert response.body == "Game Over! Average Score: 6.333333333333333, Games: 3, Scores: (AVOCADO: 6) (CUMULATE: 8) (ERUPTIVE: 5)"
 
   end
 
@@ -134,7 +134,7 @@ defmodule Hangman.Web.Test do
     {:ok, response = %HTTPoison.Response{}} = 
       HTTPoison.get("http://127.0.0.1:3737/hangman?name=gustav&secret[]=masterful&secret[]=azerbaijan&secret[]=eruptive")
 
-    assert response.body == "Game Over! Average Score: 3.6666666666666665, # Games: 3, Scores: (AZERBAIJAN: 0) (ERUPTIVE: 5) (MASTERFUL: 6)"
+    assert response.body == "Game Over! Average Score: 3.6666666666666665, Games: 3, Scores: (AZERBAIJAN: 0) (ERUPTIVE: 5) (MASTERFUL: 6)"
 
   end
 
@@ -150,7 +150,7 @@ defmodule Hangman.Web.Test do
     assert response.status_code == 200
  
 
-    assert response.body == "Game Over! Average Score: 6.91, # Games: 100, Scores: (ALARMING: 6) (ANEMOGRAPHS: 5) (AQUARIUMS: 7) (AUREOLE: 5) (AVENGERS: 6) (BEATIFIC: 5) (BENZOLES: 7) (BICONVEXITY: 3) (BOWFRONT: 7) (BUFFETERS: 8) (BUSHFIRE: 6) (CAMAIL: 6) (CANNELON: 7) (CANONISING: 5) (CARTONED: 7) (CATALYSTS: 25) (COEDUCATIONS: 3) (COLLIGATION: 7) (COMMIXTURES: 5) (COOMBS: 8) (COSTUMER: 8) (CURIA: 6) (CURVEBALLED: 5) (DEPENDABLENESS: 3) (DISOBEDIENCES: 4) (ENGAGES: 7) (EQUINITY: 3) (EXCRESCENCY: 1) (FATHERLIKE: 4) (FAVORABLY: 7) (FLOPPIER: 10) (FREQUENTATIONS: 2) (GATHERING: 8) (GELEE: 3) (GEOGRAPHER: 4) (GINGELLI: 5) (GLARIER: 7) (GOBIOID: 4) (HAPLESSNESSES: 6) (HELIAC: 8) (HOODIE: 8) (HYDRODYNAMICAL: 3) (IMMANENCES: 4) (INVALIDITY: 5) (ISOCYANATES: 4) (JESUITS: 7) (LANIARDS: 9) (LARVAL: 6) (LIXIVIA: 4) (MARTYRLY: 7) (MEGASPORES: 6) (MERCHANTED: 4) (MICROCLIMATIC: 3) (MOTIVATE: 6) (MUONS: 25) (NEEDLESSNESSES: 2) (PAGOD: 25) (PEPLUMS: 25) (PERSONALIZES: 7) (POLYMER: 6) (POSTNEONATAL: 3) (PTYALINS: 7) (QUOTH: 25) (RAINS: 7) (RETOUCHERS: 6) (RETTED: 4) (SCRIMPIEST: 6) (SELFISH: 5) (SHREWING: 8) (SKELLUMS: 6) (SKINFLINTS: 5) (SPECIOUSNESSES: 2) (SQUADS: 8) (STABILIZING: 6) (STATELIEST: 4) (STROPHE: 5) (SUBCONSCIOUSES: 4) (SUBLIMATE: 7) (SUNSCALD: 6) (SUNSCALD: 6) (SUPERPATRIOT: 6) (SUSPENSER: 2) (SWITCHING: 9) (TASTEMAKERS: 4) (THERAPEUTIC: 2) (THOROUGHBRACES: 5) (TRUSTED: 5) (UNDERNOURISHED: 4) (UNGOVERNABLE: 4) (UNHUSK: 25) (UPCURVED: 8) (UPWAFTING: 8) (VERIFY: 7) (WARRIOR: 25) (WEIGHTLESS: 5) (WETPROOF: 7) (WHOEVER: 4) (WORSEN: 9) (WORSHIPING: 8) (ZIBELINE: 5)"
+    assert response.body == "Game Over! Average Score: 6.91, Games: 100, Scores: (ALARMING: 6) (ANEMOGRAPHS: 5) (AQUARIUMS: 7) (AUREOLE: 5) (AVENGERS: 6) (BEATIFIC: 5) (BENZOLES: 7) (BICONVEXITY: 3) (BOWFRONT: 7) (BUFFETERS: 8) (BUSHFIRE: 6) (CAMAIL: 6) (CANNELON: 7) (CANONISING: 5) (CARTONED: 7) (CATALYSTS: 25) (COEDUCATIONS: 3) (COLLIGATION: 7) (COMMIXTURES: 5) (COOMBS: 8) (COSTUMER: 8) (CURIA: 6) (CURVEBALLED: 5) (DEPENDABLENESS: 3) (DISOBEDIENCES: 4) (ENGAGES: 7) (EQUINITY: 3) (EXCRESCENCY: 1) (FATHERLIKE: 4) (FAVORABLY: 7) (FLOPPIER: 10) (FREQUENTATIONS: 2) (GATHERING: 8) (GELEE: 3) (GEOGRAPHER: 4) (GINGELLI: 5) (GLARIER: 7) (GOBIOID: 4) (HAPLESSNESSES: 6) (HELIAC: 8) (HOODIE: 8) (HYDRODYNAMICAL: 3) (IMMANENCES: 4) (INVALIDITY: 5) (ISOCYANATES: 4) (JESUITS: 7) (LANIARDS: 9) (LARVAL: 6) (LIXIVIA: 4) (MARTYRLY: 7) (MEGASPORES: 6) (MERCHANTED: 4) (MICROCLIMATIC: 3) (MOTIVATE: 6) (MUONS: 25) (NEEDLESSNESSES: 2) (PAGOD: 25) (PEPLUMS: 25) (PERSONALIZES: 7) (POLYMER: 6) (POSTNEONATAL: 3) (PTYALINS: 7) (QUOTH: 25) (RAINS: 7) (RETOUCHERS: 6) (RETTED: 4) (SCRIMPIEST: 6) (SELFISH: 5) (SHREWING: 8) (SKELLUMS: 6) (SKINFLINTS: 5) (SPECIOUSNESSES: 2) (SQUADS: 8) (STABILIZING: 6) (STATELIEST: 4) (STROPHE: 5) (SUBCONSCIOUSES: 4) (SUBLIMATE: 7) (SUNSCALD: 6) (SUNSCALD: 6) (SUPERPATRIOT: 6) (SUSPENSER: 2) (SWITCHING: 9) (TASTEMAKERS: 4) (THERAPEUTIC: 2) (THOROUGHBRACES: 5) (TRUSTED: 5) (UNDERNOURISHED: 4) (UNGOVERNABLE: 4) (UNHUSK: 25) (UPCURVED: 8) (UPWAFTING: 8) (VERIFY: 7) (WARRIOR: 25) (WEIGHTLESS: 5) (WETPROOF: 7) (WHOEVER: 4) (WORSEN: 9) (WORSHIPING: 8) (ZIBELINE: 5)"
    
 
     IO.puts "#{inspect response.body}\n\n"

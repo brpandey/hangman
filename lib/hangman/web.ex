@@ -122,7 +122,7 @@ defmodule Hangman.Web do
   @spec format_rounds(list) :: list
   defp format_rounds(rounds) when is_list(rounds) do
     for round <- rounds do
-      "(#) #{round} "
+      "(H) #{round} " # Use (H) to denote Hangman and delineate rounds
     end
   end
 

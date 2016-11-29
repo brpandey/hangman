@@ -441,7 +441,7 @@ defmodule Hangman.Game do
       acc <> " (#{k}: #{v})"  
     end)
 
-    "Game Over! Average Score: #{avg}, # Games: #{games}, Scores: #{results}"
+    "Game Over! Average Score: #{avg}, Games: #{games}, Scores: #{results}"
   end
 
 
