@@ -25,7 +25,8 @@ is this speedup tangible
 
 * Game play design: [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
 
-* Feature highlights: [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/a10e3e0bc827ae55f11f35a0b53fcb5576204d65/FEATURES.md)
+* Feature highlights: [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/1bfc19ca40bbfacc82316e3614f292be3843847c/FEATURES.md)
+
 
 
 ## Usage
@@ -251,6 +252,32 @@ Web Example - Single Game
        {"content-length", "435"},
        {"cache-control", "max-age=0, private, must-revalidate"},
        {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
+```
+
+### Game Play - 5
+
+Word not in dictionary - Fault-Tolerance of Player Worker Crash
+
+```elixir
+    $ ./hangman_game -n bowser -s "apache azerbaijan enthralled"
+
+    APACHE; score=4; status=GAME_WON
+
+    18:49:15.435 module=Hangman.Player.Controller [info]  Caught exit in player controller, reason is {{%HangmanError{message: "Word not in dictionary"}, [{Hangman.Letter.Strategy, :process, 3, [file: 'lib/hangman/letter_strategy.ex', line: 85]}, {Hangman.Action.Robot, :setup, 1, [file: 'lib/hangman/action_robot.ex', line: 36]}, {Hangman.Player.FSM, :transition, 3, [file: 'lib/hangman/player_fsm.ex', line: 74]}, {Hangman.Player.Worker, :handle_call, 3, [file: 'lib/hangman/player_worker.ex', line: 122]}, {:gen_server, :try_handle_call, 4, [file: 'gen_server.erl', line: 615]}, {:gen_server, :handle_msg, 5, [file: 'gen_server.erl', line: 647]}, {:proc_lib, :init_p_do_apply, 3, [file: 'proc_lib.erl', line: 247]}]}, {GenServer, :call, [{:via, :gproc, {:n, :l, {:player_worker, "bowser"}}}, :proceed, 5000]}}
+
+    18:49:15.448 [error] GenServer {:n, :l, {:player_worker, "bowser"}} terminating
+    ** (HangmanError) Word not in dictionary
+        (hangman_game) lib/hangman/letter_strategy.ex:85: Hangman.Letter.Strategy.process/3
+        (hangman_game) lib/hangman/action_robot.ex:36: Hangman.Action.Robot.setup/1
+        (hangman_game) lib/hangman/player_fsm.ex:74: Hangman.Player.FSM.transition/3
+        (hangman_game) lib/hangman/player_worker.ex:122: Hangman.Player.Worker.handle_call/3
+        (stdlib) gen_server.erl:615: :gen_server.try_handle_call/4
+        (stdlib) gen_server.erl:647: :gen_server.handle_msg/5
+        (stdlib) proc_lib.erl:247: :proc_lib.init_p_do_apply/3
+    Last message: :proceed
+    State: %Hangman.Player.FSM{data: #Action.Robot<[display: false][id: "bowser", pid: #PID<0.261.0>, game_pid: #PID<0.260.0>, round_data: [game_num: 1, round_num: 5, guess: "overflight", guess_result: :incorrect_word, round_code: :guessing, round_status: "--ER--I---; score=5; status=KEEP_GUESSING", pattern: "--ER--I---", context: {:guessing, :incorrect_word, "overflight"}]]>, state: :setup}
+
+    Game Over! Average Score: 4.5, Games: 2, Scores:  (APACHE: 4) (AZERBAIJAN: 0) (ENTHRALLED: 5)
 ```
 
 ## Appendices
