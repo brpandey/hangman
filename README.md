@@ -59,7 +59,9 @@ Command Line options:
     [-s (hangman word(s)) -bl] [-l -d -ti] [-pl]
 ```
 
-## Install
+## Install & Run
+
+   [Install Elixir](http://elixir-lang.org/install.html)
 
 ### Step 1 - Git clone
 ```
