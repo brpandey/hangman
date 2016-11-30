@@ -9,6 +9,7 @@ Feature highlights:
 * Presents a simple command line interface to play games as well as a web interface
 * Uses a simple letter retrieval heuristic of letter counts along with english letter frequency data
 * Reduces the hangman word state through series of word reductions
+* Implements a Counter abstraction similiar to Python's Counter class, with most_common method
 * Enjoys the actor metaphor! Uses OTP/GenServer to represent key abstractions: 
   * Player.Worker, Game.Server, Pass.Cache, Dictionary.Cache, Reduction.Engine etc..
 * Uses fast in memory tables via Erlang Term Storage (ETS), caches ETS dictionary table for quick load

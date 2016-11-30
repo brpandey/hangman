@@ -76,6 +76,8 @@ defmodule Hangman.Dictionary.ETS do
 
   :words -
   Retrieves words given word length key
+  Reduces over all the same word keys to aggregate the final words list
+  (using ets bag type)
   """
 
   @spec get(:random | :counter | :words, pos_integer) :: 
@@ -109,7 +111,7 @@ defmodule Hangman.Dictionary.ETS do
     end
   end
 
-
+  # Note: Doesn't aggregate over same counter keys, assumes we have one unique key
   def get(:counter, key) when is_number(key) and key > 0 do
 
     # assert ets is setup
