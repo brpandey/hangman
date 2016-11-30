@@ -7,7 +7,6 @@ Hangman.Action.Robot.html
 Hangman.Application.html
 Hangman.CLI.html
 Hangman.CLI.Handler.html
-Hangman.Chunks.html
 Hangman.Counter.html
 Hangman.Dictionary.html
 Hangman.Dictionary.Cache.html
@@ -15,16 +14,19 @@ Hangman.Dictionary.ETS.html
 Hangman.Dictionary.Ingestion.html
 Hangman.Game.html
 Hangman.Game.Event.Manager.html
-Hangman.Game.Pid.Cache.html
 Hangman.Game.Server.html
+Hangman.Game.Server.Controller.html
 Hangman.Game.Server.Stub.html
 Hangman.Guess.html
 Hangman.Ingestion.Cache.Flow.html
 Hangman.Ingestion.First.Flow.html
+Hangman.Letter.Retrieval.Common.html
+Hangman.Letter.Retrieval.Strategy.html
 Hangman.Letter.Strategy.html
 Hangman.Pass.html
 Hangman.Pass.Cache.html
 Hangman.Pass.Cache.Writer.html
+Hangman.Pass.Reduction.html
 Hangman.Pattern.html
 Hangman.Player.html
 Hangman.Player.Alert.Handler.html
@@ -43,6 +45,7 @@ Hangman.Shard.Flow.html
 Hangman.Shard.Handler.html
 Hangman.Simple.Registry.html
 Hangman.Web.html
+Hangman.Words.html
 HangmanError.html
 Hangman.Player.Action.html
 dist/app-9b2d1e432c.js

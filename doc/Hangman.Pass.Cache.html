@@ -75,8 +75,8 @@
 
       
         <section id="moduledoc">
-          <p>Module provides cache access to the game words pass. Given a player, a game and round number, <code>Pass.Cache</code> maintains a words pass <code>cache</code> of current word passes. The words are represented by <code>Chunks</code>.</p>
-<p>Implements a <a href="#get/1"><code>get/1</code></a> and <a href="#put/2"><code>put/2</code></a> routine to retrieve and store these word pass <code>Chunks</code>.</p>
+          <p>Module provides cache access to the game words pass. Given a player, a game and round number, <code>Pass.Cache</code> maintains a words pass <code>cache</code> of current word passes. The words are represented by <code>Words.t</code>.</p>
+<p>Implements a <a href="#get/1"><code>get/1</code></a> and <a href="#put/2"><code>put/2</code></a> routine to retrieve and store these word pass <code>Words.t</code>.</p>
 <p>Given a new <code>Hangman</code> game, initially the words pass is the size of all words in the dictionary of secret length k. As each round proceeds, this is reduced by the <code>Hangman</code> pattern sequence. It is these remaining possible word set instances that are stored in the cache.</p>
 <p>After each player has made their <code>Hangman</code> round guess, the resultant reduced words <code>pass</code> data is stored into the <code>Pass.Cache</code> for access on the subsequent round. The expired <code>pass</code> data from stale rounds is subsequently removed from the <code>cache</code>.</p>
 <p>Serves as the unified point for the reduction logic when handling data around the <code>Pass.Cache</code>.</p>
@@ -101,10 +101,10 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#cleanup/1">cleanup(pass_key)</a>
+    <a href="#delete/1">delete(pass_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Cleanup pass data if single game is over</p>
+    <div class="summary-synopsis"><p>Delete pass data if single game is over</p>
 </div>
   
 </div>
@@ -113,7 +113,7 @@
     <a href="#get/1">get(pass_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Get routine retrieves <code>pass</code> chunks cache data given the pass key</p>
+    <div class="summary-synopsis"><p>Get routine retrieves <code>pass</code> words cache data given the pass key</p>
 </div>
   
 </div>
@@ -122,7 +122,7 @@
     <a href="#put/2">put(pass_key, data)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Put routine stores new <code>pass</code> chunks data, provided the pass key</p>
+    <div class="summary-synopsis"><p>Put routine stores new <code>pass</code> words data, provided the pass key</p>
 </div>
   
 </div>
@@ -134,7 +134,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#stop/1">stop(pid)</a>
+    <a href="#stop/0">stop()</a>
   </div>
   
     <div class="summary-synopsis"><p>Routine to stop server normally</p>
@@ -162,68 +162,12 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="cleanup/1">
+          <div class="detail" id="delete/1">
   <div class="detail-header">
-    <a href="#cleanup/1" class="detail-link" title="Link to this function">
+    <a href="#delete/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">cleanup(pass_key)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-156" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">cleanup(<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>) :: :ok</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Cleanup pass data if single game is over</p>
-
-  </section>
-</div>
-<div class="detail" id="get/1">
-  <div class="detail-header">
-    <a href="#get/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">get(pass_key)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-98" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">get(<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>) :: <a href="Hangman.Chunks.html#t:t/0">Hangman.Chunks.t</a> | no_return</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Get routine retrieves <code>pass</code> chunks cache data given the pass key</p>
-
-  </section>
-</div>
-<div class="detail" id="put/2">
-  <div class="detail-header">
-    <a href="#put/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">put(pass_key, data)</span>
+    <span class="signature">delete(pass_key)</span>
     
       <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-145" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
@@ -236,44 +180,24 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">put(<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>, <a href="Hangman.Chunks.html#t:t/0">Hangman.Chunks.t</a>) ::
-  :ok |
-  no_return</code></pre>
+          <pre><code class="elixir">delete(<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>) :: :ok</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Put routine stores new <code>pass</code> chunks data, provided the pass key</p>
+    <p>Delete pass data if single game is over</p>
 
   </section>
 </div>
-<div class="detail" id="start_link/0">
+<div class="detail" id="get/1">
   <div class="detail-header">
-    <a href="#start_link/0" class="detail-link" title="Link to this function">
+    <a href="#get/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">start_link()</span>
+    <span class="signature">get(pass_key)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-41" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="stop/1">
-  <div class="detail-header">
-    <a href="#stop/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">stop(pid)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-53" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-89" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -284,7 +208,83 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">stop(pid) :: {}</code></pre>
+          <pre><code class="elixir">get(<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>) :: <a href="Hangman.Words.html#t:t/0">Hangman.Words.t</a> | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Get routine retrieves <code>pass</code> words cache data given the pass key</p>
+
+  </section>
+</div>
+<div class="detail" id="put/2">
+  <div class="detail-header">
+    <a href="#put/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">put(pass_key, data)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-134" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">put(<a href="Hangman.Pass.html#t:key/0">Hangman.Pass.key</a>, <a href="Hangman.Words.html#t:t/0">Hangman.Words.t</a>) ::
+  :ok |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Put routine stores new <code>pass</code> words data, provided the pass key</p>
+
+  </section>
+</div>
+<div class="detail" id="start_link/0">
+  <div class="detail-header">
+    <a href="#start_link/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">start_link()</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-38" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="stop/0">
+  <div class="detail-header">
+    <a href="#stop/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">stop()</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/pass_cache.ex#cl-50" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">stop :: {}</code></pre>
         
       </div>
     </div>

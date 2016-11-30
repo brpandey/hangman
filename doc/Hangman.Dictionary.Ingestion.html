@@ -77,7 +77,7 @@
         <section id="moduledoc">
           <p>Module handles the ingestion of hangman dictionary words through the coordination of <code>Ingestion.First.Flow</code> and <code>Ingestion.Cache.Flow</code></p>
 <p>Saves ingestion state in intermediary cache partition files and finally in ets dump file</p>
-<p>Module transforms the dictionary file in two steps</p>
+<p>Module transforms the dictionary file in three steps</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>a preprocessing step, which ingests the dictionary file and generates ingestion cache partition files</p></li>
 <li><p>ingestion of cache files into ETS</p></li>
@@ -122,10 +122,34 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#dump/1">dump(path)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Dumps table data into file</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#print_table_info/0">print_table_info()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#process/1">process(arg)</a>
   </div>
   
     <div class="summary-synopsis"><p>Process method supports two modes: new, cache, and full</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#put/2">put(atom, data)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Put data into Dictionary.ETS</p>
 </div>
   
 </div>
@@ -175,7 +199,7 @@
     </a>
     <span class="signature">cleanup(cache_dir, key_file_map)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-224" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-243" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -203,7 +227,53 @@
     </a>
     <span class="signature">delimiter(atom)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-55" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-54" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="dump/1">
+  <div class="detail-header">
+    <a href="#dump/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">dump(path)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-233" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">dump(binary) :: :ok | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Dumps table data into file</p>
+
+  </section>
+</div>
+<div class="detail" id="print_table_info/0">
+  <div class="detail-header">
+    <a href="#print_table_info/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">print_table_info()</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-58" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -221,7 +291,7 @@
     </a>
     <span class="signature">process(arg)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-196" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-198" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -246,6 +316,36 @@
 
   </section>
 </div>
+<div class="detail" id="put/2">
+  <div class="detail-header">
+    <a href="#put/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">put(atom, data)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-226" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">put(:words | :random | :counter, term) ::
+  :ok |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Put data into Dictionary.ETS</p>
+
+  </section>
+</div>
 <div class="detail" id="run/1">
   <div class="detail-header">
     <a href="#run/1" class="detail-link" title="Link to this function">
@@ -253,7 +353,7 @@
     </a>
     <span class="signature">run(args)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-68" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-70" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -282,7 +382,7 @@
     </a>
     <span class="signature">setup(arg)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-111" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ingestion.ex#cl-113" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -305,7 +405,7 @@
     <p>Setup has two modes: a) :ets b) :flow</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>:ets Checks if there is an ets cache file that has been pre-generated. If so, we can avoid running the flow computations because the table is ready to load from the file.</p></li>
-<li><p>:flow Loads environment to run initial ingestion pass through the dictionary file. If this is the first time through, we set up intermediary ingestion cache files If not, we ensure the partition manifest file is present indicating the initial run is complete and execute the cache ingestion run loading chunks and generating random words into ETS as well as generating tally data</p></li>
+<li><p>:flow Loads environment to run initial ingestion pass through the dictionary file. If this is the first time through, we set up intermediary ingestion cache files If not, we ensure the partition manifest file is present indicating the initial run is complete and execute the cache ingestion run loading word lists and generating random words into ETS as well as generating tally data</p></li>
 </ol>
 
   </section>

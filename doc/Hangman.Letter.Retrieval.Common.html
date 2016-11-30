@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.13.2">
-    <title>Hangman.Shard.Flow – Hangman v0.9.5</title>
+    <title>Hangman.Letter.Retrieval.Common – Hangman v0.9.5</title>
     <link rel="stylesheet" href="dist/app-bbdf358507.css" />
     
     <script src="dist/sidebar_items.js"></script>
@@ -64,22 +64,15 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.5</small>
-        Hangman.Shard.Flow
+        Hangman.Letter.Retrieval.Common
         
         
-          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/shard_flow.ex#cl-1" title="View Source" class="view-source" rel="help">
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_retrieval_common.ex#cl-1" title="View Source" class="view-source" rel="help">
             <i class="icon-code"></i>
           </a>
         
       </h1>
 
-      
-        <section id="moduledoc">
-          <p>Module splits the game args into shards which is distributed to shard handlers. The resultant game information is collected and combined in the proper order.</p>
-<p>Game play is setup to be parallel and concurrent to use all the machines CPU cores.</p>
-<p>A single shard key resembles the format: {name, shard num} or {&quot;fred&quot;, 1}, and the shard value is a list of secrets or [&quot;radical&quot;, &quot;rabbit&quot;]</p>
-
-        </section>
       
 
       
@@ -99,17 +92,11 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#run/2">run(name, secrets)</a>
+    <a href="#optimal/1">optimal(strategy)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Entry point for map-reduce &quot;flow&quot; processing and collation</p>
+    <div class="summary-synopsis"><p>Returns optimal letter</p>
 </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#summarize/1">summarize(scores)</a>
-  </div>
   
 </div>
 
@@ -133,65 +120,25 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="run/2">
+          <div class="detail" id="optimal/1">
   <div class="detail-header">
-    <a href="#run/2" class="detail-link" title="Link to this function">
+    <a href="#optimal/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">run(name, secrets)</span>
+    <span class="signature">optimal(strategy)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/shard_flow.ex#cl-38" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_retrieval_common.ex#cl-34" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
     
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">run(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) ::
-  list |
-  <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a></code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>Entry point for map-reduce &quot;flow&quot; processing and collation.</p>
-<p>Setups up flow engine. For each game argument, sets up the game state and then plays the game shards</p>
-<p>In terms of map-reduce frameworks, the collection vector contains the game argument tokens</p>
-<p>These game tokens are mapped to the Handler setup and play functions, which setup game play and carry it out.</p>
-<p>Finally, the results of play are reduced and store into a map. Whose entries are handed off back to the caller module</p>
+    <p>Returns optimal letter</p>
+<p>Method implements the most <code>common</code> letter retrieval strategy with a twist. Gets the first letter with the highest frequency for when the current possible <code>Hangman</code> word set space is &gt; &quot;small&quot;. The twist is when we combine the <code>English</code> language letter relative frequency. For the cases where the word set is less than <code>small</code>, takes the letter whose frequencies are less than or equal to half the possible <code>Hangman</code> word pass <code>size</code>.</p>
+<p>E.g.for size 10, the letter <code>counts</code> would need to be 5 or lower to be chosen. Doesn't handle tie between letters.</p>
 
-  </section>
-</div>
-<div class="detail" id="summarize/1">
-  <div class="detail-header">
-    <a href="#summarize/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">summarize(scores)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/shard_flow.ex#cl-117" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">summarize(<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a></code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    
   </section>
 </div>
 

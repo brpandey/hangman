@@ -77,7 +77,7 @@
 
       
         <section id="moduledoc">
-          <p>Module implements a GenServer process providing access to a dictionary word cache. Handles lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words.</p>
+          <p>Module implements a GenServer process providing access to a dictionary word cache. Handles lookup routines to access <code>words</code>, <code>tallys</code>, and <code>random</code> words.</p>
 <p>Serves as a wrapper around dictinary specific implementation</p>
 
         </section>
@@ -104,6 +104,15 @@
   </div>
   
     <div class="summary-synopsis"><p>Cache lookup routines</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#setup?/0">setup?()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Check whether ets is setup</p>
 </div>
   
 </div>
@@ -169,7 +178,7 @@
     </a>
     <span class="signature">lookup(pid, atom, count)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-42" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-44" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -181,9 +190,9 @@
       <div class="specs-list">
         
           <pre><code class="elixir">lookup(pid, atom, pos_integer) ::
-  Chunks.t |
-  Counter.t |
   [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] |
+  Counter.t |
+  Words.t |
   no_return</code></pre>
         
       </div>
@@ -191,7 +200,35 @@
   
   <section class="docstring">
     <p>Cache lookup routines</p>
-<p>The allowed modes: * <code>:random</code> - extracts count number of random hangman words. * <code>:tally</code> - retrieve letter tally associated with word length key * <code>:chunk</code> - retrieve the word data chunk associated with the word length key</p>
+<p>The allowed modes: * <code>:random</code> - extracts count number of random hangman words. * <code>:tally</code> - retrieve letter tally associated with word length key * <code>:words</code> - retrieve the word data lists associated with the word length key</p>
+
+  </section>
+</div>
+<div class="detail" id="setup?/0">
+  <div class="detail-header">
+    <a href="#setup?/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">setup?()</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-19" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">setup? :: atom | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Check whether ets is setup</p>
 
   </section>
 </div>
@@ -202,7 +239,7 @@
     </a>
     <span class="signature">start_link(args)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-25" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-29" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -230,7 +267,7 @@
     </a>
     <span class="signature">stop(pid)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-61" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-63" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -272,7 +309,7 @@
     </a>
     <span class="signature">init(arg0)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-72" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_cache.ex#cl-74" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

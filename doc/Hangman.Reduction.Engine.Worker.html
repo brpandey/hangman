@@ -108,7 +108,7 @@
     <a href="#reduce_and_store/4">reduce_and_store(worker_id, pass_key, regex_key, exc)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Primary <code>worker</code> function which retrieves current <code>pass chunks</code> data, filters words with <code>regex</code>, tallies reduced word stream, creates new <code>Chunks</code> abstraction and stores it back into words pass table</p>
+    <div class="summary-synopsis"><p>Primary <code>worker</code> function which retrieves current <code>pass words</code> data, filters words with <code>regex</code>, tallies reduced word stream, creates new <code>Words</code> abstraction and stores it back into words pass table</p>
 </div>
   
 </div>
@@ -165,7 +165,7 @@
     </a>
     <span class="signature">reduce_and_store(worker_id, pass_key, regex_key, exc)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-48" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-44" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -182,7 +182,7 @@
     </div>
   
   <section class="docstring">
-    <p>Primary <code>worker</code> function which retrieves current <code>pass chunks</code> data, filters words with <code>regex</code>, tallies reduced word stream, creates new <code>Chunks</code> abstraction and stores it back into words pass table.</p>
+    <p>Primary <code>worker</code> function which retrieves current <code>pass words</code> data, filters words with <code>regex</code>, tallies reduced word stream, creates new <code>Words</code> abstraction and stores it back into words pass table.</p>
 <p>If pass size happens to be small enough, will also return remaining <code>Hangman</code> possible words left to aid in <code>guess</code> selection.</p>
 <p>Returns <code>pass</code>. Method is serialized.</p>
 
@@ -195,7 +195,7 @@
     </a>
     <span class="signature">start_link(worker_id)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-27" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-23" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -237,7 +237,7 @@
     </a>
     <span class="signature">terminate(term, term)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-71" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/reduction_engine_worker.ex#cl-67" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

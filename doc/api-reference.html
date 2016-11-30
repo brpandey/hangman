@@ -118,13 +118,6 @@
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Hangman.Chunks.html">Hangman.Chunks</a></div>
-  
-    <div class="summary-synopsis"><p>Module to manage word list chunks for a given secret length key</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Counter.html">Hangman.Counter</a></div>
   
     <div class="summary-synopsis"><p>Module for creating and using letter frequency tallies. Contains a set of functions for tallies, such as adding letters, words, lists, and streams, and retrieving their most common letters</p>
@@ -141,14 +134,14 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Dictionary.Cache.html">Hangman.Dictionary.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Module implements a GenServer process providing access to a dictionary word cache. Handles lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words</p>
+    <div class="summary-synopsis"><p>Module implements a GenServer process providing access to a dictionary word cache. Handles lookup routines to access <code>words</code>, <code>tallys</code>, and <code>random</code> words</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Dictionary.ETS.html">Hangman.Dictionary.ETS</a></div>
   
-    <div class="summary-synopsis"><p>Module provides access to a dictionary word cache powered by <code>ETS</code>. Provides lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words. Handles all ETS specific operations while <code>Dictionary</code> serves as a wrapper</p>
+    <div class="summary-synopsis"><p>Module provides access to a dictionary word cache powered by <code>ETS</code>. Provides lookup routines to access <code>words</code>, <code>tallys</code>, and <code>random</code> words. Handles all ETS specific operations while <code>Dictionary</code> serves as a wrapper</p>
 </div>
   
 </div>
@@ -169,11 +162,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Game.Event.Manager.html">Hangman.Game.Event.Manager</a></div>
   
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Hangman.Game.Pid.Cache.html">Hangman.Game.Pid.Cache</a></div>
-  
-    <div class="summary-synopsis"><p>Module provides access to a game server pid cache. Pid <code>caching</code> prevents a <code>Game.Server</code> process from having to be created every time. Upon game server startup, the new pid is stored into the pid cache.<br />Upon successive game plays with the same game server, the pid does not need to be regenerated, but simply retrieved from the cache</p>
+    <div class="summary-synopsis"><p>Module implements GenStage event manager which handles event dispatching given consumer backpressure</p>
 </div>
   
 </div>
@@ -181,6 +170,13 @@
   <div class="summary-signature"><a href="Hangman.Game.Server.html">Hangman.Game.Server</a></div>
   
     <div class="summary-synopsis"><p>Module handles <code>Hangman</code> <code>Game</code> serving to multiple clients.<br />Each player's active game state is maintained, until the player process exits</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Game.Server.Controller.html">Hangman.Game.Server.Controller</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides dynamic startup of Game Servers</p>
 </div>
   
 </div>
@@ -198,15 +194,23 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Ingestion.Cache.Flow.html">Hangman.Ingestion.Cache.Flow</a></div>
   
-    <div class="summary-synopsis"><p>Loads partitioned dictionary word files into ets table piecewise through words list chunks. Random words are generated from these words lists</p>
+    <div class="summary-synopsis"><p>Loads partitioned dictionary word files into ingestion table piecewise through words list chunks. Random words are generated from these words lists</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Ingestion.First.Flow.html">Hangman.Ingestion.First.Flow</a></div>
   
-    <div class="summary-synopsis"><p>Module implements the introductory ingestion flow logic given an initial hangman dictionary file. Serves to split dictionary into windowed word chunks storing them in intermediate cached files arranged by word key length</p>
+    <div class="summary-synopsis"><p>Module implements the introductory ingestion flow logic given an initial hangman dictionary file. Serves to split dictionary into windowed word list chunks storing them in intermediate cached files arranged by word key length</p>
 </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Letter.Retrieval.Common.html">Hangman.Letter.Retrieval.Common</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Letter.Retrieval.Strategy.html">Hangman.Letter.Retrieval.Strategy</a></div>
   
 </div>
 <div class="summary-row">
@@ -226,14 +230,21 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Pass.Cache.html">Hangman.Pass.Cache</a></div>
   
-    <div class="summary-synopsis"><p>Module provides cache access to the game words pass. Given a player, a game and round number, <code>Pass.Cache</code> maintains a words pass <code>cache</code> of current word passes. The words are represented by <code>Chunks</code></p>
+    <div class="summary-synopsis"><p>Module provides cache access to the game words pass. Given a player, a game and round number, <code>Pass.Cache</code> maintains a words pass <code>cache</code> of current word passes. The words are represented by <code>Words.t</code></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Hangman.Pass.Cache.Writer.html">Hangman.Pass.Cache.Writer</a></div>
   
-    <div class="summary-synopsis"><p>Module is responsible for synchronous chunk <code>pass</code> writes into the <code>Pass.Cache</code> table</p>
+    <div class="summary-synopsis"><p>Module is responsible for synchronous words <code>pass</code> writes into the <code>Pass.Cache</code> table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Pass.Reduction.html">Hangman.Pass.Reduction</a></div>
+  
+    <div class="summary-synopsis"><p>Module provides pass reduction interface for reduction engine workers</p>
 </div>
   
 </div>
@@ -360,6 +371,13 @@
   <div class="summary-signature"><a href="Hangman.Web.html">Hangman.Web</a></div>
   
     <div class="summary-synopsis"><p>Module provides access to a http web server for playing <code>Hangman</code> games via a tool such as curl or HTTPoison</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Hangman.Words.html">Hangman.Words</a></div>
+  
+    <div class="summary-synopsis"><p>Module to manage word lists for a given secret length key</p>
 </div>
   
 </div>

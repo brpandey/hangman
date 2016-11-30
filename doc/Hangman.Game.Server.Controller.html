@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.13.2">
-    <title>Hangman.Game.Pid.Cache – Hangman v0.9.5</title>
+    <title>Hangman.Game.Server.Controller – Hangman v0.9.5</title>
     <link rel="stylesheet" href="dist/app-bbdf358507.css" />
     
     <script src="dist/sidebar_items.js"></script>
@@ -64,12 +64,12 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.5</small>
-        Hangman.Game.Pid.Cache
+        Hangman.Game.Server.Controller
         
           <small>behaviour</small>
         
         
-          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-1" title="View Source" class="view-source" rel="help">
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server_controller.ex#cl-1" title="View Source" class="view-source" rel="help">
             <i class="icon-code"></i>
           </a>
         
@@ -77,8 +77,10 @@
 
       
         <section id="moduledoc">
-          <p>Module provides access to a game server pid cache. Pid <code>caching</code> prevents a <code>Game.Server</code> process from having to be created every time. Upon game server startup, the new pid is stored into the pid cache.<br />Upon successive game plays with the same game server, the pid does not need to be regenerated, but simply retrieved from the cache.</p>
-<p>Note: Currently, the <code>Game.Pid.Cache</code> maps one player_name to one game server. Thus effectively preventing a single game server from supporting multiple unique players. The simple idea for now, is to have multiple tiny game servers map to multiple tiny players</p>
+          <p>Module provides dynamic startup of Game Servers.</p>
+<p>Starts up game server if not already started and handles game server process registry via gproc.</p>
+<p>Stops game server as well, when game is finished</p>
+<p>Note: Currently, the Controller maps one player_name to one game server. Thus effectively preventing a single game server from supporting multiple unique players. The simple idea for now, is to have multiple tiny game servers map to multiple tiny players</p>
 
         </section>
       
@@ -100,7 +102,7 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#get_server_pid/2">get_server_pid(player_name, secret)</a>
+    <a href="#get_server/2">get_server(id, secret)</a>
   </div>
   
     <div class="summary-synopsis"><p>Checks registry cache for <code>Game.Server</code> pid given unique id, returns cached <code>pid</code> or if not found returns new game <code>pid</code>. Handles race conditions</p>
@@ -113,6 +115,15 @@
   </div>
   
     <div class="summary-synopsis"><p>GenServer start link wrapper function</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#stop_server/1">stop_server(id)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Issues request to stop game server</p>
 </div>
   
 </div>
@@ -156,14 +167,14 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="get_server_pid/2">
+          <div class="detail" id="get_server/2">
   <div class="detail-header">
-    <a href="#get_server_pid/2" class="detail-link" title="Link to this function">
+    <a href="#get_server/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">get_server_pid(player_name, secret)</span>
+    <span class="signature">get_server(id, secret)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-43" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server_controller.ex#cl-42" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -174,7 +185,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">get_server_pid(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) :: pid</code></pre>
+          <pre><code class="elixir">get_server(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]) :: pid</code></pre>
         
       </div>
     </div>
@@ -191,7 +202,7 @@
     </a>
     <span class="signature">start_link()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-28" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server_controller.ex#cl-27" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -209,6 +220,34 @@
   
   <section class="docstring">
     <p>GenServer start link wrapper function</p>
+
+  </section>
+</div>
+<div class="detail" id="stop_server/1">
+  <div class="detail-header">
+    <a href="#stop_server/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">stop_server(id)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server_controller.ex#cl-56" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">stop_server(<a href="Hangman.Player.html#t:id/0">Hangman.Player.id</a>) :: atom</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Issues request to stop game server</p>
 
   </section>
 </div>
@@ -233,7 +272,7 @@
     </a>
     <span class="signature">handle_call({}, tuple, term)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-64" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server_controller.ex#cl-77" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -260,7 +299,7 @@
     </a>
     <span class="signature">init(term)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_pid_cache.ex#cl-57" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/game_server_controller.ex#cl-70" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

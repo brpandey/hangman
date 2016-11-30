@@ -89,7 +89,7 @@
 <pre><code class="iex elixir">iex&gt; HTTPoison.get(&quot;http://127.0.0.1:3737/hangman?name=julio&amp;secret=kiwi&quot;)
 
 {:ok,
-%HTTPoison.Response{body: &quot;(#) ----; score=1; status=KEEP_GUESSING (#) ----; score=2; status=KEEP_GUESSING (#) ----; score=3; status=KEEP_GUESSING (#) -I-I; score=4; status=KEEP_GUESSING (#) -I-I; score=5; status=KEEP_GUESSING (#) -I-I; score=6; status=KEEP_GUESSING (#) -I-I; score=25; status=GAME_LOST (#) Game Over! Average Score: 25.0, # Games: 1, Scores:  (KIWI: 25) &quot;,
+%HTTPoison.Response{body: &quot;(H) ----; score=1; status=KEEP_GUESSING (H) ----; score=2; status=KEEP_GUESSING (H) ----; score=3; status=KEEP_GUESSING (H) -I-I; score=4; status=KEEP_GUESSING (H) -I-I; score=5; status=KEEP_GUESSING (H) -I-I; score=6; status=KEEP_GUESSING (H) -I-I; score=25; status=GAME_LOST (H) Game Over! Average Score: 25.0, Games: 1, Scores:  (KIWI: 25) &quot;,
 headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon, 14 Mar 2016 04:27:39 GMT&quot;},
 {&quot;content-length&quot;, &quot;345&quot;},
 {&quot;cache-control&quot;, &quot;max-age=0, private, must-revalidate&quot;},
@@ -98,7 +98,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
 iex&gt; HTTPoison.get(&quot;http://127.0.0.1:3737/hangman?name=julio&amp;random=1&quot;)
 
 {:ok,
-%HTTPoison.Response{body: &quot;(#) --E-----------; score=1; status=KEEP_GUESSING (#) --E--------O--; score=2; status=KEEP_GUESSING (#) --E--------O--; score=3; status=KEEP_GUESSING (#) --E----C---O--; score=4; status=KEEP_GUESSING (#) PREVARICATIONS; score=4; status=GAME_WON (#) Game Over! Average Score: 4, # Games: 1, Scores:  (PREVARICATIONS: 4) &quot;,
+%HTTPoison.Response{body: &quot;(H) --E-----------; score=1; status=KEEP_GUESSING (H) --E--------O--; score=2; status=KEEP_GUESSING (H) --E--------O--; score=3; status=KEEP_GUESSING (H) --E----C---O--; score=4; status=KEEP_GUESSING (H) PREVARICATIONS; score=4; status=GAME_WON (H) Game Over! Average Score: 4, Games: 1, Scores:  (PREVARICATIONS: 4) &quot;,
 headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon, 14 Mar 2016 04:29:05 GMT&quot;},
 {&quot;content-length&quot;, &quot;601&quot;},
 {&quot;cache-control&quot;, &quot;max-age=0, private, must-revalidate&quot;},
@@ -186,7 +186,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
     </a>
     <span class="signature">call(conn, opts)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-2" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-41" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -205,7 +205,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
     </a>
     <span class="signature">init(opts)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-2" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-41" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -224,7 +224,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
     </a>
     <span class="signature">run(conn)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-70" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-69" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -252,7 +252,7 @@ headers: [{&quot;server&quot;, &quot;Cowboy&quot;}, {&quot;date&quot;, &quot;Mon
     </a>
     <span class="signature">start_server()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-51" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/web.ex#cl-50" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

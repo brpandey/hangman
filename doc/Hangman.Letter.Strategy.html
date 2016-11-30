@@ -67,7 +67,7 @@
         Hangman.Letter.Strategy
         
         
-          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-1" title="View Source" class="view-source" rel="help">
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-1" title="View Source" class="view-source" rel="help">
             <i class="icon-code"></i>
           </a>
         
@@ -108,7 +108,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t:t/0">t()</a>
+    <a href="#t/0">t()</a>
   </div>
   
 </div>
@@ -123,10 +123,10 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#choices/2">choices(strategy, n \\ 5)</a>
+    <a href="#choices/2">choices(strategy, round)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Retrieves letter choices text. Denotes 'strategic' letter pick with an <code>asterisk</code></p>
+    <div class="summary-synopsis"><p>Retrieves choices info augmenting it with round info</p>
 </div>
   
 </div>
@@ -135,8 +135,20 @@
     <a href="#guess/1">guess(strategy)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns best letter guess as deemed by heuristics</p>
+    <div class="summary-synopsis"><p>Returns best letter guess as previously computed</p>
 </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#guess/2">guess(strategy, atom)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#guess/3">guess(strategy, atom, arg)</a>
+  </div>
   
 </div>
 <div class="summary-row">
@@ -159,16 +171,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#most_common/2">most_common(strategy, n)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Returns most common <code>n</code> letters along with their <code>counts</code></p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#new/1">new(type)</a>
+    <a href="#new/0">new()</a>
   </div>
   
     <div class="summary-synopsis"><p>Returns a new <code>Letter.Strategy</code></p>
@@ -177,19 +180,34 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#update/2">update(strategy, pass)</a>
+    <a href="#process/2">process(strategy, pass)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Updates <code>strategy</code> with engine <code>pass</code> data</p>
+    <div class="summary-synopsis"><p>Process best letter guess as deemed by the auto self-selecting heuristic</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#validate/3">validate(strategy, letter, n \\ 5)</a>
+    <a href="#process/3">process(strategy, atom, pass)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Validates <code>letter</code> is within the top strategy letter choices. If not, picks the top <code>letter</code> as deemed by heuristics</p>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#process/4">process(strategy, atom, pass, n \\ 5)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Processes pass data and stores guess choices data. Denotes 'strategic' letter pick with an <code>asterisk</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update/2">update(strategy, arg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Updates strategy with guess data</p>
 </div>
   
 </div>
@@ -217,8 +235,8 @@
   <pre><code class="elixir"><a href="#t:result/0">result</a> :: {<a href="#t:t/0">t</a>, <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a>}</code></pre>
   
 </div>
-<div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Hangman.Letter.Strategy{guess: term, guessed_letters: term, pass: term, prior_guess: term, type: term}</code></pre>
+<div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
   
 </div>
 
@@ -239,9 +257,9 @@
     <a href="#choices/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">choices(strategy, n \\ 5)</span>
+    <span class="signature">choices(strategy, round)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-134" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-198" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -252,15 +270,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">choices(<a href="#t:t/0">t</a>, pos_integer) ::
-  <a href="Hangman.Guess.html#t:option/0">Hangman.Guess.option</a> |
-  no_return</code></pre>
+          <pre><code class="elixir">choices(<a href="#t:t/0">t</a>, <a href="Hangman.Round.html#t:t/0">Hangman.Round.t</a>) :: <a href="Hangman.Guess.html#t:options/0">Hangman.Guess.options</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Retrieves letter choices text. Denotes 'strategic' letter pick with an <code>asterisk</code>.</p>
+    <p>Retrieves choices info augmenting it with round info</p>
 
   </section>
 </div>
@@ -271,7 +287,7 @@
     </a>
     <span class="signature">guess(strategy)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-278" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-155" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -288,8 +304,62 @@
     </div>
   
   <section class="docstring">
-    <p>Returns best letter guess as deemed by heuristics</p>
+    <p>Returns best letter guess as previously computed</p>
 
+  </section>
+</div>
+<div class="detail" id="guess/2">
+  <div class="detail-header">
+    <a href="#guess/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">guess(strategy, atom)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-158" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, atom) :: <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="guess/3">
+  <div class="detail-header">
+    <a href="#guess/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">guess(strategy, atom, arg)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-161" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">guess(<a href="#t:t/0">t</a>, atom, tuple) :: <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
   </section>
 </div>
 <div class="detail" id="guessed/1">
@@ -299,7 +369,7 @@
     </a>
     <span class="signature">guessed(strategy)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-91" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-61" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -327,7 +397,7 @@
     </a>
     <span class="signature">info(s)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-322" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-277" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -348,14 +418,14 @@
 
   </section>
 </div>
-<div class="detail" id="most_common/2">
+<div class="detail" id="new/0">
   <div class="detail-header">
-    <a href="#most_common/2" class="detail-link" title="Link to this function">
+    <a href="#new/0" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">most_common(strategy, n)</span>
+    <span class="signature">new()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-101" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-52" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -366,35 +436,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">most_common(<a href="#t:t/0">t</a>, pos_integer) :: <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a></code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Returns most common <code>n</code> letters along with their <code>counts</code></p>
-
-  </section>
-</div>
-<div class="detail" id="new/1">
-  <div class="detail-header">
-    <a href="#new/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">new(type)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-68" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">new(atom) :: struct</code></pre>
+          <pre><code class="elixir">new :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
@@ -404,14 +446,99 @@
 
   </section>
 </div>
+<div class="detail" id="process/2">
+  <div class="detail-header">
+    <a href="#process/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">process(strategy, pass)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-72" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">process(<a href="#t:t/0">t</a>, <a href="Hangman.Pass.html#t:t/0">Hangman.Pass.t</a>) :: <a href="#t:t/0">t</a> | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Process best letter guess as deemed by the auto self-selecting heuristic</p>
+
+  </section>
+</div>
+<div class="detail" id="process/3">
+  <div class="detail-header">
+    <a href="#process/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">process(strategy, atom, pass)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-77" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">process(<a href="#t:t/0">t</a>, atom, <a href="Hangman.Pass.html#t:t/0">Hangman.Pass.t</a>) :: <a href="#t:t/0">t</a> | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="process/4">
+  <div class="detail-header">
+    <a href="#process/4" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">process(strategy, atom, pass, n \\ 5)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-106" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">process(<a href="#t:t/0">t</a>, atom, <a href="Hangman.Pass.html#t:t/0">Hangman.Pass.t</a>, pos_integer) ::
+  <a href="Hangman.Guess.html#t:option/0">Hangman.Guess.option</a> |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Processes pass data and stores guess choices data. Denotes 'strategic' letter pick with an <code>asterisk</code>.</p>
+
+  </section>
+</div>
 <div class="detail" id="update/2">
   <div class="detail-header">
     <a href="#update/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">update(strategy, pass)</span>
+    <span class="signature">update(strategy, arg)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-285" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/letter_strategy.ex#cl-176" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -424,42 +551,11 @@
         
           <pre><code class="elixir">update(<a href="#t:t/0">t</a>, <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a>) :: <a href="#t:t/0">t</a></code></pre>
         
-          <pre><code class="elixir">update(<a href="#t:t/0">t</a>, <a href="Hangman.Pass.html#t:t/0">Hangman.Pass.t</a>) :: <a href="#t:t/0">t</a></code></pre>
-        
       </div>
     </div>
   
   <section class="docstring">
-    <p>Updates <code>strategy</code> with engine <code>pass</code> data.</p>
-<p>For <code>robot</code> player type, when we updated the pass data also <code>prepare</code> the guess.</p>
-
-  </section>
-</div>
-<div class="detail" id="validate/3">
-  <div class="detail-header">
-    <a href="#validate/3" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">validate(strategy, letter, n \\ 5)</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/strategy.ex#cl-114" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">validate(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, pos_integer) :: <a href="Hangman.Guess.html#t:t/0">Hangman.Guess.t</a></code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    <p>Validates <code>letter</code> is within the top strategy letter choices. If not, picks the top <code>letter</code> as deemed by heuristics.</p>
+    <p>Updates strategy with guess data</p>
 
   </section>
 </div>

@@ -78,7 +78,7 @@
           <p>Module runs game play for the given shard of secrets as determined by <code>Shard.Flow</code>. Basically, runs a chunk of the overall original secrets vector.</p>
 <p>Module drives <code>Player.Controller</code>, while setting up the proper <code>Game</code> server and <code>Event</code> consumer states beforehand.</p>
 <p>Simply stated it politely nudges the player to proceed to the next course of action or make the next guess.</p>
-<p>When the game is finished it politely ends the game playing return the shard_key and game snapshot tuple.</p>
+<p>When the game is finished it politely ends the game playing returning the shard_key and game snapshot tuple.</p>
 <p>The twist to this is that these shard handlers are run in parallel and concurrently thanks to the concurrent map reduce setup of <code>Flow</code></p>
 
         </section>
@@ -145,7 +145,7 @@
     </a>
     <span class="signature">play(shard_key)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/shard_handler.ex#cl-51" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/shard_handler.ex#cl-49" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -173,7 +173,7 @@
     </a>
     <span class="signature">setup(arg)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/shard_handler.ex#cl-34" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/shard_handler.ex#cl-32" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     

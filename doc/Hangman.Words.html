@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.13.2">
-    <title>Hangman.Chunks – Hangman v0.9.5</title>
+    <title>Hangman.Words – Hangman v0.9.5</title>
     <link rel="stylesheet" href="dist/app-bbdf358507.css" />
     
     <script src="dist/sidebar_items.js"></script>
@@ -64,10 +64,10 @@
 
       <h1>
         <small class="visible-xs">Hangman v0.9.5</small>
-        Hangman.Chunks
+        Hangman.Words
         
         
-          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-1" title="View Source" class="view-source" rel="help">
+          <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-1" title="View Source" class="view-source" rel="help">
             <i class="icon-code"></i>
           </a>
         
@@ -75,12 +75,12 @@
 
       
         <section id="moduledoc">
-          <p>Module to manage word list chunks for a given secret length key.</p>
-<p>The need for chunking arises when we have arbitrary long word lists/streams, as it provides structure.</p>
-<p>Chunks internally maintains standardized <code>containers</code> for word lists and keeps track of total word counts and number of <code>containers</code>. Splits big words list into smaller more manageable list <code>Chunks</code>.</p>
-<p>A single <code>Chunks</code> abstraction can contain a single chunked word list or multiple chunked word lists.</p>
-<p><code>Chunks</code> provide more manageability especially when we store into the database because the abstraction automatically binaries data leaving a smaller footprint.</p>
-<p>Primary functions are <a href="#new/2"><code>new/2</code></a>, <a href="#count/1"><code>count/1</code></a>, <a href="#add/2"><code>add/2</code></a>, and <a href="#get_words_lazy/1"><code>get_words_lazy/1</code></a>.</p>
+          <p>Module to manage word lists for a given secret length key.</p>
+<p>The need for splitting lists arises when we have arbitrary long word lists/streams, as it provides structure.</p>
+<p>Module internally maintains standardized <code>containers</code> for word lists and keeps track of total word counts. Splits big words list into smaller lists.</p>
+<p>A single <code>Words</code> abstraction can contain a single word list or multiple lists with sizes info, which is represented as a container.</p>
+<p><code>Words</code> provide extra manageability during storage as lists are binaried leaving a smaller footprint.</p>
+<p>Primary functions are <a href="#new/2"><code>new/2</code></a>, <a href="#count/1"><code>count/1</code></a>, <a href="#add/2"><code>add/2</code></a>, <a href="#filter/2"><code>filter/2</code></a>, and <a href="#stream/1"><code>stream/1</code></a>.</p>
 
         </section>
       
@@ -100,13 +100,7 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#t:binary_chunk/0">binary_chunk()</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#t:t/0">t()</a>
+    <a href="#t/0">t()</a>
   </div>
   
 </div>
@@ -121,10 +115,19 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#add/2">add(chunks, value)</a>
+    <a href="#add/2">add(words, value)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Takes an existing <code>Chunks</code> and adds the passed in binary <code>chunk</code> <code>tuple</code></p>
+    <div class="summary-synopsis"><p>Takes an existing <code>Words</code> and adds the passed in container <code>tuple</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#collect/2">collect(words, count)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return specified number of words from Words</p>
 </div>
   
 </div>
@@ -136,37 +139,37 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#count/1">count(chunks)</a>
+    <a href="#count/1">count(words)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns total word count across all <code>chunk</code> containers</p>
+    <div class="summary-synopsis"><p>Returns total word count across all <code>Words</code> containers</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#get_words_lazy/1">get_words_lazy(chunks)</a>
+    <a href="#filter/2">filter(words, regex_filter_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns words in <code>lazy</code> <code>enumerable</code> fashion</p>
+    <div class="summary-synopsis"><p>Return words filtering out words which don't match the regex key, returning a new Words abstraction</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#info/1">info(chunks)</a>
+    <a href="#info/1">info(words)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code>Chunks</code> information</p>
+    <div class="summary-synopsis"><p>Returns <code>Words</code> information</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#key/1">key(chunks)</a>
+    <a href="#key/1">key(words)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns <code>Chunks</code> word length key</p>
+    <div class="summary-synopsis"><p>Returns <code>Words</code> word length key</p>
 </div>
   
 </div>
@@ -175,7 +178,7 @@
     <a href="#new/1">new(length_key)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new empty <code>Chunks</code> abstraction</p>
+    <div class="summary-synopsis"><p>Returns new empty <code>Words</code> abstraction</p>
 </div>
   
 </div>
@@ -184,16 +187,16 @@
     <a href="#new/2">new(length_key, words)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Returns new <code>Chunks</code> abstraction. Does this by splitting and encapsulating words lists from enumerable into standardized <code>chunk</code> containers.<br />Word lists are binaried for compactness</p>
+    <div class="summary-synopsis"><p>Returns new <code>Words</code> abstraction. Does this by splitting and encapsulating words lists from enumerable into standardized containers.<br />Word lists are binaried for compactness</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#size/1">size(chunks)</a>
+    <a href="#stream/1">stream(words)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Return total number of <code>chunk</code> containers</p>
+    <div class="summary-synopsis"><p>Returns words in <code>lazy</code> <code>enumerable</code> fashion</p>
 </div>
   
 </div>
@@ -217,12 +220,8 @@
             Types
           </h1>
           <div class="types-list">
-            <div id="t:binary_chunk/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:binary_chunk/0">binary_chunk</a> :: {binary, integer}</code></pre>
-  
-</div>
-<div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Hangman.Chunks{chunk_count: term, key: term, raw_stream: term, word_count: term}</code></pre>
+            <div id="t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a></code></pre>
   
 </div>
 
@@ -243,9 +242,9 @@
     <a href="#add/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">add(chunks, value)</span>
+    <span class="signature">add(words, value)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-144" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-81" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -256,15 +255,43 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">add(<a href="#t:t/0">t</a>, <a href="#t:binary_chunk/0">binary_chunk</a>) :: <a href="#t:t/0">t</a></code></pre>
+          <pre><code class="elixir">add(<a href="#t:t/0">t</a>, {[binary], integer}) :: <a href="#t:t/0">t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Takes an existing <code>Chunks</code> and adds the passed in binary <code>chunk</code> <code>tuple</code>.</p>
-<p>Heavily used in reduce methods to add a {binary, word_count} to the <code>Chunks</code> accumulator value.</p>
+    <p>Takes an existing <code>Words</code> and adds the passed in container <code>tuple</code>.</p>
+<p>Used in reduce to add a {[binary], count} to the <code>Words</code> accumulator value.</p>
 <p>The <code>tuple</code> head is a binaried word list and the tail is the word count</p>
+
+  </section>
+</div>
+<div class="detail" id="collect/2">
+  <div class="detail-header">
+    <a href="#collect/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">collect(words, count)</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-122" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">collect(<a href="#t:t/0">t</a>, pos_integer) :: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a> | [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>]</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return specified number of words from Words</p>
 
   </section>
 </div>
@@ -275,7 +302,7 @@
     </a>
     <span class="signature">container_size()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-31" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-29" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -291,9 +318,9 @@
     <a href="#count/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">count(chunks)</span>
+    <span class="signature">count(words)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-110" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-55" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -310,18 +337,18 @@
     </div>
   
   <section class="docstring">
-    <p>Returns total word count across all <code>chunk</code> containers</p>
+    <p>Returns total word count across all <code>Words</code> containers</p>
 
   </section>
 </div>
-<div class="detail" id="get_words_lazy/1">
+<div class="detail" id="filter/2">
   <div class="detail-header">
-    <a href="#get_words_lazy/1" class="detail-link" title="Link to this function">
+    <a href="#filter/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">get_words_lazy(chunks)</span>
+    <span class="signature">filter(words, regex_filter_key)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-166" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-111" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -332,13 +359,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">get_words_lazy(<a href="#t:t/0">t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a></code></pre>
+          <pre><code class="elixir">filter(<a href="#t:t/0">t</a>, <a href="http://elixir-lang.org/docs/stable/elixir/Regex.html#t:t/0">Regex.t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Returns words in <code>lazy</code> <code>enumerable</code> fashion.</p>
+    <p>Return words filtering out words which don't match the regex key, returning a new Words abstraction</p>
 
   </section>
 </div>
@@ -347,9 +374,9 @@
     <a href="#info/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">info(chunks)</span>
+    <span class="signature">info(words)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-184" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-224" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -366,7 +393,7 @@
     </div>
   
   <section class="docstring">
-    <p>Returns <code>Chunks</code> information</p>
+    <p>Returns <code>Words</code> information</p>
 
   </section>
 </div>
@@ -375,9 +402,9 @@
     <a href="#key/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">key(chunks)</span>
+    <span class="signature">key(words)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-132" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-69" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -394,7 +421,7 @@
     </div>
   
   <section class="docstring">
-    <p>Returns <code>Chunks</code> word length key</p>
+    <p>Returns <code>Words</code> word length key</p>
 
   </section>
 </div>
@@ -405,7 +432,7 @@
     </a>
     <span class="signature">new(length_key)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-38" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-36" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -422,7 +449,7 @@
     </div>
   
   <section class="docstring">
-    <p>Returns new empty <code>Chunks</code> abstraction</p>
+    <p>Returns new empty <code>Words</code> abstraction</p>
 
   </section>
 </div>
@@ -433,7 +460,7 @@
     </a>
     <span class="signature">new(length_key, words)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-49" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-47" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -450,18 +477,18 @@
     </div>
   
   <section class="docstring">
-    <p>Returns new <code>Chunks</code> abstraction. Does this by splitting and encapsulating words lists from enumerable into standardized <code>chunk</code> containers.<br />Word lists are binaried for compactness.</p>
+    <p>Returns new <code>Words</code> abstraction. Does this by splitting and encapsulating words lists from enumerable into standardized containers.<br />Word lists are binaried for compactness.</p>
 
   </section>
 </div>
-<div class="detail" id="size/1">
+<div class="detail" id="stream/1">
   <div class="detail-header">
-    <a href="#size/1" class="detail-link" title="Link to this function">
+    <a href="#stream/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">size(chunks)</span>
+    <span class="signature">stream(words)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/chunks.ex#cl-121" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/words.ex#cl-101" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -472,13 +499,13 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">size(<a href="#t:t/0">t</a>) :: integer</code></pre>
+          <pre><code class="elixir">stream(<a href="#t:t/0">t</a>) :: <a href="http://elixir-lang.org/docs/stable/elixir/Enumerable.html#t:t/0">Enumerable.t</a></code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Return total number of <code>chunk</code> containers</p>
+    <p>Returns words in <code>lazy</code> <code>enumerable</code> fashion.</p>
 
   </section>
 </div>

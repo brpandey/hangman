@@ -75,8 +75,8 @@
 
       
         <section id="moduledoc">
-          <p>Module provides access to a dictionary word cache powered by <code>ETS</code>. Provides lookup routines to access <code>chunks</code>, <code>tallys</code>, and <code>random</code> words. Handles all ETS specific operations while <code>Dictionary</code> serves as a wrapper.</p>
-<p><code>Dictionary.ETS</code> loads the dictionary words into <code>chunks</code> and stores them into <code>ETS</code> via <code>Dictionary.Ingestion</code>. Upon startup, letter frequency <code>tallies</code> are computed and stored compactly into <code>ETS</code>. Words identified as <code>random</code> are tagged and stored as well.</p>
+          <p>Module provides access to a dictionary word cache powered by <code>ETS</code>. Provides lookup routines to access <code>words</code>, <code>tallys</code>, and <code>random</code> words. Handles all ETS specific operations while <code>Dictionary</code> serves as a wrapper.</p>
+<p><code>Dictionary.ETS</code> loads the dictionary words into <code>words</code> and stores them into <code>ETS</code> via <code>Dictionary.Ingestion</code>. Upon startup, letter frequency <code>tallies</code> are computed and stored compactly into <code>ETS</code>. Words identified as <code>random</code> are tagged and stored as well.</p>
 
         </section>
       
@@ -98,7 +98,7 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#dump/2">dump(table, path)</a>
+    <a href="#dump/1">dump(path)</a>
   </div>
   
     <div class="summary-synopsis"><p>Dumps ets table into an ets file</p>
@@ -110,8 +110,14 @@
     <a href="#get/2">get(atom, count)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Get has three modes: <code>:random</code>, <code>:counter</code>, <code>:chunks</code></p>
+    <div class="summary-synopsis"><p>Get has three modes: <code>:random</code>, <code>:counter</code>, <code>:words</code></p>
 </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#info/0">info()</a>
+  </div>
   
 </div>
 <div class="summary-row">
@@ -131,26 +137,20 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#put/3">put(atom, table_name, arg)</a>
+    <a href="#put/2">put(atom, arg)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Put function inserts data into the ETS via three modes: chunk, random, counter</p>
+    <div class="summary-synopsis"><p>Put function inserts data into the ETS via three modes: words, random, counter</p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#setup/1">setup(args)</a>
+    <a href="#setup?/0">setup?()</a>
   </div>
   
-    <div class="summary-synopsis"><p>Runs the dictionary ingestion process, loading the data into ETS</p>
+    <div class="summary-synopsis"><p>Check whether ets is setup</p>
 </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#table_name/0">table_name()</a>
-  </div>
   
 </div>
 
@@ -174,14 +174,14 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="dump/2">
+          <div class="detail" id="dump/1">
   <div class="detail-header">
-    <a href="#dump/2" class="detail-link" title="Link to this function">
+    <a href="#dump/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">dump(table, path)</span>
+    <span class="signature">dump(path)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-286" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-298" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -192,7 +192,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">dump(atom, binary) :: :ok | no_return</code></pre>
+          <pre><code class="elixir">dump(binary) :: :ok | no_return</code></pre>
         
       </div>
     </div>
@@ -209,7 +209,7 @@
     </a>
     <span class="signature">get(atom, count)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-75" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-86" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -220,21 +220,48 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">get(:random | :counter | :chunks, pos_integer) ::
+          <pre><code class="elixir">get(:random | :counter | :words, pos_integer) ::
   [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] |
   <a href="Hangman.Counter.html#t:t/0">Hangman.Counter.t</a> |
-  <a href="Hangman.Chunks.html#t:t/0">Hangman.Chunks.t</a> |
+  <a href="Hangman.Words.html#t:t/0">Hangman.Words.t</a> |
   no_return</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Get has three modes: <code>:random</code>, <code>:counter</code>, <code>:chunks</code></p>
+    <p>Get has three modes: <code>:random</code>, <code>:counter</code>, <code>:words</code></p>
 <p>:random - Retrieves all words tagged as random upon startup, then randomly chooses count words from this set, and returns the shuffled words result.</p>
 <p>:counter - Retrieves dictionary tally counter given word length key</p>
-<p>:chunks - Retrieves chunks given word length key</p>
+<p>:words - Retrieves words given word length key Reduces over all the same word keys to aggregate the final words list (using ets bag type)</p>
 
+  </section>
+</div>
+<div class="detail" id="info/0">
+  <div class="detail-header">
+    <a href="#info/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">info()</span>
+    
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-59" class="view-source" rel="help" title="View Source">
+       <i class="icon-code"></i>
+     </a>
+    
+    
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">info :: atom | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
   </section>
 </div>
 <div class="detail" id="load/1">
@@ -244,7 +271,7 @@
     </a>
     <span class="signature">load(path)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-271" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-283" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -272,7 +299,7 @@
     </a>
     <span class="signature">new()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-34" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-35" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -292,14 +319,14 @@
     
   </section>
 </div>
-<div class="detail" id="put/3">
+<div class="detail" id="put/2">
   <div class="detail-header">
-    <a href="#put/3" class="detail-link" title="Link to this function">
+    <a href="#put/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">put(atom, table_name, arg)</span>
+    <span class="signature">put(atom, arg)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-203" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-192" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -310,7 +337,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">put(:chunk | :random | :counter, atom, {pos_integer, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] | <a href="Hangman.Counter.html#t:t/0">Hangman.Counter.t</a>}) ::
+          <pre><code class="elixir">put(:words | :random | :counter, {pos_integer, [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>] | <a href="Hangman.Counter.html#t:t/0">Hangman.Counter.t</a>}) ::
   :ok |
   no_return</code></pre>
         
@@ -318,22 +345,22 @@
     </div>
   
   <section class="docstring">
-    <p>Put function inserts data into the ETS via three modes: chunk, random, counter</p>
-<p>:chunk - For each words list chunk, insert into ets</p>
-<p>:random - For each chunk list of words and length key, within valid length key sizes, extract <span class="citation">@random_words_per_chunk</span> count words, dedup extracted set and insert into ets</p>
+    <p>Put function inserts data into the ETS via three modes: words, random, counter</p>
+<p>:words - For each words list, insert into ets</p>
+<p>:random - For each list of words and length key, within valid length key sizes, extract <span class="citation">@random_words_per_list</span> count words, dedup extracted set and insert into ets</p>
 <p>:counter - Inserts verified counter structure into ets</p>
 <p>Example key is {:counter, 8} Example {length, counter} is: {8, %Counter{entries: %{&quot;a&quot; =&gt; 14490, &quot;b&quot; =&gt; 4485, &quot;c&quot; =&gt; 7815, &quot;d&quot; =&gt; 8046, &quot;e&quot; =&gt; 19600, &quot;f&quot; =&gt; 2897, &quot;g&quot; =&gt; 6009, &quot;h&quot; =&gt; 5111, &quot;i&quot; =&gt; 15530, &quot;j&quot; =&gt; 384, &quot;k&quot; =&gt; 2628, &quot;l&quot; =&gt; 11026, &quot;m&quot; =&gt; 5793, &quot;n&quot; =&gt; 12186, &quot;o&quot; =&gt; 11462, &quot;p&quot; =&gt; 5763, &quot;q&quot; =&gt; 422, &quot;r&quot; =&gt; 14211, &quot;s&quot; =&gt; 16560, &quot;t&quot; =&gt; 11870, &quot;u&quot; =&gt; 7377, &quot;v&quot; =&gt; 2156, &quot;w&quot; =&gt; 2313, &quot;x&quot; =&gt; 662, &quot;y&quot; =&gt; 3395, &quot;z&quot; =&gt; 783}}}</p>
 
   </section>
 </div>
-<div class="detail" id="setup/1">
+<div class="detail" id="setup?/0">
   <div class="detail-header">
-    <a href="#setup/1" class="detail-link" title="Link to this function">
+    <a href="#setup?/0" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">setup(args)</span>
+    <span class="signature">setup?()</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-45" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-49" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -344,41 +371,14 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">setup(<a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a>) :: :ok</code></pre>
+          <pre><code class="elixir">setup? :: atom | no_return</code></pre>
         
       </div>
     </div>
   
   <section class="docstring">
-    <p>Runs the dictionary ingestion process, loading the data into ETS</p>
+    <p>Check whether ets is setup</p>
 
-  </section>
-</div>
-<div class="detail" id="table_name/0">
-  <div class="detail-header">
-    <a href="#table_name/0" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">table_name()</span>
-    
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/dictionary_ets.ex#cl-37" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
-     </a>
-    
-    
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">table_name :: :dictionary_table</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    
   </section>
 </div>
 

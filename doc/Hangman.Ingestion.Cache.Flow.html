@@ -75,10 +75,10 @@
 
       
         <section id="moduledoc">
-          <p>Loads partitioned dictionary word files into ets table piecewise through words list chunks. Random words are generated from these words lists.</p>
-<p>Letter frequency counters of the dictionary words are arranged by length and also stored in the ets after the chunks are stored</p>
-<p>Optimization Note 1: Generating counter tallies outside of ETS allows us to use Flow's parallelism to generate these</p>
-<p>Optimization Note 2: Converting word_list chunks to binaries and counters to binaries drastically reduces ets memory footprint</p>
+          <p>Loads partitioned dictionary word files into ingestion table piecewise through words list chunks. Random words are generated from these words lists.</p>
+<p>Letter frequency counters of the dictionary words are arranged by length and also stored in the ingestion db after the words are stored</p>
+<p>Optimization Note 1: Generating counter tallies outside of the ingestion table allows us to use Flow's parallelism to generate these</p>
+<p>Optimization Note 2: Converting word_list chunks to binaries and counters to binaries drastically reduces table memory footprint</p>
 
         </section>
       
@@ -100,10 +100,10 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#run/2">run(cache_dir, ets_path)</a>
+    <a href="#run/2">run(cache_dir, dump_path)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Loads up the intermediate cached files and processes the data using flow so that it can be stored in ets. The types of data generated and stored into ets are chunk data, random words, and letter frequency counters arranged by word key length</p>
+    <div class="summary-synopsis"><p>Loads up the intermediate cached files and processes the data using flow so that it can be stored in a table. The types of data generated and stored into the db are words data, random words, and letter frequency counters arranged by word key length</p>
 </div>
   
 </div>
@@ -133,9 +133,9 @@
     <a href="#run/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">run(cache_dir, ets_path)</span>
+    <span class="signature">run(cache_dir, dump_path)</span>
     
-      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/ingestion_cache_flow.ex#cl-37" class="view-source" rel="help" title="View Source">
+      <a href="https://bitbucket.org/brpandey/elixir-hangman/src/master/lib/hangman/ingestion_cache_flow.ex#cl-32" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
@@ -152,8 +152,8 @@
     </div>
   
   <section class="docstring">
-    <p>Loads up the intermediate cached files and processes the data using flow so that it can be stored in ets. The types of data generated and stored into ets are chunk data, random words, and letter frequency counters arranged by word key length.</p>
-<p>Lastly, the ets table is dumped to file</p>
+    <p>Loads up the intermediate cached files and processes the data using flow so that it can be stored in a table. The types of data generated and stored into the db are words data, random words, and letter frequency counters arranged by word key length.</p>
+<p>Lastly, the ingestion db is dumped to file</p>
 
   </section>
 </div>
