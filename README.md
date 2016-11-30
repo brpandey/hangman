@@ -276,8 +276,9 @@ Word not in dictionary - Fault-Tolerance of Player Worker Crash
     State: %Hangman.Player.FSM{data: Action.Robot<[display: false]
     [id: "bowser", pid: #PID<0.261.0>, game_pid: #PID<0.260.0>, round_data: 
     [game_num: 1, round_num: 5, guess: "overflight", guess_result: :incorrect_word,
-    round_code: :guessing, round_status: "--ER--I---; score=5; status=KEEP_GUESSING", 
-    pattern: "--ER--I---", context: {:guessing, :incorrect_word, "overflight"}]]>, 
+    round_code: :guessing, 
+    round_status: "--ER--I---; score=5; status=KEEP_GUESSING",
+    pattern: "--ER--I---", context: {:guessing, :incorrect_word, "overflight"}]]>,
     state: :setup}
 
     Game Over! Average Score: 4.5, Games: 2, Scores:  
