@@ -51,8 +51,10 @@ all the cores of your system
 Command Line options:
 
 ```elixir    
-    --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000) 
-    [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel]
+    --name (player id) --type ("human" or "robot") 
+    --random (num random secrets, max 1000) 
+    [--secret (hangman word(s)) --baseline] 
+    [--log --display --timeout] [--parallel]
 
     or aliases: 
 
@@ -132,11 +134,11 @@ Command Line - Human type with 2 random words requested
     ./hangman_game -n luigi -t human -r 2
 
     Player luigi, Round 1, ----------; score=0; status=KEEP_GUESSING.
-    5 weighted letter choices :  e*:15606 i:13788 s:13226 r:11925 a:11763 (* robot choice)
+    5 weighted letter choices :  e*:15606 i:13788 s:13226 r:11925 a:11763 (* ...)
     [Please input letter choice] 
 
     Player luigi, Round 2, ----------; score=1; status=KEEP_GUESSING.
-    5 weighted letter choices :  i*:3852 a:3276 o:3157 n:2993 s:2968 (* robot choice)
+    5 weighted letter choices :  i*:3852 a:3276 o:3157 n:2993 s:2968 (* robot...)
     [Please input letter choice] 
 
     Player luigi, Round 3, ------I---; score=2; status=KEEP_GUESSING.
@@ -151,7 +153,7 @@ Command Line - Human type with 2 random words requested
     5 weighted letter choices :  a*:39 o:38 t:36 l:21 c:15 (* robot choice)
     [Please input letter choice] 
 
-    Possible hangman words left, 3 words: ["barbarians", "dalmatians", "mammalians"]
+    Possible hangman words left 3 words: ["barbarians", "dalmatians", "mammalians"]
 
     Player luigi, Round 6, -A--A-IANS; score=5; status=KEEP_GUESSING.
     5 weighted letter choices :  l:2 m:2 b*:1 d:1 r:1 (* robot choice)
@@ -163,7 +165,7 @@ Command Line - Human type with 2 random words requested
     BARBARIANS; score=6; status=GAME_WON
 
     Player luigi, Round 1, ------; score=0; status=KEEP_GUESSING.
-    5 weighted letter choices :  e*:9356 s:6981 a:6599 r:6097 i:5518 (* robot choice)
+    5 weighted letter choices :  e*:9356 s:6981 a:6599 r:6097 i:5518 (* robot..)
     [Please input letter choice] 
 
     Player luigi, Round 2, -E--E-; score=1; status=KEEP_GUESSING.
@@ -213,20 +215,22 @@ $ ./hangman_game -n yoshi -pl -r 100
    (CONCURRENT: 6) (CONSULTANTS: 7) (COWEDLY: 8) (CURBER: 25) (CYANOGENS: 7) 
    (DANDRIFFS: 8) (DARKENS: 10) (DEFLECTABLE: 4) (DICLINY: 7) (DOBIES: 8) 
    (DOWNPLAYS: 7) (DOZENS: 8) (ECOTYPES: 7) (ELECTROMETERS: 2) (ELEGIZING: 5) 
-   (ENTASIS: 5) (ERYTHORBATE: 3) (EXTEMPORIZER: 9) (EXTENSIONALITY: 5) (FLAGPOLE: 6) 
-   (FRAGMENTATES: 3) (GASTRONOMY: 6) (GEMLIKE: 7) (GENUINENESSES: 2) (HETEROCLITE: 3) 
-   (IMPRESSION: 3) (INNOCUOUSLY: 4) (JACKFISH: 8) (LAYABOUT: 8) (LEPIDOPTERISTS: 2) 
-   (LINGERER: 8) (LOVINGNESSES: 6) (LUMINOUSNESSES: 5) (MAILABILITIES: 5) (MARABOUTS: 7) 
-   (MICROANALYST: 4) (MISPENNED: 6) (MISYOKING: 8) (MULTIENGINES: 3) (NEOPHILIAS: 6) 
-   (NILGAIS: 5) (NONSALABLE: 4) (ORDEAL: 5) (OSCILLATES: 5) (OVERHUNTED: 7) 
-   (PACHYSANDRA: 3) (PARIS: 25) (PHILIPPICS: 4) (PLACARDING: 6) (PREDELIVERIES: 3) 
-   (PYLORUS: 25) (PYRRHICS: 8) (RACED: 6) (REEFS: 8) (RELUCTANT: 6) (REPERCUSSION: 4) 
-   (RHIZOMES: 5) (ROOMETTE: 5) (ROUBLES: 10) (SAFROL: 9) (SHIVER: 10) (SNOWMOBILIST: 5) 
-   (SOCIALIZED: 5) (SOVEREIGNS: 4) (SPRINGBOARD: 4) (STEDFAST: 5) (STRAIGHTEN: 6) 
-   (SUBCENTERS: 5) (SUBSHELLS: 7) (SWIMMINGLY: 6) (SYMMETRIZATIONS: 4) (SYMPHONIST: 7) 
-   (TENSIOMETER: 3) (TIGHTENER: 3) (TUTUS: 25) (UNBRILLIANT: 4) (UNHARNESSED: 3) 
-   (UNINTERRUPTEDLY: 2) (VERBALISM: 7) (WEATHERBOARDED: 4) (WIDGEON: 8) (WINES: 25) 
-   (WINIER: 25) (WONDERMENTS: 6) (WOODHENS: 9) (XENIAS: 8) (ZIGGURAT: 6) (ZIRCONIUM: 5)"
+   (ENTASIS: 5) (ERYTHORBATE: 3) (EXTEMPORIZER: 9) (EXTENSIONALITY: 5) 
+   (FLAGPOLE: 6) (FRAGMENTATES: 3) (GASTRONOMY: 6) (GEMLIKE: 7) (GENUINENESSES: 2) 
+   (HETEROCLITE: 3) (IMPRESSION: 3) (INNOCUOUSLY: 4) (JACKFISH: 8) (LAYABOUT: 8)
+   (LEPIDOPTERISTS: 2) (LINGERER: 8) (LOVINGNESSES: 6) (LUMINOUSNESSES: 5) 
+   (MAILABILITIES: 5) (MARABOUTS: 7) (MICROANALYST: 4) (MISPENNED: 6) 
+   (MISYOKING: 8) (MULTIENGINES: 3) (NEOPHILIAS: 6) (NILGAIS: 5) (NONSALABLE: 4) 
+   (ORDEAL: 5) (OSCILLATES: 5) (OVERHUNTED: 7) (PACHYSANDRA: 3) (PARIS: 25) 
+   (PHILIPPICS: 4) (PLACARDING: 6) (PREDELIVERIES: 3) (PYLORUS: 25) (PYRRHICS: 8) 
+   (RACED: 6) (REEFS: 8) (RELUCTANT: 6) (REPERCUSSION: 4) (RHIZOMES: 5) 
+   (ROOMETTE: 5) (ROUBLES: 10) (SAFROL: 9) (SHIVER: 10) (SNOWMOBILIST: 5) 
+   (SOCIALIZED: 5) (SOVEREIGNS: 4) (SPRINGBOARD: 4) (STEDFAST: 5) (STRAIGHTEN: 6)
+   (SUBCENTERS: 5) (SUBSHELLS: 7) (SWIMMINGLY: 6) (SYMMETRIZATIONS: 4) 
+   (SYMPHONIST: 7) (TENSIOMETER: 3) (TIGHTENER: 3) (TUTUS: 25) (UNBRILLIANT: 4) 
+   (UNHARNESSED: 3) (UNINTERRUPTEDLY: 2) (VERBALISM: 7) (WEATHERBOARDED: 4) 
+   (WIDGEON: 8) (WINES: 25) (WINIER: 25) (WONDERMENTS: 6) (WOODHENS: 9) (XENIAS: 8)
+   (ZIGGURAT: 6) (ZIRCONIUM: 5)"
 ```
 
 ### Game Play - 4
@@ -237,7 +241,8 @@ Web Example - Single Game
     $ iex -S mix
     Erlang/OTP 19 [erts-8.0] [source] [64-bit] [smp:2:2] [async-threads:10] ...
 
-    iex> HTTPoison.get("http://127.0.0.1:3737/hangman?name=princess&secret=librarian")
+    iex> 
+    HTTPoison.get("http://127.0.0.1:3737/hangman?name=princess&secret=librarian")
     {:ok,
      %HTTPoison.Response{body: "(H) ---------; score=1; status=KEEP_GUESSING 
     (H) ----A--A-; score=2; status=KEEP_GUESSING 
@@ -269,16 +274,14 @@ Word not in dictionary - Fault-Tolerance of Player Worker Crash
         (hangman_game) lib/hangman/player_worker.ex:122: 
     Last message: :proceed
     State: %Hangman.Player.FSM{data: Action.Robot<[display: false]
-    [id: "bowser", pid: #PID<0.261.0>, game_pid: #PID<0.260.0>, 
-    round_data: [game_num: 1, round_num: 5, guess: "overflight", 
-    guess_result: :incorrect_word, round_code: :guessing, 
-    round_status: "--ER--I---; score=5; status=KEEP_GUESSING", 
-    pattern: "--ER--I---", 
-    context: {:guessing, :incorrect_word, "overflight"}]]>, 
+    [id: "bowser", pid: #PID<0.261.0>, game_pid: #PID<0.260.0>, round_data: 
+    [game_num: 1, round_num: 5, guess: "overflight", guess_result: :incorrect_word,
+    round_code: :guessing, round_status: "--ER--I---; score=5; status=KEEP_GUESSING", 
+    pattern: "--ER--I---", context: {:guessing, :incorrect_word, "overflight"}]]>, 
     state: :setup}
 
-    Game Over! Average Score: 4.5, Games: 2, 
-    Scores:  (APACHE: 4) (AZERBAIJAN: 0) (ENTHRALLED: 5)
+    Game Over! Average Score: 4.5, Games: 2, Scores:  
+    (APACHE: 4) (AZERBAIJAN: 0) (ENTHRALLED: 5)
 ```
 
 ## Appendices
