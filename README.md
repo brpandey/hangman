@@ -21,11 +21,11 @@ is this speedup tangible
 
 ## Noteworthy
 
-* Comics -> [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
+* Comics: [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
-* Game play design -> [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
+* Game play design: [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
 
-* Feature highlights -> [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/a10e3e0bc827ae55f11f35a0b53fcb5576204d65/FEATURES.md)
+* Feature highlights: [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/a10e3e0bc827ae55f11f35a0b53fcb5576204d65/FEATURES.md)
 
 
 ## Usage
@@ -63,7 +63,7 @@ Command Line options:
 
 ### Step 1 - Git clone
 ```
-    $  git clone https://brpandey@bitbucket.org/brpandey/elixir-hangman.git
+    $  git clone --depth 40 https://bitbucket.org/brpandey/elixir-hangman.git
 ```
 
 ### Step 2 - Build executable
