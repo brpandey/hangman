@@ -37,7 +37,7 @@ defmodule Hangman.Player.Worker.Test do
     display = Keyword.fetch!(test_case_options, :display)
 
     # Retrieve game server pid given test specific params
-    game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
+    game_pid = Game.Server.Controller.get_server(name, secrets)
 
     # Get event server pid next
 
@@ -65,7 +65,8 @@ defmodule Hangman.Player.Worker.Test do
       Player.Logger.Handler.stop(lpid)
       Player.Alert.Handler.stop(apid)
       Player.Worker.stop(name)
-      # Hangman.Game.Server.stop(game_pid)
+      Game.Server.Controller.stop_server(name)
+
       IO.puts "Player Test finished"
     end
 

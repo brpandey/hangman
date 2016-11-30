@@ -39,7 +39,7 @@ defmodule Hangman.Game.Server.Test do
     secrets = Keyword.fetch!(test_case_options, :secrets)
     
     # Retrieve game server pid given test specific params
-    game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
+    game_pid = Game.Server.Controller.get_server(name, secrets)
 
     apid = 
       case name do
@@ -57,6 +57,10 @@ defmodule Hangman.Game.Server.Test do
     map = Map.put(map, :current_round_key, {name, "(game num goes here)", "(round num goes here)"})
 
     on_exit fn ->
+
+      # Stop game server
+      Game.Server.Controller.stop_server(name)
+
       if apid != nil, do: Player.Alert.Handler.stop(apid)
       IO.puts "test finished"
     end

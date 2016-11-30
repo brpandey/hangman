@@ -14,7 +14,7 @@ defmodule Hangman.CLI.Handler do
   have been collected in `Hangman.CLI`
   """
 
-  alias Hangman.{Game.Pid.Cache, Player, Player.Controller}
+  alias Hangman.{Game, Player}
 
   require Logger
 
@@ -44,10 +44,10 @@ defmodule Hangman.CLI.Handler do
   is_list(secrets) and is_binary(hd(secrets)) and 
   is_boolean(log) and is_boolean(display) and is_integer(timeout) do
     
-    # Grab game pid first from game pid cache
-    game_pid = Cache.get_server_pid(name, secrets)
+    # Grab game pid first from game server controller
+    game_pid = Game.Server.Controller.get_server(name, secrets)
 
-    Controller.start_worker(name, type, display, game_pid)
+    Player.Controller.start_worker(name, type, display, game_pid)
 
     logger_pid = 
       case log do
@@ -79,7 +79,7 @@ defmodule Hangman.CLI.Handler do
     # Loop until we have received an :exit value from the Player Controller
     Enum.reduce_while(Stream.cycle([player_handler_key]), 0, fn key, acc ->
  
-      feedback = key |> Controller.proceed
+      feedback = key |> Player.Controller.proceed
 
       # specifically handle IO for guess setup -- e.g. selection of letters
       feedback = handle_setup(key, feedback, timeout)
@@ -97,7 +97,8 @@ defmodule Hangman.CLI.Handler do
           {:cont, acc + 1}
 
         {:exit, _status} -> 
-          Controller.stop_worker(key)
+          Player.Controller.stop_worker(key)
+          Game.Server.Controller.stop_server(key)
 
           _ = if is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
           _ = if is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
@@ -120,7 +121,7 @@ defmodule Hangman.CLI.Handler do
 
         {:ok, choices} = Keyword.fetch(kw, :status)
         selection = ui(choices, timeout)
-        key |> Controller.guess(selection)
+        key |> Player.Controller.guess(selection)
       
       _ -> feedback # Pass back the passed in feedback
     end

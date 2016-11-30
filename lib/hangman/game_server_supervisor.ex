@@ -40,7 +40,7 @@ defmodule Hangman.Game.Server.Supervisor do
   @callback init(term) :: {:ok, tuple}
   def init(_) do
     children = [
-      worker(Game.Server, []) 
+      worker(Game.Server, [], restart: :transient) 
     ]
     
     # :simple_one_for_one to indicate that 

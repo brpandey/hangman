@@ -36,7 +36,7 @@ defmodule Hangman.Game.Server.Stub.Test do
     secrets = Keyword.fetch!(test_case_options, :secrets)
     
     # Retrieve game server pid given test specific params
-    game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
+    game_pid = Game.Server.Controller.get_server(name, secrets)
 
     
     # Update case context params map, for current test
@@ -46,6 +46,8 @@ defmodule Hangman.Game.Server.Stub.Test do
     map = Map.put(map, :current_player_key, {name, self()})
 
     on_exit fn ->
+      Game.Server.Controller.stop_server(name)
+
       IO.puts "test finished"
     end
 

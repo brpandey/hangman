@@ -10,7 +10,7 @@ defmodule Hangman.Shard.Handler do
   Simply stated it politely nudges the player to proceed to the next 
   course of action or make the next guess.  
 
-  When the game is finished it politely ends the game playing return the 
+  When the game is finished it politely ends the game playing returning the 
   shard_key and game snapshot tuple.
 
   The twist to this is that these shard handlers are run
@@ -18,7 +18,7 @@ defmodule Hangman.Shard.Handler do
   setup of `Flow`
   """
 
-  alias Hangman.{Game.Pid.Cache, Player, Player.Controller}
+  alias Hangman.{Game, Player}
   require Logger
 
   @sleep 3000
@@ -32,11 +32,11 @@ defmodule Hangman.Shard.Handler do
   def setup({id, secrets}) when 
   (is_binary(id) or is_tuple(id)) and is_list(secrets) do
 
-    # Grab game pid first from game pid cache
-    game_pid = Cache.get_server_pid(id, secrets)
+    # Grab game pid first from game server controller
+    game_pid = Game.Server.Controller.get_server(id, secrets)
 
     # Start Worker in Controller
-    Controller.start_worker(id, :robot, false, game_pid)
+    Player.Controller.start_worker(id, :robot, false, game_pid)
 
     id
   end
@@ -52,7 +52,7 @@ defmodule Hangman.Shard.Handler do
     list = 
       Enum.reduce_while(Stream.cycle([shard_key]), [], fn key, acc ->
       
-        feedback = key |> Controller.proceed
+        feedback = key |> Player.Controller.proceed
 
         case feedback do
           {code, _status} when code in [:begin, :transit] ->
@@ -68,8 +68,11 @@ defmodule Hangman.Shard.Handler do
           
             {:exit, status} -> 
             acc = [status | acc] # prepend to list then later reverse -- O(1)
-            Controller.stop_worker(key)
-            
+
+            # Stop both the player client worker and the corresponding game server
+            Player.Controller.stop_worker(key)
+            Game.Server.Controller.stop_server(key)            
+
             {:halt, acc}
           
             _ -> raise "Unknown Player state"

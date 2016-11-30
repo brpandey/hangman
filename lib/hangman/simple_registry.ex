@@ -135,7 +135,7 @@ defmodule Hangman.Simple.Registry do
           # We have an active match
           # Retrieve value state from registry
 
-          value = Map.get(registry.values, id_key)
+          Map.get(registry.values, id_key)
         
         _ -> 
           # id not active, return nil value
@@ -209,12 +209,15 @@ defmodule Hangman.Simple.Registry do
     # Remove value state from registry
     # if it isn't there, raise error
 
-    case Map.has_key?(registry.values, id_key) do
-      false -> raise HangmanError, "Can't remove value state that doesn't exist"
-      true -> 
-        values = Map.delete(registry.values, id_key)
-        registry = Kernel.put_in(registry.values, values)
-    end
+    registry = 
+      case Map.has_key?(registry.values, id_key) do
+        false -> raise HangmanError, "Can't remove value state that doesn't exist"
+        true -> 
+          values = Map.delete(registry.values, id_key)
+          Kernel.put_in(registry.values, values)
+      end
+
+    registry
   end
 
   def remove(%Registry{} = registry, :active, {id_key, pid_key} = key)

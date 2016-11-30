@@ -5,7 +5,7 @@ defmodule Hangman.Game.System.Supervisor do
 
   # Module is a second line supervisor
   # as it supervises a first-line supervisor, Game.Server.Supervisor
-  # along with the Game.Pid.Cache and Game.Event.Manager
+  # along with the Game.Server.Controller and Game.Event.Manager
 
   use Supervisor
   alias Hangman.{Game}  
@@ -33,7 +33,7 @@ defmodule Hangman.Game.System.Supervisor do
 
     children = [
         supervisor(Game.Server.Supervisor, []),
-        worker(Game.Pid.Cache, []),
+        worker(Game.Server.Controller, []),
         worker(Game.Event.Manager, [])
     ]
 

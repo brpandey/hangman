@@ -12,7 +12,7 @@ defmodule Hangman.Game.Server do
 
   NOTE: The server runs each game one at a time and handles support for 
   multiple games concurrently but is currently not harnessed by the 
-  `Game.Pid.Cache.Server` for initial simplicity purposes and therefore
+  `Game.Server.Controller` for initial simplicity purposes and therefore
   not presently utilized.
   """
   
@@ -54,18 +54,18 @@ defmodule Hangman.Game.Server do
   
   @spec whereis(id) :: pid | :undefined
   def whereis(id_key) do
-    :gproc.whereis_name({:n, :l, {:hangman_server, id_key}})
+    :gproc.whereis_name({:n, :l, {:game_server, id_key}})
   end
   
   # Used to register / lookup process in process registry via gproc
   @spec via_tuple(id) :: {:via, :gproc, {:n, :l, {atom, id}}}
   defp via_tuple(id_key) do
-    {:via, :gproc, {:n, :l, {:hangman_server, id_key}}}
+    {:via, :gproc, {:n, :l, {:game_server, id_key}}}
   end
   
   @doc """
   Loads new `game` into server process state. 
-  Used primarily by `Game.Pid.Cache`
+  Used primarily by `Game.Server.Controller`
   """
   
   @spec setup(pid, id, (String.t | [String.t]), pos_integer) :: :ok
@@ -314,7 +314,7 @@ defmodule Hangman.Game.Server do
   
 #  @callback handle_call(:atom, tuple, Registry.t) :: tuple
   def handle_call(:stop, _from, state) do
-    { :stop, :normal, {:ok, state.id}, state }
+    { :stop, :normal, :ok, state }
   end
 
   @docp """
@@ -345,10 +345,9 @@ defmodule Hangman.Game.Server do
         player_key ->
           # remove player from active keys and games
           # it was a normal exit, clean the state
-          state = 
-            state 
-            |> Registry.remove(:active, player_key)
-            |> Registry.remove(:value, player_key)
+          state 
+          |> Registry.remove(:active, player_key)
+          |> Registry.remove(:value, player_key)
       end
       
 
@@ -383,7 +382,7 @@ defmodule Hangman.Game.Server do
           
           game = Game.abort(game)
 
-          state = state |> Registry.update(player_key, game)
+          state |> Registry.update(player_key, game)
       end
 
 

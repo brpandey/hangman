@@ -12,6 +12,7 @@ Feature highlights:
 * Enjoys the actor metaphor! Uses OTP/GenServer to represent key abstractions: 
   * Player.Worker, Game.Server, Pass.Cache, Dictionary.Cache, Reduction.Engine etc..
 * Uses fast in memory tables via Erlang Term Storage (ETS), caches ETS dictionary table for quick load
+* Utilizes process registries to keep track of player workers, game servers, and reduction worker processes
 * Used some performance testing to shape dictionary load and letter tally generation,
 * Uses a liberal dose of unit and integration testing, along with stubs and even a quickcheck test
 * And mostly the Elixir code IMO is a delight to look at

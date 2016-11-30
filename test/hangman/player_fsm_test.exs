@@ -37,7 +37,7 @@ defmodule Hangman.Player.FSM.Test do
     display = Keyword.fetch!(test_case_options, :display)
 
     # Retrieve game server pid given test specific params
-    game_pid = Game.Pid.Cache.get_server_pid(name, secrets)
+    game_pid = Game.Server.Controller.get_server(name, secrets)
 
     # Update case context params map, for current test
     args = {name, type, display, game_pid}
@@ -45,7 +45,7 @@ defmodule Hangman.Player.FSM.Test do
     map = Map.put(map, :fsm_args, args)
 
     on_exit fn ->
-      # Hangman.Game.Server.stop(game_pid)
+      Game.Server.Controller.stop_server(name)
       IO.puts "Player FSM Test finished"
     end
 

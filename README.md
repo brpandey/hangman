@@ -32,8 +32,8 @@ is this speedup tangible
 
 * Hangman runs both interactive human games with manually specified
 secrets e.g. --secrets or runs games with randomly generated secrets 
-e.g. --random.  Interactivity is denoted by the player type `-t`,  
-with values of either human or robot.
+e.g. --random.  Interactivity is denoted by the player type `-t`, with 
+values of either human or robot.
 
 * The random `-r` secret generation option allows you to play without
 knowing the secret hangman word(s) beforehand as the system randomly
