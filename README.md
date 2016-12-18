@@ -1,6 +1,6 @@
 Hangman
 =======
-![Logo](https://bytebucket.org/brpandey/elixir-hangman/raw/46754306a02ecaad07edb9a71ad1c7769dd2ddaa/priv/images/hangman.jpg)
+![Logo](https://raw.githubusercontent.com/brpandey/elixir-hangman/master/priv/images/hangman.jpg)
 
 > Definition of Hangman
 >
@@ -23,9 +23,9 @@ is this speedup tangible
 
 * Comics: [9 Ways of Hangman](http://i.imgur.com/m3dh9ny.jpg)
 
-* Game play design: [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
+* Game play design: [README DIAGRAMS](https://github.com/brpandey/elixir-hangman/blob/master/README%20DIAGRAMS.pdf)
 
-* Feature highlights: [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/8cf953f7c659823473c7b8d5bdf5be8f5b20b3d0/FEATURES.md)
+* Feature highlights: [FEATURES](https://github.com/brpandey/elixir-hangman/blob/master/FEATURES.md)
 
 
 
@@ -68,7 +68,7 @@ Command Line options:
 
 ### Step 1 - Git clone
 ```
-    $  git clone --depth 40 https://bitbucket.org/brpandey/elixir-hangman.git
+    $  git clone --depth 40 https://github.com/brpandey/elixir-hangman.git
 ```
 
 ### Step 2 - Build executable
