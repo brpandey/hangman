@@ -25,7 +25,7 @@ is this speedup tangible
 
 * Game play design: [README DIAGRAMS](https://bitbucket.org/brpandey/elixir-hangman/raw/929b9fb119a0fb32385a0f64b6e77ed121835359/README%20DIAGRAMS.pdf)
 
-* Feature highlights: [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/1bfc19ca40bbfacc82316e3614f292be3843847c/FEATURES.md)
+* Feature highlights: [FEATURES](https://bitbucket.org/brpandey/elixir-hangman/raw/8cf953f7c659823473c7b8d5bdf5be8f5b20b3d0/FEATURES.md)
 
 
 
