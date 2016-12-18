@@ -80,7 +80,7 @@ Command Line options:
 
 ### Step 3 - Run game
 ```
-    $  ./hangman_game -n toad -t robot -r 3
+    $  ./hangman_game -n toad -t robot -r 3 -d
 ```
 
 or alternatively you can run the release version for the web mode
