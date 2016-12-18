@@ -2,7 +2,9 @@ Feature highlights:
 
 * Ingests dictionary words via an Apache Spark-like map reduce engine
 * Uses non-process state machine to cleanly handle player state transitions
-* Provides fault-tolerance when a game word is not in the dictionary, crashes worker process via supervision trees and resumes where it left off onto the next game if available otherwise denotes a 0 score to the game and displays Games Over!
+* Provides fault-tolerance when a game word is not in the dictionary, 
+   crashes worker process via supervision trees and resumes where it left off onto the next game if available, 
+   otherwise denotes a 0 score to the game and displays Games Over!
 * Supports the addition of other player types via protocols, currently supporting human and robot players
 * Littered with functional programming idioms of reduce, map, flat_map, reduce_while, etc...
 * Supports concurrent game play using all machine CPU cores
