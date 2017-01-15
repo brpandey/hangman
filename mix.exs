@@ -5,7 +5,7 @@ defmodule Hangman.Mixfile do
     [
       app: :hangman_game,
       name: "Hangman",
-      version: "0.9.5",
+      version: "0.9.6",
       elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -13,7 +13,7 @@ defmodule Hangman.Mixfile do
       deps: deps(),
       test_pattern: "*_{test,eqc}.exs",
       docs: [
-        source_url: "https://bitbucket.org/brpandey/elixir-hangman/",
+        source_url: "https://github.com/brpandey/elixir-hangman/",
         formatter: "html"
         ]
     ]
