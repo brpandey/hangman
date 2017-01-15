@@ -14,8 +14,8 @@ defmodule Hangman.CLI.Handler do
   have been collected in `Hangman.CLI`
   """
 
-  alias Hangman.{Game, Player}
-
+  alias Hangman.{Game, Player, Handler.Loop}
+  import Loop
   require Logger
 
   @sleep 3000 # 3 secs
@@ -26,19 +26,17 @@ defmodule Hangman.CLI.Handler do
   """
 
   @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def run(name, type, secrets, log, display, guess_timeout \\ 5000) when is_binary(name)
+  def run(name, type, secrets, log, display, guess_timeout \\ 10) when is_binary(name)
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
   and is_boolean(log) and is_boolean(display) and is_integer(guess_timeout) do
 
     {name, type, secrets, log, display, guess_timeout} |> setup |> play
   end
 
+  # Function setup loads the `player` specific `game` components.
+  # Setups the `game` server and per player `event` server.
 
-  @docp """
-  Function setup loads the `player` specific `game` components.
-  Setups the `game` server and per player `event` server.
-  """
-  
+
   @spec setup({binary, atom, list, boolean, boolean, pos_integer}) :: tuple
   defp setup({name, type, secrets, log, display, timeout}) when is_binary(name) and
   is_list(secrets) and is_binary(hd(secrets)) and 
@@ -69,49 +67,47 @@ defmodule Hangman.CLI.Handler do
     {name, alert_pid, logger_pid, timeout}
   end
 
-  @docp """
-  Play handles client play loop
-  """
+  # Play handles client play loop
 
   @spec play({String.t, pid, pid, pos_integer}) :: :ok
-  defp play({player_handler_key, alert_pid, logger_pid, timeout}) do 
+  defp play({player_key, alert_pid, logger_pid, timeout}) do 
 
     # Loop until we have received an :exit value from the Player Controller
-    Enum.reduce_while(Stream.cycle([player_handler_key]), 0, fn key, acc ->
- 
-      feedback = key |> Player.Controller.proceed
+    while do
+
+      feedback = Player.Controller.proceed(player_key)
 
       # specifically handle IO for guess setup -- e.g. selection of letters
-      feedback = handle_setup(key, feedback, timeout)
-
-      case feedback do
-        {code, _status} when code in [:begin, :action] ->
-          {:cont, acc + 1}
+      case handle_setup(player_key, feedback, timeout) do
+        {code, _status} when code in [:begin, :action] -> :ok
 
         {:transit, status} -> # display the single game overs and game summaries
           IO.puts "\n#{status}"
-          {:cont, acc + 1}
 
         {:retry, _status} ->
           Process.sleep(@sleep) # Stop gap for now for no proc error by gproc when word not in dict
-          {:cont, acc + 1}
 
         {:exit, _status} -> 
-          Player.Controller.stop_worker(key)
-          Game.Server.Controller.stop_server(key)
+          Player.Controller.stop_worker(player_key)
+          Game.Server.Controller.stop_server(player_key)
 
           _ = if is_pid(alert_pid), do: Player.Alert.Handler.stop(alert_pid)
           _ = if is_pid(logger_pid), do: Player.Logger.Handler.stop(logger_pid)
-          {:halt, acc}
+
+          break()
 
         _ -> raise "Unknown Player state"
       end
-    end)
+
+    end
 
     :ok
   end
 
   # Helpers
+
+  # Handles setup of round by extracting human guess from ui
+  # Else return original feedback tuple
 
   @spec handle_setup(Player.id, tuple, integer) :: tuple
   defp handle_setup(key, feedback, timeout) do
@@ -128,9 +124,7 @@ defmodule Hangman.CLI.Handler do
   end
 
 
-  @docp """
-  If display is valid, show letter choices and also collect letter input
-  """
+  # If display is valid, show letter choices and also collect letter input
 
   @spec ui(Guess.options, pos_integer) :: Guess.t
   defp ui({:guess_letter, text}, timeout) when is_binary(text) do
@@ -146,11 +140,9 @@ defmodule Hangman.CLI.Handler do
     {:guess_word, last_word}
   end
 
-  @docp """
-  Starts a task to run the IO.gets function as a background process.  
-  Uses the timeout facility to load a dummy guess value.  
-  Timeout value is arg specified
-  """
+  # Starts a task to run the IO.gets function as a background process.  
+  # Uses the timeout facility to load a dummy guess value.  
+  # Timeout value is arg specified
 
   @spec gets(integer) :: String.t
   defp gets(timeout) when is_integer(timeout) do

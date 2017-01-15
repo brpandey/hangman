@@ -1,6 +1,6 @@
 Feature highlights:
 
-* Ingests dictionary words via an Apache Spark-like map reduce engine
+* Ingests dictionary words via an Apache Spark-like map reduce engine (Flow/GenStage)
 * Uses non-process state machine to cleanly handle player state transitions
 * Provides fault-tolerance when a game word is not in the dictionary, 
    crashes worker process via supervision trees and resumes where it left off onto the next game if available, 
@@ -14,10 +14,13 @@ Feature highlights:
 * Implements a Counter abstraction similiar to Python's Counter class, with most_common method
 * Enjoys the actor metaphor! Uses OTP/GenServer to represent key abstractions: 
   * Player.Worker, Game.Server, Pass.Cache, Dictionary.Cache, Reduction.Engine etc..
-* Uses fast in memory tables via Erlang Term Storage (ETS), caches ETS dictionary table for quick load
+* Uses fast, concurrent, in memory tables via ETS, caches ETS dictionary table for quick load
 * Utilizes process registries to keep track of player workers, game servers, and reduction worker processes
-* Used some performance testing to shape dictionary load and letter tally generation,
-* Uses a liberal dose of unit and integration testing, along with stubs and even a quickcheck test
-* And mostly the Elixir code IMO is a delight to look at
+* Performance tested to shape dictionary load and letter tally generation,
+* Uses macros to provide client handler loop functionality without exposing cycle/reduce-while trickery
+* Has configurable system params for intuition testing
+* Uses a liberal dose of unit and integration testing, along with stubs and even a quickcheck test!
+* Uses Asynchronous Task for letter guess capture with timeout
+* And mostly the Elixir code is a delight to look at!!!
 
 

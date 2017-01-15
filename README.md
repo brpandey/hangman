@@ -17,7 +17,8 @@ Plays really fun hangman word games. What did you expect? :)
 Plays interactive games allowing the user to choose letters
 or allows the computer to guess instead.  Supports parallel play using 
 CPU cores concurrently. Only when the set of secrets is 40 or greater 
-is this speedup tangible
+is this speedup tangible. The max incorrect guesses is 5, 6 incorrect guesses
+we lose the game.
 
 ## Noteworthy
 
@@ -44,8 +45,8 @@ selects the secret(s) to play against.
 
 * Player game archival can be captured through logging, e.g. --log option
 The display and log options are exclusive to the command line client. 
-The human guessing timeout `-ti` option allows values between 0 secs and 10 secs
-to choose a letter. The parallel `-pl` option allows games to be played on 
+The human guessing wait timeout `-w` option allows values between 0 secs and 20 secs
+to choose a letter. The parallel `-p` option allows games to be played on 
 all the cores of your system
 
 Command Line options:
@@ -54,12 +55,12 @@ Command Line options:
     --name (player id) --type ("human" or "robot") 
     --random (num random secrets, max 1000) 
     [--secret (hangman word(s)) --baseline] 
-    [--log --display --timeout] [--parallel]
+    [--log --display --wait (e.g. 15 secs)] [--parallel]
 
     or aliases: 
 
     -n (player id) -t ("human" or "robot") -r (num random secrets, max 1000) 
-    [-s (hangman word(s)) -bl] [-l -d -ti] [-pl]
+    [-s (hangman word(s)) -b] [-l -d -w] [-p]
 ```
 
 ## Install & Run
@@ -68,7 +69,7 @@ Command Line options:
 
 ### Step 1 - Git clone
 ```
-    $  git clone --depth 40 https://github.com/brpandey/elixir-hangman.git
+    $  git clone --depth 10 https://github.com/brpandey/elixir-hangman.git
 ```
 
 ### Step 2 - Build executable
@@ -208,7 +209,7 @@ Open another terminal window and type `top` and press `1` to see all cores or `h
 After the below command has been issued, check the the cpu utilization of the cores while this runs!
 
 ```elixir
-$ ./hangman_game -n yoshi -pl -r 100
+$ ./hangman_game -n yoshi -p -r 100
    "Game Over! Average Score: 6.91, Games: 100, Scores: (BARRELS: 5) (BETIDES: 6) 
    (BRANDERS: 8) (BRILLIANTLY: 3) (BUCKISH: 10) (BUCKSHEES: 2) (CAGILY: 10) 
    (CHAFFIEST: 9) (CHARBROILER: 5) (CIRCULATABLE: 4) (CLOBBERED: 9) (COENURI: 5) 
@@ -288,6 +289,9 @@ Word not in dictionary - Fault-Tolerance of Player Worker Crash
 ## Appendices
 
 ### Notes
+
+* Unit and Integration tests are here
+>   https://github.com/brpandey/elixir-hangman/test/hangman
         
 * Optional -- configure `config/config.exs` to see inner game play details.
 Specifically change :info to :debug and then run `mix compile` and then `mix escript.build`
@@ -302,18 +306,41 @@ Specifically change :info to :debug and then run `mix compile` and then `mix esc
 
 * The web and cli modes are able to play parallel games using all CPU cores. To tangibly
   see the speedup of parallelization use 40 secrets or more.  For cli mode, simply use the 
-  random option to specify a value like 60 secrets with the parallel option.  e.g. -n luigi -pl -r 60
+  random option to specify a value like 60 secrets with the parallel option.  e.g. -n luigi -p -r 60
+  By default web mode plays in parallel
 
 * The hangman game handles word not in dictionary cases.  The current procedure is the Player.Worker crashes and is restarted to resume where it left off.
 
-* The dictionary ingestion is handled through multiple GenStage Flows.  Lastly it is written to an ets dump file for
-  near instantaneous load.
+* The dictionary ingestion is handled through multiple GenStage Flows.  Lastly it is written to an ets dump file for near instantaneous load.
 
 * If a "mix test" is run, the free version of Quick Check from quvic should be installed to avoid errors
 
 * The hangman file directory structure is flat in lib/hangman.  There should technically be
 directories under lib/hangman following the dotted modules names but for portfolio
 simplicity purposes all are in the top level directory.
+
+* Running 100 hangman games in parallel takes about roughly 10 secs on a dual-core
+
+* Hangman configuration is tunable (perhaps you want to compare different pool size, max_demand size combinations) -->
+
+```elixir
+
+    config :hangman_game, 
+      max_wrong_guesses: 5, # Max incorrect hangman guess chances
+      port: 3737,
+      min_secret_length: 3,
+      max_secret_length: 28,
+      max_guess_wait: 20000, # 20 secs to choose for letter under human cli
+      default_guess_wait: 5000, # 5 secs to choose for letter under human cli
+      min_random_word_length: 5,
+      max_random_word_length: 15,
+      max_random_words: 1000, # Max randoms secrets to play against
+      words_container_size: 500, # Number of words to group by when processing dict
+      random_words_per_container: 20, # Given words container choose 20 randoms
+      shard_flow_max_demand: 2, # Maximum amount of events that must be in flow 
+      reduction_pool_size: 10, # 10 reduction workers
+      shard_size_words: 10 # 10 words per shard
+```
 
 
 ### Wishlist
@@ -340,4 +367,3 @@ Enjoy playing!
 
 **Bibek Pandey**
 
-*bibekp@gmail.com*

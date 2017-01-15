@@ -18,7 +18,8 @@ defmodule Hangman.Shard.Handler do
   setup of `Flow`
   """
 
-  alias Hangman.{Game, Player}
+  alias Hangman.{Game, Player, Handler.Accumulator}
+  import Accumulator
   require Logger
 
   @sleep 3000
@@ -48,39 +49,30 @@ defmodule Hangman.Shard.Handler do
   @spec play(Player.id) :: {Player.id, list(String.t)}
   def play(shard_key) do
 
-    # Loop until we have received an :exit value from the Player Controller
-    list = 
-      Enum.reduce_while(Stream.cycle([shard_key]), [], fn key, acc ->
-      
-        feedback = key |> Player.Controller.proceed
+    # Compose game status accumulator until we have received 
+    # an :exit value from the Player Controller
+    list = cycle do
 
-        case feedback do
-          {code, _status} when code in [:begin, :transit] ->
-            {:cont, acc}
-          
-            {:retry, _status} ->
-            Process.sleep(@sleep) # Stop gap for now for no proc error by gproc
-            {:cont, acc}
-          
-            {:action, status} -> # collect guess result status as given from action state
-              acc = [status | acc] # prepend to list then later reverse -- O(1)
-            {:cont, acc}
-          
-            {:exit, status} -> 
-            acc = [status | acc] # prepend to list then later reverse -- O(1)
+      case Player.Controller.proceed(shard_key) do
+        {code, _status} when code in [:begin, :transit] -> :ok
 
-            # Stop both the player client worker and the corresponding game server
-            Player.Controller.stop_worker(key)
-            Game.Server.Controller.stop_server(key)            
+        {:retry, _status} -> 
+          Process.sleep(@sleep) # Stop gap for gproc no proc error
 
-            {:halt, acc}
+        {:action, status} -> 
+          next(status) # collect action guess result
+
+        {:exit, status} -> 
+          # Stop both the player client worker and the corresponding game server
+          Player.Controller.stop_worker(shard_key)
+          Game.Server.Controller.stop_server(shard_key)            
           
-            _ -> raise "Unknown Player state"
-        end
-      end)
-    
-    # we reverse the prepended list of round statuses
-    list = list |> Enum.reverse
+          done(status) # signal end of accumulator and capture last status result
+        
+          _ -> raise "Unknown Player state"
+      end
+
+    end        
 
     {shard_key, list}
   end

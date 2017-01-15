@@ -15,7 +15,8 @@ defmodule Hangman.Shard.Flow do
   alias Hangman.{Player, Shard.Handler}
   require Logger
 
-  @flow_shard_size 10   # 1 flow shard contains 10 secrets
+  # E.g. one flow shard contains 10 secrets
+  @flow_shard_size Application.get_env(:hangman_game, :shard_size_words)
 
 
   @doc """
@@ -53,9 +54,11 @@ defmodule Hangman.Shard.Flow do
 
     game_args = Stream.zip(sharded_keys, sharded_secrets)
     
+    demand = Application.get_env(:hangman_game, :shard_flow_max_demand)
+
     result = 
       game_args
-      |> Flow.from_enumerable(max_demand: 2)
+      |> Flow.from_enumerable(max_demand: demand)
       |> Flow.map(fn {skey, svalue} ->
            {skey, svalue} |> Handler.setup |> Handler.play
          end)
@@ -84,13 +87,12 @@ defmodule Hangman.Shard.Flow do
 
   end
 
-  @docp """
-  Collects game result information and stores into shard key
-  Combines game summaries and stores into name key
 
-  Each shard_key e.g. {"robin", 7} represents the 
-  seventh shard of the "robin" games, and is the result of the 10 games played
-  """
+  # Collects game result information and stores into shard key
+  # Combines game summaries and stores into name key
+
+  # Each shard_key e.g. {"robin", 7} represents the 
+  # seventh shard of the "robin" games, and is the result of the 10 games played
 
   @spec collate({Player.id, list(String.t)}, map) :: map
   defp collate({key, snapshot}, acc) do
@@ -109,9 +111,7 @@ defmodule Hangman.Shard.Flow do
 
   end
 
-  @docp """
-  Prepend avg score and num game info to scores text by computing the average score
-  """
+  # Prepend avg score and num game info to scores text by computing the average score
 
   @spec summarize(String.t) :: String.t
   def summarize(scores) do
