@@ -291,7 +291,7 @@ Word not in dictionary - Fault-Tolerance of Player Worker Crash
 ### Notes
 
 * Unit and Integration tests are here
->   https://github.com/brpandey/elixir-hangman/test/hangman
+>   https://github.com/brpandey/elixir-hangman/tree/master/test/hangman
         
 * Optional -- configure `config/config.exs` to see inner game play details.
 Specifically change :info to :debug and then run `mix compile` and then `mix escript.build`
