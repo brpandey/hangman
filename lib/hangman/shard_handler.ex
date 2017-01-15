@@ -51,7 +51,7 @@ defmodule Hangman.Shard.Handler do
 
     # Compose game status accumulator until we have received 
     # an :exit value from the Player Controller
-    list = cycle do
+    list = repeatedly do
 
       case Player.Controller.proceed(shard_key) do
         {code, _status} when code in [:begin, :transit] -> :ok

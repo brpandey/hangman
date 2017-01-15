@@ -42,10 +42,10 @@ defmodule Hangman.Handler.Accumulator do
   """
   
   @doc """
-  Cycle builds up an accumulator sequence using next(value) until we invoke done
+  Repeatedly builds up an accumulator sequence using next(value) until we invoke done
   """
 
-  defmacro cycle(do: block) do
+  defmacro repeatedly(do: block) do
 
     # Create AST
     quote do
