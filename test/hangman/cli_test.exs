@@ -11,7 +11,7 @@ defmodule Hangman.CLI.Test do
 
   test "cli baseline option even with random specified" do
 
-    command = "-n gustav_test -t robot -bl -r 2"
+    command = "-n gustav_test -t robot -b -r 2"
     argv = String.split(command)
     CLI.main(argv)
     
@@ -47,7 +47,7 @@ defmodule Hangman.CLI.Test do
 #  @tag timeout: :infinity
   test "parallel test with 40 random words nearly 1/2 time of sequential" do
 
-    command = "-n p_mario_test1 -pl -r 40"
+    command = "-n p_mario_test1 -p -r 40"
     argv = String.split(command)
     CLI.main(argv)
     
@@ -73,7 +73,7 @@ _ =  """
 
   test "parallel test with baseline words" do
 
-    command = "-n p_mario_test2 -pl -bl"
+    command = "-n p_mario_test2 -p -b"
     argv = String.split(command)
     CLI.main(argv)
     
@@ -103,7 +103,7 @@ _ =  """
   
   test "parallel test with secrets list with 1 word not in dictionary" do
 
-    argv = ["-n", "p_mario_test4", "-pl", "-s", "fantastic embryo enzyme azerbaijan entail frolic zygote"]
+    argv = ["-n", "p_mario_test4", "-p", "-s", "fantastic embryo enzyme azerbaijan entail frolic zygote"]
 
     IO.puts "argv is {inspect argv}"
 
@@ -129,7 +129,7 @@ _ =  """
   @tag timeout: 180_000 # 180 seconds
   test "random words human" do
     
-    command = "-n lulu_test1 -t human -r 4 -d -ti 10"
+    command = "-n lulu_test1 -t human -r 4 -d -w 0"
     argv = String.split(command)
     CLI.main(argv)
 
@@ -183,7 +183,7 @@ _ =  """
 
   test "human, word not in dictionary - exhausted all words" do
 
-    command = "-n oscar_test -t human -s azerbaijan -d -ti 10"
+    command = "-n oscar_test -t human -s azerbaijan -d -w 0"
     argv = String.split(command)
     CLI.main(argv)
   end

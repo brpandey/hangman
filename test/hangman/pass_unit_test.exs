@@ -5,8 +5,8 @@ defmodule Hangman.Pass.UnitTest do
 
   setup context do
     case context[:case_key] do
-      :start -> start_round_setup
-      :guessing -> guessing_round_setup
+      :start -> start_round_setup()
+      :guessing -> guessing_round_setup()
     end
   end
 
@@ -32,7 +32,7 @@ defmodule Hangman.Pass.UnitTest do
 
     # setup start round
     [pass: pass_receipt, pass_key: pass_key, reduce_key: reduce_key] =
-      start_round_setup
+      start_round_setup()
 
     # run the start round
     {^pass_key, ^pass_receipt} = Pass.result(:start, pass_key, reduce_key)

@@ -3,8 +3,6 @@ defmodule Hangman.Pass.Test do
 
   alias Hangman.{Pass, Reduction, Letter.Strategy, Counter}
 
-  @robot :robot
-
   setup_all do
     IO.puts "Pass Test"
     :ok

@@ -16,19 +16,19 @@ defmodule Hangman.CLI do
   Player game archival can be captured through logging, e.g. --log option
   
   The display and log options are exclusive to the command line client. 
-  The human guessing timeout `-ti` option allows values between 0 secs and 10 secs
-  to choose a letter. The parallel `-pl` option allows games to be played on 
+  The human guessing wait `-w` option allows values between 0 secs and 20 secs
+  to choose a letter. The parallel `-p` option allows games to be played on 
   all the cores of your system
 
   `Usage:
   --name (player id) --type ("human" or "robot") --random (num random secrets, max 1000)
-  [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel (40 secrets or more suggested)]`
+  [--secret (hangman word(s)) --baseline] [--log --display --wait (e.g. 15 secs)] [--parallel (40 secrets or more suggested)]`
 
   or
 
   `Aliase Usage: 
   -n (player id) -t ("human" or "robot") -r (num random secrets, max 1000)
-  [-s (hangman word(s)) -bl] [-l -d -ti] [-pl (40 secrets or more suggested)]`
+  [-s (hangman word(s)) -b] [-l -d -w] [-p (40 secrets or more suggested)]`
 
   NOTE: Should a player submit a secret hangman word that does not actually
   reside in the `Dictionary.Cache` the player will abort and then restart and the
@@ -37,11 +37,12 @@ defmodule Hangman.CLI do
 
   alias Hangman.{CLI, Shard}
 
-  @min_secret_length 3
-  @max_secret_length 28
+  @min_secret_length Application.get_env(:hangman_game, :min_secret_length)
+  @max_secret_length Application.get_env(:hangman_game, :max_secret_length)
 
-  @max_guess_timeout 10000 # 10 secs
-  @default_guess_timeout 5000 # 5 secs
+  @max_guess_wait Application.get_env(:hangman_game, :max_guess_wait)
+  @default_guess_wait Application.get_env(:hangman_game, :default_guess_wait)
+  @test_guess_wait 10 # let tests run quicker
 
   @human Hangman.Player.Types.human
   @robot Hangman.Player.Types.robot
@@ -68,14 +69,14 @@ defmodule Hangman.CLI do
           baseline: :boolean, # --baseline or alias -bl, boolean only
           log: :boolean, # -- log or alias -l, boolean only
           display: :boolean, # -- display or alias -d, boolean only
-          timeout: :integer, # -- timeout or alias -ti, integer only
+          wait: :integer, # -- wait or alias -w, integer only
           parallel: :boolean, # --parallel or alias -pl, boolean only
           help: :boolean # --help or alias -h, boolean only
         ],
 
         aliases: [n: :name, t: :type, r: :random, s: :secret, 
-                  bl: :baseline, l: :log, d: :display, ti: :timeout, 
-                  pl: :parallel, h: :help]
+                  b: :baseline, l: :log, d: :display, w: :wait, 
+                  p: :parallel, h: :help]
       ])
 
     parsed
@@ -96,10 +97,10 @@ defmodule Hangman.CLI do
       {:ok, true} ->
         IO.puts "--name (player id) --type (\"human\" or \"robot\")" <> 
           " --random (num random secrets, max 1000)" <>
-          " [--secret (hangman word(s)) --baseline] [--log --display --timeout] [--parallel  (40 secrets or more suggested)]\n"
+          " [--secret (hangman word(s)) --baseline] [--log --display --wait] [--parallel  (40 secrets or more suggested)]\n"
         
         IO.puts "or aliases: -n (player id) -t (\"human\" or \"robot\") " <> 
-          "-r (num random secrets, max 1000) [-s (hangman word(s)) -bl] [-l -d -ti] [-pl (40 secrets or more suggested)]"
+          "-r (num random secrets, max 1000) [-s (hangman word(s)) -bl] [-l -d -w] [-pl (40 secrets or more suggested)]"
         System.halt(0)
     end
 
@@ -158,19 +159,22 @@ defmodule Hangman.CLI do
           :error -> false
         end
       
-      timeout = 
-        case Keyword.fetch(args, :timeout) do
-          {:ok, timeout} when is_integer(timeout) -> 
-            if timeout > 0 and timeout <= @max_guess_timeout do
-              timeout
-            else
-              @default_guess_timeout
+      wait = 
+        case Keyword.fetch(args, :wait) do
+          {:ok, wait} when is_integer(wait) -> 
+
+            secs_wait = wait * 1000
+
+            cond do
+              secs_wait == 0 -> @test_guess_wait
+              secs_wait > 0 and secs_wait <= @max_guess_wait -> secs_wait
+              true -> @default_guess_wait
             end
-          
-            :error -> @default_guess_timeout
+
+          :error -> @default_guess_wait
         end
       
-      {:sequential, {name, type, secrets, log, display, timeout}}
+      {:sequential, {name, type, secrets, log, display, wait}}
 
     else
       _ -> raise HangmanError, "name argument missing"
@@ -236,10 +240,10 @@ defmodule Hangman.CLI do
 
 
   @spec run({:sequential, {String.t, atom, list, boolean, boolean, pos_integer}}) :: :ok
-  defp run({:sequential, {name, type, secrets, log, display, timeout}}) when is_binary(name) 
+  defp run({:sequential, {name, type, secrets, log, display, wait}}) when is_binary(name) 
   and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
-  and is_boolean(log) and is_boolean(display) and is_integer(timeout) do
-    CLI.Handler.run(name, type, secrets, log, display, timeout)
+  and is_boolean(log) and is_boolean(display) and is_integer(wait) do
+    CLI.Handler.run(name, type, secrets, log, display, wait)
   end
 
   @spec run({:parallel, {String.t, list}}) :: :ok
