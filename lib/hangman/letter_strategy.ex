@@ -217,10 +217,8 @@ defmodule Hangman.Letter.Strategy do
   end
  
 
-  @docp """
-  If we have reached the last possible hangman word,
-  return it so we can guess it
-  """
+  # If we have reached the last possible hangman word,
+  # return it so we can guess it
 
   @spec last_word?(t) :: tuple
   defp last_word?(%Strategy{} = strategy) do
@@ -232,10 +230,9 @@ defmodule Hangman.Letter.Strategy do
   end
 
 
-  @docp """
-  Validates `letter` is within the top strategy letter choices.
-  If not, picks the top `letter` as deemed by heuristics.
-  """
+
+  # Validates `letter` is within the top strategy letter choices.
+  # If not, picks the top `letter` as deemed by heuristics.
 
   @spec validate(t, String.t, pos_integer) :: Guess.t
   defp validate(%Strategy{} = strategy, letter, n \\ @letter_choices) 
@@ -253,9 +250,7 @@ defmodule Hangman.Letter.Strategy do
   end
 
 
-  @docp """
-  Interjects specific parameters into `choices text`.
-  """
+  # Interjects specific parameters into `choices text`.
 
   @spec update_choices(Round.t, String.t) :: String.t
   defp update_choices(%Round{} = round, text) when is_binary(text) do

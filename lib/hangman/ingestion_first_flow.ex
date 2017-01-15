@@ -99,7 +99,7 @@ defmodule Hangman.Ingestion.First.Flow do
 
   ####  FLOW HELPER FUNCTIONS ####
 
-  @docp "Maps each word event in parallel to a tuple {word length key, word} event"
+  # Maps each word event in parallel to a tuple {word length key, word} event"
 
   @spec event_map(binary) :: {pos_integer, binary}
   defp event_map(event) when is_binary(event) do
@@ -107,10 +107,8 @@ defmodule Hangman.Ingestion.First.Flow do
     {String.length(event), event}    
   end
 
-  @docp """
-  Calculate the partition hash for the event using the event_route function
-  which returns partition to route the event to
-  """
+  # Calculate the partition hash for the event using the event_route function
+  # which returns partition to route the event to
   
   @spec event_route({pos_integer, binary}) :: tuple
   defp event_route({key, word}) when is_integer(key) and is_binary(word) do
@@ -129,11 +127,9 @@ defmodule Hangman.Ingestion.First.Flow do
   end
 
 
-  @docp """
-  Reduce the partition data given the window trigger of e.g. 500 events
-  The acc state is reset after the trigger is materialized
-  The reduce is run per window AND partition 
-  """
+  # Reduce the partition data given the window trigger of e.g. 500 events
+  # The acc state is reset after the trigger is materialized
+  # The reduce is run per window AND partition 
 
   @spec partition_reduce({pos_integer, binary}, map) :: map
   defp partition_reduce({key, word}, %{} = acc) do
@@ -142,10 +138,8 @@ defmodule Hangman.Ingestion.First.Flow do
   end
 
 
-  @docp """
-  Invoked after partition reduce
-  Apply function to each partition's state which is a single key map
-  """
+  # Invoked after partition reduce
+  # Apply function to each partition's state which is a single key map
 
   @spec partition_each(map, map) :: :ok
   defp partition_each(%{} = acc_map, %{} = key_file_map) do

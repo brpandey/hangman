@@ -56,7 +56,8 @@ defmodule Hangman.Pass.Reduction do
 
   # PRIVATE HELPERS
 
-  @docp "Extract pass metadata: size, last word, and possible words data"
+  # Extract pass metadata: size, last word, and possible words data
+
   @spec extract(Words.t) :: tuple 
   defp extract(%Words{} = data) do
 

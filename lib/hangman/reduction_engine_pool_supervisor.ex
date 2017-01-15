@@ -7,9 +7,7 @@ defmodule Hangman.Reduction.Engine.Pool do
   use Supervisor
   alias Hangman.Reduction
 
-  @docp """
-  `Supervisor` start link wrapper function. Accepts `pool` size argument.
-  """
+  #`Supervisor` start link wrapper function. Accepts `pool` size argument.
   
   #@spec start_link(pos_integer) :: Supervisor.on_start
   def start_link(pool_size) do

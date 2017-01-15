@@ -52,7 +52,7 @@ defmodule Hangman.Application do
   require Logger
 
 
-  @docp """
+  @doc """
   Main `application` callback start method. Calls `Root.Supervisor`
   and Web http server.
   """

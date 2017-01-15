@@ -67,7 +67,7 @@ defmodule Hangman.Round do
   @spec new((String.t | tuple), pid) :: Round.t
   def new(name, game_pid) when 
   (is_binary(name) or is_tuple(name)) and is_pid(game_pid) do
-    %Round{ id: name, pid: self, game_pid: game_pid }
+    %Round{ id: name, pid: self(), game_pid: game_pid }
   end
 
 
@@ -215,11 +215,7 @@ defmodule Hangman.Round do
     round
   end
 
-  # Returns round relevant data parameters
-
-  @docp """
-  Returns round `context` based on results of `last guess`
-  """
+  # Returns round `context` based on results of `last guess`
 
   @spec build_context(t, none | non_neg_integer) :: context | no_return
   defp build_context(%Round{} = round, data \\ 0) do

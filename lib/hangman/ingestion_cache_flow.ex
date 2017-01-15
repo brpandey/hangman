@@ -63,11 +63,10 @@ defmodule Hangman.Ingestion.Cache.Flow do
     :ok
   end
 
-  @docp """
-  Event is a cache file line up to new line
-  The function splits it first into a line without the delimiter 
-  and then into the word length key and the words data
-  """
+
+  # Event is a cache file line up to new line
+  # The function splits it first into a line without the delimiter 
+  # and then into the word length key and the words data
 
   @spec event_map(binary) :: {pos_integer, [binary]}
   defp event_map(event) do
@@ -87,12 +86,11 @@ defmodule Hangman.Ingestion.Cache.Flow do
     {key, value}
   end
   
-  @docp """
-  Event reduce performs three tasks
-  -Reduce the word length key and words lists into the table
-  -Generate random words as well into the ingestion db
-  -Build up the counter object in the meantime
-  """
+
+  # Event reduce performs three tasks
+  # -Reduce the word length key and words lists into the table
+  # -Generate random words as well into the ingestion db
+  # -Build up the counter object in the meantime
 
   @spec event_reduce({pos_integer, [binary,...]}, map) :: map
   defp event_reduce({k,v}, %{} = counter_map) 
@@ -118,10 +116,8 @@ defmodule Hangman.Ingestion.Cache.Flow do
     counter_map
   end
 
-  @docp """
-  Take the final acc, namely the counter map here and
-  insert it into the db
-  """
+  # Take the final acc, namely the counter map here and
+  # insert it into the db
 
   @spec final_reduce(map) :: :ok
   defp final_reduce(%{} = counter_map) do

@@ -63,16 +63,12 @@ defmodule Hangman.Game.Server.Controller do
   end
 
 
-  @docp """
-  GenServer callback to initialize server process
-  """
+  # GenServer callback to initialize server process
 
   @callback init(term) :: tuple
   def init(_), do:  {:ok, nil}
   
-  @docp """
-  GenServer callback to retrieve game server pid
-  """
+  # GenServer callback to retrieve game server pid
   
   @callback handle_call({atom, Player.id, [String.t]}, tuple, term) :: tuple
   def handle_call({:get_server, player_name, secret}, _from, state) do

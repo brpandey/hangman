@@ -22,7 +22,7 @@ defmodule Hangman.Game.Server do
 
   @type id :: Player.id
   @vsn "0"
-  @max_wrong 5
+  @max_wrong Application.get_env(:hangman_game, :max_wrong_guesses)
   
   #####
   # External API
@@ -126,12 +126,6 @@ defmodule Hangman.Game.Server do
     GenServer.call game_pid, {:register, player_key, round_key}
   end
   
-  '''
-  def another_game(secret, max_wrong \\ 5) when is_binary(secret) do
-  GenServer.cast @name, {:another_game, secret, max_wrong}
-  end
-  '''
-  
   @doc """
   Issues request to stop `GenServer`
   """
@@ -144,20 +138,17 @@ defmodule Hangman.Game.Server do
   #####
   # GenServer implementation
   
-  @docp """
-  GenServer callback to initalize server process
-  """
-  
+
+  # GenServer callback to initalize server process
+
   @callback init(term) :: tuple
   def init(state) do
-    _ = Logger.debug "Starting Hangman Game Server #{inspect self}"
+    _ = Logger.debug "Starting Hangman Game Server #{inspect self()}"
     {:ok, state}
   end
   
-  @docp """
-  Loads a new `Game`
-  """
-  
+  # Loads a new `Game`
+
   @callback handle_cast(tuple, Registry.t) :: tuple
   def handle_cast({:setup, id_key, secret, max_wrong}, state) do
     game = Game.new(id_key, secret, max_wrong)
@@ -166,10 +157,8 @@ defmodule Hangman.Game.Server do
     {:noreply, state}
   end
   
-  @docp """
-  Registers pid and returns the hangman secret length
-  """
-  
+  # Registers pid and returns the hangman secret length
+
   @callback handle_call({:atom, Player.key, Round.key}, tuple, Registry.t) :: tuple
   def handle_call({:register, {_, pid_key} = player_key, round_key}, _from, state) do
 
@@ -207,12 +196,10 @@ defmodule Hangman.Game.Server do
   end
 
   
-  @docp """
-  {:guess_letter, letter}
-  Guess the specified letter and update the pattern state accordingly
 
-  Returns result data tuple
-  """
+  # {:guess_letter, letter}
+  # Guess the specified letter and update the pattern state accordingly
+  # Returns result data tuple
   
   @callback handle_call({Guess.t, Player.key, Round.key}, tuple, Registry.t) 
   :: tuple
@@ -241,12 +228,10 @@ defmodule Hangman.Game.Server do
     { :reply, result, state }
   end
   
-  @docp """
-  {:guess_word, word}
-  Guess the specified word and update the pattern state accordingly
-  
-  Returns result data tuple
-  """
+
+  # {:guess_word, word}
+  # Guess the specified word and update the pattern state accordingly  
+  # Returns result data tuple
 
   @callback handle_call({Guess.t, Player.key, Round.key}, tuple, Registry.t) 
   :: tuple  
@@ -277,9 +262,7 @@ defmodule Hangman.Game.Server do
   end
   
 
-  @docp """
-  Returns the game status text
-  """
+  # Returns the game status text
 
   @callback handle_call({atom, Player.key, Round.key}, tuple, Registry.t) 
   :: tuple
@@ -308,31 +291,25 @@ defmodule Hangman.Game.Server do
   
   
 
-  @docp """
-  Stops the server in a normal graceful way
-  """
+  # Stops the server in a normal graceful way
   
 #  @callback handle_call(:atom, tuple, Registry.t) :: tuple
   def handle_call(:stop, _from, state) do
     { :stop, :normal, :ok, state }
   end
 
-  @docp """
-  Handles client pid down
-  """
 
-  @docp """
-  Handles state cleanup when player client process exits. 
-  If normal exit, remove player from state. If not, keep player
-  game state around to inspect and potentially for retry.
-  """
+  # Handles client pid down
+  # Handles state cleanup when player client process exits. 
+  # If normal exit, remove player from state. If not, keep player
+  # game state around to inspect and potentially for retry.
 
   #@callback handle_info(term, tuple, Registry.t) :: tuple
 
   def handle_info({:DOWN, ref, :process, pid, :normal}, state) do
 
 
-    _ = Logger.debug "In Game.Server handle info, received :DOWN normal msg, self: #{inspect self}"
+    _ = Logger.debug "In Game.Server handle info, received :DOWN normal msg, self: #{inspect self()}"
 
     Process.demonitor(ref)
 
@@ -358,7 +335,7 @@ defmodule Hangman.Game.Server do
 
   def handle_info({:DOWN, ref, :process, pid, reason}, state) do
 
-    _ = Logger.debug "In Game.Server handle info, received :DOWN msg, self: #{inspect self}, reason: #{inspect reason}"
+    _ = Logger.debug "In Game.Server handle info, received :DOWN msg, self: #{inspect self()}, reason: #{inspect reason}"
 
     Process.demonitor(ref)
     
@@ -398,14 +375,13 @@ defmodule Hangman.Game.Server do
 
 
   
-  @docp """
-  Terminates the `game` server
-  No special cleanup other than refreshing the state
-  """
+
+  # Terminates the `game` server
+  # No special cleanup other than refreshing the state
   
 #  @callback terminate(term, term) :: :ok
   def terminate(reason, _state) do
-    _ = Logger.debug "Terminating Hangman Game Server reason: #{inspect reason}, #{inspect self}"
+    _ = Logger.debug "Terminating Hangman Game Server reason: #{inspect reason}, #{inspect self()}"
     :ok
   end
   

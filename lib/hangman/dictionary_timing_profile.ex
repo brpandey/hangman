@@ -13,7 +13,7 @@ defmodule Hangman.Dictionary.Cache.Timing.Profile do
   @spec go_simple :: term
   def go_simple do
     profile do
-      run_setup_test
+      run_setup_test()
     end
   end 
 

@@ -30,9 +30,7 @@ defmodule Hangman.Pass.Cache do
 
   # External API
 
-  @docp """
-  GenServer start link wrapper function
-  """
+  @doc "GenServer start link wrapper function"
   
   #@spec start_link :: Supervisor.on_start
   def start_link() do
@@ -51,9 +49,7 @@ defmodule Hangman.Pass.Cache do
     GenServer.call :hangman_pass_cache, :stop
   end
 
-  @docp """
-  GenServer callback to initialize server process
-  """
+  # GenServer callback to initialize server process
 
   #@callback init(term) :: {}
   def init(_) do
@@ -62,18 +58,14 @@ defmodule Hangman.Pass.Cache do
     {:ok, {}}
   end
 
-  @docp """
-  GenServer callback to stop server
-  """
+  # GenServer callback to stop server
   
   #@callback handle_call(:atom, {}, {}) :: {}
   def handle_call(:stop, _from, {}) do
     { :stop, :normal, :ok, {}}
   end 
 
-  @docp """
-  GenServer callback to cleanup server state
-  """
+  # GenServer callback to cleanup server state
 
   #@callback terminate(reason :: term, {}) :: term | no_return
   def terminate(_reason, _state) do

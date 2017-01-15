@@ -63,7 +63,7 @@ defmodule Hangman.Game do
   
   @mystery_letter "-"
 
-  @min_secret_size 2
+  @min_secret_length Application.get_env(:hangman_game, :min_secret_length)
 
   @states [:reset, :start, :guessing, :won, :lost, :finished]
     
@@ -76,7 +76,7 @@ defmodule Hangman.Game do
   def new(id_key, secret, max_wrong)
   when (is_binary(id_key) or is_tuple(id_key)) and is_binary(secret) do
 
-    case (@min_secret_size <= String.length(secret)) do
+    case (@min_secret_length <= String.length(secret)) do
       true -> :ok
       false -> raise HangmanError, "Secret submitted is too short"
     end
@@ -93,7 +93,7 @@ defmodule Hangman.Game do
 
     #Ensure the secrets are atleast the min secret size
 
-    case Enum.all?(secrets, fn x -> @min_secret_size <= String.length(x) end) do
+    case Enum.all?(secrets, fn x -> @min_secret_length <= String.length(x) end) do
       true -> :ok
       false -> raise HangmanError, "Secret submitted is too short"
     end
@@ -264,12 +264,10 @@ defmodule Hangman.Game do
   end
 
 
-  @docp """
-  Returns next game, in the process of doing so checks
-  if all games are over and if all secrets have been played against.
-  If there are indeed games left to play, 
-  updates state and transitions to next game 
-  """
+  # Returns next game, in the process of doing so checks
+  # if all games are over and if all secrets have been played against.
+  # If there are indeed games left to play, 
+  # updates state and transitions to next game 
 
   @spec next(t) :: {t, feedback}
   def next(%Game{} = game) do
@@ -370,9 +368,9 @@ defmodule Hangman.Game do
       case code do
         # compute score if not lost and not reset
         code when code in [:guessing, :won] ->
-          Set.size(game.incorrect_letters) + 
-          Set.size(game.incorrect_words) +
-          Set.size(game.correct_letters)
+          MapSet.size(game.incorrect_letters) + 
+          MapSet.size(game.incorrect_words) +
+          MapSet.size(game.correct_letters)
         code when code in [:lost, :abort] ->
         # return default score if game lost or game_abort
           {_, _, score} = @status_codes[code]
@@ -388,8 +386,8 @@ defmodule Hangman.Game do
   
   @spec incorrect(t) :: non_neg_integer
   defp incorrect(%Game{} = game) do
-    Set.size(game.incorrect_letters) + 
-    Set.size(game.incorrect_words)
+    MapSet.size(game.incorrect_letters) + 
+    MapSet.size(game.incorrect_words)
   end
 
 
@@ -412,10 +410,8 @@ defmodule Hangman.Game do
   end
   
   
-  @docp """
-  Returns `game` summary as a string.  Includes `number` of games played, `average` 
-  score per game, per game `score`.
-  """
+  # Returns `game` summary as a string.  Includes `number` of games played, `average` 
+  # score per game, per game `score`.
   
   defp build_summary(%Game{} = game) do
 

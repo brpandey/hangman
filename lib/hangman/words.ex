@@ -24,9 +24,9 @@ defmodule Hangman.Words do
   
   @opaque t :: %__MODULE__{}
   
-  @container_words_size 500
+  @words_container_size Application.get_env(:hangman_game, :words_container_size)
   
-  def container_size, do: @container_words_size
+  def container_size, do: @words_container_size
   
   @doc """
   Returns new empty `Words` abstraction
@@ -136,9 +136,8 @@ defmodule Hangman.Words do
 
   # PRIVATE HELPERS
 
-  @docp """
-  Create new words, given words stream and length key
-  """
+  # Create new words, given words stream and length key
+
 
   @spec create(pos_integer, Enumerable.t) :: t
   defp create(length_key, %Stream{} = words)
@@ -160,7 +159,7 @@ defmodule Hangman.Words do
     
     fn_split_into_containers = fn
       {_word, index} -> 
-        _id = div(index, @container_words_size)
+        _id = div(index, @words_container_size)
     end
     
     # lambda to normalize containers
@@ -207,18 +206,15 @@ defmodule Hangman.Words do
     Regex.match?(compiled_regex, word)
   end
 
-  @docp """
-  'Unpacks' binary into list of word strings.
-  """
+  # 'Unpacks' binary into list of word strings.
   
   @spec unpack(binary) :: [String.t]
   defp unpack(binary) when is_binary(binary) do
     _words_list = :erlang.binary_to_term(binary)
   end
   
-  @doc """
-  Returns `Words` information
-  """
+
+  # Returns `Words` information
   
   @spec info(t) :: Keyword.t
   def info(%Words{} = words) do
@@ -226,6 +222,7 @@ defmodule Hangman.Words do
   end
   
   # Allows users to inspect this module type in a controlled manner  
+
   defimpl Inspect do
     import Inspect.Algebra
     

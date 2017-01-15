@@ -48,11 +48,12 @@ defmodule Hangman.Web do
 
   @doc "Starts the cowboy web server"
   def start_server do
-    Plug.Adapters.Cowboy.http(__MODULE__, nil, port: 3737)
+    port = Application.get_env(:hangman_game, :port)
+    Plug.Adapters.Cowboy.http(__MODULE__, nil, port: port)
   end
 
 
-  @docp "Get macro, matches GET request and /hangman"
+  # Get macro, matches GET request and /hangman
   get "/hangman" do
     conn
     |> Plug.Conn.fetch_query_params

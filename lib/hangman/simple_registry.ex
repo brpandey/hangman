@@ -66,7 +66,7 @@ defmodule Hangman.Simple.Registry do
         # Update registry
         registry = Kernel.put_in(registry.active_pids, active_pids)
 
-        _ = Logger.debug("Simple registry, add :active_pids, just added pid_key: #{inspect pid_key}, registry: #{inspect registry}, self: #{inspect self}")
+        _ = Logger.debug("Simple registry, add :active_pids, just added pid_key: #{inspect pid_key}, registry: #{inspect registry}, self: #{inspect self()}")
 
         registry
     end

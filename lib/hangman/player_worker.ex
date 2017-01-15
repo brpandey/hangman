@@ -107,7 +107,7 @@ defmodule Hangman.Player.Worker do
     # create the FSM abstraction and then initalize it
     fsm = Player.FSM.new |> Player.FSM.initialize(args) 
 
-    _ = Logger.debug "Started Player Worker #{inspect self}"
+    _ = Logger.debug "Started Player Worker #{inspect self()}"
 
     {:ok, fsm}
   end
@@ -159,7 +159,7 @@ defmodule Hangman.Player.Worker do
   end
 
 
-  @docp """
+  @doc """
   Stops the server in a normal graceful way
   """
   
@@ -173,7 +173,7 @@ defmodule Hangman.Player.Worker do
   
   @callback terminate(term, term) :: :ok
   def terminate(reason, _state) do
-    _ = Logger.debug "Terminating Player Worker #{inspect self}, reason: #{inspect reason}"
+    _ = Logger.debug "Terminating Player Worker #{inspect self()}, reason: #{inspect reason}"
     :ok
   end
 

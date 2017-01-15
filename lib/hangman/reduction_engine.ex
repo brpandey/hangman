@@ -14,7 +14,7 @@ defmodule Hangman.Reduction.Engine do
 
   alias Hangman.{Reduction.Engine, Pass}
 
-  @pool_size 10
+  @pool_size Application.get_env(:hangman_game, :reduction_pool_size)
 
   @doc """
   Supervisor start link wrapper function

@@ -38,9 +38,7 @@ defmodule Hangman.Pass.Cache.Writer do
     GenServer.call :pass_cache_writer, :stop
   end
   
-  @docp """
-  GenServer callback to initialize server process
-  """
+  # GenServer callback to initialize server process
   
   #@callback init(term) :: {}
   def init(_) do
@@ -68,14 +66,12 @@ defmodule Hangman.Pass.Cache.Writer do
     :ets.insert(@ets_table_name, {pass_key, words})
 
     _ = Logger.debug "inserted words into pass key " <> 
-      "#{inspect [self, pass_key, words]}"
+      "#{inspect [self(), pass_key, words]}"
 
     {:reply, :ok, state}
   end
 
-  @docp """
-  GenServer callback to stop server
-  """
+  # GenServer callback to stop server
   
   #@callback handle_call(:atom, {}, {}) :: {}
   def handle_call(:stop, _from, {}) do

@@ -71,9 +71,7 @@ defmodule Hangman.Reduction.Engine.Worker do
   end
 
   
-  @docp """
-  GenServer callback function to handle reduce and store request
-  """
+  # GenServer callback function to handle reduce and store request
 
   #@callback handle_call(atom, Pass.key, Regex.t, MapSet.t, term, tuple) :: tuple
   def handle_call({:reduce_and_store, pass_key, regex_key, exclusion}, 
@@ -83,18 +81,18 @@ defmodule Hangman.Reduction.Engine.Worker do
     {:reply, pass_info, {}}
   end
 
-  @docp """
-  Primary worker function which retrieves current pass words data,
-  filters words with regex.
+  
+  # Primary worker function which retrieves current pass words data,
+  # filters words with regex.
 
-  Takes reduced word set and tallies it, creates new
-  Chunk abstraction and stores it back into words pass table.
+  # Takes reduced word set and tallies it, creates new
+  # Chunk abstraction and stores it back into words pass table.
 
-  If pass size happens to be small enough, will also return
-  remaining hangman possible words left to aid in guess selection. 
+  # If pass size happens to be small enough, will also return
+  # remaining hangman possible words left to aid in guess selection. 
 
-  Returns pass metadata.
-  """
+  # Returns pass metadata.
+
 
   @spec do_reduce_and_store(Pass.key, Regex.t, Enumerable.t) :: Pass.t
   defp do_reduce_and_store(pass_key, regex_key, exclusion) do
