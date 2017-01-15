@@ -73,7 +73,8 @@ defmodule Hangman.CLI.Handler do
   defp play({player_key, alert_pid, logger_pid, timeout}) do 
 
     # Loop until we have received an :exit value from the Player Controller
-    while do
+
+    while(true) do
 
       feedback = Player.Controller.proceed(player_key)
 

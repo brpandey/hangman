@@ -9,7 +9,7 @@ defmodule Hangman.Handler.Loop do
   until break() is called
   """
 
-  defmacro while(do: block) do
+  defmacro while(expression, do: block) do
 
     # Create AST
     quote do
@@ -18,8 +18,13 @@ defmodule Hangman.Handler.Loop do
       try do
         # Use list comprehension generator to endlessly iterate
         for _ <- Stream.cycle([:ok]) do
-          # Inject block
-          unquote(block)
+          # Check expression
+          if unquote(expression) do
+            # Inject block
+            unquote(block)
+          else # Issue loop termination
+            break()
+          end
         end
       catch
         :break -> :ok # loop termination successful
