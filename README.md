@@ -319,6 +319,8 @@ Specifically change :info to :debug and then run `mix compile` and then `mix esc
 directories under lib/hangman following the dotted modules names but for portfolio
 simplicity purposes all are in the top level directory.
 
+* In the doc directory are generated html docs with Github integration: [Sample](https://github.com/brpandey/elixir-hangman/blob/master/CounterSnapshot.pdf)
+
 * Running 100 hangman games in parallel takes about roughly 10 secs on a dual-core
 
 * Hangman configuration is tunable (perhaps you want to compare different pool size, max_demand size combinations) -->
