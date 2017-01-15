@@ -82,9 +82,7 @@ defmodule Hangman.Dictionary.Cache do
     {:ok, {}}
   end
 
-  @docp """
-  GenServer callback to retrieve random hangman word
-  """
+  # GenServer callback to retrieve random hangman word
 
   #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_random, count}, _from, {}) do
@@ -92,9 +90,7 @@ defmodule Hangman.Dictionary.Cache do
     {:reply, data, {}}
   end
 
-  @docp """
-  GenServer callback to retrieve tally given word length key
-  """
+  # GenServer callback to retrieve tally given word length key
 
   #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_tally, length_key}, _from, {})
@@ -103,27 +99,23 @@ defmodule Hangman.Dictionary.Cache do
     {:reply, data, {}}
   end
 
-  @docp """
-  GenServer callback to retrieve word lists given word length key
-  """
+  # GenServer callback to retrieve word lists given word length key
+
   #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_words, length_key}, _from, {}) do
     data = Dictionary.ETS.get(:words, length_key)
     {:reply, data, {}}
   end
  
-  @docp """
-  GenServer callback to stop server normally
-  """
+  # GenServer callback to stop server normally
 
   #@callback handle_call(:atom, pid, {}) :: {}
   def handle_call(:stop, _from, {}) do
     { :stop, :normal, :ok, {}}
   end 
 
-  @docp """
-  GenServer callback to cleanup server state
-  """
+
+  # GenServer callback to cleanup server state
 
   #@callback terminate(reason :: term, {}) :: term | no_return
   def terminate(reason, _state) do

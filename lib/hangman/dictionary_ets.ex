@@ -23,9 +23,10 @@ defmodule Hangman.Dictionary.ETS do
 
   # Use for admin of random words extract 
   @ets_random_words_key :random_hangman_words
-  @random_words_per_list 20
-  @min_random_word_length 5
-  @max_random_word_length 15
+
+  @random_words_per_container Application.get_env(:hangman_game, :random_words_per_container)
+  @min_random_word_length Application.get_env(:hangman_game, :min_random_word_length)
+  @max_random_word_length Application.get_env(:hangman_game, :max_random_word_length)
 
 
   # CREATE
@@ -57,7 +58,7 @@ defmodule Hangman.Dictionary.ETS do
 
   @spec info :: atom | no_return
   def info do
-    true = setup?
+    true = setup?()
     info = :ets.info(@ets_table_name)
     _ = Logger.debug ":counter + chunks + randoms, ets info is: #{inspect info}\n"
   end
@@ -85,11 +86,11 @@ defmodule Hangman.Dictionary.ETS do
 
   def get(:random, count) when is_integer(count) and count > 0 do
 
-    case count <= Dictionary.max_random_words_request do
+    case count <= Dictionary.max_random_words do
       true ->
 
         # assert ets is setup
-        true = setup?
+        true = setup?()
         
         # we use a module constant since the key doesn't change
         ets_key = @ets_random_words_key
@@ -115,7 +116,7 @@ defmodule Hangman.Dictionary.ETS do
   def get(:counter, key) when is_number(key) and key > 0 do
 
     # assert ets is setup
-    true = setup?
+    true = setup?()
 
     # validate that the key is within our valid set
     case valid_key?(key) do
@@ -136,7 +137,7 @@ defmodule Hangman.Dictionary.ETS do
   def get(:words, key) when is_number(key) and key > 0 do
 
     # assert ets is setup
-    true = setup?
+    true = setup?()
 
     # validate that the key is within our valid set
     case valid_key?(key) do
@@ -193,7 +194,7 @@ defmodule Hangman.Dictionary.ETS do
   when is_list(list) and is_binary(hd(list)) and is_number(key) and key > 0 do
 
     # assert ets is setup
-    true = setup?
+    true = setup?()
 
     # validate that the key is within our valid set
     case valid_key?(key) do
@@ -219,7 +220,7 @@ defmodule Hangman.Dictionary.ETS do
   when is_list(list) and is_binary(hd(list)) and is_number(key) and key > 0 do
 
     # assert ets is setup    
-    true = setup?
+    true = setup?()
 
     cond do
       key >= @min_random_word_length and key <= @max_random_word_length ->
@@ -230,9 +231,9 @@ defmodule Hangman.Dictionary.ETS do
         _ = :rand.seed(:exsplus, r_seed)
         _ = :rand.seed(:exsplus, r_seed)
       
-        # Grab @random_words_per_list random words
+        # Grab @random_words_per_container random words
       
-        rand = for _x <- 1..@random_words_per_list do 
+        rand = for _x <- 1..@random_words_per_container do 
           Enum.random(list) 
         end
       
@@ -258,7 +259,7 @@ defmodule Hangman.Dictionary.ETS do
   when is_number(key) and key > 0 do
 
     # assert ets is setup    
-    true = setup?
+    true = setup?()
 
     # validate that the key is within our valid set
     case valid_key?(key) do
@@ -307,7 +308,8 @@ defmodule Hangman.Dictionary.ETS do
   end
 
 
-  @docp "Returns a list, whose elements are randomly selected from the input list"
+  # Returns a list, whose elements are randomly selected from the input list
+
   @spec random_select(list, pos_integer) :: :error | list
   defp random_select(list, count) when is_list(list) and count > 0 do
 

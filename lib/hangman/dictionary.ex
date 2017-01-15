@@ -16,14 +16,82 @@ defmodule Hangman.Dictionary do
     :big => "#{@root_path}/dictionary/big/"
   }
 
-  def max_random_words_request, do: 1000
+  def max_random_words, do: Application.get_env(:hangman_game, :max_random_words)
 
 
   # dictionary hangman words range in size 2..28
   def key_range, do: 2..28
 
 
+  @doc """
+  Dictionary lookup routines
 
+  The allowed modes:
+    * `:random` - extracts specified count of random hangman words. 
+    * `:tally` - retrieve letter tally associated with word length key
+    * `:words` -  retrieve the word data lists associated with the word length key
+
+  """
+
+  @spec lookup(:random | :tally | :words, pos_integer) ::  [String.t] | Counter.t | Words.t
+
+  def lookup(:random, count) do
+
+    # quick assert
+    unless count < max_random_words() do
+      raise HangmanError, message: "random count exceeds max random words"
+    end
+
+    # assert that table is setup
+    true = Cache.setup?()
+
+    # Uses global server name to retrieve the server pid
+    pid = Process.whereis(:hangman_dictionary_cache_server)  
+    true = is_pid(pid) 
+    
+    Cache.lookup(pid, :random, count)
+  end
+
+  def lookup(:tally, length_key)
+  when is_integer(length_key) and length_key > 0 do
+
+    # quick assert on length_key
+    unless Enum.any?(key_range(), fn x -> x == length_key end) do
+      raise HangmanError, message: "key not in set of possible keys!"
+    end
+
+    # assert that table is setup
+    true = Cache.setup?()
+
+    # Uses global server name to retrieve the server pid
+    pid = Process.whereis(:hangman_dictionary_cache_server)  
+    true = is_pid(pid) 
+  
+    Cache.lookup(pid, :tally, length_key)
+  end
+
+  def lookup(:words, length_key)
+  when is_integer(length_key) and length_key > 0 do
+
+    # quick assert on length_key
+    unless Enum.any?(key_range(), fn x -> x == length_key end)  do
+      raise HangmanError, message: "key not in set of possible keys!"
+    end
+
+    # assert that table is setup
+    true = Cache.setup?()
+
+    # Uses global server name to retrieve the server pid
+    pid = Process.whereis(:hangman_dictionary_cache_server)
+    true = is_pid(pid)
+
+    Cache.lookup(pid, :words, length_key)
+  end
+
+
+  # Public Helper Functions
+
+  # Provides tuple of dictionary path and whether ingestion is enabled
   def startup_params(opts) do
     dir_path = directory_path(opts)
     ingestion = ingestion_enabled(opts)
@@ -60,76 +128,11 @@ defmodule Hangman.Dictionary do
     # convert user input to integer value
     value = String.to_integer(count)
     cond do
-      value > 0 and value <= max_random_words_request() ->
+      value > 0 and value <= max_random_words() ->
         lookup(:random, value)
       true ->
         raise HangmanError, "submitted random count value is not valid"
     end
-  end
-
-  @doc """
-  Cache lookup routines
-
-  The allowed modes:
-    * `:random` - extracts specified count of random hangman words. 
-    * `:tally` - retrieve letter tally associated with word length key
-    * `:words` -  retrieve the word data lists associated with the word length key
-
-  """
-
-  @spec lookup(:random | :tally | :words, pos_integer) ::  [String.t] | Counter.t | Words.t
-
-  def lookup(:random, count) do
-
-    # quick assert
-    unless count < max_random_words_request() do
-      raise HangmanError, message: "random count exceeds max random words"
-    end
-
-    # assert that table is setup
-    true = Cache.setup?
-
-    # Uses global server name to retrieve the server pid
-    pid = Process.whereis(:hangman_dictionary_cache_server)  
-    true = is_pid(pid) 
-    
-    Cache.lookup(pid, :random, count)
-  end
-
-  def lookup(:tally, length_key)
-  when is_integer(length_key) and length_key > 0 do
-
-    # quick assert on length_key
-    unless Enum.any?(key_range, fn x -> x == length_key end) do
-      raise HangmanError, message: "key not in set of possible keys!"
-    end
-
-    # assert that table is setup
-    true = Cache.setup?
-
-    # Uses global server name to retrieve the server pid
-    pid = Process.whereis(:hangman_dictionary_cache_server)  
-    true = is_pid(pid) 
-  
-    Cache.lookup(pid, :tally, length_key)
-  end
-
-  def lookup(:words, length_key)
-  when is_integer(length_key) and length_key > 0 do
-
-    # quick assert on length_key
-    unless Enum.any?(key_range, fn x -> x == length_key end)  do
-      raise HangmanError, message: "key not in set of possible keys!"
-    end
-
-    # assert that table is setup
-    true = Cache.setup?
-
-    # Uses global server name to retrieve the server pid
-    pid = Process.whereis(:hangman_dictionary_cache_server)
-    true = is_pid(pid)
-
-    Cache.lookup(pid, :words, length_key)
   end
 
 
