@@ -18,6 +18,8 @@ Hangman.Game.Server.html
 Hangman.Game.Server.Controller.html
 Hangman.Game.Server.Stub.html
 Hangman.Guess.html
+Hangman.Handler.Accumulator.html
+Hangman.Handler.Loop.html
 Hangman.Ingestion.Cache.Flow.html
 Hangman.Ingestion.First.Flow.html
 Hangman.Letter.Retrieval.Common.html
