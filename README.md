@@ -292,6 +292,9 @@ Word not in dictionary - Fault-Tolerance of Player Worker Crash
 
 * Unit and Integration tests are here
 >   https://github.com/brpandey/elixir-hangman/tree/master/test/hangman
+>
+> Finished in 74.9 seconds
+> 1 property, 165 tests, 0 failures
         
 * Optional -- configure `config/config.exs` to see inner game play details.
 Specifically change :info to :debug and then run `mix compile` and then `mix escript.build`
