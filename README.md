@@ -74,7 +74,7 @@ Command Line options:
 
 ### Step 2 - Build executable
 ```
-    $  cd elixir-hangman
+    $  cd hangman
     $  mix compile
     $  mix escript.build
 ```
