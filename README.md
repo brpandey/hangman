@@ -69,7 +69,7 @@ Command Line options:
 
 ### Step 1 - Git clone
 ```
-    $  git clone --depth 10 https://github.com/brpandey/elixir-hangman.git
+    $  git clone --depth 10 https://github.com/brpandey/hangman.git
 ```
 
 ### Step 2 - Build executable
