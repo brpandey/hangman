@@ -69,6 +69,8 @@ defmodule Hangman.Mixfile do
       {:httpoison, "~> 0.11.0"},
       # for state machine handling
       {:fsm, "~> 0.3.0"},
+      # for release
+      {:distillery, "~> 1.5"},
       # for simple GenServers
       {:exactor, "~> 2.2.0", warn_missing: false},
       # exp module for distinct producers and consumers
