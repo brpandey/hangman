@@ -6,44 +6,44 @@ defmodule Hangman.Pass.Cache.Test do
   alias Hangman.{Pass, Words}
 
   setup_all do
-    IO.puts "Pass Cache Test"
+    IO.puts("Pass Cache Test")
     :ok
   end
 
-
   setup _context do
-    cache_pid = 
+    cache_pid =
       case Pass.Cache.start_link() do
         {:ok, pid} ->
           pid
-        {:error, {:already_started, pid}} -> 
+
+        {:error, {:already_started, pid}} ->
           pid
       end
 
-    cache_writer_pid = 
+    cache_writer_pid =
       case Pass.Cache.Writer.start_link() do
         {:ok, pid} ->
           pid
-        {:error, {:already_started, pid}} -> 
+
+        {:error, {:already_started, pid}} ->
           pid
       end
 
-    on_exit fn -> 
+    on_exit(fn ->
       # Ensure the pass servers are shutdown with non-normal reason
       Process.exit(cache_pid, :shutdown)
       Process.exit(cache_writer_pid, :shutdown)
-      
+
       # Wait until the servers are dead
       cache_ref = Process.monitor(cache_pid)
       cache_writer_ref = Process.monitor(cache_writer_pid)
 
       assert_receive {:DOWN, ^cache_ref, _, _, _}
       assert_receive {:DOWN, ^cache_writer_ref, _, _, _}
-    end
+    end)
 
     :ok
   end
-
 
   test "pass get and delete" do
     key = {"francois", 1, 3}
@@ -64,12 +64,11 @@ defmodule Hangman.Pass.Cache.Test do
     # error read
     assert :error = Pass.Cache.get(key)
 
-    Pass.Cache.Writer.stop
-    Pass.Cache.stop
+    Pass.Cache.Writer.stop()
+    Pass.Cache.stop()
 
     :ok
   end
-
 
   test "pass delete and get" do
     key = {"francois", 1, 4}
@@ -86,11 +85,9 @@ defmodule Hangman.Pass.Cache.Test do
 
     assert :error = Pass.Cache.get(key)
 
-    Pass.Cache.Writer.stop
-    Pass.Cache.stop
+    Pass.Cache.Writer.stop()
+    Pass.Cache.stop()
 
     :ok
   end
-
-
 end

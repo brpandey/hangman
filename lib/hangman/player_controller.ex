@@ -36,38 +36,37 @@ defmodule Hangman.Player.Controller do
   Dynamically start a new player worker
   """
 
-  @spec start_worker(Player.id, atom, boolean, pid) :: :ok
+  @spec start_worker(Player.id(), atom, boolean, pid) :: :ok
   def start_worker(name, type, display, game_pid) do
-    {:ok, _player_pid} = 
-      Player.Worker.Supervisor.start_child(name, type, display, game_pid)
+    {:ok, _player_pid} = Player.Worker.Supervisor.start_child(name, type, display, game_pid)
 
     :ok
   end
 
   @doc "Issues proceed call to iterate player sequence"
 
-  @spec proceed(Player.id) :: tuple
+  @spec proceed(Player.id()) :: tuple
   def proceed(id) do
     try do
       Player.Worker.proceed(id)
-    catch :exit, reason ->
-      _ = Logger.info "Caught exit in player controller, reason is #{inspect reason}"
-      {:retry, reason}
+    catch
+      :exit, reason ->
+        _ = Logger.info("Caught exit in player controller, reason is #{inspect(reason)}")
+        {:retry, reason}
     end
   end
 
   @doc "Issues guess request with guess data"
-  
-  @spec guess(Player.id, tuple | String.t) :: tuple
-  def guess(id, data)  when is_tuple(data) or is_binary(data) do
+
+  @spec guess(Player.id(), tuple | String.t()) :: tuple
+  def guess(id, data) when is_tuple(data) or is_binary(data) do
     Player.Worker.guess(id, data)
   end
 
   @doc "Issues request to stop worker"
 
-  @spec stop_worker(Player.id) :: atom
+  @spec stop_worker(Player.id()) :: atom
   def stop_worker(id) do
     Player.Worker.stop(id)
   end
-
 end

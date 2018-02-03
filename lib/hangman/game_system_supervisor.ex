@@ -1,4 +1,4 @@
-defmodule Hangman.Game.System.Supervisor do 
+defmodule Hangman.Game.System.Supervisor do
   @moduledoc false
 
   # Module implements `Supervisor` behaviour.
@@ -8,16 +8,16 @@ defmodule Hangman.Game.System.Supervisor do
   # along with the Game.Server.Controller and Game.Event.Manager
 
   use Supervisor
-  alias Hangman.{Game}  
+  alias Hangman.{Game}
   require Logger
 
   @doc """
   Supervisor start_link wrapper function
   """
-  
-  @spec start_link :: Supervisor.on_start
+
+  @spec start_link :: Supervisor.on_start()
   def start_link do
-    _ = Logger.debug "Starting Hangman Game System Supervisor"
+    _ = Logger.debug("Starting Hangman Game System Supervisor")
 
     Supervisor.start_link(__MODULE__, nil)
   end
@@ -30,14 +30,12 @@ defmodule Hangman.Game.System.Supervisor do
 
   @callback init(term) :: {}
   def init(_) do
-
     children = [
-        supervisor(Game.Server.Supervisor, []),
-        worker(Game.Server.Controller, []),
-        worker(Game.Event.Manager, [])
+      supervisor(Game.Server.Supervisor, []),
+      worker(Game.Server.Controller, []),
+      worker(Game.Event.Manager, [])
     ]
 
-    supervise(children, strategy: :one_for_one) 
+    supervise(children, strategy: :one_for_one)
   end
-
 end

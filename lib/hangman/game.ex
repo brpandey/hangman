@@ -15,7 +15,7 @@ defmodule Hangman.Game do
 
   The game rules are simply to stay within the max incorrect guesses and choose
   letters consistent with the game.  No timing or other such rules are imposed.
-  
+
   If the number of incorrect letter guesses exceeds the threshhold,
   the game is lost.  The lower the score and hence the fewer rounds to guess 
   the word, the more desirable aim.
@@ -23,60 +23,67 @@ defmodule Hangman.Game do
   The `Game` handles a single `Hangman` game or multiple `Hangman` games and 
   runs each game sequentially.  Therefore only one `game` is in play at
   any one time.
-  
+
   Primary game functions are `load/3`, `guess/2`, `status/1`.
   """
-  
+
   alias Hangman.{Game, Guess, Pattern}
   require Logger
-  
-  defstruct id: nil, current: 0, #Current game index
-  secret: "", pattern: "", score: 0, state: :reset,
-  secrets: [],  patterns: [], scores: [],
-  max_wrong: 0, correct_letters: MapSet.new, 
-  incorrect_letters: MapSet.new, incorrect_words: MapSet.new
-  
+
+  # Current game index
+  defstruct id: nil,
+            current: 0,
+            secret: "",
+            pattern: "",
+            score: 0,
+            state: :reset,
+            secrets: [],
+            patterns: [],
+            scores: [],
+            max_wrong: 0,
+            correct_letters: MapSet.new(),
+            incorrect_letters: MapSet.new(),
+            incorrect_words: MapSet.new()
+
   @opaque t :: %__MODULE__{}
 
   @typedoc "`Game` id is String.t (currently using player's name as unique key)"
-  @type id :: String.t
-  
+  @type id :: String.t()
+
   @typedoc "`Game` status code values"
   @type code :: :reset | :start | :guessing | :won | :lost | :finished | :abort
 
   @typedoc "returned `Game` feedback data"
 
   @type feedback :: %{
-    required(:id) => String.t, 
-    required(:code) => code,
-    optional(:text | :pattern | :result | :previous) => String.t | atom | map
-  }
+          required(:id) => String.t(),
+          required(:code) => code,
+          optional(:text | :pattern | :result | :previous) => String.t() | atom | map
+        }
 
-  @status_codes  %{
+  @status_codes %{
     start: {:start, 'GAME_START', 0},
-    won: {:won, 'GAME_WON', -2}, 
-    lost: {:lost, 'GAME_LOST', 25}, 
+    won: {:won, 'GAME_WON', -2},
+    lost: {:lost, 'GAME_LOST', 25},
     guessing: {:guessing, 'KEEP_GUESSING', -1},
     reset: {:reset, 'GAME_RESET', 0},
     abort: {:abort, 'GAME_ABORT', 0}
   }
-  
+
   @mystery_letter "-"
 
   @min_secret_length Application.get_env(:hangman_game, :min_secret_length)
 
   @states [:reset, :start, :guessing, :won, :lost, :finished]
-    
-  
+
   @doc """
   Creates a new `Game` state given new `secret(s)`
   """
-  
-  @spec new(id, String.t | [String.t], pos_integer) :: t
-  def new(id_key, secret, max_wrong)
-  when (is_binary(id_key) or is_tuple(id_key)) and is_binary(secret) do
 
-    case (@min_secret_length <= String.length(secret)) do
+  @spec new(id, String.t() | [String.t()], pos_integer) :: t
+  def new(id_key, secret, max_wrong)
+      when (is_binary(id_key) or is_tuple(id_key)) and is_binary(secret) do
+    case @min_secret_length <= String.length(secret) do
       true -> :ok
       false -> raise HangmanError, "Secret submitted is too short"
     end
@@ -84,30 +91,40 @@ defmodule Hangman.Game do
     secret = String.upcase(secret)
     pattern = String.duplicate(@mystery_letter, String.length(secret))
 
-    %Game{id: id_key, secret: secret, secrets: [secret],
-          pattern: pattern, max_wrong: max_wrong, state: :start}
+    %Game{
+      id: id_key,
+      secret: secret,
+      secrets: [secret],
+      pattern: pattern,
+      max_wrong: max_wrong,
+      state: :start
+    }
   end
-  
-  def new(id_key, secrets, max_wrong) when 
-  (is_binary(id_key) or is_tuple(id_key)) and is_list(secrets) do
 
-    #Ensure the secrets are atleast the min secret size
+  def new(id_key, secrets, max_wrong)
+      when (is_binary(id_key) or is_tuple(id_key)) and is_list(secrets) do
+    # Ensure the secrets are atleast the min secret size
 
     case Enum.all?(secrets, fn x -> @min_secret_length <= String.length(x) end) do
       true -> :ok
       false -> raise HangmanError, "Secret submitted is too short"
     end
 
-    #initialize the list of secrets to be uppercase 
-    #initialize the list of patterns to fit the secrets length
+    # initialize the list of secrets to be uppercase 
+    # initialize the list of patterns to fit the secrets length
     secrets = secrets |> Enum.map(&String.upcase(&1))
 
-    patterns = 
-      secrets |> Enum.map(&String.duplicate(@mystery_letter, String.length(&1)))
-    
-    %Game{id: id_key, secret: List.first(secrets), 
-          pattern: List.first(patterns), secrets: secrets, 
-          patterns: patterns, max_wrong: max_wrong, state: :start}
+    patterns = secrets |> Enum.map(&String.duplicate(@mystery_letter, String.length(&1)))
+
+    %Game{
+      id: id_key,
+      secret: List.first(secrets),
+      pattern: List.first(patterns),
+      secrets: secrets,
+      patterns: patterns,
+      max_wrong: max_wrong,
+      state: :start
+    }
   end
 
   @doc """
@@ -118,7 +135,7 @@ defmodule Hangman.Game do
   def equal?(%Game{} = game1, %Game{} = game2) do
     map1 = Map.from_struct(game1)
     map2 = Map.from_struct(game2)
-    
+
     Map.equal?(map1, map2)
   end
 
@@ -131,7 +148,6 @@ defmodule Hangman.Game do
     equal?(game, %Game{})
   end
 
-  
   # Returns length of the current game secret
   @spec secret_length(t) :: integer
   def secret_length(%Game{} = game) do
@@ -143,7 +159,6 @@ defmodule Hangman.Game do
   def abort(%Game{} = game) do
     Kernel.put_in(game.state, :abort)
   end
-  
 
   @doc """
   Runs `guess` against `Game` `secret`. Updates `Hangman` pattern, status, and
@@ -160,64 +175,61 @@ defmodule Hangman.Game do
     If incorrect, returns the :incorrect_word data tuple with `game` data    
   """
 
-
-  @spec guess(t, Guess.t) :: {t, feedback}
+  @spec guess(t, Guess.t()) :: {t, feedback}
   def guess(%Game{} = game, {:guess_letter, letter}) do
+    # Assert
+    {_, %{code: :guessing}} = status(game)
 
-    {_, %{code: :guessing}} = status(game) # Assert
+    letter = letter |> String.upcase()
 
-    letter = letter |> String.upcase
-
-    {game, result} = 
-      case String.contains?(game.secret, letter) do 
-          true -> 
-          
+    {game, result} =
+      case String.contains?(game.secret, letter) do
+        true ->
           # letter found within secret, update pattern and game
-            pattern = Pattern.update(game.pattern, game.secret, letter)
-            game = Kernel.put_in(game.correct_letters,
-                               MapSet.put(game.correct_letters, letter))
-            game = Kernel.put_in(game.pattern, pattern)
-            {game, :correct_letter}
-        
-          false -> #default: letter not found
-            game = Kernel.put_in(game.incorrect_letters, 
-                                 MapSet.put(game.incorrect_letters, letter))        
+          pattern = Pattern.update(game.pattern, game.secret, letter)
+          game = Kernel.put_in(game.correct_letters, MapSet.put(game.correct_letters, letter))
+          game = Kernel.put_in(game.pattern, pattern)
+          {game, :correct_letter}
+
+        # default: letter not found
+        false ->
+          game = Kernel.put_in(game.incorrect_letters, MapSet.put(game.incorrect_letters, letter))
           {game, :incorrect_letter}
       end
 
-    #return updated game status
-    {game, feedback} = status(game)
-    
-    feedback = 
-      feedback 
-      |> Map.put(:pattern, game.pattern) 
-      |> Map.put(:result, result)
-    
-    {game, feedback}
-  end
-  
-  
-  def guess(%Game{} = game, {:guess_word, word}) do
-    {_, %{code: :guessing}} = status(game) # Assert
-    
-    word = String.upcase(word)
-    
-    {game, result} = 
-      case game.secret do
-        ^word -> 
-          game = %{ game | pattern: word }        
-          {game, :correct_word}
-        _ -> 
-          game = Kernel.put_in(game.incorrect_words, 
-                               MapSet.put(game.incorrect_words, word))
-          {game, :incorrect_word}
-      end
-    
+    # return updated game status
     {game, feedback} = status(game)
 
-    feedback = 
-      feedback 
-      |> Map.put(:pattern, game.pattern) 
+    feedback =
+      feedback
+      |> Map.put(:pattern, game.pattern)
+      |> Map.put(:result, result)
+
+    {game, feedback}
+  end
+
+  def guess(%Game{} = game, {:guess_word, word}) do
+    # Assert
+    {_, %{code: :guessing}} = status(game)
+
+    word = String.upcase(word)
+
+    {game, result} =
+      case game.secret do
+        ^word ->
+          game = %{game | pattern: word}
+          {game, :correct_word}
+
+        _ ->
+          game = Kernel.put_in(game.incorrect_words, MapSet.put(game.incorrect_words, word))
+          {game, :incorrect_word}
+      end
+
+    {game, feedback} = status(game)
+
+    feedback =
+      feedback
+      |> Map.put(:pattern, game.pattern)
       |> Map.put(:result, result)
 
     {game, feedback}
@@ -229,40 +241,43 @@ defmodule Hangman.Game do
 
   @spec status(t) :: {t, feedback}
   def status(%Game{} = game) do
+    new_code =
+      cond do
+        # RESET, FINISHED -> RESET
+        game.state in [:reset, :finished] ->
+          :reset
 
-    new_code = cond do
-      # RESET, FINISHED -> RESET
-      game.state in [:reset, :finished] -> :reset
-        
-      # GUESSING -> WON
-      game.state in [:start, :guessing] and 
-      game.secret == game.pattern -> :won
+        # GUESSING -> WON
+        game.state in [:start, :guessing] and game.secret == game.pattern ->
+          :won
 
-      # GUESSING -> LOST
-      game.state == :guessing and 
-      incorrect(game) > game.max_wrong -> :lost
+        # GUESSING -> LOST
+        game.state == :guessing and incorrect(game) > game.max_wrong ->
+          :lost
 
-      # START, GUESSING -> GUESSING
-      game.state in [:start, :guessing] and 
-      game.secret != game.pattern -> :guessing
+        # START, GUESSING -> GUESSING
+        game.state in [:start, :guessing] and game.secret != game.pattern ->
+          :guessing
 
-      # WON, LOST, ABORT -> NEXT
-      game.state in [:won, :lost, :abort] -> :next
+        # WON, LOST, ABORT -> NEXT
+        game.state in [:won, :lost, :abort] ->
+          :next
 
-      true -> raise HangmanError, "unmatched status cond, game is #{inspect game}"
-    end
+        true ->
+          raise HangmanError, "unmatched status cond, game is #{inspect(game)}"
+      end
 
     case new_code do
-      :next -> game |> next
+      :next ->
+        game |> next
+
       _ ->
         game = Kernel.put_in(game.state, new_code)
         map = build_feedback(game, new_code)
-        
+
         {game, map}
-    end    
-
+    end
   end
-
 
   # Returns next game, in the process of doing so checks
   # if all games are over and if all secrets have been played against.
@@ -271,7 +286,6 @@ defmodule Hangman.Game do
 
   @spec next(t) :: {t, feedback}
   def next(%Game{} = game) do
-
     # assert that we are only called once a single game is over
     # as opposed to mid-game play
     case game.state in [:won, :lost, :abort] do
@@ -280,10 +294,10 @@ defmodule Hangman.Game do
     end
 
     games_played = game.current + 1
-    
-    {game, feedback} = 
+
+    {game, feedback} =
       case Kernel.length(game.secrets) > games_played do
-        true ->   
+        true ->
           # Have games left to play
           # Updates game
 
@@ -294,13 +308,14 @@ defmodule Hangman.Game do
               :abort -> %{}
               _ -> build_feedback(game, game.state)
             end
-          
+
           # New Game Start
           game = archive_and_update(game)
 
           {_, text, _} = @status_codes[:start]
-          
+
           {game, %{id: game.id, code: :start, text: text, previous: previous}}
+
         false ->
           # Otherwise we have no more games left 
           # Store the current score in the game.scores list - insert
@@ -308,11 +323,11 @@ defmodule Hangman.Game do
 
           score = score(game)
           scores = List.insert_at(game.scores, game.current, score)
-          
-          game = %{ game | state: :finished, scores: scores }
+
+          game = %{game | state: :finished, scores: scores}
 
           summary = build_summary(game)
-          
+
           # Games Over
           {game, %{id: game.id, code: :finished, text: summary}}
       end
@@ -320,101 +335,102 @@ defmodule Hangman.Game do
     {game, feedback}
   end
 
-
   # Saves result from current game, loads next game
-  
-  defp archive_and_update(%Game{} = game) do
 
+  defp archive_and_update(%Game{} = game) do
     ### GAME ARCHIVAL - STEPS ###
-    
-    #Store the game finishing pattern into the game.patterns list - replace
+
+    # Store the game finishing pattern into the game.patterns list - replace
     patterns = List.replace_at(game.patterns, game.current, game.pattern)
-    
-    #Store the current score in the game.scores list - insert
+
+    # Store the current score in the game.scores list - insert
     scores = List.insert_at(game.scores, game.current, score(game))
-    
-    #Increment the current game index    
-    #Update game
-    game = %{ game | patterns: patterns, 
-              scores: scores, current: game.current + 1 }
-    
+
+    # Increment the current game index    
+    # Update game
+    game = %{game | patterns: patterns, scores: scores, current: game.current + 1}
+
     ### REFRESH UPDATE OF CURRENT GAME - STEPS ###
-    
-    #Replace the current pattern with new game's pattern
-    #Replace the current secret with new game's secret
-    #Reset the letter and word set counters
-    
-    #Update game
-    %{ game | pattern: Enum.at(game.patterns, game.current),
-       secret: Enum.at(game.secrets, game.current),
-       correct_letters: MapSet.new, 
-       incorrect_letters: MapSet.new, 
-       incorrect_words: MapSet.new,
-       state: :start}
+
+    # Replace the current pattern with new game's pattern
+    # Replace the current secret with new game's secret
+    # Reset the letter and word set counters
+
+    # Update game
+    %{
+      game
+      | pattern: Enum.at(game.patterns, game.current),
+        secret: Enum.at(game.secrets, game.current),
+        correct_letters: MapSet.new(),
+        incorrect_letters: MapSet.new(),
+        incorrect_words: MapSet.new(),
+        state: :start
+    }
   end
-  
+
   # Helper function to return current game score
-  
+
   @spec score(t, code | nil) :: integer | no_return
-  defp score(%Game{} = game, state_code \\ nil)  do
-    code = 
+  defp score(%Game{} = game, state_code \\ nil) do
+    code =
       case state_code do
         nil -> game.state
         code when code in @states -> code
         _ -> raise "Invalid state code in function score"
       end
-    
-    score = 
+
+    score =
       case code do
         # compute score if not lost and not reset
         code when code in [:guessing, :won] ->
-          MapSet.size(game.incorrect_letters) + 
-          MapSet.size(game.incorrect_words) +
-          MapSet.size(game.correct_letters)
+          MapSet.size(game.incorrect_letters) + MapSet.size(game.incorrect_words) +
+            MapSet.size(game.correct_letters)
+
         code when code in [:lost, :abort] ->
-        # return default score if game lost or game_abort
+          # return default score if game lost or game_abort
           {_, _, score} = @status_codes[code]
           score
-        _ -> 
+
+        _ ->
           raise "Shouldn't be asking for score in this state"
       end
-    
-    score
-  end  
 
-  # Helper function to return current number of wrong guesses
-  
-  @spec incorrect(t) :: non_neg_integer
-  defp incorrect(%Game{} = game) do
-    MapSet.size(game.incorrect_letters) + 
-    MapSet.size(game.incorrect_words)
+    score
   end
 
+  # Helper function to return current number of wrong guesses
+
+  @spec incorrect(t) :: non_neg_integer
+  defp incorrect(%Game{} = game) do
+    MapSet.size(game.incorrect_letters) + MapSet.size(game.incorrect_words)
+  end
 
   @spec build_feedback(t, code) :: feedback
   defp build_feedback(%Game{} = game, state_code) when state_code in @states do
-
     {_code, text, score} = @status_codes[state_code]
 
-    score = if score < 0 do score(game, state_code) else score end
+    score =
+      if score < 0 do
+        score(game, state_code)
+      else
+        score
+      end
 
     case state_code do
-      :reset -> 
+      :reset ->
         %{id: game.id, code: state_code, text: "GAMES_RESET"}
-      _ -> 
+
+      _ ->
         str = "#{game.pattern}; score=#{score}; status=#{text}"
 
         %{id: game.id, code: state_code, text: str}
     end
-
   end
-  
-  
+
   # Returns `game` summary as a string.  Includes `number` of games played, `average` 
   # score per game, per game `score`.
-  
-  defp build_summary(%Game{} = game) do
 
+  defp build_summary(%Game{} = game) do
     total_score = Enum.reduce(game.scores, 0, &(&1 + &2))
 
     # count the number of game scores that have 0 e.g. game abort
@@ -424,38 +440,37 @@ defmodule Hangman.Game do
 
     aborted = Enum.count(game.scores, fn x -> x == abort_score end)
 
-    games = (game.current + 1) - aborted
+    games = game.current + 1 - aborted
 
-    avg = 
+    avg =
       case games do
         games when games <= 0 -> 0
         _ -> total_score / games
       end
 
     zipped = Enum.zip(game.secrets, game.scores)
-    results = Enum.reduce(zipped, "",  fn {k,v}, acc -> 
-      acc <> " (#{k}: #{v})"  
-    end)
+
+    results =
+      Enum.reduce(zipped, "", fn {k, v}, acc ->
+        acc <> " (#{k}: #{v})"
+      end)
 
     "Game Over! Average Score: #{avg}, Games: #{games}, Scores: #{results}"
   end
-
-
 
   @doc """
   Returns `Game` information
   """
 
-  @spec info(t) :: Keyword.t
+  @spec info(t) :: Keyword.t()
   def info(%Game{} = g) do
-
     correct_letters = MapSet.to_list(g.correct_letters)
     incorrect_letters = MapSet.to_list(g.incorrect_letters)
     incorrect_words = MapSet.to_list(g.incorrect_words)
-    
+
     letters = [correct: correct_letters, incorrect: incorrect_letters]
     words = [incorrect: incorrect_words]
-    
+
     info = [
       id: g.id,
       state: g.state,
@@ -467,7 +482,7 @@ defmodule Hangman.Game do
       patterns: g.patterns,
       scores: g.scores,
       max_wrong_guesses: g.max_wrong,
-      guessed_letters: letters, 
+      guessed_letters: letters,
       guessed_words: words
     ]
 
@@ -480,8 +495,7 @@ defmodule Hangman.Game do
 
     def inspect(t, opts) do
       info = Inspect.List.inspect(Game.info(t), opts)
-      concat ["#Game<", info, ">"]
+      concat(["#Game<", info, ">"])
     end
   end
-
 end

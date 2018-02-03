@@ -18,50 +18,51 @@ defmodule Hangman.CLI.Handler do
   import Loop
   require Logger
 
-  @sleep 3000 # 3 secs
+  # 3 secs
+  @sleep 3000
 
   @doc """
   Function run connects all the `player` specific components together 
   and runs the player `game`
   """
 
-  @spec run(String.t, Player.kind, [String.t], boolean, boolean) :: :ok
-  def run(name, type, secrets, log, display, guess_timeout \\ 10) when is_binary(name)
-  and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) 
-  and is_boolean(log) and is_boolean(display) and is_integer(guess_timeout) do
-
+  @spec run(String.t(), Player.kind(), [String.t()], boolean, boolean) :: :ok
+  def run(name, type, secrets, log, display, guess_timeout \\ 10)
+      when is_binary(name) and is_atom(type) and is_list(secrets) and is_binary(hd(secrets)) and
+             is_boolean(log) and is_boolean(display) and is_integer(guess_timeout) do
     {name, type, secrets, log, display, guess_timeout} |> setup |> play
   end
 
   # Function setup loads the `player` specific `game` components.
   # Setups the `game` server and per player `event` server.
 
-
   @spec setup({binary, atom, list, boolean, boolean, pos_integer}) :: tuple
-  defp setup({name, type, secrets, log, display, timeout}) when is_binary(name) and
-  is_list(secrets) and is_binary(hd(secrets)) and 
-  is_boolean(log) and is_boolean(display) and is_integer(timeout) do
-    
+  defp setup({name, type, secrets, log, display, timeout})
+       when is_binary(name) and is_list(secrets) and is_binary(hd(secrets)) and is_boolean(log) and
+              is_boolean(display) and is_integer(timeout) do
     # Grab game pid first from game server controller
     game_pid = Game.Server.Controller.get_server(name, secrets)
 
     Player.Controller.start_worker(name, type, display, game_pid)
 
-    logger_pid = 
+    logger_pid =
       case log do
         true ->
           {:ok, pid} = Player.Logger.Supervisor.start_child(name)
           pid
-        false -> nil
+
+        false ->
+          nil
       end
 
-
-    alert_pid = 
+    alert_pid =
       case display do
         true ->
           {:ok, pid} = Player.Alert.Supervisor.start_child(name, self())
           pid
-        false -> nil
+
+        false ->
+          nil
       end
 
     {name, alert_pid, logger_pid, timeout}
@@ -69,26 +70,27 @@ defmodule Hangman.CLI.Handler do
 
   # Play handles client play loop
 
-  @spec play({String.t, pid, pid, pos_integer}) :: :ok
-  defp play({player_key, alert_pid, logger_pid, timeout}) do 
-
+  @spec play({String.t(), pid, pid, pos_integer}) :: :ok
+  defp play({player_key, alert_pid, logger_pid, timeout}) do
     # Loop until we have received an :exit value from the Player Controller
 
-    while(true) do
-
+    while true do
       feedback = Player.Controller.proceed(player_key)
 
       # specifically handle IO for guess setup -- e.g. selection of letters
       case handle_setup(player_key, feedback, timeout) do
-        {code, _status} when code in [:begin, :action] -> :ok
+        {code, _status} when code in [:begin, :action] ->
+          :ok
 
-        {:transit, status} -> # display the single game overs and game summaries
-          IO.puts "\n#{status}"
+        # display the single game overs and game summaries
+        {:transit, status} ->
+          IO.puts("\n#{status}")
 
         {:retry, _status} ->
-          Process.sleep(@sleep) # Stop gap for now for no proc error by gproc when word not in dict
+          # Stop gap for now for no proc error by gproc when word not in dict
+          Process.sleep(@sleep)
 
-        {:exit, _status} -> 
+        {:exit, _status} ->
           Player.Controller.stop_worker(player_key)
           Game.Server.Controller.stop_server(player_key)
 
@@ -97,9 +99,9 @@ defmodule Hangman.CLI.Handler do
 
           break()
 
-        _ -> raise "Unknown Player state"
+        _ ->
+          raise "Unknown Player state"
       end
-
     end
 
     :ok
@@ -110,28 +112,28 @@ defmodule Hangman.CLI.Handler do
   # Handles setup of round by extracting human guess from ui
   # Else return original feedback tuple
 
-  @spec handle_setup(Player.id, tuple, integer) :: tuple
+  @spec handle_setup(Player.id(), tuple, integer) :: tuple
   defp handle_setup(key, feedback, timeout) do
     # Handle feedback where the response code is :setup
     case feedback do
       {:setup, kw} ->
-
         {:ok, choices} = Keyword.fetch(kw, :status)
         selection = ui(choices, timeout)
         key |> Player.Controller.guess(selection)
-      
-      _ -> feedback # Pass back the passed in feedback
+
+      # Pass back the passed in feedback
+      _ ->
+        feedback
     end
   end
 
-
   # If display is valid, show letter choices and also collect letter input
 
-  @spec ui(Guess.options, pos_integer) :: Guess.t
+  @spec ui(Guess.options(), pos_integer) :: Guess.t()
   defp ui({:guess_letter, text}, timeout) when is_binary(text) do
     IO.puts("\n#{text}")
     letter = gets(timeout)
-    
+
     {:guess_letter, letter}
   end
 
@@ -145,22 +147,21 @@ defmodule Hangman.CLI.Handler do
   # Uses the timeout facility to load a dummy guess value.  
   # Timeout value is arg specified
 
-  @spec gets(integer) :: String.t
+  @spec gets(integer) :: String.t()
   defp gets(timeout) when is_integer(timeout) do
-
-    task = 
+    task =
       Task.async(fn ->
         {:ok, IO.gets("[Please input letter choice] ")}
       end)
-    
+
     try do
       {:ok, choice} = Task.await(task, timeout)
-      String.strip(choice) # return choice without newline
+      # return choice without newline
+      String.strip(choice)
     catch
       :exit, {:timeout, _} ->
-        " " # return space character
+        # return space character
+        " "
     end
-    
   end
-
 end

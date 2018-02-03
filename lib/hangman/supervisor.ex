@@ -1,6 +1,6 @@
-defmodule Hangman.Supervisor do 
+defmodule Hangman.Supervisor do
   @moduledoc false
-  
+
   '''
   Module is the root level supervisor.
 
@@ -20,10 +20,10 @@ defmodule Hangman.Supervisor do
   @doc """
   Supervisor start_link wrapper function
   """
-  
-  @spec start_link(Keyword.t) :: Supervisor.on_start
+
+  @spec start_link(Keyword.t()) :: Supervisor.on_start()
   def start_link(args) do
-    _ = Logger.debug "Starting Hangman Supervisor, args: #{inspect args}"
+    _ = Logger.debug("Starting Hangman Supervisor, args: #{inspect(args)}")
     Supervisor.start_link(@name, args)
   end
 
@@ -32,7 +32,7 @@ defmodule Hangman.Supervisor do
   once supervisor started
   """
 
-  @callback init(Keyword.t) :: {:ok, tuple}
+  @callback init(Keyword.t()) :: {:ok, tuple}
   def init(args) do
     children = [
       supervisor(Game.System.Supervisor, []),
@@ -42,5 +42,4 @@ defmodule Hangman.Supervisor do
 
     supervise(children, strategy: :rest_for_one)
   end
-
 end

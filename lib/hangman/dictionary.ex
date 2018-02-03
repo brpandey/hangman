@@ -7,7 +7,7 @@ defmodule Hangman.Dictionary do
 
   alias Hangman.Dictionary.Cache
 
-  @type kind :: :regular | :big  
+  @type kind :: :regular | :big
 
   @root_path :code.priv_dir(:hangman_game)
 
@@ -18,10 +18,8 @@ defmodule Hangman.Dictionary do
 
   def max_random_words, do: Application.get_env(:hangman_game, :max_random_words)
 
-
   # dictionary hangman words range in size 2..28
   def key_range, do: 2..28
-
 
   @doc """
   Dictionary lookup routines
@@ -33,10 +31,9 @@ defmodule Hangman.Dictionary do
 
   """
 
-  @spec lookup(:random | :tally | :words, pos_integer) ::  [String.t] | Counter.t | Words.t
+  @spec lookup(:random | :tally | :words, pos_integer) :: [String.t()] | Counter.t() | Words.t()
 
   def lookup(:random, count) do
-
     # quick assert
     unless count < max_random_words() do
       raise HangmanError, message: "random count exceeds max random words"
@@ -46,15 +43,14 @@ defmodule Hangman.Dictionary do
     true = Cache.setup?()
 
     # Uses global server name to retrieve the server pid
-    pid = Process.whereis(:hangman_dictionary_cache_server)  
-    true = is_pid(pid) 
-    
+    pid = Process.whereis(:hangman_dictionary_cache_server)
+    true = is_pid(pid)
+
     Cache.lookup(pid, :random, count)
   end
 
   def lookup(:tally, length_key)
-  when is_integer(length_key) and length_key > 0 do
-
+      when is_integer(length_key) and length_key > 0 do
     # quick assert on length_key
     unless Enum.any?(key_range(), fn x -> x == length_key end) do
       raise HangmanError, message: "key not in set of possible keys!"
@@ -64,17 +60,16 @@ defmodule Hangman.Dictionary do
     true = Cache.setup?()
 
     # Uses global server name to retrieve the server pid
-    pid = Process.whereis(:hangman_dictionary_cache_server)  
-    true = is_pid(pid) 
-  
+    pid = Process.whereis(:hangman_dictionary_cache_server)
+    true = is_pid(pid)
+
     Cache.lookup(pid, :tally, length_key)
   end
 
   def lookup(:words, length_key)
-  when is_integer(length_key) and length_key > 0 do
-
+      when is_integer(length_key) and length_key > 0 do
     # quick assert on length_key
-    unless Enum.any?(key_range(), fn x -> x == length_key end)  do
+    unless Enum.any?(key_range(), fn x -> x == length_key end) do
       raise HangmanError, message: "key not in set of possible keys!"
     end
 
@@ -88,7 +83,6 @@ defmodule Hangman.Dictionary do
     Cache.lookup(pid, :words, length_key)
   end
 
-
   # Public Helper Functions
 
   # Provides tuple of dictionary path and whether ingestion is enabled
@@ -98,11 +92,9 @@ defmodule Hangman.Dictionary do
     {dir_path, ingestion}
   end
 
-
   @doc "Returns dictionary dir path"
-  @spec directory_path(Keyword.t) :: String.t | no_return
+  @spec directory_path(Keyword.t()) :: String.t() | no_return
   def directory_path(opts) do
-
     case Keyword.fetch(opts, :type) do
       {:ok, :regular} -> Map.get(@paths, :regular)
       {:ok, :big} -> Map.get(@paths, :big)
@@ -110,31 +102,30 @@ defmodule Hangman.Dictionary do
     end
   end
 
-
   @doc "Returns whether ingestion is enabled"
-  @spec ingestion_enabled(Keyword.t) :: boolean | no_return
+  @spec ingestion_enabled(Keyword.t()) :: boolean | no_return
   def ingestion_enabled(opts) do
     case Keyword.fetch(opts, :ingestion) do
       {:ok, true} -> true
       {:ok, false} -> false
-        _ -> raise "invalid ingestion setting"
+      _ -> raise "invalid ingestion setting"
     end
   end
 
-
   @doc "Returns random word secrets given count"
-  @spec random(String.t) :: [String.t] | no_return
+  @spec random(String.t()) :: [String.t()] | no_return
   def random(count) do
     # convert user input to integer value
     value = String.to_integer(count)
+
     cond do
       value > 0 and value <= max_random_words() ->
         lookup(:random, value)
+
       true ->
         raise HangmanError, "submitted random count value is not valid"
     end
   end
-
 
   @doc "Handles dictionary server termination"
   def stop do
@@ -142,6 +133,4 @@ defmodule Hangman.Dictionary do
 
     Cache.stop(pid)
   end
-
-
 end

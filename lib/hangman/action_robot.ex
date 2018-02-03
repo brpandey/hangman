@@ -12,7 +12,6 @@ defmodule Hangman.Action.Robot do
 
   @type t :: %__MODULE__{}
 
-
   @doc """
   Sets up round by running a reduction pass.  Informs Strategy
   of reduction pass result to be later used in the guess method.
@@ -20,13 +19,12 @@ defmodule Hangman.Action.Robot do
 
   @spec setup(t) :: tuple
   def setup(%Robot{} = robot) do
-
     round = robot.round
     strategy = robot.strategy
-    
+
     # Retrieve the exclusion set, simply the list of already guessed letters
-    exclusion = strategy |> Strategy.guessed
-    
+    exclusion = strategy |> Strategy.guessed()
+
     # Setup game round, passing in strategy callback routine
     {round, %Pass{} = pass} = round |> Round.setup(exclusion)
 
@@ -46,12 +44,11 @@ defmodule Hangman.Action.Robot do
   returns round `status`
   """
 
-  @spec guess(t, Guess.t) :: tuple()
+  @spec guess(t, Guess.t()) :: tuple()
   def guess(%Robot{} = robot, _data) do
-
     strategy = robot.strategy
     round = robot.round
-    
+
     guess = strategy |> Strategy.guess(:auto)
     round = round |> Round.guess(guess)
     robot = Kernel.put_in(robot.round, round)
@@ -62,8 +59,8 @@ defmodule Hangman.Action.Robot do
 
   # EXTRA
   # Returns player information 
-  @spec info(t) :: Keyword.t
-  def info(%Robot{} = robot) do        
+  @spec info(t) :: Keyword.t()
+  def info(%Robot{} = robot) do
     _info = [
       display: robot.display
     ]
@@ -76,22 +73,19 @@ defmodule Hangman.Action.Robot do
     def inspect(t, opts) do
       robot_info = Inspect.List.inspect(Robot.info(t), opts)
       round_info = Inspect.List.inspect(Round.info(t.round), opts)
-      concat ["#Action.Robot<", robot_info, round_info, ">"]
+      concat(["#Action.Robot<", robot_info, round_info, ">"])
     end
   end
-
-
 
   defimpl Hangman.Player.Action, for: Robot do
-
     def setup(%Robot{} = player) do
-      Robot.setup(player) # returns {player, []} tuple
+      # returns {player, []} tuple
+      Robot.setup(player)
     end
-    
+
     def guess(%Robot{} = player, _guess) do
-      Robot.guess(player, nil) # returns {player, status} tuple
+      # returns {player, status} tuple
+      Robot.guess(player, nil)
     end
-    
   end
-  
 end

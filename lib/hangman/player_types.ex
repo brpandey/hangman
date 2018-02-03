@@ -8,9 +8,8 @@ defmodule Hangman.Player.Types do
 
   def types do
     %{
-      :human => %Hangman.Action.Human{}, 
+      :human => %Hangman.Action.Human{},
       :robot => %Hangman.Action.Robot{}
     }
   end
-
 end

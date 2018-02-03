@@ -3,34 +3,34 @@ defmodule Hangman.Handler.Accumulator.Test do
 
   import Hangman.Handler.Accumulator
 
-
-
   test "done with no value terminates loop and no values are accumulated" do
-
     # send msg to self
-    send self(), :one
+    send(self(), :one)
 
     # wrap receive block in our repeatedly macro
-    list = repeatedly do
-      receive do
+    list =
+      repeatedly do
+        receive do
+          # no next
+          :one ->
+            send(self(), :two)
 
-        :one -> # no next
-          send self(), :two
+          # no next
+          :two ->
+            send(self(), :three)
 
-        :two -> # no next
-          send self(), :three
+          # no next
+          :three ->
+            send(self(), :four)
 
-        :three -> # no next
-          send self(), :four
+          :four ->
+            # :finished should be received outside of while macro
+            send(self(), :finished)
 
-        :four ->
-          # :finished should be received outside of while macro
-          send self(), :finished 
-
-          # Issue loop termination
-          done()
+            # Issue loop termination
+            done()
+        end
       end
-    end
 
     # assert loop has terminated and we have received last msg
     assert_received :finished
@@ -39,75 +39,76 @@ defmodule Hangman.Handler.Accumulator.Test do
     assert list == []
   end
 
-
   test "done with no value terminates loop and values are accumulated" do
-
     # send msg to self
-    send self(), :one
+    send(self(), :one)
 
     # wrap receive block in our repeatedly macro
-    list = repeatedly do
-      receive do
+    list =
+      repeatedly do
+        receive do
+          # explicit next
+          :one ->
+            send(self(), :two)
+            # add :one to our accumulator
+            next(:one)
 
-        :one -> # explicit next
-          send self(), :two
-          next(:one) # add :one to our accumulator
+          # no explicit next
+          :two ->
+            send(self(), :three)
 
-        :two -> # no explicit next
-          send self(), :three
+          # explicit next
+          :three ->
+            send(self(), :four)
+            # add :three to our accumulator
+            next(:three)
 
-        :three -> # explicit next
-          send self(), :four
-          next(:three) # add :three to our accumulator
+          :four ->
+            # :finished should be received outside of while macro
+            send(self(), :finished)
 
-        :four ->
-          # :finished should be received outside of while macro
-          send self(), :finished 
-
-          # Issue loop termination
-          done()
+            # Issue loop termination
+            done()
+        end
       end
-    end
 
     assert_received :finished
     assert list == [:one, :three]
   end
 
-
-
   test "done with value terminates loop and values are accumulated" do
-
     # send msg to self
-    send self(), :one
+    send(self(), :one)
 
     # wrap receive block in our repeatedly macro
-    list = repeatedly do
-      receive do
+    list =
+      repeatedly do
+        receive do
+          # explicit next
+          :one ->
+            send(self(), :two)
+            # add :one to our accumulator
+            next(:one)
 
-        :one -> # explicit next
-          send self(), :two
-          next(:one) # add :one to our accumulator
+          # no explicit next
+          :two ->
+            send(self(), :three)
 
-        :two -> # no explicit next
-          send self(), :three
+          # empty explicit next
+          :three ->
+            send(self(), :four)
+            next()
 
-        :three -> # empty explicit next
-          send self(), :four
-          next()
+          :four ->
+            # :finished should be received outside of while macro
+            send(self(), :finished)
 
-        :four ->
-          # :finished should be received outside of while macro
-          send self(), :finished 
-
-          # Issue loop termination and add :finished to our accumulator
-          done(:finished)
-          
+            # Issue loop termination and add :finished to our accumulator
+            done(:finished)
+        end
       end
-    end
 
     assert_received :finished
     assert list == [:one, :finished]
-  
   end
-
 end

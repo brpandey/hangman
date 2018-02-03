@@ -33,43 +33,55 @@ defmodule Hangman.Round do
   """
 
   alias Hangman.{Round, Guess, Reduction}
-  alias Hangman.Game.Server, as: Game   # single place to switch to Game.Server.Stub
-  alias Hangman.Pass, as: Pass   # single place to switch to Pass.Stub
+  # single place to switch to Game.Server.Stub
+  alias Hangman.Game.Server, as: Game
+  # single place to switch to Pass.Stub
+  alias Hangman.Pass, as: Pass
   require Logger
 
+  defstruct id: "",
+            num: 0,
+            game_num: 0,
+            context: nil,
+            guess: {},
+            result_code: nil,
+            status_code: nil,
+            status_text: "",
+            pattern: "",
+            pid: nil,
+            game_pid: nil
 
-  defstruct id: "", num: 0, game_num: 0, context: nil,
-  guess: {}, result_code: nil, status_code: nil, status_text: "", pattern: "",
-  pid: nil, game_pid: nil
-  
   @opaque t :: %__MODULE__{}
   @type result_code :: :correct_letter | :incorrect_letter | :incorrect_word | :correct_word
 
-  @type key :: {id :: (String.t | tuple), 
-                game_num :: non_neg_integer,
-                round_num :: non_neg_integer} # Used as round key
+  @type key ::
+          {
+            id :: String.t() | tuple,
+            game_num :: non_neg_integer,
+            # Used as round key
+            round_num :: non_neg_integer
+          }
 
   @typedoc """
   Sum type used to understand prior `guess` result
   """
 
-  @type context :: {:start, non_neg_integer} 
-  | {:guessing, :correct_letter, String.t, pattern :: String.t, mystery_letter :: String.t} 
-  | {:guessing, :incorrect_letter | :incorrect_word, String.t} 
-  | {:won, :correct_word, String.t}
-  
-                    
-  @mystery_letter "-"
+  @type context ::
+          {:start, non_neg_integer}
+          | {:guessing, :correct_letter, String.t(), pattern :: String.t(),
+             mystery_letter :: String.t()}
+          | {:guessing, :incorrect_letter | :incorrect_word, String.t()}
+          | {:won, :correct_word, String.t()}
 
+  @mystery_letter "-"
 
   # CREATE
 
-  @spec new((String.t | tuple), pid) :: Round.t
-  def new(name, game_pid) when 
-  (is_binary(name) or is_tuple(name)) and is_pid(game_pid) do
-    %Round{ id: name, pid: self(), game_pid: game_pid }
+  @spec new(String.t() | tuple, pid) :: Round.t()
+  def new(name, game_pid)
+      when (is_binary(name) or is_tuple(name)) and is_pid(game_pid) do
+    %Round{id: name, pid: self(), game_pid: game_pid}
   end
-
 
   @doc """
   Register the round with the start of a new game.  Retrieves the 
@@ -82,45 +94,46 @@ defmodule Hangman.Round do
 
   @spec register(t) :: t
   def register(%Round{} = round) do
-    
-    round = 
+    round =
       case round.game_num do
-        0 -> round
+        0 ->
+          round
+
         _ ->
           # create a new round with some leftover data from passed in round
-          %Round{ id: round.id, pid: round.pid, game_pid: round.game_pid }
+          %Round{id: round.id, pid: round.pid, game_pid: round.game_pid}
       end
 
     # Further update round
-    round = %{ round | num: 0, 
-               game_num: round.game_num + 1, 
-               status_code: :start }
-    
+    round = %{round | num: 0, game_num: round.game_num + 1, status_code: :start}
+
     {player_key, round_key, game_pid} = game_context_key(round)
 
     # Register the client with the game server and set the context
     %{key: ^round_key, code: status_code, data: data, text: status_text} =
-      Game.register(game_pid, player_key, round_key)    
+      Game.register(game_pid, player_key, round_key)
 
-    context = if status_code == :finished do nil else build_context(round, data) end
+    context =
+      if status_code == :finished do
+        nil
+      else
+        build_context(round, data)
+      end
 
-    %{ round | status_code: status_code,
-       status_text: status_text, 
-       context: context }
-    
+    %{round | status_code: status_code, status_text: status_text, context: context}
   end
-  
+
   # READ
 
   @doc """
   Returns `round` status tuple
   """
 
-  @spec status(t) :: {Game.code, String.t}
+  @spec status(t) :: {Game.code(), String.t()}
   def status(%Round{} = round), do: {round.status_code, round.status_text}
 
   # UPDATE
-  
+
   # Setup the game play round
 
   @doc """
@@ -133,9 +146,8 @@ defmodule Hangman.Round do
   Returns round and pass data metadata
   """
 
-  @spec setup(t, Enumerable.t) :: {t, Pass.t}
+  @spec setup(t, Enumerable.t()) :: {t, Pass.t()}
   def setup(%Round{} = round, exclusion) do
-
     # since we're at the start of a new round increment round num
     round = Kernel.put_in(round.num, round.num + 1)
 
@@ -145,37 +157,42 @@ defmodule Hangman.Round do
     pass_key = round_key(round)
 
     # Filter the hangman word set, grab the result of the pass
-    {^pass_key, pass_info} = 
-      Pass.result(match_key, pass_key, reduce_key)
+    {^pass_key, pass_info} = Pass.result(match_key, pass_key, reduce_key)
 
     {round, pass_info}
   end
-
 
   @doc """
   Issues a client `guess` (either `letter` or `word`) against `Game.Server`.
   Returns received `round` data
   """
 
-  @spec guess(t, Guess.t) :: t
-  def guess(%Round{} = round, guess = {id, value}) 
-  when id in [:guess_letter, :guess_word] and is_binary(value) do
-    
+  @spec guess(t, Guess.t()) :: t
+  def guess(%Round{} = round, guess = {id, value})
+      when id in [:guess_letter, :guess_word] and is_binary(value) do
     {player_key, round_key, game_pid} = game_context_key(round)
 
-    %{key: ^round_key, result: result_code, code: status_code, 
-      pattern: pattern, text: status_text} =
-      Game.guess(game_pid, player_key, round_key, guess)
-    
-    round = %{round | guess: guess, result_code: result_code, 
-              status_code: status_code, pattern: pattern, 
-              status_text: status_text}
+    %{
+      key: ^round_key,
+      result: result_code,
+      code: status_code,
+      pattern: pattern,
+      text: status_text
+    } = Game.guess(game_pid, player_key, round_key, guess)
+
+    round = %{
+      round
+      | guess: guess,
+        result_code: result_code,
+        status_code: status_code,
+        pattern: pattern,
+        status_text: status_text
+    }
 
     # Compute round context for the next round
     round = Kernel.put_in(round.context, build_context(round))
 
     round
-
   end
 
   @doc """
@@ -186,30 +203,30 @@ defmodule Hangman.Round do
 
   @spec transition(t) :: t
   def transition(%Round{} = round) do
-
     true = round.status_code in [:won, :lost]
 
     # invoke pass clean up routine, so that we purge pass table of 
     # last pass data
-    round |> increment_key |> Pass.delete
+    round |> increment_key |> Pass.delete()
 
     {player_key, round_key, game_pid} = game_context_key(round)
 
-    %{key: ^round_key, code: status_code} = status =
-      Game.status(game_pid, player_key, round_key)
+    %{key: ^round_key, code: status_code} = status = Game.status(game_pid, player_key, round_key)
 
     round = Kernel.put_in(round.status_code, status_code)
 
     # Handle the special case if we are starting a new game
     # return the previous games results
-    status_text = 
+    status_text =
       case status_code do
-        :start -> 
+        :start ->
           %{text: text} = Map.get(status, :previous)
           text
-        _ -> Map.get(status, :text)
+
+        _ ->
+          Map.get(status, :text)
       end
-    
+
     round = Kernel.put_in(round.status_text, status_text)
 
     round
@@ -220,13 +237,14 @@ defmodule Hangman.Round do
   @spec build_context(t, none | non_neg_integer) :: context | no_return
   defp build_context(%Round{} = round, data \\ 0) do
     case round.result_code do
-      nil -> {:start, data}
+      nil ->
+        {:start, data}
 
-      :correct_letter -> 
+      :correct_letter ->
         {:guess_letter, letter} = round.guess
         {:guessing, :correct_letter, letter, round.pattern, @mystery_letter}
 
-      :incorrect_letter -> 
+      :incorrect_letter ->
         {:guess_letter, letter} = round.guess
         {:guessing, :incorrect_letter, letter}
 
@@ -234,15 +252,14 @@ defmodule Hangman.Round do
         {:guess_word, word} = round.guess
         {:guessing, :incorrect_word, word}
 
-      :correct_word -> 
+      :correct_word ->
         {:guess_word, word} = round.guess
         {:won, :correct_word, word}
-      
+
       true ->
         raise HangmanError, "Unknown round result"
     end
   end
-
 
   @doc "Returns round tuple key"
 
@@ -250,7 +267,7 @@ defmodule Hangman.Round do
   def round_key(%Round{} = round), do: {round.id, round.game_num, round.num}
 
   @spec increment_key(t) :: key
-  defp increment_key(%Round{} = round), do:  {round.id, round.game_num, round.num + 1}
+  defp increment_key(%Round{} = round), do: {round.id, round.game_num, round.num + 1}
 
   @spec player_key(t) :: tuple
   defp player_key(%Round{} = round), do: {round.id, round.pid}
@@ -262,18 +279,16 @@ defmodule Hangman.Round do
     {pkey, rkey, round.game_pid}
   end
 
-
   # EXTRA
   # Returns player information 
-  @spec info(t) :: Keyword.t
+  @spec info(t) :: Keyword.t()
   def info(%Round{} = round) do
-    
-    guess = 
+    guess =
       case round.guess do
         {} -> ""
         {_atom, token} -> token
       end
-    
+
     round_info = [
       game_num: round.game_num,
       round_num: round.num,
@@ -284,7 +299,7 @@ defmodule Hangman.Round do
       pattern: round.pattern,
       context: round.context
     ]
-    
+
     _info = [
       id: round.id,
       pid: round.pid,
@@ -299,9 +314,7 @@ defmodule Hangman.Round do
 
     def inspect(t, opts) do
       info = Inspect.List.inspect(Round.info(t), opts)
-      concat ["#Round<", info, ">"]
+      concat(["#Round<", info, ">"])
     end
   end
-
-
 end

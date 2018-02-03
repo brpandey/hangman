@@ -36,10 +36,10 @@ defmodule Hangman.Letter.Strategy do
   alias Hangman.{Counter, Guess, Pass, Letter, Letter.Strategy, Round}
   require Logger
 
-  defstruct guessed_letters: MapSet.new, pass: %Pass{}, guess: {}, choices: {}
+  defstruct guessed_letters: MapSet.new(), pass: %Pass{}, guess: {}, choices: {}
 
   @opaque t :: %__MODULE__{}
-  @type result :: {t, Guess.t}
+  @type result :: {t, Guess.t()}
 
   @letter_choices 5
 
@@ -59,163 +59,167 @@ defmodule Hangman.Letter.Strategy do
 
   @spec guessed(t) :: list
   def guessed(%Strategy{} = strategy) do
-    strategy.guessed_letters |> Enum.to_list
+    strategy.guessed_letters |> Enum.to_list()
   end
-
 
   # UPDATE
 
   @doc """
   Process best letter guess as deemed by the auto self-selecting heuristic
   """
-  @spec process(t, Pass.t) :: t | no_return
+  @spec process(t, Pass.t()) :: t | no_return
   def process(%Strategy{} = strategy, %Pass{} = pass) do
     process(strategy, :auto, pass)
   end
 
-  @spec process(t, atom, Pass.t) :: t | no_return
+  @spec process(t, atom, Pass.t()) :: t | no_return
   def process(%Strategy{} = strategy, :auto, %Pass{} = pass) do
-
     # Updates `strategy` with engine `pass` data.
-    strategy = %{ strategy | pass: pass }
+    strategy = %{strategy | pass: pass}
 
-    strategy = 
-      case strategy.pass.size do 
-        0 ->  
+    strategy =
+      case strategy.pass.size do
+        0 ->
           raise HangmanError, "Word not in dictionary"
+
         1 ->
           {true, {:guess_word, final_word}} = last_word?(strategy)
           Kernel.put_in(strategy.guess, {:guess_word, final_word})
+
         _ ->
           letter = select(strategy)
           guessed_letters = MapSet.put(strategy.guessed_letters, letter)
           strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
-          Kernel.put_in(strategy.guess, {:guess_letter, letter})            
+          Kernel.put_in(strategy.guess, {:guess_letter, letter})
       end
-    
+
     strategy
   end
-
 
   @doc """
   Processes pass data and stores guess choices data. Denotes
   'strategic' letter pick with an `asterisk`.
   """
-  
-  @spec process(t, atom, Pass.t, pos_integer) :: Guess.option | no_return
+
+  @spec process(t, atom, Pass.t(), pos_integer) :: Guess.option() | no_return
   def process(%Strategy{} = strategy, :choices, %Pass{} = pass, n \\ @letter_choices)
-  when is_number(n) and n > 0 do
-
+      when is_number(n) and n > 0 do
     # Updates `strategy` with engine `pass` data.
-    strategy = %{ strategy | pass: pass }
+    strategy = %{strategy | pass: pass}
 
-    if strategy.pass.size == 0 do raise HangmanError, "Word not in dictionary" end
-    
-    strategy = 
-      case last_word?(strategy) do        
-        {false, _} ->          
+    if strategy.pass.size == 0 do
+      raise HangmanError, "Word not in dictionary"
+    end
+
+    strategy =
+      case last_word?(strategy) do
+        {false, _} ->
           # Return top 5 {letter, count} pairs if possible
-          top_choices = strategy.pass.tally |> Counter.most_common(n) 
-          
-          wrap = if String.length(strategy.pass.possible) > 0 do "\n\n" else "" end
-          
+          top_choices = strategy.pass.tally |> Counter.most_common(n)
+
+          wrap =
+            if String.length(strategy.pass.possible) > 0 do
+              "\n\n"
+            else
+              ""
+            end
+
           possible_words_txt = strategy.pass.possible <> wrap
-          
-          size = length(top_choices)      
-          choices_text = Enum.reduce(top_choices, "", fn {k,v}, acc -> 
-            acc <> " #{k}:#{v}" end)
-          
-          best_letter = select(strategy)        
+
+          size = length(top_choices)
+
+          choices_text =
+            Enum.reduce(top_choices, "", fn {k, v}, acc ->
+              acc <> " #{k}:#{v}"
+            end)
+
+          best_letter = select(strategy)
           choices_text = String.replace(choices_text, best_letter, best_letter <> "*")
-          
-          text = possible_words_txt <>
-            "Player {name}, Round {round_no}, {status}.\n" <>
-            "#{size} weighted letter choices : #{choices_text}" <> 
-            " (* robot choice)"
-          
+
+          text =
+            possible_words_txt <>
+              "Player {name}, Round {round_no}, {status}.\n" <>
+              "#{size} weighted letter choices : #{choices_text}" <> " (* robot choice)"
+
           Kernel.put_in(strategy.choices, {:guess_letter, text})
 
         {true, {:guess_word, last}} ->
           # Return text with last word
-          text = "Player {name}, Round {round_no}, {status}.\n" <>
-            "Last word left: #{last}"
-          
+          text = "Player {name}, Round {round_no}, {status}.\n" <> "Last word left: #{last}"
+
           Kernel.put_in(strategy.choices, {:guess_word, last, text})
       end
-    
+
     strategy
   end
-
 
   @doc """
   Returns best letter guess as previously computed
   """
 
-  @spec guess(t) :: Guess.t
+  @spec guess(t) :: Guess.t()
   def guess(%Strategy{} = strategy), do: guess(strategy, :auto)
 
-  @spec guess(t, atom) :: Guess.t
+  @spec guess(t, atom) :: Guess.t()
   def guess(%Strategy{} = strategy, :auto), do: strategy.guess
 
-  @spec guess(t, atom, tuple) :: Guess.t
+  @spec guess(t, atom, tuple) :: Guess.t()
   def guess(%Strategy{} = strategy, :choices, {:guess_letter, letter}) do
     validate(strategy, letter)
   end
 
-  def guess(%Strategy{} = _strategy, :choices, {:guess_word, last_word}) 
+  def guess(%Strategy{} = _strategy, :choices, {:guess_word, last_word})
       when is_binary(last_word) do
     {:guess_word, last_word}
   end
-
 
   @doc """
   Updates strategy with guess data
   """
 
-  @spec update(t, Guess.t) :: t
+  @spec update(t, Guess.t()) :: t
   def update(%Strategy{} = strategy, {:guess_letter, guessed_letter})
-  when is_binary(guessed_letter) do
-
+      when is_binary(guessed_letter) do
     guessed_letters = MapSet.put(strategy.guessed_letters, guessed_letter)
-    
+
     strategy = Kernel.put_in(strategy.guessed_letters, guessed_letters)
-    strategy = Kernel.put_in(strategy.guess, {:guess_letter, guessed_letter}) 
-    
+    strategy = Kernel.put_in(strategy.guess, {:guess_letter, guessed_letter})
+
     strategy
   end
 
   def update(%Strategy{} = strategy, {:guess_word, last_word})
-  when is_binary(last_word) do
-    %{ strategy | guess: {:guess_word, last_word}}
+      when is_binary(last_word) do
+    %{strategy | guess: {:guess_word, last_word}}
   end
-
 
   @doc """
   Retrieves choices info augmenting it with round info
   """
 
-  @spec choices(t, Round.t) :: Guess.options
+  @spec choices(t, Round.t()) :: Guess.options()
   def choices(%Strategy{} = strategy, %Round{} = round) do
     case strategy.choices do
       {:guess_letter, text} ->
         text = update_choices(round, text)
         {:guess_letter, text}
+
       {:guess_word, last, text} ->
         text = update_choices(round, text)
         {:guess_word, last, text}
-      _ -> raise HangmanError, "Unsupported choices type"
+
+      _ ->
+        raise HangmanError, "Unsupported choices type"
     end
   end
-
 
   # PRIVATE HELPERS
 
   # Defer to letter retrieval strategy to return best letter
-  @spec select(t) :: String.t
+  @spec select(t) :: String.t()
   defp select(%Strategy{} = strategy) do
     Letter.Retrieval.Strategy.select(strategy)
   end
- 
 
   # If we have reached the last possible hangman word,
   # return it so we can guess it
@@ -229,57 +233,55 @@ defmodule Hangman.Letter.Strategy do
     end
   end
 
-
-
   # Validates `letter` is within the top strategy letter choices.
   # If not, picks the top `letter` as deemed by heuristics.
 
-  @spec validate(t, String.t, pos_integer) :: Guess.t
-  defp validate(%Strategy{} = strategy, letter, n \\ @letter_choices) 
-  when is_number(n) and n > 0 and is_binary(letter) do
-
+  @spec validate(t, String.t(), pos_integer) :: Guess.t()
+  defp validate(%Strategy{} = strategy, letter, n \\ @letter_choices)
+       when is_number(n) and n > 0 and is_binary(letter) do
     counter = strategy.pass.tally
     top_choices = Counter.most_common_key(counter, n)
 
     # If user has decided to put in a letter, not in the choices
     # grab the letter that had the highest letter counts
-    letter = 
-      unless letter in top_choices do Kernel.hd(top_choices) else letter end
-    
+    letter =
+      unless letter in top_choices do
+        Kernel.hd(top_choices)
+      else
+        letter
+      end
+
     {:guess_letter, letter}
   end
 
-
   # Interjects specific parameters into `choices text`.
 
-  @spec update_choices(Round.t, String.t) :: String.t
+  @spec update_choices(Round.t(), String.t()) :: String.t()
   defp update_choices(%Round{} = round, text) when is_binary(text) do
     {name, _, round_no} = Round.round_key(round)
     {_, status_text} = Round.status(round)
 
-    text 
+    text
     |> String.replace("{name}", "#{name}")
     |> String.replace("{round_no}", "#{round_no}")
     |> String.replace("{status}", "#{status_text}")
   end
 
-
   @doc """
   Returns `Strategy` information
   """
 
-  @spec info(t) :: Keyword.t
+  @spec info(t) :: Keyword.t()
   def info(%Strategy{} = s) do
-
-    pass_tally_text = 
-      case(s.pass.tally) do
+    pass_tally_text =
+      case s.pass.tally do
         %Counter{} -> Counter.items(s.pass.tally)
         %{} -> []
       end
 
     pass = [
       size: s.pass.size,
-#      possible_words: s.pass.possible,
+      #      possible_words: s.pass.possible,
       last_word: s.pass.last_word,
       tally: pass_tally_text
     ]
@@ -295,9 +297,7 @@ defmodule Hangman.Letter.Strategy do
 
     def inspect(t, opts) do
       info = Inspect.List.inspect(Strategy.info(t), opts)
-      concat ["#Strategy<", info, ">"]
+      concat(["#Strategy<", info, ">"])
     end
   end
-
-  
 end

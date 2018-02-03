@@ -11,7 +11,7 @@ defmodule Hangman.Player.Alert.Handler do
   alias Experimental.GenStage
   require Logger
 
-  @spec start_link(Keyword.t) :: GenServer.on_start
+  @spec start_link(Keyword.t()) :: GenServer.on_start()
   def start_link(options) do
     GenStage.start_link(__MODULE__, options)
   end
@@ -23,17 +23,18 @@ defmodule Hangman.Player.Alert.Handler do
 
   # Callbacks
 
-  @callback init(term) :: {GenStage.type, tuple, GenStage.options} | {:stop, :normal}
+  @callback init(term) :: {GenStage.type(), tuple, GenStage.options()} | {:stop, :normal}
   def init(options) do
     # Starts a permanent subscription to the broadcaster
     # which will automatically start requesting items.
 
-    with {:ok, key} <- Keyword.fetch(options, :id), 
-    {:ok, write_pid} <- Keyword.fetch(options, :pid) do
+    with {:ok, key} <- Keyword.fetch(options, :id),
+         {:ok, write_pid} <- Keyword.fetch(options, :pid) do
       {:consumer, {key, write_pid}, subscribe_to: [Hangman.Game.Event.Manager]}
-    else 
+    else
       ## ABORT if display output not true
-      _ -> {:stop, :normal}
+      _ ->
+        {:stop, :normal}
     end
   end
 
@@ -55,45 +56,40 @@ defmodule Hangman.Player.Alert.Handler do
       process_event(event, write_pid)
     end
 
-    {:noreply, [], {key, write_pid}}    
+    {:noreply, [], {key, write_pid}}
   end
 
   @spec process_event({atom, term, tuple | binary}, pid) :: :ok
   defp process_event(event, _write_pid) do
-
-    msg = 
+    msg =
       case event do
         {:register, name, {game_no, length}} ->
           "##{name}_feed --> Game #{game_no} has started\n" <>
-          "##{name}_feed Game #{game_no}, " <> 
-            "secret length --> #{length}"
+            "##{name}_feed Game #{game_no}, " <> "secret length --> #{length}"
+
         {:guess, name, {{:guess_letter, letter}, game_no}} ->
-          "##{name}_feed Game #{game_no}, " <> 
-            "letter --> #{letter}"
+          "##{name}_feed Game #{game_no}, " <> "letter --> #{letter}"
+
         {:guess, name, {{:guess_word, word}, game_no}} ->
-          "##{name}_feed Game #{game_no}, " <> 
-            "word --> #{word}"
+          "##{name}_feed Game #{game_no}, " <> "word --> #{word}"
+
         {:status, name, {game_no, round_no, text}} ->
-          "##{name}_feed Game #{game_no}, " <> 
-            "Round #{round_no}, status --> #{text}\n"
+          "##{name}_feed Game #{game_no}, " <> "Round #{round_no}, status --> #{text}\n"
+
         {:finished, name, text} ->
           "##{name}_feed Game Over!! --> #{text}"
       end
 
-
     IO.puts(msg)
-
-
   end
-
 
   @doc """
   Terminate callback.
   """
-  
+
   @callback terminate(term, term) :: :ok | tuple
   def terminate(_reason, _state) do
-    _ = Logger.debug "Terminating Player Alert"
+    _ = Logger.debug("Terminating Player Alert")
     :ok
   end
 end

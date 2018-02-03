@@ -20,22 +20,30 @@ use Mix.Config
 #
 #     config :logger, level: :info
 
-
-config :hangman_game, 
-  max_wrong_guesses: 5, # Max incorrect hangman guess chances
+config :hangman_game,
+  # Max incorrect hangman guess chances
+  max_wrong_guesses: 5,
   port: 3737,
   min_secret_length: 3,
   max_secret_length: 28,
-  max_guess_wait: 20000, # 20 secs to choose for letter under human cli
-  default_guess_wait: 5000, # 5 secs to choose for letter under human cli
+  # 20 secs to choose for letter under human cli
+  max_guess_wait: 20000,
+  # 5 secs to choose for letter under human cli
+  default_guess_wait: 5000,
   min_random_word_length: 5,
   max_random_word_length: 15,
-  max_random_words: 1000, # Max randoms secrets to play against
-  words_container_size: 500, # Number of words to group by when processing dict
-  random_words_per_container: 20, # Given words container choose 20 randoms
-  shard_flow_max_demand: 2, # Maximum amount of events that must be in flow 
-  reduction_pool_size: 10, # 10 reduction workers
-  shard_size_words: 10 # 10 words per shard
+  # Max randoms secrets to play against
+  max_random_words: 1000,
+  # Number of words to group by when processing dict
+  words_container_size: 500,
+  # Given words container choose 20 randoms
+  random_words_per_container: 20,
+  # Maximum amount of events that must be in flow 
+  shard_flow_max_demand: 2,
+  # 10 reduction workers
+  reduction_pool_size: 10,
+  # 10 words per shard
+  shard_size_words: 10
 
 config :logger, :console,
   level: :info,

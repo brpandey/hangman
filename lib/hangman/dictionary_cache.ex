@@ -14,18 +14,17 @@ defmodule Hangman.Dictionary.Cache do
   # External API
 
   @doc "Check whether ets is setup"
-  
+
   @spec setup? :: atom | no_return
   def setup? do
-    Dictionary.ETS.setup?
+    Dictionary.ETS.setup?()
   end
-
 
   @doc """
   GenServer start link wrapper function
   """
 
-  @spec start_link(Keyword.t) :: {:ok, pid}
+  @spec start_link(Keyword.t()) :: {:ok, pid}
   def start_link(args) do
     options = [name: :hangman_dictionary_cache_server]
     GenServer.start_link(__MODULE__, args, options)
@@ -40,19 +39,19 @@ defmodule Hangman.Dictionary.Cache do
     * `:words` -  retrieve the word data lists associated with the word length key
   """
 
-  @spec lookup(pid, atom, pos_integer) ::  [String.t] | Counter.t | Words.t | no_return
+  @spec lookup(pid, atom, pos_integer) :: [String.t()] | Counter.t() | Words.t() | no_return
   def lookup(pid, :random, count) do
-    GenServer.call pid, {:lookup_random, count}
+    GenServer.call(pid, {:lookup_random, count})
   end
 
   def lookup(pid, :tally, length_key)
-  when is_number(length_key) and length_key > 0 do
-    GenServer.call pid, {:lookup_tally, length_key}
+      when is_number(length_key) and length_key > 0 do
+    GenServer.call(pid, {:lookup_tally, length_key})
   end
 
   def lookup(pid, :words, length_key)
-  when is_number(length_key) and length_key > 0 do
-    GenServer.call pid, {:lookup_words, length_key}
+      when is_number(length_key) and length_key > 0 do
+    GenServer.call(pid, {:lookup_words, length_key})
   end
 
   @doc """
@@ -61,9 +60,8 @@ defmodule Hangman.Dictionary.Cache do
 
   @spec stop(none | pid) :: {}
   def stop(pid) when is_pid(pid) do
-    GenServer.call pid, :stop
+    GenServer.call(pid, :stop)
   end
-
 
   @doc """
   GenServer callback to initalize server process
@@ -71,10 +69,9 @@ defmodule Hangman.Dictionary.Cache do
   Kicks off ingestion process to load dictionary words
   """
 
-  @callback init(Keyword.t) :: tuple
+  @callback init(Keyword.t()) :: tuple
   def init(args) do
-
-    _ = Logger.debug "Starting Hangman Dictionary Cache Server, args #{inspect args}"
+    _ = Logger.debug("Starting Hangman Dictionary Cache Server, args #{inspect(args)}")
 
     # Run ingestion workflow, store the results into ETS
     Dictionary.Ingestion.run(args)
@@ -84,7 +81,7 @@ defmodule Hangman.Dictionary.Cache do
 
   # GenServer callback to retrieve random hangman word
 
-  #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
+  # @callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_random, count}, _from, {}) do
     data = Dictionary.ETS.get(:random, count)
     {:reply, data, {}}
@@ -92,37 +89,33 @@ defmodule Hangman.Dictionary.Cache do
 
   # GenServer callback to retrieve tally given word length key
 
-  #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
+  # @callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_tally, length_key}, _from, {})
-  when is_integer(length_key) do
+      when is_integer(length_key) do
     data = Dictionary.ETS.get(:counter, length_key)
     {:reply, data, {}}
   end
 
   # GenServer callback to retrieve word lists given word length key
 
-  #@callback handle_call({:atom, pos_integer}, {}, {}) :: {}
+  # @callback handle_call({:atom, pos_integer}, {}, {}) :: {}
   def handle_call({:lookup_words, length_key}, _from, {}) do
     data = Dictionary.ETS.get(:words, length_key)
     {:reply, data, {}}
   end
- 
+
   # GenServer callback to stop server normally
 
-  #@callback handle_call(:atom, pid, {}) :: {}
+  # @callback handle_call(:atom, pid, {}) :: {}
   def handle_call(:stop, _from, {}) do
-    { :stop, :normal, :ok, {}}
-  end 
-
+    {:stop, :normal, :ok, {}}
+  end
 
   # GenServer callback to cleanup server state
 
-  #@callback terminate(reason :: term, {}) :: term | no_return
+  # @callback terminate(reason :: term, {}) :: term | no_return
   def terminate(reason, _state) do
     _ = Logger.debug("Dictionary Cache Server terminating, reason #{reason}")
     :ok
   end
-
-
 end
-

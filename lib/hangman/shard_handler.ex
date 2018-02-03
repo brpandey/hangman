@@ -28,11 +28,10 @@ defmodule Hangman.Shard.Handler do
   Sets up the `game` server and per player `event` server.
   Used primarly by the collation logic in Flow
   """
-  
-  @spec setup({Player.id, list[String.t]}) :: Player.id
-  def setup({id, secrets}) when 
-  (is_binary(id) or is_tuple(id)) and is_list(secrets) do
 
+  @spec setup({Player.id(), list[String.t()]}) :: Player.id()
+  def setup({id, secrets})
+      when (is_binary(id) or is_tuple(id)) and is_list(secrets) do
     # Grab game pid first from game server controller
     game_pid = Game.Server.Controller.get_server(id, secrets)
 
@@ -46,36 +45,37 @@ defmodule Hangman.Shard.Handler do
   Play handles client play loop for particular player shard_key 
   """
 
-  @spec play(Player.id) :: {Player.id, list(String.t)}
+  @spec play(Player.id()) :: {Player.id(), list(String.t())}
   def play(shard_key) do
-
     # Compose game status accumulator until we have received 
     # an :exit value from the Player Controller
-    list = repeatedly do
+    list =
+      repeatedly do
+        case Player.Controller.proceed(shard_key) do
+          {code, _status} when code in [:begin, :transit] ->
+            :ok
 
-      case Player.Controller.proceed(shard_key) do
-        {code, _status} when code in [:begin, :transit] -> :ok
+          {:retry, _status} ->
+            # Stop gap for gproc no proc error
+            Process.sleep(@sleep)
 
-        {:retry, _status} -> 
-          Process.sleep(@sleep) # Stop gap for gproc no proc error
+          {:action, status} ->
+            # collect action guess result
+            next(status)
 
-        {:action, status} -> 
-          next(status) # collect action guess result
+          {:exit, status} ->
+            # Stop both the player client worker and the corresponding game server
+            Player.Controller.stop_worker(shard_key)
+            Game.Server.Controller.stop_server(shard_key)
 
-        {:exit, status} -> 
-          # Stop both the player client worker and the corresponding game server
-          Player.Controller.stop_worker(shard_key)
-          Game.Server.Controller.stop_server(shard_key)            
-          
-          done(status) # signal end of accumulator and capture last status result
-        
-          _ -> raise "Unknown Player state"
+            # signal end of accumulator and capture last status result
+            done(status)
+
+          _ ->
+            raise "Unknown Player state"
+        end
       end
-
-    end        
 
     {shard_key, list}
   end
-
-
 end

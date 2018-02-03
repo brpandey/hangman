@@ -7,9 +7,9 @@ defmodule Hangman.Reduction.Engine.Pool do
   use Supervisor
   alias Hangman.Reduction
 
-  #`Supervisor` start link wrapper function. Accepts `pool` size argument.
-  
-  #@spec start_link(pos_integer) :: Supervisor.on_start
+  # `Supervisor` start link wrapper function. Accepts `pool` size argument.
+
+  # @spec start_link(pos_integer) :: Supervisor.on_start
   def start_link(pool_size) do
     Supervisor.start_link(__MODULE__, pool_size)
   end
@@ -21,16 +21,17 @@ defmodule Hangman.Reduction.Engine.Pool do
 
   @callback init(pool_size :: pos_integer) :: {:ok, tuple}
   def init(pool_size) do
-    processes = for worker_id <- 1..pool_size do
-      # Create worker spec for each value
-      worker(
-        Reduction.Engine.Worker, [worker_id],
-        id: {:reduction_engine_worker, worker_id}
-      )
-    end
+    processes =
+      for worker_id <- 1..pool_size do
+        # Create worker spec for each value
+        worker(
+          Reduction.Engine.Worker,
+          [worker_id],
+          id: {:reduction_engine_worker, worker_id}
+        )
+      end
 
     # Supervise each of above defined workers
     supervise(processes, strategy: :one_for_one)
   end
-
 end

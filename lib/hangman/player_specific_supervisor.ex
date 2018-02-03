@@ -20,12 +20,11 @@ defmodule Hangman.Player.Specific.Supervisor do
   Supervisor start and link wrapper function
   """
 
-  @spec start_link :: Supervisor.on_start
+  @spec start_link :: Supervisor.on_start()
   def start_link do
     args = {}
 
-    _ = Logger.debug "Starting Hangman Player Specific Supervisor," <> 
-      " args: #{inspect args}"
+    _ = Logger.debug("Starting Hangman Player Specific Supervisor," <> " args: #{inspect(args)}")
 
     Supervisor.start_link(__MODULE__, args)
   end
@@ -35,10 +34,9 @@ defmodule Hangman.Player.Specific.Supervisor do
   Deploys a strategy of rest for one to isolate
   process tree errors without leaving dangling orphan processes
   """
-  
+
   @callback init(term) :: {:ok, tuple}
   def init(_) do
-
     children = [
       supervisor(Player.Worker.Supervisor, []),
       supervisor(Player.Logger.Supervisor, []),
@@ -47,5 +45,4 @@ defmodule Hangman.Player.Specific.Supervisor do
 
     supervise(children, strategy: :rest_for_one)
   end
-
 end

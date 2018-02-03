@@ -23,22 +23,22 @@ defmodule Hangman.Player.Worker.Supervisor do
   Supervisor start and link wrapper function
   """
 
-  @spec start_link :: Supervisor.on_start
+  @spec start_link :: Supervisor.on_start()
   def start_link() do
-    _ = Logger.debug "Starting Hangman Player Worker Supervisor"
+    _ = Logger.debug("Starting Hangman Player Worker Supervisor")
 
-    Supervisor.start_link(__MODULE__, {}, 
-                          name: :hangman_player_worker_supervisor)
+    Supervisor.start_link(__MODULE__, {}, name: :hangman_player_worker_supervisor)
   end
 
   @doc """
   Starts a player worker dynamically
   """
 
-  @spec start_child(Player.id, atom, boolean, pid) :: Supervisor.on_start_child
-  def start_child(player_id, player_type, display, game_pid) do 
-    Supervisor.start_child(:hangman_player_worker_supervisor, 
-      [{player_id, player_type, display, game_pid}])
+  @spec start_child(Player.id(), atom, boolean, pid) :: Supervisor.on_start_child()
+  def start_child(player_id, player_type, display, game_pid) do
+    Supervisor.start_child(:hangman_player_worker_supervisor, [
+      {player_id, player_type, display, game_pid}
+    ])
   end
 
   @doc """
@@ -47,15 +47,15 @@ defmodule Hangman.Player.Worker.Supervisor do
 
   Supervises each player worker server
   """
-  
+
   @callback init(term) :: {:ok, tuple}
   def init(_) do
     children = [
-      worker(Player.Worker, [], restart: :transient) 
+      worker(Player.Worker, [], restart: :transient)
     ]
 
     # :simple_one_for_one to indicate that 
     # we're starting children dynamically 
-    supervise( children, strategy: :simple_one_for_one )
+    supervise(children, strategy: :simple_one_for_one)
   end
 end

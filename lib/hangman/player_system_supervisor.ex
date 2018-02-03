@@ -20,10 +20,9 @@ defmodule Hangman.Player.System.Supervisor do
   Supervisor start and link wrapper function
   """
 
-  @spec start_link(Keyword.t) :: Supervisor.on_start
+  @spec start_link(Keyword.t()) :: Supervisor.on_start()
   def start_link(args) do
-    _ = Logger.debug "Starting Hangman Player System Supervisor," <> 
-      " args: #{inspect args}"
+    _ = Logger.debug("Starting Hangman Player System Supervisor," <> " args: #{inspect(args)}")
 
     Supervisor.start_link(__MODULE__, args)
   end
@@ -35,10 +34,9 @@ defmodule Hangman.Player.System.Supervisor do
   process trees are dependant on each other
   and not mutually exclusive
   """
-  
-  @callback init(Keyword.t) :: {:ok, tuple}
-  def init(args) do
 
+  @callback init(Keyword.t()) :: {:ok, tuple}
+  def init(args) do
     children = [
       worker(Dictionary.Cache, [args]),
       worker(Pass.Cache, []),
@@ -48,5 +46,4 @@ defmodule Hangman.Player.System.Supervisor do
 
     supervise(children, strategy: :rest_for_one)
   end
-
 end

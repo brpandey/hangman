@@ -14,12 +14,12 @@ defmodule Hangman.Game.Event.Manager do
   Starts the manager.
   """
 
-  @spec start_link :: GenServer.on_start
+  @spec start_link :: GenServer.on_start()
   def start_link() do
-    _ = Logger.debug "Starting Hangman Game Event Manager"
+    _ = Logger.debug("Starting Hangman Game Event Manager")
     GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
   end
-  
+
   @doc """
   Sends an event and returns only after the event is
   dispatched.  Blocks until event is broadcasted
@@ -30,13 +30,11 @@ defmodule Hangman.Game.Event.Manager do
     GenStage.cast(__MODULE__, {:notify, event})
   end
 
-  
   ### Server Callbacks
 
-
-  @callback init(term) :: {GenStage.type, tuple, GenStage.options}
+  @callback init(term) :: {GenStage.type(), tuple, GenStage.options()}
   def init(:ok) do
-    {:producer, {:queue.new, 0}, dispatcher: GenStage.BroadcastDispatcher}
+    {:producer, {:queue.new(), 0}, dispatcher: GenStage.BroadcastDispatcher}
   end
 
   # Store the event into the queue
@@ -57,14 +55,15 @@ defmodule Hangman.Game.Event.Manager do
 
   @spec dispatch_async_events(term, pos_integer, term) :: tuple
   defp dispatch_async_events(queue, demand, events) do
+    ## Returns events now that we've consumed the demand
     with d when d > 0 <- demand,
-    {item, queue} = :queue.out(queue),
-    {:value, event} <- item do
+         {item, queue} = :queue.out(queue),
+         {:value, event} <- item do
       dispatch_async_events(queue, demand - 1, [event | events])
-    else ## Returns events now that we've consumed the demand
-        ## if events empty than so be it, else return the concatenated list
-      _ -> {:noreply, Enum.reverse(events), {queue, demand}}
+    else
+      ## if events empty than so be it, else return the concatenated list
+      _ ->
+        {:noreply, Enum.reverse(events), {queue, demand}}
     end
   end
-
 end

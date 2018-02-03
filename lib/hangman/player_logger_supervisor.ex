@@ -12,9 +12,9 @@ defmodule Hangman.Player.Logger.Supervisor do
   Supervisor start and link wrapper function
   """
 
-  @spec start_link :: Supervisor.on_start
+  @spec start_link :: Supervisor.on_start()
   def start_link do
-    _ = Logger.debug "Starting Hangman Player Logger Supervisor"
+    _ = Logger.debug("Starting Hangman Player Logger Supervisor")
     Supervisor.start_link(__MODULE__, {}, name: :player_logger_supervisor)
   end
 
@@ -22,19 +22,19 @@ defmodule Hangman.Player.Logger.Supervisor do
   Starts a player logger handler dynamically
   """
 
-  @spec start_child(String.t) :: Supervisor.on_start_child
+  @spec start_child(String.t()) :: Supervisor.on_start_child()
   def start_child(id) when is_binary(id) do
     options = [id: id]
     Supervisor.start_child(:player_logger_supervisor, [options])
   end
-  
+
   @doc """
   For each worker instantiated through start_child, 
   defines the worker specification to be supervised.
 
   Supervises each player logger handler
   """
-  
+
   @callback init(term) :: {:ok, tuple}
   def init(_) do
     # define single child specification 
@@ -47,7 +47,6 @@ defmodule Hangman.Player.Logger.Supervisor do
     # :simple_one_for_one to indicate that 
     # we're starting children dynamically and children are of same type
 
-    supervise( children, strategy: :simple_one_for_one )
+    supervise(children, strategy: :simple_one_for_one)
   end
-  
 end

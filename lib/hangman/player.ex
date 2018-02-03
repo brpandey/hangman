@@ -13,45 +13,41 @@ defmodule Hangman.Player do
   """
 
   alias Hangman.{Player, Round, Letter.Strategy}
-  
+
   # The Player ID needs to be unique during multiple concurrent game play
   # Async testing of hangman games should use different player ids
 
-  @type id :: String.t | {id :: String.t, shard_no :: pos_integer}
-  @type key :: {id :: String.t, player_pid :: pid} # Used as game key
-
+  @type id :: String.t() | {id :: String.t(), shard_no :: pos_integer}
+  # Used as game key
+  @type key :: {id :: String.t(), player_pid :: pid}
 
   @doc "Create new player"
   def new({name, type, display, game_pid})
-  when (is_binary(name) or is_tuple(name)) and
-  is_boolean(display) and is_pid(game_pid) and is_atom(type) do
-
-    player = Map.get(Player.Types.types, type)
+      when (is_binary(name) or is_tuple(name)) and is_boolean(display) and is_pid(game_pid) and
+             is_atom(type) do
+    player = Map.get(Player.Types.types(), type)
     round = Round.new(name, game_pid)
 
     %{player | display: display, round: round}
   end
 
-
   @doc "Begin new game player action"
   def begin(player) do
-
     round = player.round
 
     round = Round.register(round)
-    strategy = Strategy.new
+    strategy = Strategy.new()
 
-    code = 
+    code =
       case Round.status(round) do
         {:finished, _text} -> :finished
         _ -> :start
       end
 
-    player = %{ player | round: round, strategy: strategy }
+    player = %{player | round: round, strategy: strategy}
 
     {player, code}
   end
-
 
   # Forward to polymorphic functions
 
@@ -59,13 +55,11 @@ defmodule Hangman.Player do
   def setup(player) do
     Player.Action.setup(player)
   end
-  
+
   @doc "Returns player guess"
   def guess(player, guess \\ nil) do
     Player.Action.guess(player, guess)
   end
-
-
 
   @doc "Returns the correct player transition at the game end"
   def transition(player) do
@@ -77,9 +71,4 @@ defmodule Hangman.Player do
 
     {player, status}
   end
-
-
-
 end
-
-

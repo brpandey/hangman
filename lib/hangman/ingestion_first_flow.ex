@@ -10,7 +10,7 @@ defmodule Hangman.Ingestion.First.Flow do
   require Logger
 
   # Use the number of keys as the same number to partition our dictionary words
-  @num_stages  Dictionary.key_range |> Enum.count
+  @num_stages Dictionary.key_range() |> Enum.count()
 
   @doc """
   Run reads in dictionary words file, and checkpoints snapshots of so many events, 
@@ -23,7 +23,6 @@ defmodule Hangman.Ingestion.First.Flow do
 
   @spec run(binary, map) :: {:ok, map}
   def run(path, %{} = key_file_map) when is_binary(path) do
-
     # Basically we want checkpoint snapshots of e.g. 500 events for each partition
 
     # If we don't use window triggers and lump all the events per partition
@@ -68,9 +67,9 @@ defmodule Hangman.Ingestion.First.Flow do
     [{8, 1000}, {9, 1000}, {10, 1000}, {7, 1000}, {11, 1000}, {6, 1000}, {8, 1000}, {9, 1000}]
 
     So key 8 - partition 6 - already has two sets of 1000 events
-    
+
     Here's an example of the words corresponding to above
-    
+
     %{8 => ["antinuke", "antinomy", "antinode", "antimony", "antimere", "antimask", "antimale", "antilogy", "antilogs", "antilock", "antilife", "antileft", "antileak", "antiking", "antihero", "antigens", "antigene", "antifoam", "antidrug", "antidote", "antidora", ...]}, 
     %{9 => ["antiwhite", "antivirus", "antiviral", "antivenin", "antiurban", "antiunion", "antiulcer", "antitypes", "antitumor", "antitrust", "antitoxin", "antitoxic", "antitheft", "antistory", "antistick", "antistate", "antisolar", "antismoke",  ...]}, 
     %{10 => ["areologies", "arenaceous", "arecolines", "arctically", "arctangent", "archpriest", "archosaurs", "archnesses", "archivolts", "archivists", "architrave", "architects", "archfiends", "archetypes", ...]}, 
@@ -83,7 +82,8 @@ defmodule Hangman.Ingestion.First.Flow do
 
     # By setting the trigger, the reduce function
     # is checkpointed every so many events, e.g. 500 events
-    window = Flow.Window.global |> Flow.Window.trigger_every(Hangman.Words.container_size, :reset)
+    window =
+      Flow.Window.global() |> Flow.Window.trigger_every(Hangman.Words.container_size(), :reset)
 
     File.stream!(path, read_ahead: 100_000)
     |> Flow.from_enumerable()
@@ -91,11 +91,10 @@ defmodule Hangman.Ingestion.First.Flow do
     |> Flow.partition(window: window, stages: @num_stages, hash: &event_route/1)
     |> Flow.reduce(fn -> %{} end, &partition_reduce/2)
     |> Flow.each_state(fn state -> partition_each(state, key_file_map) end)
-    |> Flow.run
+    |> Flow.run()
 
     {:ok, key_file_map}
   end
-
 
   ####  FLOW HELPER FUNCTIONS ####
 
@@ -103,16 +102,15 @@ defmodule Hangman.Ingestion.First.Flow do
 
   @spec event_map(binary) :: {pos_integer, binary}
   defp event_map(event) when is_binary(event) do
-    event = event |> String.trim |> String.downcase
-    {String.length(event), event}    
+    event = event |> String.trim() |> String.downcase()
+    {String.length(event), event}
   end
 
   # Calculate the partition hash for the event using the event_route function
   # which returns partition to route the event to
-  
+
   @spec event_route({pos_integer, binary}) :: tuple
   defp event_route({key, word}) when is_integer(key) and is_binary(word) do
-
     # If we have key lengths ranging from 2..28 we have 27 partitions
     # So for example, given a key of length 7 this would go into
     # 7 - 2 => partition 5 (we account for 0 based partition scheme 
@@ -126,51 +124,49 @@ defmodule Hangman.Ingestion.First.Flow do
     {{key, word}, rem(key - 2, @num_stages)}
   end
 
-
   # Reduce the partition data given the window trigger of e.g. 500 events
   # The acc state is reset after the trigger is materialized
   # The reduce is run per window AND partition 
 
   @spec partition_reduce({pos_integer, binary}, map) :: map
   defp partition_reduce({key, word}, %{} = acc) do
-#     Logger.debug "key is #{key}, word is #{word}"
-      Map.update(acc, key, [word], &(List.flatten([word], &1)))
+    #     Logger.debug "key is #{key}, word is #{word}"
+    Map.update(acc, key, [word], &List.flatten([word], &1))
   end
-
 
   # Invoked after partition reduce
   # Apply function to each partition's state which is a single key map
 
   @spec partition_each(map, map) :: :ok
   defp partition_each(%{} = acc_map, %{} = key_file_map) do
-
     # Only one key value in each partition map state
-    _ = 
+    _ =
       case Map.to_list(acc_map) do
-        [] -> ""
-        [{k, v}] -> 
-          _ = Logger.debug "ingestion flow partition each result: #{inspect {k, Enum.count(v)}}"
-          
+        [] ->
+          ""
+
+        [{k, v}] ->
+          _ = Logger.debug("ingestion flow partition each result: #{inspect({k, Enum.count(v)})}")
+
           # retrieve file pid and write partition data to file
           file_pid = Map.get(key_file_map, k)
-          
+
           kv_delim = Dictionary.Ingestion.delimiter(:kv)
           line_delim = Dictionary.Ingestion.delimiter(:line)
-          
+
           # construct the str which will be written
           str = "#{k}" <> kv_delim <> Enum.join(v, ", ")
-          
+
           IO.write(file_pid, str)
-          
+
           # Add delimiter after every windowed word list chunk, 
           # easier for chunk retrieval
           IO.write(file_pid, line_delim)
-        _ -> raise "Unable to extract acc_map in partition each"
+
+        _ ->
+          raise "Unable to extract acc_map in partition each"
       end
 
     :ok
   end
-
 end
-
-

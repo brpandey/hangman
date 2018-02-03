@@ -61,69 +61,66 @@ defmodule Hangman.Player.FSM do
 
   defstate begin do
     defevent proceed, data: player do
-      {player, code} = player |> Player.begin
+      {player, code} = player |> Player.begin()
+
       case code do
         :start -> respond({:begin, "fsm begin"}, :setup, player)
         :finished -> respond({:begin, "going to fsm exit"}, :exit, player)
       end
     end
   end
-  
+
   defstate setup do
     defevent proceed, data: player do
-      {player, status} = player |> Player.setup
-  #    Logger.debug "FSM setup: player is #{inspect player}"
+      {player, status} = player |> Player.setup()
+      #    Logger.debug "FSM setup: player is #{inspect player}"
       case status do
-        [] -> respond({:setup, []}, 
-                      :action, player)
-        _ ->  respond({:setup, [display: player.display, status: status]}, 
-                      :action, player)
+        [] -> respond({:setup, []}, :action, player)
+        _ -> respond({:setup, [display: player.display, status: status]}, :action, player)
       end
     end
   end
 
-
   defstate action do
     defevent guess(data), data: player do
       {player, status} = player |> Player.guess(data)
-      _ = Logger.debug "FSM action: player is #{inspect player}"
+      _ = Logger.debug("FSM action: player is #{inspect(player)}")
 
       # check if we get game won or game lost
       case status do
-        {code, text} when code in [:won, :lost] -> 
+        {code, text} when code in [:won, :lost] ->
           respond({:action, text}, :transit, player)
+
         {:guessing, text} ->
           respond({:action, text}, :setup, player)
       end
     end
   end
 
-  
   defstate transit do
     defevent proceed, data: player do
-      {player, status} = player |> Player.transition
-#      _ = Logger.debug "FSM transit: player is #{inspect player}"
+      {player, status} = player |> Player.transition()
+      #      _ = Logger.debug "FSM transit: player is #{inspect player}"
 
       case status do
-        {:start, text} -> 
+        {:start, text} ->
           respond({:transit, text}, :begin, player)
-        {:finished, text} -> 
+
+        {:finished, text} ->
           respond({:transit, text}, :exit, player)
       end
     end
   end
 
-  
   defstate exit do
     defevent proceed, data: player do
-      _ = Logger.debug "FSM exit: player is #{inspect player}"
+      _ = Logger.debug("FSM exit: player is #{inspect(player)}")
 
-      #Games Over
+      # Games Over
       respond({:exit, player.round.status_text}, :exit, player)
     end
   end
 
   # called for undefined state/event mapping when inside any state
-  defevent _, do: raise "Player FSM doesn't support requested state:event mapping."
-
+  defevent(_, do: raise("Player FSM doesn't support requested state:event mapping."))
 end

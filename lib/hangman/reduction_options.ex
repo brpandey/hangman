@@ -10,53 +10,46 @@ defmodule Hangman.Reduction.Options do
   Generates `Reduction.key` given round context
   """
 
-  @spec reduce_key(Round.context, Enumerable.t) :: Reduction.key
+  @spec reduce_key(Round.context(), Enumerable.t()) :: Reduction.key()
   def reduce_key({:start, secret_length} = _context, _letters) do
-    
     Keyword.new([
       {:start, true},
       {:secret_length, secret_length}
     ])
   end
-  
-  def reduce_key({_, :correct_letter, guess, _pattern, 
-                  _mystery_letter} = context, letters) do
-    
-    letters = letters |> MapSet.new
+
+  def reduce_key({_, :correct_letter, guess, _pattern, _mystery_letter} = context, letters) do
+    letters = letters |> MapSet.new()
 
     # generate regex match key given context to be used to reduce words set
     regex = regex_match_key(context, letters)
-    
+
     Keyword.new([
-      {:correct_letter, guess}, 
+      {:correct_letter, guess},
       {:guessed_letters, letters},
       {:regex_match_key, regex}
     ])
   end
-  
-  def reduce_key({_, :incorrect_letter, guess} = context, 
-                 letters) do
 
-    letters = letters |> MapSet.new
+  def reduce_key({_, :incorrect_letter, guess} = context, letters) do
+    letters = letters |> MapSet.new()
 
     # generate regex match key given context to be used to reduce words set    
     regex = regex_match_key(context, letters)
-    
+
     Keyword.new([
       {:incorrect_letter, guess},
       {:guessed_letters, letters},
       {:regex_match_key, regex}
     ])
   end
-  
 
   def reduce_key({_, :incorrect_word, guess} = context, letters) do
-
-    letters = letters |> MapSet.new
+    letters = letters |> MapSet.new()
 
     # generate regex match key given context to be used to reduce words set    
     regex = regex_match_key(context, letters)
-    
+
     Keyword.new([
       {:incorrect_word, guess},
       {:guessed_letters, letters},
@@ -85,31 +78,30 @@ defmodule Hangman.Reduction.Options do
   We create a `regex` key to reflect this information.
   """
 
-  @spec regex_match_key(Round.context, Enumerable.t) :: Regex.t
+  @spec regex_match_key(Round.context(), Enumerable.t()) :: Regex.t()
 
-  def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, 
-                      guessed_letters) do
+  def regex_match_key({_, :correct_letter, _guess, pattern, mystery_letter}, guessed_letters) do
     pattern = String.downcase(pattern)
-    
+
     replacement = "[^" <> Enum.join(guessed_letters) <> "]"
-    
+
     # For each mystery_letter replace it with [^characters-already-guessed]
     updated_pattern = String.replace(pattern, mystery_letter, replacement)
     Regex.compile!("^" <> updated_pattern <> "$")
   end
 
-  def regex_match_key({_, :incorrect_letter, incorrect_letter}, _guessed_letters) do    
+  def regex_match_key({_, :incorrect_letter, incorrect_letter}, _guessed_letters) do
     # If "E" was the incorrect letter, the pattern would be "^[^E]*$"
     # Starting from the beginning of the string to the end, any string that 
     # contains an "E" will fail false-> Regex.match?(regex, "HELLO") 
-    
+
     pattern = "^[^" <> incorrect_letter <> "]*$"
     Regex.compile!(pattern)
   end
-  
-  def regex_match_key({_, :incorrect_word, incorrect_word}, _guessed_letters) do    
+
+  def regex_match_key({_, :incorrect_word, incorrect_word}, _guessed_letters) do
     # If "overflight" was the incorrect word, the pattern would be "^(overflight)$"
-    
+
     pattern = "^(?!" <> incorrect_word <> "$)"
     Regex.compile!(pattern)
   end

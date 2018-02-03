@@ -8,9 +8,9 @@ defmodule Hangman.Player.Logger.Handler do
   alias Experimental.GenStage
   require Logger
 
-  @root_path   :code.priv_dir(:hangman_game)
+  @root_path :code.priv_dir(:hangman_game)
 
-  @spec start_link(Keyword.t) :: GenServer.on_start
+  @spec start_link(Keyword.t()) :: GenServer.on_start()
   def start_link(options) do
     GenStage.start_link(__MODULE__, options)
   end
@@ -20,34 +20,30 @@ defmodule Hangman.Player.Logger.Handler do
     GenStage.call(pid, :stop)
   end
 
-
   # Callbacks
 
-  @callback init(term) :: {GenStage.type, tuple, GenStage.options} | {:stop, :normal}
+  @callback init(term) :: {GenStage.type(), tuple, GenStage.options()} | {:stop, :normal}
   def init(options) do
     # Starts a permanent subscription to the broadcaster
     # which will automatically start requesting items.
 
     with {:ok, key} <- Keyword.fetch(options, :id) do
-
       file_name = "#{@root_path}/#{key}_hangman_games.txt"
 
       {:ok, logger_pid} = File.open(file_name, [:append])
 
       {:consumer, {key, logger_pid}, subscribe_to: [Hangman.Game.Event.Manager]}
-
-    else 
+    else
       ## ABORT if display output not true
-      _ -> {:stop, :normal}
+      _ ->
+        {:stop, :normal}
     end
-
   end
 
   @callback handle_call(atom, tuple, term) :: tuple
   def handle_call(:stop, _from, state) do
     {:stop, :normal, :ok, state}
   end
-
 
   @doc """
   The handle_events callback handles various events
@@ -57,29 +53,30 @@ defmodule Hangman.Player.Logger.Handler do
 
   @callback handle_events(term, term, tuple) :: tuple
   def handle_events(events, _from, {key, logger_pid}) do
-
-    for event <- events,  key == Kernel.elem(event, 1) do
+    for event <- events, key == Kernel.elem(event, 1) do
       process_event(event, logger_pid)
     end
 
-    {:noreply, [], {key, logger_pid}}    
+    {:noreply, [], {key, logger_pid}}
   end
-
 
   @spec process_event({atom, term, tuple | binary}, pid) :: :ok
   defp process_event(event, logger_pid) do
-
-    msg = 
+    msg =
       case event do
-        {:register, _, {game_no, length}} -> 
+        {:register, _, {game_no, length}} ->
           "\n# new game #{game_no}! secret length --> #{length}\n"
+
         {:guess, _, {{:guess_letter, letter}, _game_no}} ->
           "# letter --> #{letter} "
+
         {:guess, _, {{:guess_word, word}, _game_no}} ->
           "# word --> #{word} "
-        {:status, _, {_game_no, round_no, text}} -> 
+
+        {:status, _, {_game_no, round_no, text}} ->
           "# round #{round_no} status --> #{text}\n"
-        {:finished, _, text} ->     
+
+        {:finished, _, text} ->
           "\n# games over! --> #{text} \n"
       end
 
@@ -88,22 +85,24 @@ defmodule Hangman.Player.Logger.Handler do
     :ok
   end
 
-
   @doc """
   Terminate callback. Closes player `logger` file
   """
-  
+
   @callback terminate(term, term) :: :ok
   def terminate(_reason, state) do
-    _ = Logger.debug "Terminating Player Logger Handler"
+    _ = Logger.debug("Terminating Player Logger Handler")
 
-    _ = case state do
-      val when is_tuple(val) -> 
-        {_key, logger_pid} = val
-        File.close(logger_pid)
-      _ -> ""
-    end
-    
+    _ =
+      case state do
+        val when is_tuple(val) ->
+          {_key, logger_pid} = val
+          File.close(logger_pid)
+
+        _ ->
+          ""
+      end
+
     :ok
   end
 end

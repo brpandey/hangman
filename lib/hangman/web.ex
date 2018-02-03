@@ -6,7 +6,7 @@ defmodule Hangman.Web do
   Query params are specified after `/hangman?`
 
   These are name :: String.t, secret :: String.t | [String.t], random :: pos_integer
-  
+
   The name at all times must be specified along with either a secret value or random value:
   true = name and (secret | random)
 
@@ -35,16 +35,15 @@ defmodule Hangman.Web do
       {"content-length", "601"},
       {"cache-control", "max-age=0, private, must-revalidate"},
       {"content-type", "text/plain; charset=utf-8"}], status_code: 200}}
-  
+
   """
 
   use Plug.Router
   alias Hangman.Shard
   require Logger
 
-
-  plug :match
-  plug :dispatch
+  plug(:match)
+  plug(:dispatch)
 
   @doc "Starts the cowboy web server"
   def start_server do
@@ -52,11 +51,10 @@ defmodule Hangman.Web do
     Plug.Adapters.Cowboy.http(__MODULE__, nil, port: port)
   end
 
-
   # Get macro, matches GET request and /hangman
   get "/hangman" do
     conn
-    |> Plug.Conn.fetch_query_params
+    |> Plug.Conn.fetch_query_params()
     |> run
     |> respond
   end
@@ -65,10 +63,9 @@ defmodule Hangman.Web do
   Retrieves connection params `name` and either a `secret` or `random`. 
   Runs web game. Returns complete game results in connection response body
   """
-  
-  @spec run(Plug.Conn.t) :: Plug.Conn.t | no_return
-  def run(conn) do
 
+  @spec run(Plug.Conn.t()) :: Plug.Conn.t() | no_return
+  def run(conn) do
     # Let's catch most of the errors in the beginning using a "with" construct
 
     # name must be provided
@@ -78,12 +75,12 @@ defmodule Hangman.Web do
     # NOTE: random value is a string which will be error checked in Dictionary.random()
 
     with name when not is_nil(name) and is_binary(name) <- conn.params["name"],
-    secrets when is_nil(secrets) or is_binary(secrets) or 
-    (is_list(secrets) and is_binary(hd(secrets))) <- conn.params["secret"],
-    count = conn.params["random"],
-    false <- (is_nil(secrets) and is_nil(count)) do
-      
-      secrets = 
+         secrets
+         when is_nil(secrets) or is_binary(secrets) or
+                (is_list(secrets) and is_binary(hd(secrets))) <- conn.params["secret"],
+         count = conn.params["random"],
+         false <- is_nil(secrets) and is_nil(count) do
+      secrets =
         case secrets do
           nil -> Hangman.Dictionary.random(conn.params["random"])
           secrets when is_binary(secrets) -> [secrets]
@@ -92,42 +89,42 @@ defmodule Hangman.Web do
 
       # Run secrets via flow which breakes up game args into shards
       results = Shard.Flow.run(name, secrets)
-      
-      response = 
-        case Enum.count(secrets) do 
+
+      response =
+        case Enum.count(secrets) do
           1 -> format_rounds(results)
           _ -> results
         end
-      
+
       Plug.Conn.assign(conn, :response, response)
-      
     else
-      error -> 
-      _ = Logger.debug "error is #{inspect error}"
-      raise HangmanError, "Can't run hangman without a name or either a secrets or a random option specified"
+      error ->
+        _ = Logger.debug("error is #{inspect(error)}")
+
+        raise HangmanError,
+              "Can't run hangman without a name or either a secrets or a random option specified"
     end
-    
-
   end
 
-'''
-  defp debug_spawn(file_name, term) do
-    path = "./tmp"
-    spawn(fn ->
-      "{path}/{file_name}"
-      |> File.write!(term)
-      end)
-  end
-'''
+  '''
+    defp debug_spawn(file_name, term) do
+      path = "./tmp"
+      spawn(fn ->
+        "{path}/{file_name}"
+        |> File.write!(term)
+        end)
+    end
+  '''
 
   @spec format_rounds(list) :: list
   defp format_rounds(rounds) when is_list(rounds) do
     for round <- rounds do
-      "(H) #{round} " # Use (H) to denote Hangman and delineate rounds
+      # Use (H) to denote Hangman and delineate rounds
+      "(H) #{round} "
     end
   end
 
-  @spec respond(Plug.Conn.t) :: Plug.Conn.t
+  @spec respond(Plug.Conn.t()) :: Plug.Conn.t()
   defp respond(conn) do
     conn
     |> Plug.Conn.put_resp_content_type("text/plain")
